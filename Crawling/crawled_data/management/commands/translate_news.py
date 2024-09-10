@@ -24,6 +24,7 @@ class Command(BaseCommand):
         def translate_with_gemini(title, content):
             try:
                 question = (f"제목: {title}. 내용: {content}. "
+                            f"내용에 쓸데 없는 문장이 있다면 제거해 주세요."
                             f"다음 지침에 따라 이 정보를 영어로 번역해 주세요. "
                             f"1. 제목과 내용을 영어로 번역하십시오. "
                             f"2. 내용의 번역은 세 가지 난이도로 제공하십시오: "
@@ -48,6 +49,7 @@ class Command(BaseCommand):
                 return response_text
             except Exception as e:
                 logging.error(f"Error translating article: {e}")
+                save_failed_translation(title, content, str(e))  # 실패한 경우 저장
                 return None
 
         def save_response_to_file(response_text):
@@ -60,11 +62,36 @@ class Command(BaseCommand):
             except Exception as e:
                 logging.error(f"Error saving response to file: {e}")
 
+        def save_failed_translation(title, content, error_message):
+            try:
+                current_date = datetime.now().strftime("%Y%m%d")
+                failed_filename = f"{current_date}_failed_translations.txt"
+                with open(failed_filename, 'a') as file:
+                    file.write(f"Title: {title}\n")
+                    file.write(f"Content: {content}\n")
+                    file.write(f"Error: {error_message}\n")
+                    file.write("\n" + "-"*40 + "\n")
+                logging.info(f"Failed translation details saved to: {failed_filename}")
+            except Exception as e:
+                logging.error(f"Error saving failed translation details to file: {e}")
+
+        def escape_json_content(content):
+            # 큰따옴표, 역슬래시, 제어 문자를 이스케이프 처리
+            escaped_content = content.replace('\\', '\\\\')  # 역슬래시 이스케이프
+            escaped_content = escaped_content.replace('"', '\\"')  # 큰따옴표 이스케이프
+            escaped_content = escaped_content.replace('\n', '\\n')  # 줄 바꿈 이스케이프
+            escaped_content = escaped_content.replace('\t', '\\t')  # 탭 이스케이프
+            escaped_content = escaped_content.replace('\r', '\\r')  # 캐리지 리턴 이스케이프
+            return escaped_content
+
         def parse_json_response(response):
             try:
                 # 백틱과 'json' 태그 제거
                 cleaned_response = re.sub(r'```(?:json)?\s*', '', response).strip()
                 cleaned_response = re.sub(r'```$', '', cleaned_response).strip()
+
+                # 내용 내부 이스케이프 처리
+                cleaned_response = escape_json_content(cleaned_response)
 
                 # JSON 파싱
                 json_content = json.loads(cleaned_response)
@@ -112,6 +139,7 @@ class Command(BaseCommand):
                     logging.warning(f"No translation data for row {i}")
             except Exception as e:
                 logging.error(f"Error processing row {i}: {e}")
+                save_failed_translation(df.at[i, 'title'], df.at[i, 'main'], str(e))  # 실패한 경우 저장
                 continue
 
         try:

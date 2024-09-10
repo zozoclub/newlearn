@@ -1,104 +1,89 @@
-import requests
-from bs4 import BeautifulSoup
-from tqdm import tqdm
+import re
 import pandas as pd
+from bs4 import BeautifulSoup
 from datetime import datetime
-from Crawling import settings
 from django.core.management.base import BaseCommand
+import requests
+from tqdm import tqdm
 
-CRAWLING_USER_AGENT = settings.CRAWLING_USER_AGENT
+CRAWLING_USER_AGENT = 'your_user_agent_here'
 
 class Command(BaseCommand):
     help = "뉴스를 크롤링하여 CSV 파일로 저장합니다."
 
     def handle(self, *args, **kwargs):
+        def clean_text(text):
+            # Remove unwanted whitespace and special characters
+            text = text.replace('\n', ' ').strip()
+            text = re.sub(r'\s+', ' ', text)  # Replace multiple spaces with a single space
+            text = re.sub(r'\s*[\.\?!]\s*', '. ', text)  # Ensure proper spacing after punctuation
+            return text
+
         def ex_tag(sid, page):
-            # 현재 날짜를 YYYYMMDD 형식으로 가져옴
-            # today_date = datetime.now().strftime("%Y%m%d")
-            # print("오늘 날짜 : " + today_date)
-            # url = f"https://news.naver.com/main/main.naver?mode=LSD&mid=shm&sid1={sid}" \
-            #       f"#&date={today_date}:00&page={page}"
-
             url = f"https://news.naver.com/main/main.naver?mode=LSD&mid=shm&sid1={sid}&page={page}"
-
             headers = {"User-Agent": CRAWLING_USER_AGENT}
-            html = requests.get(url, headers=headers)
-            soup = BeautifulSoup(html.text, "lxml")
-            a_tag = soup.find_all("a")
+            try:
+                html = requests.get(url, headers=headers)
+                html.raise_for_status()
+                soup = BeautifulSoup(html.text, "lxml")
+                a_tags = soup.find_all("a")
+                tag_list = [a["href"] for a in a_tags if "href" in a.attrs and "article" in a["href"] and "comment" not in a["href"]]
+                return tag_list
+            except requests.RequestException as e:
+                logging.error(f"Request error: {e}")
+                return []
 
-            tag_list = []
-            for a in a_tag:
-                if "href" in a.attrs:
-                    href = a["href"]
-                    if "article" in href and "comment" not in href:
-                        tag_list.append(href)
-            return tag_list
-
-        def re_tag(sid):
-            # 특정 분야의 뉴스 링크를 모아서 중복 제거
+        def re_tag(sid, num_pages=1):
             re_lst = []
-            for i in tqdm(range(1)):  # 1 페이지만 수집
+            for i in tqdm(range(num_pages), desc=f"Collecting links for sid={sid}"):
                 lst = ex_tag(sid, i + 1)
                 re_lst.extend(lst)
             return list(set(re_lst))
 
-        def art_crawl(all_hrefs, sid, index):
-            # 기사 본문 크롤링
+        def art_crawl(url):
             art_dic = {}
             headers = {"User-Agent": CRAWLING_USER_AGENT}
+            selectors = {
+                "title": "#title_area > span",
+                "date": "#ct > div.media_end_head.go_trans > div.media_end_head_info.nv_notrans > div.media_end_head_info_datestamp > div:nth-child(1) > span",
+                "main": "#dic_area",
+                "press": ".media_end_head_top_logo img",
+                "journalist": ".media_end_head_journalist_name",
+                "image": "#img1"
+            }
 
-            title_selector = "#title_area > span"
-            date_selector = "#ct > div.media_end_head.go_trans > div.media_end_head_info.nv_notrans > div.media_end_head_info_datestamp > div:nth-child(1) > span"
-            main_selector = "#dic_area"
-            press_selector = ".media_end_head_top_logo img"
-            journalist_selector = ".media_end_head_journalist_name"
-            image_selector = "#img1"
+            try:
+                html = requests.get(url, headers=headers)
+                html.raise_for_status()
+                soup = BeautifulSoup(html.text, "lxml")
 
-            url = all_hrefs[sid][index]
-            html = requests.get(url, headers=headers)
-            soup = BeautifulSoup(html.text, "lxml")
+                art_dic = {key: clean_text(soup.select_one(selector).text) if soup.select_one(selector) else ""
+                           for key, selector in selectors.items()}
 
-            title = soup.select_one(title_selector)
-            title_str = title.text.replace('\n', ' ').strip() if title else ""
+                # Special handling for press and image
+                press = soup.select_one(selectors["press"])
+                art_dic["press"] = press['alt'].strip() if press else ""
+                image = soup.select_one(selectors["image"])
+                art_dic["image"] = image['data-src'] if image else ""
 
-            date = soup.select_one(date_selector)
-            date_str = date.text.replace('\n', ' ').strip() if date else ""
-
-            main = soup.select_one(main_selector)
-            main_str = main.text.replace('\n', ' ').strip() if main else ""
-
-            press = soup.select_one(press_selector)
-            press_str = press['alt'].strip() if press else ""
-
-            journalist = soup.select_one(journalist_selector)
-            journalist_str = journalist.text.replace('\n', ' ').strip() if journalist else ""
-
-            image = soup.select_one(image_selector)
-            image_url = image['data-src'] if image else ""
-
-            art_dic.update({
-                "title": title_str,
-                "date": date_str,
-                "main": main_str,
-                "press": press_str,
-                "journalist": journalist_str,
-                "image": image_url
-            })
-            return art_dic
+                return art_dic
+            except requests.RequestException as e:
+                logging.error(f"Request error while crawling article: {e}")
+                return {}
 
         all_hrefs = {}
         sids = [102]  # 예시로 하나의 분야만 크롤링
         for sid in sids:
-            sid_data = re_tag(sid)
-            all_hrefs[sid] = sid_data
+            all_hrefs[sid] = re_tag(sid, num_pages=3)  # 예를 들어 3페이지까지 크롤링
 
         artdic_list = []
         for sid, hrefs in all_hrefs.items():
-            for i in range(len(hrefs)):
-                art_dic = art_crawl(all_hrefs, sid, i)
-                art_dic["section"] = sid
-                art_dic["url"] = hrefs[i]
-                artdic_list.append(art_dic)
+            for url in hrefs:
+                art_dic = art_crawl(url)
+                if art_dic:
+                    art_dic["section"] = sid
+                    art_dic["url"] = url
+                    artdic_list.append(art_dic)
 
         art_df = pd.DataFrame(artdic_list)
 

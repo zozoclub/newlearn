@@ -2,7 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 from tqdm import tqdm
 import pandas as pd
-from datetime import datetime  # 날짜를 다루기 위한 모듈 추가
+from datetime import datetime
 from Crawling import settings
 from django.core.management.base import BaseCommand
 

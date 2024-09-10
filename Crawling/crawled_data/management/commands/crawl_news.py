@@ -3,8 +3,9 @@ import requests
 from bs4 import BeautifulSoup
 from tqdm import tqdm
 import pandas as pd
+from Crawling import settings
 
-user_agent = ""
+CRAWLING_USER_AGENT = settings.CRAWLING_USER_AGENT
 
 class Command(BaseCommand):
     help = "뉴스를 크롤링하여 CSV 파일로 저장합니다."
@@ -15,7 +16,7 @@ class Command(BaseCommand):
             url = f"https://news.naver.com/main/main.naver?mode=LSD&mid=shm&sid1={sid}" \
                   "#&date=20240904:00&page={page}"
 
-            headers = {"User-Agent": user_agent}
+            headers = {"User-Agent": CRAWLING_USER_AGENT}
             html = requests.get(url, headers=headers)
             soup = BeautifulSoup(html.text, "lxml")
             a_tag = soup.find_all("a")

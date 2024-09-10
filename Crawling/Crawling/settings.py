@@ -125,12 +125,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 #######################################################
 
-#environ을 기존 import에 추가
 import environ
 
-env = environ.Env(DEBUG=(bool, True)) #환경변수를 불러올 수 있는 상태로 세팅
+env = environ.Env(DEBUG=(bool, True))
 
-#환경변수 파일 읽어오기
 environ.Env.read_env(
     env_file=os.path.join(BASE_DIR, '.env')
 )

@@ -2,13 +2,16 @@ from django.core.management.base import BaseCommand
 import google.generativeai as genai
 import pandas as pd
 from tqdm import tqdm
+from Crawling import settings
+
+GEN_AI_SECRET_KEY = settings.GEN_AI_SECRET_KEY
 
 class Command(BaseCommand):
     help = "CSV 파일에 있는 뉴스를 제미나이 API를 통해 번역하여 저장."
 
     def handle(self, *args, **kwargs):
         # gemini API 설정
-        api_key = "YOUR_GEMINI_API_KEY"
+        api_key = "GEN_AI_SECRET_KEY"
         genai.configure(api_key=api_key)
         model = genai.GenerativeModel('gemini-1.5-flash')
 

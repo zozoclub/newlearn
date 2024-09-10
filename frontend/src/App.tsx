@@ -1,14 +1,8 @@
-import React from "react";
 import { RecoilRoot } from "recoil";
 import "./App.css";
-import MainPage from "@pages/MainPage";
 
 function App() {
-  return (
-    <RecoilRoot>
-      <MainPage />
-    </RecoilRoot>
-  );
+  return <RecoilRoot>에러야 제발 나지 말렴</RecoilRoot>;
 }
 
 export default App;

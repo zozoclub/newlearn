@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.hibernate.annotations.ColumnDefault;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -46,6 +48,13 @@ public class Users {
 	@Column(name = "nickname", nullable = false, unique = true)
 	private String nickname;
 
+	@Column(name = "provider")
+	@ColumnDefault(value = "local")
+	private String provider;
+
+	@Column(name = "provider_id")
+	private String providerId;
+
 	@Column(name = "difficulty")
 	private Long difficulty;
 
@@ -75,7 +84,10 @@ public class Users {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdAt;
 
-
+	public void updateOAuthInfo(String provider, String providerId) {
+		this.provider = provider;
+		this.providerId = providerId;
+	}
 
 
 

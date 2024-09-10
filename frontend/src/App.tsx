@@ -1,8 +1,13 @@
 import { RecoilRoot } from "recoil";
 import "./App.css";
+import MainPage from "./pages/MainPage";
 
 function App() {
-  return <RecoilRoot>에러야 제발 나지 말렴</RecoilRoot>;
+  return (
+    <RecoilRoot>
+      <MainPage />
+    </RecoilRoot>
+  );
 }
 
 export default App;

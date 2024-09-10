@@ -1,5 +1,23 @@
+import Button from "@components/Button";
+import { useTheme } from "@context/ThemeContext";
+
 function MainPage() {
-  return <div>MainPage 입니다.</div>;
+  const { toggleTheme } = useTheme();
+
+  return (
+    <div>
+      <Button
+        varient="primary"
+        size="medium"
+        onClick={() => console.log("Clicked!")}
+      >
+        안녕하세요
+      </Button>
+      <Button varient="secondary" size="medium" onClick={toggleTheme}>
+        테마 전환
+      </Button>
+    </div>
+  );
 }
 
 export default MainPage;

@@ -1,9 +1,10 @@
-from django.core.management.base import BaseCommand
 import requests
 from bs4 import BeautifulSoup
 from tqdm import tqdm
 import pandas as pd
+from datetime import datetime  # 날짜를 다루기 위한 모듈 추가
 from Crawling import settings
+from django.core.management.base import BaseCommand
 
 CRAWLING_USER_AGENT = settings.CRAWLING_USER_AGENT
 
@@ -12,9 +13,13 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         def ex_tag(sid, page):
-            # 뉴스 링크를 추출하는 함수
-            url = f"https://news.naver.com/main/main.naver?mode=LSD&mid=shm&sid1={sid}" \
-                  "#&date=20240904:00&page={page}"
+            # 현재 날짜를 YYYYMMDD 형식으로 가져옴
+            # today_date = datetime.now().strftime("%Y%m%d")
+            # print("오늘 날짜 : " + today_date)
+            # url = f"https://news.naver.com/main/main.naver?mode=LSD&mid=shm&sid1={sid}" \
+            #       f"#&date={today_date}:00&page={page}"
+
+            url = f"https://news.naver.com/main/main.naver?mode=LSD&mid=shm&sid1={sid}&page={page}"
 
             headers = {"User-Agent": CRAWLING_USER_AGENT}
             html = requests.get(url, headers=headers)
@@ -40,7 +45,7 @@ class Command(BaseCommand):
         def art_crawl(all_hrefs, sid, index):
             # 기사 본문 크롤링
             art_dic = {}
-            headers = {"User-Agent": user_agent}
+            headers = {"User-Agent": CRAWLING_USER_AGENT}
 
             title_selector = "#title_area > span"
             date_selector = "#ct > div.media_end_head.go_trans > div.media_end_head_info.nv_notrans > div.media_end_head_info_datestamp > div:nth-child(1) > span"
@@ -81,7 +86,6 @@ class Command(BaseCommand):
             })
             return art_dic
 
-        # 뉴스 크롤링 수행
         all_hrefs = {}
         sids = [102]  # 예시로 하나의 분야만 크롤링
         for sid in sids:
@@ -97,5 +101,11 @@ class Command(BaseCommand):
                 artdic_list.append(art_dic)
 
         art_df = pd.DataFrame(artdic_list)
-        art_df.to_csv("article_df.csv", index=False)  # CSV 파일로 저장
-        self.stdout.write(self.style.SUCCESS('크롤링 및 CSV 저장 완료!'))
+
+        # 현재 날짜를 기준으로 파일명 생성
+        current_date = datetime.now().strftime("%Y%m%d")  # YYYYMMDD 형식
+        filename = f"{current_date}.csv"
+
+        # CSV 파일로 저장
+        art_df.to_csv(filename, index=False)
+        self.stdout.write(self.style.SUCCESS(f'크롤링 및 CSV 저장 완료! 파일명: {filename}'))

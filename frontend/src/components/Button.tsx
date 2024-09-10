@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { Theme } from "types/theme";
 
 type ButtonProps = {
-  varient: "primary" | "secondary";
+  varient: "primary" | "cancel";
   size: "small" | "medium" | "large";
   children: React.ReactNode;
   onClick: () => void;
@@ -13,7 +13,7 @@ const StyledButton = styled.button<ButtonProps & { theme: Theme }>`
   background-color: ${(props) =>
     props.varient === "primary"
       ? props.theme.colors.primary
-      : props.theme.colors.secondary};
+      : props.theme.colors.cancel};
   color: #ffffff;
   border: none;
   border-radius: 0.25rem;

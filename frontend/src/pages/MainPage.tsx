@@ -13,7 +13,7 @@ function MainPage() {
       >
         안녕하세요
       </Button>
-      <Button varient="secondary" size="medium" onClick={toggleTheme}>
+      <Button varient="cancel" size="medium" onClick={toggleTheme}>
         테마 전환
       </Button>
     </div>

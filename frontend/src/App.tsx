@@ -1,8 +1,10 @@
 import { RecoilRoot } from "recoil";
 import { ThemeProvider } from "./context/ThemeContext";
 import styled from "styled-components";
-import MainPage from "./pages/MainPage";
 import { GlobalStyle } from "@styles/GlobalStyle";
+
+import { RouterProvider } from "react-router-dom";
+import { router } from "./Router";
 
 const AppContainer = styled.div`
   background-color: ${(props) => props.theme.colors.background};
@@ -16,7 +18,7 @@ const App: React.FC = () => {
       <ThemeProvider>
         <GlobalStyle />
         <AppContainer>
-          <MainPage />
+          <RouterProvider router={router} />
         </AppContainer>
       </ThemeProvider>
     </RecoilRoot>

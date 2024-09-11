@@ -17,6 +17,7 @@ const App: React.FC = () => {
       <ThemeProvider>
         <GlobalStyle />
         <AppContainer>
+          어이가없네
           <Background />
           <RouterProvider router={router} />
         </AppContainer>

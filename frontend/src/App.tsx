@@ -1,11 +1,12 @@
 import { RecoilRoot } from "recoil";
-import { ThemeProvider } from "./context/ThemeContext";
 import styled from "styled-components";
-import MainPage from "./pages/MainPage";
+import { ThemeProvider } from "@context/ThemeContext";
+import MainPage from "@pages/MainPage";
 import { GlobalStyle } from "@styles/GlobalStyle";
 
 const AppContainer = styled.div`
-  background-color: ${(props) => props.theme.colors.background};
+  background-image: url(${(props) => props.theme.images.background});
+  /* background-image: url("src/assets/images/background-dark.png"); */
   color: ${(props) => props.theme.colors.text};
   min-height: 100vh;
 `;

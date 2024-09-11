@@ -2,7 +2,6 @@ import { Theme } from "types/theme";
 
 export const darkTheme: Theme = {
   colors: {
-    background: "#171717",
     "card-background": "#333344",
     primary: "#0099ff",
     "primary-press": "#62b7ff",
@@ -17,5 +16,8 @@ export const darkTheme: Theme = {
     "text-04": "#a5a5a5",
     readonly: "#333333",
     placeholder: "8b8b8b",
+  },
+  images: {
+    background: "src/assets/images/background-dark.png",
   },
 };

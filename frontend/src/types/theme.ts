@@ -1,6 +1,5 @@
 export type Theme = {
   colors: {
-    background: string;
     "card-background": string;
     primary: string;
     "primary-press": string;
@@ -15,5 +14,8 @@ export type Theme = {
     "text-04": string;
     readonly: string;
     placeholder: string;
+  };
+  images: {
+    background: string;
   };
 };

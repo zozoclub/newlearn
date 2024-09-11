@@ -17,7 +17,7 @@ export const darkTheme: Theme = {
     readonly: "#333333",
     placeholder: "8b8b8b",
   },
-  images: {
-    background: "src/assets/images/background-dark.png",
+  opacities: {
+    background: 100,
   },
 };

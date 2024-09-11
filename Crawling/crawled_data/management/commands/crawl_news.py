@@ -5,6 +5,7 @@ from datetime import datetime
 from django.core.management.base import BaseCommand
 import requests
 from tqdm import tqdm
+import logging
 
 CRAWLING_USER_AGENT = 'your_user_agent_here'
 
@@ -57,6 +58,11 @@ class Command(BaseCommand):
                 html.raise_for_status()
                 soup = BeautifulSoup(html.text, "lxml")
 
+                # Only proceed if the main content exists
+                main_content = soup.select_one(selectors["main"])
+                if not main_content:
+                    return None  # If main content is None, return None
+
                 art_dic = {key: clean_text(soup.select_one(selector).text) if soup.select_one(selector) else ""
                            for key, selector in selectors.items()}
 
@@ -69,10 +75,10 @@ class Command(BaseCommand):
                 return art_dic
             except requests.RequestException as e:
                 logging.error(f"Request error while crawling article: {e}")
-                return {}
+                return None
 
         all_hrefs = {}
-        sids = [102]  # 예시로 하나의 분야만 크롤링
+        sids = [100, 101, 102, 103, 104, 105]  # sid 100~105로 설정
         for sid in sids:
             all_hrefs[sid] = re_tag(sid, num_pages=3)  # 예를 들어 3페이지까지 크롤링
 
@@ -80,17 +86,20 @@ class Command(BaseCommand):
         for sid, hrefs in all_hrefs.items():
             for url in hrefs:
                 art_dic = art_crawl(url)
-                if art_dic:
+                if art_dic and art_dic.get("main"):  # Check if the main content exists before adding
                     art_dic["section"] = sid
                     art_dic["url"] = url
                     artdic_list.append(art_dic)
 
-        art_df = pd.DataFrame(artdic_list)
+        if artdic_list:  # If there is any data to save
+            art_df = pd.DataFrame(artdic_list)
 
-        # 현재 날짜를 기준으로 파일명 생성
-        current_date = datetime.now().strftime("%Y%m%d")  # YYYYMMDD 형식
-        filename = f"{current_date}.csv"
+            # 현재 날짜를 기준으로 파일명 생성
+            current_date = datetime.now().strftime("%Y%m%d")  # YYYYMMDD 형식
+            filename = f"{current_date}.csv"
 
-        # CSV 파일로 저장
-        art_df.to_csv(filename, index=False)
-        self.stdout.write(self.style.SUCCESS(f'크롤링 및 CSV 저장 완료! 파일명: {filename}'))
+            # CSV 파일로 저장
+            art_df.to_csv(filename, index=False)
+            self.stdout.write(self.style.SUCCESS(f'크롤링 및 CSV 저장 완료! 파일명: {filename}'))
+        else:
+            self.stdout.write(self.style.WARNING('수집된 데이터가 없습니다.'))

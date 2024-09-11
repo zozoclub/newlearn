@@ -22,8 +22,9 @@
     "react-media-recorder": "^1.7.1",
     "react-router-dom": "^6.26.2",
     "recoil": "^0.7.7",
-    "string-similarity": "^4.0.4",
-    "styled-components": "^6.1.13"
+    "styled-components": "^6.1.13",
+    "styled-reset": "^4.5.2",
+    "string-similarity": "^4.0.4"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",

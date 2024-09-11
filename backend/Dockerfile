@@ -5,7 +5,7 @@ FROM openjdk:17-alpine
 RUN ln -snf /usr/share/zoneinfo/Asia/Seoul /etc/localtime && echo Asia/Seoul > /etc/timezone
 
 # build가 되는 시점에 JAR_FILE 경로에 jar파일 생성
-ARG JAR_FILE=/build/libs/newlearn-0.0.1-SNAPSHOT.jar
+ARG JAR_FILE=/build/libs/backend-0.0.1-SNAPSHOT.jar
 
 COPY ${JAR_FILE} /newlearnspring.jar
 

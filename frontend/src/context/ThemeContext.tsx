@@ -14,11 +14,26 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 export const ThemeProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [isDark, setIsDark] = useState(false);
+  const [isDark, setIsDark] = useState<boolean>(() => {
+    // localStorage에 사용자 설정이 있다면 해당 설정으로
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme) {
+      return savedTheme === "dark";
+    }
+    // localStorage에 사용자 설정이 없다면 Windows 설정으로
+    return (
+      window.matchMedia &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches
+    );
+  });
   const theme = isDark ? darkTheme : lightTheme;
 
   const toggleTheme = () => {
-    setIsDark(!isDark);
+    setIsDark((prev) => {
+      const newTheme = !prev;
+      localStorage.setItem("theme", newTheme ? "dark" : "light"); // localStorage에 사용자 설정 저장
+      return newTheme;
+    });
   };
 
   return (

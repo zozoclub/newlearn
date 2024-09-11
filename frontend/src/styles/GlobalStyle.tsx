@@ -3,7 +3,7 @@ import reset from "styled-reset";
 
 export const GlobalStyle = createGlobalStyle`
   ${reset}
-  body {
+  body, button {
     font-family: 'Pretendard', sans-serif;
     color: ${(props) => props.theme.colors.text};
     margin: 0;

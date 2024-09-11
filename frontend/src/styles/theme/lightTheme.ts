@@ -20,4 +20,15 @@ export const lightTheme: Theme = {
   opacities: {
     background: 0,
   },
+  fontSize: {
+    "5xl": "2.5rem",
+    "4xl": "2.25rem",
+    "3xl": "2rem",
+    "2xl": "1.75rem",
+    xl: "1.5rem",
+    lg: "1.25rem",
+    md: "1rem",
+    sm: "0.875rem",
+    xs: "0.75rem",
+  },
 };

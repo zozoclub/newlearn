@@ -18,4 +18,15 @@ export type Theme = {
   opacities: {
     background: number;
   };
+  fontSize: {
+    "5xl": string;
+    "4xl": string;
+    "3xl": string;
+    "2xl": string;
+    xl: string;
+    lg: string;
+    md: string;
+    sm: string;
+    xs: string;
+  };
 };

@@ -10,6 +10,8 @@ const AppContainer = styled.div`
   background-repeat: no-repeat;
   color: ${(props) => props.theme.colors.text};
   min-height: 100vh;
+  transition-property: background-image;
+  transition-duration: 0.5s;
 `;
 
 const App: React.FC = () => {

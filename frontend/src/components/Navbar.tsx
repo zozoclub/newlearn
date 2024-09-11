@@ -17,6 +17,7 @@ const Container = styled.div`
   border-radius: 1rem;
   padding: 0 0.5rem;
   position: fixed;
+  z-index: 1;
   left: 50%;
   transform: translate(-50%, 0);
   bottom: 1.5rem;
@@ -67,7 +68,7 @@ const Navbar = () => {
   }
 
   return (
-    <div>
+    <div style={{ minHeight: "100vh" }}>
       <Container>
         {IconList.map((icon, index) => (
           <IconContainer

@@ -1,9 +1,10 @@
 import { RecoilRoot } from "recoil";
 import { ThemeProvider } from "@context/ThemeContext";
 import { GlobalStyle } from "@styles/GlobalStyle";
-import MainPage from "@pages/MainPage";
 import styled from "styled-components";
 import Background from "@styles/BackGround";
+import { RouterProvider } from "react-router-dom";
+import { router } from "./Router";
 
 const AppContainer = styled.div`
   position: relative;
@@ -17,7 +18,7 @@ const App: React.FC = () => {
         <GlobalStyle />
         <AppContainer>
           <Background />
-          <MainPage />
+          <RouterProvider router={router} />
         </AppContainer>
       </ThemeProvider>
     </RecoilRoot>

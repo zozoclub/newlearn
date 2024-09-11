@@ -1,14 +1,15 @@
 import { RecoilRoot } from "recoil";
-import { ThemeProvider } from "@context/ThemeContext";
-import { GlobalStyle } from "@styles/GlobalStyle";
 import styled from "styled-components";
-import Background from "@styles/BackGround";
 import { RouterProvider } from "react-router-dom";
 import { router } from "./Router";
 
+import { ThemeProvider } from "@context/ThemeContext";
+import { GlobalStyle } from "@styles/GlobalStyle";
+import Background from "@styles/BackGround";
+import Navbar from "@components/Navbar";
+
 const AppContainer = styled.div`
   position: relative;
-  background-color: none;
 `;
 
 const App: React.FC = () => {
@@ -19,6 +20,7 @@ const App: React.FC = () => {
         <AppContainer>
           <Background />
           <RouterProvider router={router} />
+          <Navbar />
         </AppContainer>
       </ThemeProvider>
     </RecoilRoot>

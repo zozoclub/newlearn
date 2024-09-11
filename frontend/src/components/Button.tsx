@@ -14,7 +14,7 @@ const StyledButton = styled.button<ButtonProps & { theme: Theme }>`
     props.varient === "primary"
       ? props.theme.colors.primary
       : props.theme.colors.cancel};
-  color: #ffffff;
+  color: ${(props) => props.varient === "primary" && "#ffffff"};
   border: none;
   border-radius: 0.25rem;
   cursor: pointer;

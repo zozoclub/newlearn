@@ -7,7 +7,8 @@ export const GlobalStyle = createGlobalStyle`
   * {
     font-family: 'Pretendard', sans-serif;
   }
-  body {
+  body, button {
+    color: ${(props) => props.theme.colors.text};
     margin: 0;
     padding: 0;
     box-sizing: border-box;

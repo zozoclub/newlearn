@@ -1,32 +1,21 @@
 export type Theme = {
   colors: {
-    "card-background": string;
+    cardBackground: string;
     primary: string;
-    "primary-press": string;
+    primaryPress: string;
     danger: string;
-    "danger-press": string;
+    dangerPress: string;
     cancel: string;
-    "cancel-press": string;
+    cancelPress: string;
     text: string;
-    "text-01": string;
-    "text-02": string;
-    "text-03": string;
-    "text-04": string;
+    text01: string;
+    text02: string;
+    text03: string;
+    text04: string;
     readonly: string;
     placeholder: string;
   };
   opacities: {
     background: number;
-  };
-  fontSize: {
-    "5xl": string;
-    "4xl": string;
-    "3xl": string;
-    "2xl": string;
-    xl: string;
-    lg: string;
-    md: string;
-    sm: string;
-    xs: string;
   };
 };

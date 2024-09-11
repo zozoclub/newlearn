@@ -16,6 +16,7 @@ export const darkTheme: Theme = {
     text04: "#a5a5a5",
     readonly: "#333333",
     placeholder: "8b8b8b",
+    shadow: "#0e1125",
   },
   opacities: {
     background: 100,

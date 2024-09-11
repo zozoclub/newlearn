@@ -16,6 +16,7 @@ export const lightTheme: Theme = {
     text04: "#8b8b8b",
     readonly: "#ececec",
     placeholder: "#c1c1c1",
+    shadow: "#8b8b8b",
   },
   opacities: {
     background: 0,

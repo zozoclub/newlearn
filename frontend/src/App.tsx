@@ -6,7 +6,6 @@ import { router } from "./Router";
 import { ThemeProvider } from "@context/ThemeContext";
 import { GlobalStyle } from "@styles/GlobalStyle";
 import Background from "@styles/BackGround";
-import Navbar from "@components/Navbar";
 
 const AppContainer = styled.div`
   position: relative;
@@ -20,7 +19,6 @@ const App: React.FC = () => {
         <AppContainer>
           <Background />
           <RouterProvider router={router} />
-          <Navbar />
         </AppContainer>
       </ThemeProvider>
     </RecoilRoot>

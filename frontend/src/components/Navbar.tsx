@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { useState } from "react";
 
-import puzzleIcon from "@assets/icons/searchIcon.png";
+import puzzleIcon from "@assets/icons/puzzleIcon.png";
 import pronounceTestIcon from "@assets/icons/pronounceTestIcon.png";
 import newsIcon from "@assets/icons/newsIcon.png";
 import myPageIcon from "@assets/icons/myPageIcon.png";

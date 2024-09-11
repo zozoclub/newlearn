@@ -17,7 +17,7 @@ export const lightTheme: Theme = {
     readonly: "#ececec",
     placeholder: "#c1c1c1",
   },
-  images: {
-    background: "src/assets/images/background-light.png",
+  opacities: {
+    background: 0,
   },
 };

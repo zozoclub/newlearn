@@ -15,7 +15,7 @@ export type Theme = {
     readonly: string;
     placeholder: string;
   };
-  images: {
-    background: string;
+  opacities: {
+    background: number;
   };
 };

@@ -1,6 +1,5 @@
 import { RecoilRoot } from "recoil";
 import { ThemeProvider } from "@context/ThemeContext";
-import MainPage from "@pages/MainPage";
 import { GlobalStyle } from "@styles/GlobalStyle";
 
 const App: React.FC = () => {

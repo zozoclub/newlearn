@@ -8,8 +8,8 @@ import styled from "styled-components";
 
 const Container = styled.div`
   display: flex;
-  padding: 50px;
   justify-content: space-between;
+  padding: 50px;
 `;
 
 const NewsContainer = styled.div`
@@ -18,9 +18,9 @@ const NewsContainer = styled.div`
 
 const WidgetContainer = styled.div`
   display: grid;
-  margin: auto 0;
   grid-template-columns: 1fr 1fr;
   grid-auto-rows: 240px;
+  margin: auto 0;
 `;
 
 function MainPage() {

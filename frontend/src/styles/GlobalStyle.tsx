@@ -4,10 +4,10 @@ import reset from "styled-reset";
 export const GlobalStyle = createGlobalStyle`
   ${reset}
   body, button {
-    font-family: 'Pretendard', sans-serif;
-    color: ${(props) => props.theme.colors.text};
     margin: 0;
     padding: 0;
+    color: ${(props) => props.theme.colors.text};
+    font-family: 'Pretendard', sans-serif;
     box-sizing: border-box;
   }
   /* 스크롤바 커스터마이징 */

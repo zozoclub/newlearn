@@ -10,14 +10,6 @@ type ButtonProps = {
 };
 
 const StyledButton = styled.button<ButtonProps & { theme: Theme }>`
-  background-color: ${(props) =>
-    props.$varient === "primary"
-      ? props.theme.colors.primary
-      : props.theme.colors.cancel};
-  color: ${(props) => props.$varient === "primary" && "#ffffff"};
-  border: none;
-  border-radius: 0.25rem;
-  cursor: pointer;
   padding: ${(props) => {
     switch (props.size) {
       case "small":
@@ -28,6 +20,13 @@ const StyledButton = styled.button<ButtonProps & { theme: Theme }>`
         return "0.5rem 1rem";
     }
   }};
+  background-color: ${(props) =>
+    props.$varient === "primary"
+      ? props.theme.colors.primary
+      : props.theme.colors.cancel};
+  color: ${(props) => props.$varient === "primary" && "#ffffff"};
+  border: none;
+  border-radius: 0.25rem;
   font-size: ${(props) => {
     switch (props.size) {
       case "small":
@@ -38,6 +37,7 @@ const StyledButton = styled.button<ButtonProps & { theme: Theme }>`
         return "1rem";
     }
   }};
+  cursor: pointer;
 `;
 
 const Button: React.FC<ButtonProps> = ({

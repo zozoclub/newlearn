@@ -3,42 +3,21 @@ import { Outlet } from "react-router-dom";
 import styled from "styled-components";
 
 import Navbar from "@components/Navbar";
-import LogoImage from "@assets/images/logo-full.png";
+import Header from "@components/Header";
 
-const Container = styled.div``;
-
-const HeaderContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 100px;
+const Container = styled.div`
+  padding: 0 125px;
 `;
 
-const Logo = styled.img.attrs({
-  src: `${LogoImage}`,
-  alt: "LogoImage",
-})`
-  width: 310px;
-  height: 67px;
-`;
-
-const PageInfo = styled.div`
-  font-size: 2rem;
-  font-weight: 600;
-`;
-
-const ContentContainer = styled.div``;
+const Content = styled.div``;
 
 const Layout: React.FC = () => {
   return (
     <Container>
-      <HeaderContainer>
-        <Logo />
-        <PageInfo>어디 페이지죠 이게</PageInfo>
-      </HeaderContainer>
-      <ContentContainer>
+      <Header />
+      <Content>
         <Outlet />
-      </ContentContainer>
+      </Content>
       <Navbar />
     </Container>
   );

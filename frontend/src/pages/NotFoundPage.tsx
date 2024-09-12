@@ -1,4 +1,7 @@
+import locationState from "@store/state";
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
+import { useResetRecoilState } from "recoil";
 import styled from "styled-components";
 
 const Container = styled.div`
@@ -20,6 +23,12 @@ const Container = styled.div`
 `;
 
 const NotFoundPage = () => {
+  const resetCurrentLocation = useResetRecoilState(locationState);
+
+  useEffect(() => {
+    resetCurrentLocation();
+  }, [resetCurrentLocation]);
+
   return (
     <Container>
       <div>Page Not Found!</div>

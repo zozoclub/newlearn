@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 const Container = styled.div<{ $isHovered: boolean }>`
+  position: relative;
   display: inline-block;
   text-align: center;
   @media (hover: hover) and (pointer: fine) {
@@ -12,12 +13,22 @@ const Container = styled.div<{ $isHovered: boolean }>`
   transition: transform 0.3s;
   transition-timing-function: ease-out;
   font-size: 0.8rem;
-  padding: 0 0 0.5rem 0;
   cursor: pointer;
 `;
 
 const Icon = styled.img`
-  margin-bottom: -0.5rem;
+  margin-bottom: -0.25rem;
+  width: 75px;
+`;
+
+const IconDesc = styled.div<{ $isHovered: boolean }>`
+  position: absolute;
+  left: 50%;
+  top: -10px;
+  transform: translate(-50%, 0);
+  white-space: nowrap;
+  opacity: ${(props) => (props.$isHovered ? 1 : 0)};
+  transition: opacity 0.5s;
 `;
 
 const NavbarItem: React.FC<{ src: string; alt: string; link: string }> = (
@@ -45,7 +56,7 @@ const NavbarItem: React.FC<{ src: string; alt: string; link: string }> = (
       onMouseLeave={mouseLeaveHandler}
     >
       <Icon src={icon.src} alt={icon.alt} />
-      <div>{icon.alt}</div>
+      <IconDesc $isHovered={isHovered}>{icon.alt}</IconDesc>
     </Container>
   );
 };

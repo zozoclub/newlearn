@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { Theme } from "types/theme";
 
 type ButtonProps = {
-  varient: "primary" | "cancel";
+  $varient: "primary" | "cancel";
   size: "small" | "medium" | "large";
   children: React.ReactNode;
   onClick: () => void;
@@ -11,10 +11,10 @@ type ButtonProps = {
 
 const StyledButton = styled.button<ButtonProps & { theme: Theme }>`
   background-color: ${(props) =>
-    props.varient === "primary"
+    props.$varient === "primary"
       ? props.theme.colors.primary
       : props.theme.colors.cancel};
-  color: ${(props) => props.varient === "primary" && "#ffffff"};
+  color: ${(props) => props.$varient === "primary" && "#ffffff"};
   border: none;
   border-radius: 0.25rem;
   cursor: pointer;
@@ -42,12 +42,12 @@ const StyledButton = styled.button<ButtonProps & { theme: Theme }>`
 
 const Button: React.FC<ButtonProps> = ({
   children,
-  varient = "primary",
+  $varient = "primary",
   size = "medium",
   onClick,
 }) => {
   return (
-    <StyledButton varient={varient} size={size} onClick={onClick}>
+    <StyledButton $varient={$varient} size={size} onClick={onClick}>
       {children}
     </StyledButton>
   );

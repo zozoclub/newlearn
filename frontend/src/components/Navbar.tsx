@@ -26,7 +26,7 @@ const Container = styled.div`
 `;
 
 const Navbar = () => {
-  const IconList = [
+  const iconList = [
     { src: puzzleIcon, alt: "퍼즐", link: "/puzzle" },
     { src: pronounceTestIcon, alt: "발음 테스트", link: "/speak" },
     { src: newsIcon, alt: "뉴스", link: "/news" },
@@ -39,7 +39,7 @@ const Navbar = () => {
 
   return (
     <Container>
-      {IconList.map((icon, index) => (
+      {iconList.map((icon, index) => (
         <NavbarItem
           key={index}
           src={icon.src}

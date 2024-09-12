@@ -11,7 +11,7 @@ const HeaderContainer = styled.div`
   justify-content: space-between;
   align-items: center;
   height: 150px;
-  padding: 0 100px;
+  padding: 0 5vw;
 `;
 
 const Logo = styled.img.attrs({

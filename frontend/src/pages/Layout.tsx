@@ -6,10 +6,14 @@ import Navbar from "@components/Navbar";
 import Header from "@components/Header";
 
 const Container = styled.div`
-  padding: 0 125px;
+  position: relative;
+  height: 100vh;
+  padding: 0 5vw;
 `;
 
-const Content = styled.div``;
+const Content = styled.div`
+  height: calc(100%-150px);
+`;
 
 const Layout: React.FC = () => {
   return (

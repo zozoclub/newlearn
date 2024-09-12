@@ -7,6 +7,33 @@ import stringSimilarity from "string-similarity";
 import { useSetRecoilState } from "recoil";
 import locationState from "@store/state";
 
+// Styled Component
+import styled from "styled-components";
+
+const WholeContainer = styled.div`
+  width: 80%;
+  min-height: 600px;
+  margin: auto;
+  padding: 10px;
+  background-color: ${(props) => props.theme.colors.cardBackground + "BF"};
+  backdrop-filter: blur(4px);
+  border-radius: 12px;
+  box-shadow: 0.5rem 0.5rem 0.25rem ${(props) => props.theme.colors.shadow};
+  transition: box-shadow 0.5s;
+`;
+
+const SubContainer = styled.div`
+  width: 30%;
+  min-height: 200px;
+  margin: auto;
+  padding: 10px;
+  background-color: ${(props) => props.theme.colors.cardBackground + "BF"};
+  backdrop-filter: blur(4px);
+  border-radius: 12px;
+  box-shadow: 0.5rem 0.5rem 0.25rem ${(props) => props.theme.colors.shadow};
+  transition: box-shadow 0.5s;
+`;
+
 const SpeakingTestPage: React.FC = () => {
   const [recognizingText, setRecognizingText] = useState<string>(""); // 실시간 인식 텍스트
   const [recognitionResult, setRecognitionResult] = useState<string>(""); // 최종 인식 텍스트
@@ -306,53 +333,56 @@ const SpeakingTestPage: React.FC = () => {
     );
 
   return (
-    <div>
+    <WholeContainer>
       <h1>Speaking Test Page</h1>
-
-      {/* 녹음 버튼 및 상태 표시 */}
-      <button onClick={startRecording} disabled={status === "recording"}>
-        {status === "recording" ? "Recording..." : "Start Recording"}
-      </button>
-      <button onClick={stopRecording} disabled={status !== "recording"}>
-        Stop Recording
-      </button>
-
-      {/* 녹음 중일 때 시각적 효과 (ex: 녹음 중 애니메이션) */}
-      {status === "recording" && (
-        <div style={{ color: "red", fontWeight: "bold" }}>녹음중...</div>
-      )}
-
-      {/* 녹음된 오디오 파일 재생 */}
-      {mediaBlobUrl && (
-        <div>
-          <h3>Recorded Audio</h3>
-          <audio controls src={mediaBlobUrl}></audio>
-        </div>
-      )}
-
-      <button onClick={handleSubmit} disabled={!mediaBlobUrl || isLoading}>
-        {isLoading ? "Processing..." : "Submit for Evaluation"}
-      </button>
 
       <h3>Origin Text</h3>
       <p>{reference_text}</p>
       <button onClick={handleRead}>음성 재생</button>
+      <SubContainer>
+        {/* 녹음 버튼 및 상태 표시 */}
+        <button onClick={startRecording} disabled={status === "recording"}>
+          {status === "recording" ? "Recording..." : "Start Recording"}
+        </button>
+        <button onClick={stopRecording} disabled={status !== "recording"}>
+          Stop Recording
+        </button>
 
-      {/* 실시간 인식 텍스트 표시 */}
-      {recognizingText && (
-        <div>
-          <h3>Recognizing Text...</h3>
-          <p>{recognizingText}</p>
-        </div>
-      )}
+        {/* 녹음 중일 때 시각적 효과 (ex: 녹음 중 애니메이션) */}
+        {status === "recording" && (
+          <div style={{ color: "red", fontWeight: "bold" }}>녹음중...</div>
+        )}
 
-      {/* 최종 인식된 텍스트 출력 */}
-      {recognitionResult && (
-        <div>
-          <h3>Final Recognition Result</h3>
-          <p>{recognitionResult}</p>
-        </div>
-      )}
+        {/* 녹음된 오디오 파일 재생 */}
+        {mediaBlobUrl && (
+          <div>
+            <h3>Recorded Audio</h3>
+            <audio controls src={mediaBlobUrl}></audio>
+          </div>
+        )}
+
+        <button onClick={handleSubmit} disabled={!mediaBlobUrl || isLoading}>
+          {isLoading ? "Processing..." : "Submit for Evaluation"}
+        </button>
+      </SubContainer>
+
+      <SubContainer>
+        {/* 실시간 인식 텍스트 표시 */}
+        {recognizingText && (
+          <div>
+            <h3>Recognizing Text...</h3>
+            <p>{recognizingText}</p>
+          </div>
+        )}
+
+        {/* 최종 인식된 텍스트 출력 */}
+        {recognitionResult && (
+          <div>
+            <h3>Final Recognition Result</h3>
+            <p>{recognitionResult}</p>
+          </div>
+        )}
+      </SubContainer>
 
       {/* 최종 발음 평가 점수 출력 */}
       {averagePronunciationScore !== null && (
@@ -372,7 +402,7 @@ const SpeakingTestPage: React.FC = () => {
           <p>{completenessScore}%</p>
         </div>
       )}
-    </div>
+    </WholeContainer>
   );
 };
 

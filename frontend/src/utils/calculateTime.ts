@@ -1,4 +1,4 @@
-function calculateTime(time: Date): string[] {
+const calculateTime = (time: Date): string[] => {
   const months = [
     "January",
     "February",
@@ -37,6 +37,6 @@ function calculateTime(time: Date): string[] {
   const formattedTime = `${hours}:${minutes} ${ampm}`;
 
   return [`${formattedTime}`, `${day}, ${month} ${date}`];
-}
+};
 
 export default calculateTime;

@@ -1,6 +1,5 @@
 import React from "react";
 import styled from "styled-components";
-import { Theme } from "types/theme";
 
 type ButtonProps = {
   $varient: "primary" | "cancel";
@@ -9,7 +8,7 @@ type ButtonProps = {
   onClick: () => void;
 };
 
-const StyledButton = styled.button<ButtonProps & { theme: Theme }>`
+const StyledButton = styled.button<ButtonProps>`
   padding: ${(props) => {
     switch (props.size) {
       case "small":

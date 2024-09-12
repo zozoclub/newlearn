@@ -23,7 +23,7 @@ const WidgetContainer = styled.div`
   margin: auto 0;
 `;
 
-function MainPage() {
+const MainPage = () => {
   const setCurrentLocation = useSetRecoilState(locationState);
   const widgetList = [
     { variety: "profile" },
@@ -49,6 +49,6 @@ function MainPage() {
       </WidgetContainer>
     </Container>
   );
-}
+};
 
 export default MainPage;

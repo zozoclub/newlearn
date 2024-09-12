@@ -67,6 +67,18 @@ public class JwtTokenProvider {
 			.compact();
 	}
 
+	public String generateOAuthSignUpToken(String userEmail, String userName) {
+		return Jwts.builder()
+			.issuer("newLearn")
+			.subject("JWT Token")
+			.claim("email", userEmail)
+			.claim("name", userName)
+			.issuedAt(new Date())
+			.expiration(new Date(new Date().getTime() + oauthTokenExpiration))
+			.signWith(secretKey)
+			.compact();
+	}
+
 	public String getUserEmail(String token) {
 		return getClaims(token).get("userEmail", String.class);
 	}

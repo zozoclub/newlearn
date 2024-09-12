@@ -4,8 +4,8 @@ import styled from "styled-components";
 
 const Container = styled.div``;
 const FormattedTime = styled.div`
-  font-size: 2rem;
   margin-bottom: 0.5rem;
+  font-size: 2rem;
 `;
 
 const Clock = () => {

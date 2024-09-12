@@ -21,9 +21,9 @@ const DarkBackground = styled.img.attrs({
 })<{ theme: Theme }>`
   position: fixed;
   z-index: 2;
-  opacity: ${(props) => props.theme.opacities.background};
-  transition: opacity 0.5s;
   width: 1925px;
+  transition: opacity 0.5s;
+  opacity: ${(props) => props.theme.opacities.background};
 `;
 
 const Background = () => {

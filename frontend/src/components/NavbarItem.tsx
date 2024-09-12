@@ -3,8 +3,9 @@ import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 const Container = styled.div<{ $isHovered: boolean }>`
-  position: relative;
   display: inline-block;
+  position: relative;
+  font-size: 0.8rem;
   text-align: center;
   @media (hover: hover) and (pointer: fine) {
     transform: ${(props) =>
@@ -12,13 +13,12 @@ const Container = styled.div<{ $isHovered: boolean }>`
   }
   transition: transform 0.3s;
   transition-timing-function: ease-out;
-  font-size: 0.8rem;
   cursor: pointer;
 `;
 
 const Icon = styled.img`
-  margin-bottom: -0.25rem;
   width: 75px;
+  margin-bottom: -0.25rem;
 `;
 
 const IconDesc = styled.div<{ $isHovered: boolean }>`
@@ -26,9 +26,9 @@ const IconDesc = styled.div<{ $isHovered: boolean }>`
   left: 50%;
   top: -10px;
   transform: translate(-50%, 0);
-  white-space: nowrap;
   opacity: ${(props) => (props.$isHovered ? 1 : 0)};
   transition: opacity 0.5s;
+  white-space: nowrap;
 `;
 
 const NavbarItem: React.FC<{ src: string; alt: string; link: string }> = (

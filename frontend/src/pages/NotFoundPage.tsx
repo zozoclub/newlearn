@@ -16,9 +16,9 @@ const Container = styled.div`
     font-weight: 700;
   }
   a {
-    text-decoration: none;
-    font-size: 1.5rem;
     color: ${(props) => props.theme.colors.text02};
+    font-size: 1.5rem;
+    text-decoration: none;
   }
 `;
 

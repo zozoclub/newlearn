@@ -5,10 +5,10 @@ const Container = styled.div`
   margin: 10px;
   padding: 10px;
   background-color: ${(props) => props.theme.colors.cardBackground + "BF"};
-  backdrop-filter: blur(4px);
   border-radius: 12px;
-  box-shadow: 0.5rem 0.5rem 0.25rem ${(props) => props.theme.colors.shadow};
   transition: box-shadow 0.5s;
+  backdrop-filter: blur(4px);
+  box-shadow: 0.5rem 0.5rem 0.25rem ${(props) => props.theme.colors.shadow};
 `;
 
 const Widget: React.FC<{ variety: string }> = ({ variety }) => {

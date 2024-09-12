@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { useState } from "react";
+import { Outlet } from "react-router-dom";
 
 import puzzleIcon from "@assets/icons/puzzleIcon.png";
 import pronounceTestIcon from "@assets/icons/pronounceTestIcon.png";
@@ -9,7 +9,8 @@ import calendarIcon from "@assets/icons/calendarIcon.png";
 import searchIcon from "@assets/icons/searchIcon.png";
 import wordBookIcon from "@assets/icons/wordBookIcon.png";
 import trashCanIcon from "@assets/icons/trashCanIcon.png";
-import { Outlet, useNavigate } from "react-router-dom";
+
+import NavbarItem from "@components/NavbarItem";
 
 const Container = styled.div`
   display: flex;
@@ -25,27 +26,7 @@ const Container = styled.div`
   transition: box-shadow 0.5s;
 `;
 
-const IconContainer = styled.div<{ $isHovered: boolean }>`
-  display: inline-block;
-  text-align: center;
-  @media (hover: hover) and (pointer: fine) {
-    transform: ${(props) =>
-      props.$isHovered ? "translate(0, -1rem)" : "none"};
-  }
-  transition: transform 0.3s;
-  transition-timing-function: ease-out;
-  /* font-family: "Pretendard", sans-serif; */
-  font-size: 0.8rem;
-  padding: 0 0 0.5rem 0;
-`;
-
-const Icon = styled.img`
-  cursor: pointer;
-  margin-bottom: -0.5rem;
-`;
-
 const Navbar = () => {
-  const navigate = useNavigate();
   const IconList = [
     { src: puzzleIcon, alt: "퍼즐", link: "/puzzle" },
     { src: pronounceTestIcon, alt: "발음 테스트", link: "/speak" },
@@ -57,33 +38,16 @@ const Navbar = () => {
     { src: trashCanIcon, alt: "휴지통", link: "/trash" },
   ];
 
-  const [hoveredIcon, setHoveredIcon] = useState<number | null>(null);
-
-  function mouseEnterHandler(index: number) {
-    setHoveredIcon(index);
-  }
-
-  function mouseLeaveHandler() {
-    setHoveredIcon(null);
-  }
-
   return (
     <div style={{ minHeight: "100vh" }}>
       <Container>
         {IconList.map((icon, index) => (
-          <IconContainer
-            key={icon.alt}
-            $isHovered={hoveredIcon === index}
-            onClick={() => navigate(icon.link)}
-          >
-            <Icon
-              src={icon.src}
-              alt={icon.alt}
-              onMouseEnter={() => mouseEnterHandler(index)}
-              onMouseLeave={mouseLeaveHandler}
-            />
-            <div>{icon.alt}</div>
-          </IconContainer>
+          <NavbarItem
+            key={index}
+            src={icon.src}
+            alt={icon.alt}
+            link={icon.link}
+          />
         ))}
       </Container>
 

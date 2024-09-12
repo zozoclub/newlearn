@@ -1,17 +1,17 @@
 import { createBrowserRouter } from "react-router-dom";
 
-import MainPage from "@pages/MainPage.tsx";
-import SpeakingTestPage from "@pages/SpeakingTestPage.tsx";
-import Navbar from "@components/Navbar";
-import NotFoundPage from "@pages/notFoundPage";
+import Layout from "@pages/Layout";
+import MainPage from "@pages/MainPage";
+import SpeakingTestPage from "@pages/SpeakingTestPage";
+import NotFoundPage from "@pages/NotFoundPage";
 
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <Navbar />,
+    element: <Layout />,
     children: [
       {
-        path: "main",
+        index: true,
         element: <MainPage />,
       },
       {

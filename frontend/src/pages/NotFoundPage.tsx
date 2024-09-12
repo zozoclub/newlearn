@@ -23,7 +23,7 @@ const NotFoundPage = () => {
   return (
     <Container>
       <div>Page Not Found!</div>
-      <Link to="/main">메인으로 돌아가기</Link>
+      <Link to="/">메인으로 돌아가기</Link>
     </Container>
   );
 };

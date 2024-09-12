@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import { Outlet } from "react-router-dom";
 
 import puzzleIcon from "@assets/icons/puzzleIcon.png";
 import pronounceTestIcon from "@assets/icons/pronounceTestIcon.png";
@@ -39,20 +38,16 @@ const Navbar = () => {
   ];
 
   return (
-    <div style={{ minHeight: "100vh" }}>
-      <Container>
-        {IconList.map((icon, index) => (
-          <NavbarItem
-            key={index}
-            src={icon.src}
-            alt={icon.alt}
-            link={icon.link}
-          />
-        ))}
-      </Container>
-
-      <Outlet />
-    </div>
+    <Container>
+      {IconList.map((icon, index) => (
+        <NavbarItem
+          key={index}
+          src={icon.src}
+          alt={icon.alt}
+          link={icon.link}
+        />
+      ))}
+    </Container>
   );
 };
 

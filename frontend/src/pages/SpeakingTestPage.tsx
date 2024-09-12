@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useReactMediaRecorder } from "react-media-recorder";
 import * as sdk from "microsoft-cognitiveservices-speech-sdk";
 // 유사도 측정 도구
 import _ from "lodash";
 import stringSimilarity from "string-similarity";
+import { useSetRecoilState } from "recoil";
+import locationState from "@store/state";
 
 const SpeakingTestPage: React.FC = () => {
   const [recognizingText, setRecognizingText] = useState<string>(""); // 실시간 인식 텍스트
@@ -274,6 +276,11 @@ const SpeakingTestPage: React.FC = () => {
       }
     );
   };
+
+  const setCurrentLocation = useSetRecoilState(locationState);
+  useEffect(() => {
+    setCurrentLocation("Speaking Test Page");
+  });
 
   // 이하 TTS
   // Azure Speech 서비스 구독 설정

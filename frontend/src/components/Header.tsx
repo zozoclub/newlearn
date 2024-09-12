@@ -5,6 +5,7 @@ import LogoImage from "@assets/images/logo-full.png";
 import locationState from "@store/state";
 import Button from "@components/Button";
 import { useTheme } from "@context/ThemeContext";
+import { useNavigate } from "react-router-dom";
 
 const HeaderContainer = styled.div`
   display: flex;
@@ -20,6 +21,7 @@ const Logo = styled.img.attrs({
 })`
   width: 275px;
   height: 60px;
+  cursor: pointer;
 `;
 
 const PageInfo = styled.div`
@@ -28,13 +30,20 @@ const PageInfo = styled.div`
 `;
 
 const Header = () => {
+  const navigate = useNavigate();
   const currentLocation = useRecoilValue(locationState);
   const { toggleTheme } = useTheme();
 
   return (
     <HeaderContainer>
       {/* NotFoundPage일 때 Logo 표시 안 함 */}
-      {currentLocation !== "" && <Logo />}
+      {currentLocation !== "" && (
+        <Logo
+          onClick={() => {
+            navigate("/");
+          }}
+        />
+      )}
 
       {/* 테마 전환 버튼 나중에 따로 만들 예정 */}
       <Button $varient="cancel" size="medium" onClick={toggleTheme}>

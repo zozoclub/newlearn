@@ -1,14 +1,13 @@
 import { createBrowserRouter } from "react-router-dom";
-
-import Layout from "@pages/Layout";
 import MainPage from "@pages/MainPage";
 import SpeakingTestPage from "@pages/SpeakingTestPage";
 import NotFoundPage from "@pages/NotFoundPage";
+import App from "./App";
 
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <Layout />,
+    element: <App />,
     children: [
       {
         index: true,

@@ -9,19 +9,19 @@ import lombok.Getter;
 @Builder
 public class UserProfileResponseDTO {
 
-	private long userId;
+	private Long userId;
 	private String email;
 	private String nickname;
-	private long rank;
-	private long difficulty;
+	private Long rank;
+	private Long difficulty;
 	private List<Integer> interestes;
-	private long experience;
-	private long totalNewsReadCount;
-	private long unCompleteWordCount;
-	private long completeWordCount;
-	private long scrapCount;
+	private Long experience;
+	private Long totalNewsReadCount;
+	private Long unCompleteWordCount;
+	private Long completeWordCount;
+	private Long scrapCount;
 
-	private long skin;
-	private long eye;
-	private long mask;
+	private Long skin;
+	private Long eye;
+	private Long mask;
 }

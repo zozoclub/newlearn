@@ -13,4 +13,8 @@ public interface UserService {
 	void signUp(SignUpRequestDTO signUpRequestDTO);
 
 	void updateAvatar(Long userId, AvatarUpdateDTO avatarUpdateDTO);
+
+	boolean checkNickname(String nickname);
+
+	void updateNickname(Long userId, String nickname);
 }

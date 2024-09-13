@@ -1,11 +1,17 @@
 package com.newlearn.backend.user.controller;
 
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.newlearn.backend.common.ApiResponse;
@@ -13,6 +19,9 @@ import com.newlearn.backend.common.ErrorCode;
 import com.newlearn.backend.common.JwtTokenProvider;
 import com.newlearn.backend.user.dto.request.AvatarUpdateDTO;
 import com.newlearn.backend.user.dto.request.SignUpRequestDTO;
+import com.newlearn.backend.user.dto.request.UpdateNicknameRequestDto;
+import com.newlearn.backend.user.dto.response.LoginResponseDTO;
+import com.newlearn.backend.user.dto.response.RefreshTokenResponseDTO;
 import com.newlearn.backend.user.model.Users;
 import com.newlearn.backend.user.service.TokenService;
 import com.newlearn.backend.user.service.UserService;
@@ -91,4 +100,78 @@ public class UserController {
 		}
 		return null;
 	}
+
+	@PostMapping("/refresh-token")
+	public ApiResponse<?> refreshToken(@CookieValue(name = "refreshToken", required = false) String refreshToken,
+		HttpServletResponse response) throws Exception {
+		try {
+			if(refreshToken != null || refreshToken.isEmpty()) {
+				return ApiResponse.createError(ErrorCode.REFRESH_TOKEN_NOT_FOUND);
+			}
+
+			RefreshTokenResponseDTO responseDTO = tokenService.getRefreshToken(refreshToken);
+
+			if(responseDTO == null) {
+				return ApiResponse.createError(ErrorCode.REFRESH_TOKEN_NOT_FOUND);
+			}
+			String newAccessToken = responseDTO.getAccessToken();;
+			String newRefreshToken = responseDTO.getRefreshToken();
+
+			ResponseCookie responseCookie = ResponseCookie.from("refreshToken", newRefreshToken)
+				.httpOnly(true)
+				.secure(true)
+				.maxAge(60*60*24*14)
+				.path("/")
+				.sameSite("None")
+				.domain("j11d105.p.ssafy.io")
+				.build();
+
+			response.setHeader(HttpHeaders.SET_COOKIE, responseCookie.toString());
+
+			newAccessToken = "Bearer " + newAccessToken;
+			LoginResponseDTO loginResponseDTO = new LoginResponseDTO();
+			loginResponseDTO.setAccessToken(newAccessToken);
+
+			return ApiResponse.createSuccess(loginResponseDTO, "토큰 재발급에 성공하였습니다.");
+		}
+		catch (Exception e) {
+			return ApiResponse.createError(ErrorCode.INVALID_JWT_TOKEN);
+		}
+	}
+
+	@GetMapping("/profile")
+	public ApiResponse<?> getProfile(Authentication authentication) {
+		return null;
+	}
+
+	@GetMapping("/check/{nickname}")
+	public ApiResponse<?> getNickname(@PathVariable(value = "nickname") String nickname) {
+		try {
+			boolean isDuplicate = userService.checkNickname(nickname);
+
+			return ApiResponse.createSuccess(isDuplicate, "성공적으로 닉네임 중복 조회 성공");
+		} catch (Exception e) {
+			return ApiResponse.createError(ErrorCode.NICKNAME_NOT_FOUND);
+		}
+	}
+
+	@PutMapping("update-nickname")
+	public ApiResponse<?> updateNickname(Authentication authentication, @RequestBody UpdateNicknameRequestDto updateNicknameRequestDto) {
+		try {
+			Users user = userService.findByEmail(authentication.getName())
+				.orElseThrow(() -> new Exception("회원정보 없음"));
+
+			String nickname = updateNicknameRequestDto.getNickname();
+
+			if(!userService.checkNickname(nickname)) {
+				return ApiResponse.createError(ErrorCode.NICKNAME_NOT_FOUND);
+			}
+			userService.updateNickname(user.getUserId(), nickname);
+			return ApiResponse.createSuccess(null, "닉네임 업데이트 성공");
+
+		} catch (Exception e) {
+			return ApiResponse.createError(ErrorCode.USER_UPDATE_FAILED);
+		}
+	}
+
 }

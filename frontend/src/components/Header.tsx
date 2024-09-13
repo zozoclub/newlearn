@@ -28,6 +28,7 @@ const Header = () => {
 
 const HeaderContainer = styled.div`
   display: flex;
+  position: relative;
   justify-content: space-between;
   align-items: center;
   height: 150px;

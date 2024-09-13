@@ -48,4 +48,9 @@ public class UserServiceImpl implements UserService{
 
 		avatarRepository.save(avatar);
 	}
+
+	@Override
+	public boolean checkNickname(String nickname) {
+		return userRepository.existsByNickname(nickname);
+	}
 }

@@ -6,10 +6,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.newlearn.backend.common.ApiResponse;
@@ -140,4 +142,17 @@ public class UserController {
 	public ApiResponse<?> getProfile(Authentication authentication) {
 		return null;
 	}
+
+	@GetMapping("/check/{nickname}")
+	public ApiResponse<?> getNickname(@PathVariable(value = "nickname") String nickname) {
+		try {
+			boolean isDuplicate = userService.checkNickname(nickname);
+
+			return ApiResponse.createSuccess(isDuplicate, "성공적으로 닉네임 중복 조회 성공");
+		} catch (Exception e) {
+			return ApiResponse.createError(ErrorCode.NICKNAME_NOT_FOUND);
+		}
+	}
+
+
 }

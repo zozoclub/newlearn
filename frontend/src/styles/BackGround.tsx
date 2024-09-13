@@ -1,6 +1,9 @@
-import { useTheme } from "@context/ThemeContext";
 import { Theme } from "types/theme";
 import styled from "styled-components";
+import { useRecoilValue } from "recoil";
+import { themeState } from "@store/themeState";
+import { darkTheme } from "./theme/darkTheme";
+import { lightTheme } from "./theme/lightTheme";
 
 const Container = styled.div`
   position: absolute;
@@ -27,7 +30,7 @@ const DarkBackground = styled.img.attrs({
 `;
 
 const Background = () => {
-  const { theme } = useTheme();
+  const theme = useRecoilValue(themeState) === "dark" ? darkTheme : lightTheme;
 
   return (
     <Container>

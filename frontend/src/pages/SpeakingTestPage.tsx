@@ -5,7 +5,7 @@ import * as sdk from "microsoft-cognitiveservices-speech-sdk";
 import _ from "lodash";
 import stringSimilarity from "string-similarity";
 import { useSetRecoilState } from "recoil";
-import locationState from "@store/state";
+import locationState from "@store/locationState";
 
 // Styled Component
 import styled from "styled-components";

@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { useSetRecoilState } from "recoil";
 import styled from "styled-components";
-import { pageTransitionState } from "@store/pageTransition"; // Recoil 상태 import
+import { usePageTransition } from "@hooks/usePageTransition";
 
 const Container = styled.div<{ $isHovered: boolean }>`
   display: inline-block;
@@ -13,8 +12,7 @@ const Container = styled.div<{ $isHovered: boolean }>`
       props.$isHovered ? "translate(0, -1rem)" : "none"};
   }
   transition: transform 0.3s;
-  transition-timing-function: ease-out
-  ;
+  transition-timing-function: ease-out;
   cursor: pointer;
 `;
 
@@ -37,14 +35,10 @@ const NavbarItem: React.FC<{ src: string; alt: string; link: string }> = (
   icon
 ) => {
   const [isHovered, setIsHovered] = useState<boolean>(false);
-  const setPageTransition = useSetRecoilState(pageTransitionState); // Recoil 상태 업데이트 함수
+  const transitionTo = usePageTransition(); // 커스텀 훅 사용
 
   function handleClick() {
-    // Recoil 상태로 페이지 전환 요청
-    setPageTransition({
-      isTransitioning: true,
-      targetLocation: icon.link,
-    });
+    transitionTo(icon.link);
   }
 
   return (

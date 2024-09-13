@@ -1,7 +1,7 @@
 import Clock from "@components/Clock";
 import DailyNews from "@components/DailyNews";
 import Widget from "@components/Widget";
-import locationState from "@store/state";
+import locationState from "@store/locationState";
 import { useEffect } from "react";
 import { useSetRecoilState } from "recoil";
 import styled from "styled-components";

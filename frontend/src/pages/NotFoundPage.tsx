@@ -1,4 +1,4 @@
-import locationState from "@store/state";
+import locationState from "@store/locationState";
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useResetRecoilState } from "recoil";

@@ -2,10 +2,9 @@ import styled from "styled-components";
 import { useRecoilValue } from "recoil";
 
 import LogoImage from "@assets/images/logo-full.png";
-import locationState from "@store/state";
-import Button from "@components/Button";
-import { useTheme } from "@context/ThemeContext";
+import locationState from "@store/locationState";
 import { useNavigate } from "react-router-dom";
+import DarkModeButton from "./DarkModeButton";
 
 const HeaderContainer = styled.div`
   display: flex;
@@ -32,7 +31,6 @@ const PageInfo = styled.div`
 const Header = () => {
   const navigate = useNavigate();
   const currentLocation = useRecoilValue(locationState);
-  const { toggleTheme } = useTheme();
 
   return (
     <HeaderContainer>
@@ -44,12 +42,7 @@ const Header = () => {
           }}
         />
       )}
-
-      {/* 테마 전환 버튼 나중에 따로 만들 예정 */}
-      <Button $varient="cancel" size="medium" onClick={toggleTheme}>
-        테마 전환(임시)
-      </Button>
-
+      <DarkModeButton />
       <PageInfo>{currentLocation}</PageInfo>
     </HeaderContainer>
   );

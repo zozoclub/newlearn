@@ -1,12 +1,15 @@
-import { Outlet, useNavigate } from "react-router-dom";
-import styled, { keyframes } from "styled-components";
+import styled, { ThemeProvider } from "styled-components";
+import { useRecoilValue } from "recoil";
+import { Outlet } from "react-router-dom";
 
 import Header from "@components/Header";
 import Navbar from "@components/Navbar";
-import { useEffect, useState } from "react";
-
-import { pageTransitionState } from "@store/pageTransition";
-import { useRecoilState } from "recoil";
+import Background from "@styles/BackGround";
+import { GlobalStyle } from "@styles/GlobalStyle";
+import { themeState } from "@store/themeState";
+import { darkTheme } from "@styles/theme/darkTheme";
+import { lightTheme } from "@styles/theme/lightTheme";
+import TransitionContent from "@components/TransitionContent";
 
 const AppContainer = styled.div`
   position: relative;
@@ -14,67 +17,22 @@ const AppContainer = styled.div`
   padding: 0 5vw;
 `;
 
-// const Content = styled.div`
-//   height: calc(100% - 150px);
-// `;
-
 const App: React.FC = () => {
-  const navigate = useNavigate();
-  const [pageTransition, setPageTransition] =
-    useRecoilState(pageTransitionState);
-  const [transitionStage, setTransitionStage] = useState("fadeIn");
-
-  useEffect(() => {
-    if (pageTransition.isTransitioning) {
-      setTransitionStage("fadeOut"); // FadeOut 시작
-      setTimeout(() => {
-        navigate(pageTransition.targetLocation); // 0.5초 후 페이지 이동
-        setTransitionStage("fadeIn");
-        setPageTransition({ isTransitioning: false, targetLocation: "" }); // 상태 초기화
-      }, 500); // 500ms 후 이동
-    }
-  }, [pageTransition, navigate, setPageTransition]);
+  const theme = useRecoilValue(themeState) === "dark" ? darkTheme : lightTheme;
 
   return (
-    <AppContainer>
-      <Header />
-      <Content className={`${transitionStage}`}>
-        <Outlet />
-      </Content>
-      <Navbar />
-    </AppContainer>
+    <ThemeProvider theme={theme}>
+      <GlobalStyle />
+      <Background />
+      <AppContainer>
+        <Header />
+        <TransitionContent>
+          <Outlet />
+        </TransitionContent>
+        <Navbar />
+      </AppContainer>
+    </ThemeProvider>
   );
 };
-
-export const fadeInAnimation = keyframes`
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-`;
-export const fadeOutAnimation = keyframes`
-  0% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
-`;
-export const Content = styled.div`
-  height: calc(100% - 150px);
-  opacity: 0;
-  &.fadeIn {
-    animation: ${fadeInAnimation} 500ms;
-    animation-fill-mode: forwards;
-  }
-  &.fadeOut {
-    animation: ${fadeOutAnimation} 500ms;
-    animation-fill-mode: forwards;
-    // animation-fill-mode :애니메이션의 끝난 후의 상태를 설정
-    // forward : 애니메이션이 끝난 후 마지막 CSS 그대로 있음
-  }
-`;
 
 export default App;

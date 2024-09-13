@@ -11,7 +11,7 @@ const NewsListHeader = () => {
     <Container>
       <CategoryContainer>
         {categoryList.map((category) => (
-          <CategoryItem>
+          <CategoryItem key={category.name}>
             <div>{category.name}</div>
             <FocusEffect />
           </CategoryItem>

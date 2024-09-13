@@ -21,7 +21,6 @@ const NewsListHeader: React.FC<{
             key={category.name}
             onClick={() => {
               setSelectedCategory(index);
-              console.log(index);
             }}
           >
             {category.name}

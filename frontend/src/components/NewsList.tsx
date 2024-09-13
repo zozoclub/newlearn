@@ -1,13 +1,38 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import NewsListItem from "./NewsListItem";
 
-const NewsList = () => {
+const NewsList: React.FC<{ selectedCategory: number }> = ({
+  selectedCategory,
+}) => {
   const [newsList, setNewsList] = useState([
     { title: "누스 타이틀 완" },
     { title: "누스 타이틀 투" },
     { title: "누스 타이틀 쓰리" },
   ]);
+
+  useEffect(() => {
+    switch (selectedCategory) {
+      case 0:
+        console.log("전체 선택");
+        break;
+      case 1:
+        console.log("경제 선택");
+        break;
+      case 2:
+        console.log("사회 선택");
+        break;
+      case 3:
+        console.log("연예 선택");
+        break;
+      case 4:
+        console.log("IT/과학 선택");
+        break;
+      case 5:
+        console.log("몰라 선택");
+        break;
+    }
+  }, [selectedCategory]);
 
   return (
     <Container>

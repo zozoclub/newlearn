@@ -22,7 +22,7 @@ const NewsPage = () => {
       />
       <NewsContent>
         {selectedCategory === 0 && <Recommand />}
-        <NewsList />
+        <NewsList selectedCategory={selectedCategory} />
       </NewsContent>
     </Container>
   );

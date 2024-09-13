@@ -15,4 +15,5 @@ public class OAuthCodeToken {
 	private String code;
 	private String accessToken;
 	private String refreshToken;
+	private String userEmail;
 }

@@ -22,6 +22,8 @@ import com.newlearn.backend.oauth.model.TempUser;
 import com.newlearn.backend.oauth.repository.OAuthCodeTokenRepository;
 import com.newlearn.backend.oauth.repository.TempUserRepository;
 import com.newlearn.backend.user.dto.response.LoginResponseDTO;
+import com.newlearn.backend.user.model.RefreshToken;
+import com.newlearn.backend.user.repository.redis.RefreshTokenRepository;
 import com.newlearn.backend.user.service.UserService;
 
 import jakarta.servlet.http.HttpServletResponse;
@@ -38,6 +40,7 @@ public class OAuthController {
 	private final OAuthCodeTokenRepository oAuthCodeTokenRepository;
 	private final TempUserRepository tempUserRepository;
 	private final UserService userService;
+	private final RefreshTokenRepository refreshTokenRepository;
 
 	@Value("${oauth2.baseUrl}")
 	private String baseUrl;
@@ -83,6 +86,10 @@ public class OAuthController {
 
 			String accessToken =oAuthCodeToken.getAccessToken();
 			String refreshToken =oAuthCodeToken.getRefreshToken();
+			String userEmail = oAuthCodeToken.getUserEmail();
+
+			//refresh토큰 저장
+			saveRefreshToken(userEmail, refreshToken);
 
 			ResponseCookie responseCookie = ResponseCookie.from("refreshToken", refreshToken)
 				.httpOnly(true)
@@ -103,6 +110,12 @@ public class OAuthController {
 		} catch (Exception e) {
 			return ApiResponse.createError(ErrorCode.OAUTH_CODE_NOT_FOUND);
 		}
+	}
+
+	private void saveRefreshToken(String userEmail, String refreshToken) {
+		long refreshTokenExpireTime = jwtTokenProvider.getRefreshTokenExpiration();
+		RefreshToken rt = new RefreshToken(userEmail, refreshToken, refreshTokenExpireTime);
+		refreshTokenRepository.save(rt);
 	}
 
 }

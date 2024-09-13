@@ -65,6 +65,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 					.code(tempCode)
 					.accessToken(accessToken)
 					.refreshToken(refreshToken)
+					.userEmail(email)
 					.build();
 				oAuthCodeTokenRepository.save(oAuthCodeToken);
 

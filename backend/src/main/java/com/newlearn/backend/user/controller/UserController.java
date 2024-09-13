@@ -2,6 +2,7 @@ package com.newlearn.backend.user.controller;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -90,5 +91,17 @@ public class UserController {
 			}
 		}
 		return null;
+	}
+
+	@PostMapping("refresh-token")
+	public ApiResponse<?> refreshToken(@CookieValue(name = "refreshToken", required = false) String refreshToken,
+		HttpServletResponse response) {
+		try {
+			if(refreshToken != null || refreshToken.isEmpty()) {
+				return ApiResponse.createError(ErrorCode.REFRESH_TOKEN_NOT_FOUND);
+			}
+
+			tokenService.getRefreshToken(refreshToken);
+		}
 	}
 }

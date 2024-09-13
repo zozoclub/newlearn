@@ -18,4 +18,16 @@ public class TokenServiceImpl implements TokenService{
 	public void blacklistRefreshToken(String refreshToken) {
 		tokenBlacklistRepository.save(new TokenBlacklist(refreshToken));
 	}
+
+	@Override
+	public void getRefreshToken(String refreshToken) {
+		if(isRefreshTokenInBlacklisted(refreshToken)) {
+
+		}
+	}
+
+	@Override
+	public boolean isRefreshTokenInBlacklisted(String refreshToken) {
+		return tokenBlacklistRepository.existsById(refreshToken);
+	}
 }

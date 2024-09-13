@@ -384,24 +384,24 @@ const SpeakingTestPage: React.FC = () => {
 
 const WholeContainer = styled.div`
   width: 80%;
-  min-height: 600px;
+  min-height: 37.5rem;
   margin: auto;
-  padding: 10px;
+  padding: 0.625rem;
   background-color: ${(props) => props.theme.colors.cardBackground + "BF"};
-  backdrop-filter: blur(4px);
-  border-radius: 12px;
+  backdrop-filter: blur(0.25rem);
+  border-radius: 0.75rem;
   box-shadow: 0.5rem 0.5rem 0.25rem ${(props) => props.theme.colors.shadow};
   transition: box-shadow 0.5s;
 `;
 
 const SubContainer = styled.div`
   width: 30%;
-  min-height: 200px;
+  min-height: 12.5rem;
   margin: auto;
-  padding: 10px;
+  padding: 0.625rem;
   background-color: ${(props) => props.theme.colors.cardBackground + "BF"};
-  backdrop-filter: blur(4px);
-  border-radius: 12px;
+  backdrop-filter: blur(0.25rem);
+  border-radius: 0.75rem;
   box-shadow: 0.5rem 0.5rem 0.25rem ${(props) => props.theme.colors.shadow};
   transition: box-shadow 0.5s;
 `;

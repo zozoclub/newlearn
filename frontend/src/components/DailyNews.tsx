@@ -10,7 +10,7 @@ const Container = styled.div`
   margin: 20px 0;
   padding: 10px;
   background-color: #333344;
-  border-radius: 12px;
+  border-radius: 0.75rem;
 `;
 
 export default DailyNews;

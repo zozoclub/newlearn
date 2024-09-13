@@ -31,6 +31,7 @@ const App: React.FC = () => {
 
 const AppContainer = styled.div`
   position: relative;
+  width: 90vw;
   height: 100vh;
   padding: 0 5vw;
 `;

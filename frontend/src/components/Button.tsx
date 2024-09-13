@@ -8,6 +8,19 @@ type ButtonProps = {
   onClick: () => void;
 };
 
+const Button: React.FC<ButtonProps> = ({
+  children,
+  $varient = "primary",
+  size = "medium",
+  onClick,
+}) => {
+  return (
+    <StyledButton $varient={$varient} size={size} onClick={onClick}>
+      {children}
+    </StyledButton>
+  );
+};
+
 const StyledButton = styled.button<ButtonProps>`
   padding: ${(props) => {
     switch (props.size) {
@@ -38,18 +51,5 @@ const StyledButton = styled.button<ButtonProps>`
   }};
   cursor: pointer;
 `;
-
-const Button: React.FC<ButtonProps> = ({
-  children,
-  $varient = "primary",
-  size = "medium",
-  onClick,
-}) => {
-  return (
-    <StyledButton $varient={$varient} size={size} onClick={onClick}>
-      {children}
-    </StyledButton>
-  );
-};
 
 export default Button;

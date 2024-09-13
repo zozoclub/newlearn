@@ -1,16 +1,5 @@
 import styled from "styled-components";
 
-const Container = styled.div`
-  width: 200px;
-  margin: 10px;
-  padding: 10px;
-  background-color: ${(props) => props.theme.colors.cardBackground + "BF"};
-  border-radius: 12px;
-  transition: box-shadow 0.5s;
-  backdrop-filter: blur(4px);
-  box-shadow: 0.5rem 0.5rem 0.25rem ${(props) => props.theme.colors.shadow};
-`;
-
 const Widget: React.FC<{ variety: string }> = ({ variety }) => {
   switch (variety) {
     case "profile":
@@ -23,5 +12,16 @@ const Widget: React.FC<{ variety: string }> = ({ variety }) => {
       return <Container>목표임</Container>;
   }
 };
+
+const Container = styled.div`
+  width: 200px;
+  margin: 10px;
+  padding: 10px;
+  background-color: ${(props) => props.theme.colors.cardBackground + "BF"};
+  border-radius: 12px;
+  transition: box-shadow 0.5s;
+  backdrop-filter: blur(4px);
+  box-shadow: 0.5rem 0.5rem 0.25rem ${(props) => props.theme.colors.shadow};
+`;
 
 export default Widget;

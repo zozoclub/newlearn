@@ -5,6 +5,17 @@ import { themeState } from "@store/themeState";
 import { darkTheme } from "./theme/darkTheme";
 import { lightTheme } from "./theme/lightTheme";
 
+const Background = () => {
+  const theme = useRecoilValue(themeState) === "dark" ? darkTheme : lightTheme;
+
+  return (
+    <Container>
+      <LightBackground theme={theme} />
+      <DarkBackground theme={theme} />
+    </Container>
+  );
+};
+
 const Container = styled.div`
   position: absolute;
   z-index: -1;
@@ -28,16 +39,5 @@ const DarkBackground = styled.img.attrs({
   transition: opacity 0.5s;
   opacity: ${(props) => props.theme.opacities.background};
 `;
-
-const Background = () => {
-  const theme = useRecoilValue(themeState) === "dark" ? darkTheme : lightTheme;
-
-  return (
-    <Container>
-      <LightBackground theme={theme} />
-      <DarkBackground theme={theme} />
-    </Container>
-  );
-};
 
 export default Background;

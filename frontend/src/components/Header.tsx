@@ -6,6 +6,26 @@ import locationState from "@store/locationState";
 import { useNavigate } from "react-router-dom";
 import DarkModeButton from "./DarkModeButton";
 
+const Header = () => {
+  const navigate = useNavigate();
+  const currentLocation = useRecoilValue(locationState);
+
+  return (
+    <HeaderContainer>
+      {/* NotFoundPage일 때 Logo 표시 안 함 */}
+      {currentLocation !== "" && (
+        <Logo
+          onClick={() => {
+            navigate("/");
+          }}
+        />
+      )}
+      <DarkModeButton />
+      <PageInfo>{currentLocation}</PageInfo>
+    </HeaderContainer>
+  );
+};
+
 const HeaderContainer = styled.div`
   display: flex;
   justify-content: space-between;
@@ -27,25 +47,5 @@ const PageInfo = styled.div`
   font-size: 2rem;
   font-weight: 600;
 `;
-
-const Header = () => {
-  const navigate = useNavigate();
-  const currentLocation = useRecoilValue(locationState);
-
-  return (
-    <HeaderContainer>
-      {/* NotFoundPage일 때 Logo 표시 안 함 */}
-      {currentLocation !== "" && (
-        <Logo
-          onClick={() => {
-            navigate("/");
-          }}
-        />
-      )}
-      <DarkModeButton />
-      <PageInfo>{currentLocation}</PageInfo>
-    </HeaderContainer>
-  );
-};
 
 export default Header;

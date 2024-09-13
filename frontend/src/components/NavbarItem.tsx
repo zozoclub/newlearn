@@ -2,6 +2,30 @@ import { useState } from "react";
 import styled from "styled-components";
 import { usePageTransition } from "@hooks/usePageTransition";
 
+const NavbarItem: React.FC<{ src: string; alt: string; link: string }> = (
+  icon
+) => {
+  const [isHovered, setIsHovered] = useState<boolean>(false);
+  const transitionTo = usePageTransition(); // 커스텀 훅 사용
+
+  function handleClick() {
+    transitionTo(icon.link);
+  }
+
+  return (
+    <Container
+      key={icon.alt}
+      $isHovered={isHovered}
+      onClick={handleClick} // 클릭 시 페이지 전환 요청
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <Icon src={icon.src} alt={icon.alt} />
+      <IconDesc $isHovered={isHovered}>{icon.alt}</IconDesc>
+    </Container>
+  );
+};
+
 const Container = styled.div<{ $isHovered: boolean }>`
   display: inline-block;
   position: relative;
@@ -30,29 +54,5 @@ const IconDesc = styled.div<{ $isHovered: boolean }>`
   transition: opacity 0.5s;
   white-space: nowrap;
 `;
-
-const NavbarItem: React.FC<{ src: string; alt: string; link: string }> = (
-  icon
-) => {
-  const [isHovered, setIsHovered] = useState<boolean>(false);
-  const transitionTo = usePageTransition(); // 커스텀 훅 사용
-
-  function handleClick() {
-    transitionTo(icon.link);
-  }
-
-  return (
-    <Container
-      key={icon.alt}
-      $isHovered={isHovered}
-      onClick={handleClick} // 클릭 시 페이지 전환 요청
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      <Icon src={icon.src} alt={icon.alt} />
-      <IconDesc $isHovered={isHovered}>{icon.alt}</IconDesc>
-    </Container>
-  );
-};
 
 export default NavbarItem;

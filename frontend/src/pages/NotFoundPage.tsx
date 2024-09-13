@@ -4,6 +4,21 @@ import { Link } from "react-router-dom";
 import { useResetRecoilState } from "recoil";
 import styled from "styled-components";
 
+const NotFoundPage = () => {
+  const resetCurrentLocation = useResetRecoilState(locationState);
+
+  useEffect(() => {
+    resetCurrentLocation();
+  }, [resetCurrentLocation]);
+
+  return (
+    <Container>
+      <div>Page Not Found!</div>
+      <Link to="/">메인으로 돌아가기</Link>
+    </Container>
+  );
+};
+
 const Container = styled.div`
   position: absolute;
   left: 50%;
@@ -21,20 +36,5 @@ const Container = styled.div`
     text-decoration: none;
   }
 `;
-
-const NotFoundPage = () => {
-  const resetCurrentLocation = useResetRecoilState(locationState);
-
-  useEffect(() => {
-    resetCurrentLocation();
-  }, [resetCurrentLocation]);
-
-  return (
-    <Container>
-      <div>Page Not Found!</div>
-      <Link to="/">메인으로 돌아가기</Link>
-    </Container>
-  );
-};
 
 export default NotFoundPage;

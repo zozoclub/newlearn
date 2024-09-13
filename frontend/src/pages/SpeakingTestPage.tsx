@@ -10,30 +10,6 @@ import locationState from "@store/locationState";
 // Styled Component
 import styled from "styled-components";
 
-const WholeContainer = styled.div`
-  width: 80%;
-  min-height: 600px;
-  margin: auto;
-  padding: 10px;
-  background-color: ${(props) => props.theme.colors.cardBackground + "BF"};
-  backdrop-filter: blur(4px);
-  border-radius: 12px;
-  box-shadow: 0.5rem 0.5rem 0.25rem ${(props) => props.theme.colors.shadow};
-  transition: box-shadow 0.5s;
-`;
-
-const SubContainer = styled.div`
-  width: 30%;
-  min-height: 200px;
-  margin: auto;
-  padding: 10px;
-  background-color: ${(props) => props.theme.colors.cardBackground + "BF"};
-  backdrop-filter: blur(4px);
-  border-radius: 12px;
-  box-shadow: 0.5rem 0.5rem 0.25rem ${(props) => props.theme.colors.shadow};
-  transition: box-shadow 0.5s;
-`;
-
 const SpeakingTestPage: React.FC = () => {
   const [recognizingText, setRecognizingText] = useState<string>(""); // 실시간 인식 텍스트
   const [recognitionResult, setRecognitionResult] = useState<string>(""); // 최종 인식 텍스트
@@ -405,5 +381,29 @@ const SpeakingTestPage: React.FC = () => {
     </WholeContainer>
   );
 };
+
+const WholeContainer = styled.div`
+  width: 80%;
+  min-height: 600px;
+  margin: auto;
+  padding: 10px;
+  background-color: ${(props) => props.theme.colors.cardBackground + "BF"};
+  backdrop-filter: blur(4px);
+  border-radius: 12px;
+  box-shadow: 0.5rem 0.5rem 0.25rem ${(props) => props.theme.colors.shadow};
+  transition: box-shadow 0.5s;
+`;
+
+const SubContainer = styled.div`
+  width: 30%;
+  min-height: 200px;
+  margin: auto;
+  padding: 10px;
+  background-color: ${(props) => props.theme.colors.cardBackground + "BF"};
+  backdrop-filter: blur(4px);
+  border-radius: 12px;
+  box-shadow: 0.5rem 0.5rem 0.25rem ${(props) => props.theme.colors.shadow};
+  transition: box-shadow 0.5s;
+`;
 
 export default SpeakingTestPage;

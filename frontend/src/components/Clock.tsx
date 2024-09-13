@@ -2,12 +2,6 @@ import calculateTime from "@utils/calculateTime";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 
-const Container = styled.div``;
-const FormattedTime = styled.div`
-  margin-bottom: 0.5rem;
-  font-size: 2rem;
-`;
-
 const Clock = () => {
   const [time, setTime] = useState<string[]>([]);
 
@@ -27,5 +21,12 @@ const Clock = () => {
     </Container>
   );
 };
+
+const Container = styled.div``;
+
+const FormattedTime = styled.div`
+  margin-bottom: 0.5rem;
+  font-size: 2rem;
+`;
 
 export default Clock;

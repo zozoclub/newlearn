@@ -31,7 +31,7 @@ const TransitionContent: React.FC<{ children: React.ReactNode }> = ({
   return <Content className={`${transitionStage}`}>{children}</Content>;
 };
 
-export const fadeInAnimation = keyframes`
+const fadeInAnimation = keyframes`
   0% {
     opacity: 0;
   }
@@ -39,7 +39,7 @@ export const fadeInAnimation = keyframes`
     opacity: 1;
   }
 `;
-export const fadeOutAnimation = keyframes`
+const fadeOutAnimation = keyframes`
   0% {
     opacity: 1;
   }
@@ -47,7 +47,7 @@ export const fadeOutAnimation = keyframes`
     opacity: 0;
   }
 `;
-export const Content = styled.div`
+const Content = styled.div`
   height: calc(100% - 150px);
   opacity: 0;
   &.fadeIn {

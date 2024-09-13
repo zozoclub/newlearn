@@ -1,9 +1,12 @@
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import styled, { keyframes } from "styled-components";
 
 import Header from "@components/Header";
 import Navbar from "@components/Navbar";
 import { useEffect, useState } from "react";
+
+import { pageTransitionState } from "@store/pageTransition";
+import { useRecoilState } from "recoil";
 
 const AppContainer = styled.div`
   position: relative;
@@ -16,24 +19,26 @@ const AppContainer = styled.div`
 // `;
 
 const App: React.FC = () => {
-  const location = useLocation();
-  const [displayLocation, setDisplayLocation] = useState(location);
+  const navigate = useNavigate();
+  const [pageTransition, setPageTransition] =
+    useRecoilState(pageTransitionState);
   const [transitionStage, setTransitionStage] = useState("fadeIn");
 
   useEffect(() => {
-    if (location !== displayLocation) setTransitionStage("fadeOut");
-  }, [location]);
+    if (pageTransition.isTransitioning) {
+      setTransitionStage("fadeOut"); // FadeOut 시작
+      setTimeout(() => {
+        navigate(pageTransition.targetLocation); // 0.5초 후 페이지 이동
+        setTransitionStage("fadeIn");
+        setPageTransition({ isTransitioning: false, targetLocation: "" }); // 상태 초기화
+      }, 500); // 500ms 후 이동
+    }
+  }, [pageTransition, navigate, setPageTransition]);
 
   return (
     <AppContainer>
       <Header />
-      <Content
-        className={`${transitionStage}`}
-        onAnimationEnd={() => {
-          setTransitionStage("fadeIn");
-          setDisplayLocation(location);
-        }}
-      >
+      <Content className={`${transitionStage}`}>
         <Outlet />
       </Content>
       <Navbar />

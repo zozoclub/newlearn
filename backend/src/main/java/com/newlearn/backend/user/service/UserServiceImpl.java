@@ -53,4 +53,13 @@ public class UserServiceImpl implements UserService{
 	public boolean checkNickname(String nickname) {
 		return userRepository.existsByNickname(nickname);
 	}
+
+	@Override
+	public void updateNickname(Long userId, String nickname) {
+
+		Users user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다"));
+
+		user.setNickname(nickname);
+		userRepository.save(user);
+	}
 }

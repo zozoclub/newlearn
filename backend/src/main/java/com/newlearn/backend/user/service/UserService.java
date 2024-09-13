@@ -15,4 +15,6 @@ public interface UserService {
 	void updateAvatar(Long userId, AvatarUpdateDTO avatarUpdateDTO);
 
 	boolean checkNickname(String nickname);
+
+	void updateNickname(Long userId, String nickname);
 }

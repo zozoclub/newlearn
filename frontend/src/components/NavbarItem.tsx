@@ -12,13 +12,23 @@ const NavbarItem: React.FC<{ src: string; alt: string; link: string }> = (
     transitionTo(icon.link);
   }
 
+  function mouseEnterHandler(value: boolean) {
+    setIsHovered(value);
+  }
+
+  function mouseLeaveHandler() {
+    setTimeout(() => {
+      setIsHovered(false);
+    }, 100);
+  }
+
   return (
     <Container
       key={icon.alt}
       $isHovered={isHovered}
       onClick={handleClick} // 클릭 시 페이지 전환 요청
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      onMouseEnter={() => mouseEnterHandler(true)}
+      onMouseLeave={mouseLeaveHandler}
     >
       <Icon src={icon.src} alt={icon.alt} />
       <IconDesc $isHovered={isHovered}>{icon.alt}</IconDesc>

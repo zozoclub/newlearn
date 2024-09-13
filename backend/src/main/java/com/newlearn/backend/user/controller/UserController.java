@@ -5,6 +5,7 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -97,7 +98,7 @@ public class UserController {
 		return null;
 	}
 
-	@PostMapping("refresh-token")
+	@PostMapping("/refresh-token")
 	public ApiResponse<?> refreshToken(@CookieValue(name = "refreshToken", required = false) String refreshToken,
 		HttpServletResponse response) throws Exception {
 		try {
@@ -133,5 +134,10 @@ public class UserController {
 		catch (Exception e) {
 			return ApiResponse.createError(ErrorCode.INVALID_JWT_TOKEN);
 		}
+	}
+
+	@GetMapping("/profile")
+	public ApiResponse<?> getProfile(Authentication authentication) {
+		return null;
 	}
 }

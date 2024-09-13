@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useSetRecoilState } from "recoil";
 import styled from "styled-components";
+import { pageTransitionState } from "@store/pageTransition"; // Recoil 상태 import
 
 const Container = styled.div<{ $isHovered: boolean }>`
   display: inline-block;
@@ -12,7 +13,8 @@ const Container = styled.div<{ $isHovered: boolean }>`
       props.$isHovered ? "translate(0, -1rem)" : "none"};
   }
   transition: transform 0.3s;
-  transition-timing-function: ease-out;
+  transition-timing-function: ease-out
+  ;
   cursor: pointer;
 `;
 
@@ -34,26 +36,24 @@ const IconDesc = styled.div<{ $isHovered: boolean }>`
 const NavbarItem: React.FC<{ src: string; alt: string; link: string }> = (
   icon
 ) => {
-  const navigate = useNavigate();
   const [isHovered, setIsHovered] = useState<boolean>(false);
+  const setPageTransition = useSetRecoilState(pageTransitionState); // Recoil 상태 업데이트 함수
 
-  function mouseEnterHandler(value: boolean) {
-    setIsHovered(value);
-  }
-
-  function mouseLeaveHandler() {
-    setTimeout(() => {
-      setIsHovered(false);
-    }, 100);
+  function handleClick() {
+    // Recoil 상태로 페이지 전환 요청
+    setPageTransition({
+      isTransitioning: true,
+      targetLocation: icon.link,
+    });
   }
 
   return (
     <Container
       key={icon.alt}
       $isHovered={isHovered}
-      onClick={() => navigate(icon.link)}
-      onMouseEnter={() => mouseEnterHandler(true)}
-      onMouseLeave={mouseLeaveHandler}
+      onClick={handleClick} // 클릭 시 페이지 전환 요청
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
       <Icon src={icon.src} alt={icon.alt} />
       <IconDesc $isHovered={isHovered}>{icon.alt}</IconDesc>

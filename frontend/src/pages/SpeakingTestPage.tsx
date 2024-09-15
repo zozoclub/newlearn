@@ -5,14 +5,14 @@ import { convertToWav } from "@utils/audioUtils";
 // 유사도 측정 도구
 import _ from "lodash";
 import stringSimilarity from "string-similarity";
-import { useSetRecoilState } from "recoil";
-import locationState from "@store/locationState";
-// Styled Component
-import styled from "styled-components";
-
+// Components
 import SpeakingTestReference from "@components/SpeakingTestReference";
 import SpeakingTestRealtimeText from "@components/SpeakingTestRealtimeText";
 import SpeakingTestRecord from "@components/SpeakingTestRecord";
+// 이외 라이브러리
+import { useSetRecoilState } from "recoil";
+import locationState from "@store/locationState";
+import styled from "styled-components";
 
 const SpeakingTestPage: React.FC = () => {
   // 페이지 확인
@@ -21,8 +21,9 @@ const SpeakingTestPage: React.FC = () => {
     setCurrentLocation("Speaking Test Page");
   });
 
-  const [, setRecognizingText] = useState<string>(""); // 녹음에 대한 실시간 텍스트
+  const [recognizingText, setRecognizingText] = useState<string>(""); // 실시간 텍스트
   const [, setRecognitionResult] = useState<string>(""); // 최종 텍스트
+  const [audioUrl, setAudioUrl] = useState<string | undefined>("");
   const recognizerRef = useRef<sdk.SpeechRecognizer | null>(null);
   const speechConfig = sdk.SpeechConfig.fromSubscription(
     import.meta.env.VITE_SPEECH_API_KEY,
@@ -48,7 +49,7 @@ const SpeakingTestPage: React.FC = () => {
 
   // 이하 Realtime Speech To Text
   const [userRecognizedText, setUserRecognizedText] = useState("");
-  const [userRecognizingText, setUserRecognizingText] = useState("");
+  const [, setUserRecognizingText] = useState("");
   // 스피킹 테스트 시작
   const [, setIsRecording] = useState(false);
   const [isExplainText, setIsExplainText] = useState(true);
@@ -61,7 +62,9 @@ const SpeakingTestPage: React.FC = () => {
     recognizerRef.current = recognizer;
 
     recognizer.recognizing = (_, e) => {
+      // 실시간 인식된 텍스트 업데이트
       setRecognizingText(e.result.text);
+      setUserRecognizingText(e.result.text); // 이 부분이 실시간으로 반영됨
     };
 
     recognizer.recognized = (_, e) => {
@@ -101,6 +104,8 @@ const SpeakingTestPage: React.FC = () => {
     useReactMediaRecorder({ audio: true });
 
   const startUserRecording = () => {
+    setUserRecognizedText("");
+    setRecognizingText("");
     startRecording();
     startRecognition();
   };
@@ -110,19 +115,28 @@ const SpeakingTestPage: React.FC = () => {
     stopRecognition();
   };
 
+  useEffect(() => {
+    setAudioUrl(mediaBlobUrl);
+  }, [mediaBlobUrl]);
+
+  const restartRecording = () => {
+    setRecognizingText("");
+    setUserRecognizedText("");
+    setAudioUrl("");
+    stopUserRecording();
+    startUserRecording();
+  };
+
   const handleRecordingDataSubmit = async () => {
     if (!mediaBlobUrl) return;
 
     setIsLoading(true); // 로딩 시작
 
-    // Fetch the webm audio blob from mediaBlobUrl
     const response = await fetch(mediaBlobUrl);
     const webmBlob = await response.blob();
 
-    // webm 파일을 wav로 변환
     const wavBlob = await convertToWav(webmBlob);
 
-    // 변환된 파일을 File 객체로 변환
     const audioFile = new File([wavBlob], "recorded_audio.wav", {
       type: "audio/wav",
     });
@@ -243,11 +257,11 @@ const SpeakingTestPage: React.FC = () => {
           />
           <SubArea>
             <SubContainer>
-              {/* 유저 실시간 음성 인식 텍스트 표시 */}
               <SpeakingTestRealtimeText
                 isExplainText={isExplainText}
                 userRecognizedText={userRecognizedText}
-                userRecognizingText={userRecognizingText}
+                userRecognizingText={recognizingText}
+                status={status}
               />
             </SubContainer>
 
@@ -255,7 +269,8 @@ const SpeakingTestPage: React.FC = () => {
               <SpeakingTestRecord
                 startUserRecording={startUserRecording}
                 stopUserRecording={stopUserRecording}
-                mediaBlobUrl={mediaBlobUrl}
+                restartRecording={restartRecording}
+                audioUrl={audioUrl}
                 status={status}
               />
             </SubContainer>

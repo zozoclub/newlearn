@@ -4,19 +4,28 @@ type Props = {
   isExplainText: boolean;
   userRecognizingText: string;
   userRecognizedText: string;
+  status: string;
 };
 
 const SpeakingTestRealtimeText: React.FC<Props> = ({
   userRecognizingText,
   userRecognizedText,
   isExplainText,
+  status, // status로 녹음 상태를 확인
 }) => {
   return (
     <>
       {!isExplainText ? (
         <div>
-          <h2>Recognizing Text: {userRecognizingText}</h2>
-          <h3>Final Recognized Text: {userRecognizedText}</h3>
+          {status === "recording" ? (
+            userRecognizingText ? (
+              <h2>Recognizing Text: {userRecognizingText}</h2>
+            ) : (
+              <h2>멘트치십시오</h2>
+            )
+          ) : userRecognizedText ? (
+            <h3>Final Recognized Text: {userRecognizedText}</h3>
+          ) : null}
         </div>
       ) : (
         <ul>

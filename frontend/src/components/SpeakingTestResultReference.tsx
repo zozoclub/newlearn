@@ -34,8 +34,10 @@ const SpeakingTestResultReference: React.FC<Props> = ({
           >
             <SpeakerClickIcon />
           </SpeakerIcon>
-          <EnglishSentence>{sentence}.</EnglishSentence>
-          <KoreanSentence>{koreanSentences[index]}</KoreanSentence>
+          <TextBlock>
+            <EnglishSentence>{sentence}.</EnglishSentence>
+            <KoreanSentence>{koreanSentences[index]}</KoreanSentence>
+          </TextBlock>
         </SentenceBlock>
       ))}
     </SentenceArea>
@@ -50,20 +52,26 @@ const SentenceArea = styled.div`
   padding: 3%;
 `;
 
+const TextBlock = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-left: 1rem;
+`;
+
 const EnglishSentence = styled.div`
   font-size: 1.25rem;
   font-weight: 200;
-  margin-left: 10px;
 `;
 
 const KoreanSentence = styled.div`
   color: ${(props) => props.theme.colors.primary};
   font-size: 1rem;
+  margin-top: 0.5rem;
 `;
 
 const SentenceBlock = styled.div`
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   margin-bottom: 2rem;
 `;
 

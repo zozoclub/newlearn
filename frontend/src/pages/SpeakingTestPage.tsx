@@ -282,7 +282,7 @@ const MainContainer = styled.div`
   margin: auto;
   padding: 0.625rem;
   background-color: ${(props) => props.theme.colors.cardBackground + "BF"};
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(0.25rem);
   border-radius: 0.75rem;
   box-shadow: 0.5rem 0.5rem 0.25rem ${(props) => props.theme.colors.shadow};
   transition: box-shadow 0.5s;
@@ -310,7 +310,7 @@ const SubContainer = styled.div`
   margin: 0.75rem 0;
   padding: 0.625rem;
   background-color: ${(props) => props.theme.colors.cardBackground + "BF"};
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(0.25rem);
   border-radius: 0.75rem;
   box-shadow: 0.5rem 0.5rem 0.25rem ${(props) => props.theme.colors.shadow};
   transition: box-shadow 0.5s;

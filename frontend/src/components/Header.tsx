@@ -3,12 +3,12 @@ import { useRecoilValue } from "recoil";
 
 import LogoImage from "@assets/images/logo-full.png";
 import locationState from "@store/locationState";
-import { useNavigate } from "react-router-dom";
 import DarkModeButton from "./DarkModeButton";
+import { usePageTransition } from "@hooks/usePageTransition";
 
 const Header = () => {
-  const navigate = useNavigate();
   const currentLocation = useRecoilValue(locationState);
+  const transitionTo = usePageTransition();
 
   return (
     <HeaderContainer>
@@ -16,7 +16,7 @@ const Header = () => {
       {currentLocation !== "" && (
         <Logo
           onClick={() => {
-            navigate("/");
+            transitionTo("/");
           }}
         />
       )}
@@ -28,18 +28,19 @@ const Header = () => {
 
 const HeaderContainer = styled.div`
   display: flex;
+  position: relative;
   justify-content: space-between;
   align-items: center;
-  height: 150px;
-  padding: 0 5vw;
+  height: 9.375rem;
+  padding: 0 5%;
 `;
 
 const Logo = styled.img.attrs({
   src: `${LogoImage}`,
   alt: "LogoImage",
 })`
-  width: 275px;
-  height: 60px;
+  width: 17.5rem;
+  height: 3.75rem;
   cursor: pointer;
 `;
 

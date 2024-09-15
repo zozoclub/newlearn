@@ -18,7 +18,7 @@ const Container = styled.div`
   margin: 10px;
   padding: 10px;
   background-color: ${(props) => props.theme.colors.cardBackground + "BF"};
-  border-radius: 12px;
+  border-radius: 0.75rem;
   transition: box-shadow 0.5s;
   backdrop-filter: blur(4px);
   box-shadow: 0.5rem 0.5rem 0.25rem ${(props) => props.theme.colors.shadow};

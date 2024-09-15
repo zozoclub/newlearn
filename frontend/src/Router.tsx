@@ -3,6 +3,7 @@ import MainPage from "@pages/MainPage";
 import SpeakingTestPage from "@pages/SpeakingTestPage";
 import NotFoundPage from "@pages/NotFoundPage";
 import App from "./App";
+import NewsPage from "@pages/NewsPage";
 
 export const router = createBrowserRouter([
   {
@@ -16,6 +17,10 @@ export const router = createBrowserRouter([
       {
         path: "speak",
         element: <SpeakingTestPage />,
+      },
+      {
+        path: "news",
+        element: <NewsPage />,
       },
       {
         path: "*",

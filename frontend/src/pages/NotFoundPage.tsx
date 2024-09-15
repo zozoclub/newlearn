@@ -1,11 +1,12 @@
+import { usePageTransition } from "@hooks/usePageTransition";
 import locationState from "@store/locationState";
 import { useEffect } from "react";
-import { Link } from "react-router-dom";
 import { useResetRecoilState } from "recoil";
 import styled from "styled-components";
 
 const NotFoundPage = () => {
   const resetCurrentLocation = useResetRecoilState(locationState);
+  const transitionTo = usePageTransition();
 
   useEffect(() => {
     resetCurrentLocation();
@@ -13,8 +14,8 @@ const NotFoundPage = () => {
 
   return (
     <Container>
-      <div>Page Not Found!</div>
-      <Link to="/">메인으로 돌아가기</Link>
+      <h1>Page Not Found!</h1>
+      <div onClick={() => transitionTo("/")}>메인으로 돌아가기</div>
     </Container>
   );
 };
@@ -25,7 +26,7 @@ const Container = styled.div`
   top: 50%;
   transform: translate(-50%, -50%);
   text-align: center;
-  div {
+  h1 {
     margin-bottom: 1.5rem;
     font-size: 3rem;
     font-weight: 700;

@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import * as sdk from "microsoft-cognitiveservices-speech-sdk";
 import { useSetRecoilState } from "recoil";
 import locationState from "@store/locationState";
-import SpeakingTestResultReference from "@components/SpeakingTestResultReference"; // Import the refactored component
+import SpeakingTestResultReference from "@components/SpeakingTestResultReference";
+import SpeakingTestResultCharts from "@components/SpeakingTestResultCharts";
 
 import styled from "styled-components";
 
@@ -51,11 +52,20 @@ const SpeakingTestResultPage: React.FC = () => {
     );
   };
 
+  const testResults = {
+    pronunciationScore: 82,
+    accuracyScore: 93,
+    fluencyScore: 91,
+    prosodyScore: 83,
+    completenessScore: 71,
+  };
+
   return (
     <MainLayout>
-      <MainContainer></MainContainer>
       <MainContainer>
-        {/* Refactored component */}
+        <SpeakingTestResultCharts results={testResults} />
+      </MainContainer>
+      <MainContainer>
         <SpeakingTestResultReference
           referenceTest={reference_text}
           referenceTextTranslate={reference_text_translate}

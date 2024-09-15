@@ -54,6 +54,9 @@ const SpeakingTestPage: React.FC = () => {
   const [, setIsRecording] = useState(false);
   const [isExplainText, setIsExplainText] = useState(true);
 
+  // 녹음이 진행 중이거나 완료된 경우에만 제출 버튼이 활성화되도록 설정
+  const isSubmitDisabled = !audioUrl || isLoading;
+
   speechConfig.speechRecognitionLanguage = "en-US";
 
   const startRecognition = () => {
@@ -276,16 +279,14 @@ const SpeakingTestPage: React.FC = () => {
             </SubContainer>
           </SubArea>
         </MainLayout>
-        <SubmitButton>
-          <div>
-            <button
-              onClick={handleRecordingDataSubmit}
-              disabled={!mediaBlobUrl || isLoading}
-            >
-              {isLoading ? "Processing..." : "Submit for Evaluation"}
-            </button>
-          </div>
-        </SubmitButton>
+        <SubmitButtonContainer>
+          <SubmitButton
+            onClick={handleRecordingDataSubmit}
+            disabled={isSubmitDisabled}
+          >
+            {isLoading ? "제출중일 경우 문구" : "제출하기"}
+          </SubmitButton>
+        </SubmitButtonContainer>
       </MainContainer>
     </>
   );
@@ -331,10 +332,29 @@ const SubContainer = styled.div`
   transition: box-shadow 0.5s;
 `;
 
-const SubmitButton = styled.div`
+const SubmitButtonContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-top: 1rem;
+`;
+
+const SubmitButton = styled.button<{ disabled: boolean }>`
+  padding: 1rem 2rem;
+  background-color: ${(props) =>
+    props.disabled ? "#ccc" : props.theme.colors.primary};
+  color: ${(props) => (props.disabled ? "#666" : "#fff")};
+  border: none;
+  border-radius: 0.625rem;
+  cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};
+  font-size: 1rem;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: ${(props) =>
+      props.disabled ? "#ccc" : props.theme.colors.primaryHover};
+  }
 `;
 
 export default SpeakingTestPage;

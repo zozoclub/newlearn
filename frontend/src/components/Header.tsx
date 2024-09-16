@@ -45,8 +45,8 @@ const Logo = styled.img.attrs({
 `;
 
 const PageInfo = styled.div`
+  font-family: "Righteous";
   font-size: 2rem;
-  font-weight: 600;
 `;
 
 export default Header;

@@ -48,6 +48,7 @@ export default SpeakingTestResultReference;
 
 const SentenceArea = styled.div`
   width: 90%;
+
   margin: 0.75rem;
   padding: 3%;
 `;
@@ -55,6 +56,7 @@ const SentenceArea = styled.div`
 const TextBlock = styled.div`
   display: flex;
   flex-direction: column;
+
   margin-left: 1rem;
 `;
 
@@ -64,20 +66,23 @@ const EnglishSentence = styled.div`
 `;
 
 const KoreanSentence = styled.div`
-  color: ${(props) => props.theme.colors.primary};
   font-size: 1rem;
+
+  color: ${(props) => props.theme.colors.primary};
+
   margin-top: 0.5rem;
 `;
 
 const SentenceBlock = styled.div`
   display: flex;
   align-items: flex-start;
+
   margin-bottom: 2rem;
 `;
 
 const SpeakerIcon = styled.div<{ disabled: boolean }>`
   cursor: ${({ disabled }) => (disabled ? "not-allowed" : "pointer")};
-  opacity: ${({ disabled }) => (disabled ? 0.5 : 1)}; // 재생 중일 때 회색 처리
+  opacity: ${({ disabled }) => (disabled ? 0.5 : 1)};
 
   &:hover {
     transform: ${({ disabled }) => (disabled ? "none" : "scale(1.1)")};

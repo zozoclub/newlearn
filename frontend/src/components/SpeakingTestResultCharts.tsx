@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 import { Chart } from "chart.js/auto";
 
 type Props = {
@@ -16,6 +16,8 @@ const SpeakingTestResultCharts: React.FC<Props> = ({ results }) => {
   const doughnutChartRef = useRef<HTMLCanvasElement | null>(null);
   const barChartRef = useRef<HTMLCanvasElement | null>(null);
 
+  const theme = useTheme();
+
   useEffect(() => {
     // 도넛형 차트 (Pronunciation Score)
     if (doughnutChartRef.current) {
@@ -24,19 +26,20 @@ const SpeakingTestResultCharts: React.FC<Props> = ({ results }) => {
         new Chart(doughnutCtx, {
           type: "doughnut",
           data: {
-            labels: ["Pronunciation Score"],
             datasets: [
               {
                 data: [
                   results.pronunciationScore,
                   100 - results.pronunciationScore,
                 ],
-                backgroundColor: ["blue", "#ddd"],
+                backgroundColor: [theme.colors.primary, "#ddd"],
                 borderWidth: 1,
               },
             ],
           },
           options: {
+            responsive: true, 
+            maintainAspectRatio: false, 
             cutout: "70%",
             plugins: {
               legend: { display: true },
@@ -46,7 +49,16 @@ const SpeakingTestResultCharts: React.FC<Props> = ({ results }) => {
                     return context.label + ": " + context.raw + "%";
                   },
                 },
+                bodyFont: {
+                  size: 14,
+                  family: "Pretendard",
+                },
               },
+            },
+            font: {
+              family: "Pretendard",
+              size: 16,
+              weight: "bold",
             },
           },
           plugins: [
@@ -55,14 +67,20 @@ const SpeakingTestResultCharts: React.FC<Props> = ({ results }) => {
               afterDraw(chart) {
                 const { ctx, width, height } = chart;
                 const score = results.pronunciationScore;
+
+                // 텍스트 위치 계산
+                const centerX = width / 2;
+                const centerY = (height * 53) / 100;
+
                 ctx.save();
-                ctx.font = "bold 1.5rem Pretendard";
-                ctx.fillStyle = getComputedStyle(
-                  document.documentElement
-                ).getPropertyValue("--theme-text");
+                ctx.font = "bold 2rem Pretendard";
+                ctx.fillStyle = theme.colors.primary;
                 ctx.textAlign = "center";
                 ctx.textBaseline = "middle";
-                ctx.fillText(`${score}%`, width / 2, height / 2);
+
+                // 텍스트를 차트 중심에 정확히 배치
+                ctx.fillText(`${score}%`, centerX, centerY);
+                ctx.restore();
               },
             },
           ],
@@ -70,6 +88,7 @@ const SpeakingTestResultCharts: React.FC<Props> = ({ results }) => {
       }
     }
 
+    // 수평 막대형 차트 (나머지 점수들)
     if (barChartRef.current) {
       const barCtx = barChartRef.current.getContext("2d");
       if (barCtx) {
@@ -86,27 +105,54 @@ const SpeakingTestResultCharts: React.FC<Props> = ({ results }) => {
                   results.prosodyScore,
                   results.completenessScore,
                 ],
-                backgroundColor: "blue",
+                backgroundColor: theme.colors.primary, 
               },
             ],
           },
           options: {
-            indexAxis: "y", // 수평 막대형 차트
+            responsive: true,
+            maintainAspectRatio: false, 
+            indexAxis: "y", 
             scales: {
               x: {
                 max: 100, // 100점 만점 기준
+                ticks: {
+                  font: {
+                    family: "Pretendard", 
+                    size: 14, 
+                    weight: "normal", 
+                  },
+                },
               },
-              y: {},
+              y: {
+                ticks: {
+                  font: {
+                    family: "Pretendard",
+                    size: 14,
+                    weight: "bold",
+                  },
+                },
+              },
             },
             plugins: {
-              legend: { display: false }, // 범례 비활성화
+              legend: { display: false }, 
+              tooltip: {
+                bodyFont: {
+                  size: 14, 
+                  family: "Pretendard", 
+                },
+              },
+            },
+            font: {
+              family: "Pretendard", 
+              size: 14,
+              weight: "normal", 
             },
           },
         });
       }
     }
-  }, [results]);
-
+  }, [results, theme]);
   return (
     <ChartContainer>
       <DoughnutChartContainer>
@@ -129,11 +175,15 @@ const ChartContainer = styled.div`
 `;
 
 const DoughnutChartContainer = styled.div`
-  width: 40%;
+  width: 35%;
   margin: auto;
+  position: relative;
+  height: 15rem;
 `;
 
 const BarChartContainer = styled.div`
   width: 60%;
   margin: 3rem auto 0 auto;
+  position: relative;
+  height: 15rem;
 `;

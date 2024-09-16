@@ -46,7 +46,7 @@ const SpeakingTestResultCharts: React.FC<Props> = ({ results }) => {
                   100 - results.pronunciationScore,
                 ],
                 backgroundColor: [theme.colors.primary, "#ddd"],
-                borderWidth: 1,
+                borderWidth: 0.5,
               },
             ],
           },
@@ -125,7 +125,7 @@ const SpeakingTestResultCharts: React.FC<Props> = ({ results }) => {
             indexAxis: "y", // 수평 막대형 차트
             scales: {
               x: {
-                max: 100, // 100점 만점 기준
+                max: 120, // 120점 만점 기준으로 하여 데이터가 페이지 넘어가는 경우를 제거
                 grid: { display: false },
                 ticks: {
                   display: false,
@@ -155,8 +155,8 @@ const SpeakingTestResultCharts: React.FC<Props> = ({ results }) => {
               },
               datalabels: {
                 align: "end",
-                anchor: "end", 
-                formatter: (value) => `${value}`, 
+                anchor: "end",
+                formatter: (value) => `${value}점`,
                 font: {
                   size: 14,
                   family: "Pretendard",
@@ -170,7 +170,7 @@ const SpeakingTestResultCharts: React.FC<Props> = ({ results }) => {
               weight: "normal",
             },
           },
-          plugins: [ChartDataLabels], // 플러그인 적용
+          plugins: [ChartDataLabels],
         });
       }
     }
@@ -192,20 +192,21 @@ export default SpeakingTestResultCharts;
 
 const ChartContainer = styled.div`
   display: flex;
+  justify-content: center;
   align-items: center;
-  justify-content: space-around;
   width: 95%;
 `;
 
 const DoughnutChartContainer = styled.div`
-  margin: auto;
-  position: relative;
-  height: 15rem;
+  display: flex;
+  justify-content: center;
+  height: 12rem;
+  margin: 1rem;
 `;
 
 const BarChartContainer = styled.div`
-  width: 70%;
-  margin: 2rem auto 0 auto;
-  position: relative;
-  height: 15rem;
+  display: flex;
+  justify-content: center;
+  height: 12rem;
+  margin: 1rem;
 `;

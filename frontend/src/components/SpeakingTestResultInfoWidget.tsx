@@ -31,7 +31,7 @@ const SubContainer = styled.div`
   display: flex;
   flex-direction: column;
 
-  min-height: 15rem;
+  min-height: 12rem;
 
   margin: 0.25rem;
   padding: 1rem;

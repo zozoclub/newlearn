@@ -56,11 +56,11 @@ const SpeakingTestResultPage: React.FC = () => {
   };
 
   const testResults = {
-    pronunciationScore: 82,
-    accuracyScore: 93,
-    fluencyScore: 91,
-    prosodyScore: 83,
-    completenessScore: 71,
+    pronunciationScore: 100,
+    accuracyScore: 100,
+    fluencyScore: 100,
+    prosodyScore: 100,
+    completenessScore: 100,
   };
 
   // 점수 평가 함수
@@ -210,5 +210,5 @@ const GridContainer = styled.div`
   grid-template-columns: repeat(2, 1fr);
   grid-gap: 1rem;
 
-  width: 100%;
+  width: 95%;
 `;

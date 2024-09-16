@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import styled, { useTheme } from "styled-components";
 import { Chart } from "chart.js/auto";
+import ChartDataLabels from "chartjs-plugin-datalabels"; // 플러그인 추가
 
 type Props = {
   results: {
@@ -18,12 +19,24 @@ const SpeakingTestResultCharts: React.FC<Props> = ({ results }) => {
 
   const theme = useTheme();
 
+  // 기존 차트 인스턴스를 저장할 ref
+  const doughnutChartInstance = useRef<Chart<"doughnut"> | null>(null);
+  const barChartInstance = useRef<Chart<"bar"> | null>(null);
+
   useEffect(() => {
     // 도넛형 차트 (Pronunciation Score)
     if (doughnutChartRef.current) {
       const doughnutCtx = doughnutChartRef.current.getContext("2d");
       if (doughnutCtx) {
-        new Chart(doughnutCtx, {
+        if (doughnutChartInstance.current) {
+          doughnutChartInstance.current.destroy();
+        }
+
+        doughnutChartInstance.current = new Chart<
+          "doughnut",
+          number[],
+          unknown
+        >(doughnutCtx, {
           type: "doughnut",
           data: {
             datasets: [
@@ -38,15 +51,13 @@ const SpeakingTestResultCharts: React.FC<Props> = ({ results }) => {
             ],
           },
           options: {
-            responsive: true, 
-            maintainAspectRatio: false, 
-            cutout: "70%",
+            cutout: "65%",
             plugins: {
               legend: { display: true },
               tooltip: {
                 callbacks: {
                   label: function (context) {
-                    return context.label + ": " + context.raw + "%";
+                    return context.label + ": " + context.raw + "점";
                   },
                 },
                 bodyFont: {
@@ -68,7 +79,6 @@ const SpeakingTestResultCharts: React.FC<Props> = ({ results }) => {
                 const { ctx, width, height } = chart;
                 const score = results.pronunciationScore;
 
-                // 텍스트 위치 계산
                 const centerX = width / 2;
                 const centerY = (height * 53) / 100;
 
@@ -77,9 +87,7 @@ const SpeakingTestResultCharts: React.FC<Props> = ({ results }) => {
                 ctx.fillStyle = theme.colors.primary;
                 ctx.textAlign = "center";
                 ctx.textBaseline = "middle";
-
-                // 텍스트를 차트 중심에 정확히 배치
-                ctx.fillText(`${score}%`, centerX, centerY);
+                ctx.fillText(`${score}점`, centerX, centerY);
                 ctx.restore();
               },
             },
@@ -88,11 +96,15 @@ const SpeakingTestResultCharts: React.FC<Props> = ({ results }) => {
       }
     }
 
-    // 수평 막대형 차트 (나머지 점수들)
+    // 수평 막대형 차트 (4개의 항목)
     if (barChartRef.current) {
       const barCtx = barChartRef.current.getContext("2d");
       if (barCtx) {
-        new Chart(barCtx, {
+        if (barChartInstance.current) {
+          barChartInstance.current.destroy();
+        }
+
+        barChartInstance.current = new Chart<"bar", number[], unknown>(barCtx, {
           type: "bar",
           data: {
             labels: ["Accuracy", "Fluency", "Prosody", "Completeness"],
@@ -105,54 +117,65 @@ const SpeakingTestResultCharts: React.FC<Props> = ({ results }) => {
                   results.prosodyScore,
                   results.completenessScore,
                 ],
-                backgroundColor: theme.colors.primary, 
+                backgroundColor: theme.colors.primary,
               },
             ],
           },
           options: {
-            responsive: true,
-            maintainAspectRatio: false, 
-            indexAxis: "y", 
+            indexAxis: "y", // 수평 막대형 차트
             scales: {
               x: {
                 max: 100, // 100점 만점 기준
+                grid: { display: false },
                 ticks: {
-                  font: {
-                    family: "Pretendard", 
-                    size: 14, 
-                    weight: "normal", 
-                  },
+                  display: false, // X축 수치 숨기기
                 },
+                border: { display: false },
               },
               y: {
+                grid: { display: false },
+                border: { display: false },
                 ticks: {
                   font: {
                     family: "Pretendard",
                     size: 14,
                     weight: "bold",
                   },
+                  color: theme.colors.text,
                 },
               },
             },
             plugins: {
-              legend: { display: false }, 
+              legend: { display: false },
               tooltip: {
                 bodyFont: {
-                  size: 14, 
-                  family: "Pretendard", 
+                  size: 14,
+                  family: "Pretendard",
                 },
+              },
+              datalabels: {
+                align: "end", // 텍스트를 막대 끝에 배치
+                anchor: "end", // 막대 끝에 수직 배치
+                formatter: (value) => `${value}`, // "점수/100" 형식으로 출력
+                font: {
+                  size: 14,
+                  family: "Pretendard",
+                },
+                color: theme.colors.text, // 텍스트 색상 설정
               },
             },
             font: {
-              family: "Pretendard", 
+              family: "Pretendard",
               size: 14,
-              weight: "normal", 
+              weight: "normal",
             },
           },
+          plugins: [ChartDataLabels], // 플러그인 적용
         });
       }
     }
   }, [results, theme]);
+
   return (
     <ChartContainer>
       <DoughnutChartContainer>

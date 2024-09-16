@@ -175,7 +175,7 @@ const MainContainer = styled.div`
   flex-direction: column;
 
   width: 90%;
-  min-height: 60rem;
+  min-height: 50rem;
 
   margin: 0 0.5rem;
   padding: 0.5rem;

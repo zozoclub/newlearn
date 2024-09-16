@@ -13,8 +13,11 @@ import SpeakingTestRecord from "@components/SpeakingTestRecord";
 import { useSetRecoilState } from "recoil";
 import locationState from "@store/locationState";
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 
 const SpeakingTestPage: React.FC = () => {
+  const navigate = useNavigate();
+
   // 페이지 확인
   const setCurrentLocation = useSetRecoilState(locationState);
   useEffect(() => {
@@ -236,7 +239,9 @@ const SpeakingTestPage: React.FC = () => {
         prosodyScore: avgProsody,
         completenessScore: completeness,
       };
+      setIsLoading(false);
       console.log(results);
+      navigate("/speakresult");
     };
 
     reco.startContinuousRecognitionAsync(

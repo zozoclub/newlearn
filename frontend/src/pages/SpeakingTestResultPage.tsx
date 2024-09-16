@@ -8,6 +8,8 @@ import SpeakingTestResultInfoWidget from "@components/SpeakingTestResultInfoWidg
 
 import styled from "styled-components";
 
+import BackArrow from "@assets/icons/BackArrow";
+
 const SpeakingTestResultPage: React.FC = () => {
   const speechConfig = sdk.SpeechConfig.fromSubscription(
     import.meta.env.VITE_SPEECH_API_KEY,
@@ -124,6 +126,10 @@ const SpeakingTestResultPage: React.FC = () => {
   return (
     <MainLayout>
       <MainContainer>
+        <BackHeader>
+          <BackArrow />
+          평가 리스트로 돌아가기
+        </BackHeader>
         <SpeakingTestResultCharts results={testResults} />
         <GridContainer>
           <SpeakingTestResultInfoWidget
@@ -182,6 +188,15 @@ const MainContainer = styled.div`
   transition: box-shadow 0.5s;
 
   backdrop-filter: blur(0.25rem);
+`;
+
+const BackHeader = styled.div`
+  display: flex;
+  width: 100%;
+  align-items: center;
+  padding-left: 1rem;
+  font-size: 1.5rem;
+  font-weight: 700;
 `;
 
 const MainLayout = styled.div`

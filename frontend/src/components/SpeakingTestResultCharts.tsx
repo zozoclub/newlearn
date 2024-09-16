@@ -128,7 +128,7 @@ const SpeakingTestResultCharts: React.FC<Props> = ({ results }) => {
                 max: 100, // 100점 만점 기준
                 grid: { display: false },
                 ticks: {
-                  display: false, // X축 수치 숨기기
+                  display: false,
                 },
                 border: { display: false },
               },
@@ -154,9 +154,9 @@ const SpeakingTestResultCharts: React.FC<Props> = ({ results }) => {
                 },
               },
               datalabels: {
-                align: "end", // 텍스트를 막대 끝에 배치
-                anchor: "end", // 막대 끝에 수직 배치
-                formatter: (value) => `${value}`, // "점수/100" 형식으로 출력
+                align: "end",
+                anchor: "end", 
+                formatter: (value) => `${value}`, 
                 font: {
                   size: 14,
                   family: "Pretendard",
@@ -194,19 +194,18 @@ const ChartContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-around;
-  width: 100%;
+  width: 95%;
 `;
 
 const DoughnutChartContainer = styled.div`
-  width: 35%;
   margin: auto;
   position: relative;
   height: 15rem;
 `;
 
 const BarChartContainer = styled.div`
-  width: 60%;
-  margin: 3rem auto 0 auto;
+  width: 70%;
+  margin: 2rem auto 0 auto;
   position: relative;
   height: 15rem;
 `;

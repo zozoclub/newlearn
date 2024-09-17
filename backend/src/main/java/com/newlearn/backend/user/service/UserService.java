@@ -22,4 +22,6 @@ public interface UserService {
 	void updateDifficulty(Long userId, Long difficulty);
 
 	void updateCategory(Long userId, List<String> categories);
+
+	void deleteUser(Long userId);
 }

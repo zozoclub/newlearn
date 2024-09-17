@@ -4,6 +4,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -200,6 +201,33 @@ public class UserController {
 
 		} catch (Exception e) {
 			return ApiResponse.createError(ErrorCode.USER_UPDATE_FAILED);
+		}
+	}
+
+	@DeleteMapping("/delete")
+	public ApiResponse<?> deleteUser(Authentication authentication, HttpServletRequest request, HttpServletResponse response) {
+		try {
+			Users user = userService.findByEmail(authentication.getName())
+				.orElseThrow(() -> new Exception("회원정보 없음"));
+
+			String refreshToken = extractRefreshToken(request);
+			if (refreshToken != null && jwtTokenProvider.validateToken(refreshToken)) {
+
+				tokenService.blacklistRefreshToken(refreshToken);
+
+				Cookie cookie = new Cookie("refreshToken", null);
+				cookie.setMaxAge(0);
+				cookie.setPath("/");
+				response.addCookie(cookie);
+			} else {
+				return ApiResponse.createError(ErrorCode.INVALID_JWT_TOKEN);
+			}
+
+			userService.deleteUser(user.getUserId());
+
+			return ApiResponse.createSuccess(null, "회원 탈퇴가 완료되었습니다.");
+		} catch (Exception e) {
+			return ApiResponse.createError(ErrorCode.USER_DELETE_FAILED);
 		}
 	}
 }

@@ -77,7 +77,7 @@ public class Users {
 		joinColumns = @JoinColumn(name = "user_id"),
 		inverseJoinColumns = @JoinColumn(name = "interest_id")
 	)
-	private Set<Category> interests = new HashSet<>();
+	private Set<Category> categories = new HashSet<>();
 
 	@Column(name = "created_at", nullable = false, updatable = false,
 		insertable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
@@ -89,6 +89,8 @@ public class Users {
 		this.providerId = providerId;
 	}
 
-
-
+	public void updateCategories(Set<Category> newCategories) {
+		this.categories.clear();
+		this.categories.addAll(newCategories);
+	}
 }

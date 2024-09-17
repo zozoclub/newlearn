@@ -1,5 +1,7 @@
 package com.newlearn.backend.user.dto.request;
 
+import java.util.List;
+
 import com.newlearn.backend.user.model.Avatar;
 import com.newlearn.backend.user.model.Users;
 
@@ -17,7 +19,7 @@ public class SignUpRequestDTO {
 	private String provider;
 	private String providerId;
 	private Long difficulty;
-
+	private List<String> categories;
 	// 아바타 정보
 	private Long skin;
 	private Long eyes;

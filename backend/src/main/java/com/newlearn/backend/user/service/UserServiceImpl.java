@@ -62,4 +62,12 @@ public class UserServiceImpl implements UserService{
 		user.setNickname(nickname);
 		userRepository.save(user);
 	}
+
+	@Override
+	public void updateDifficulty(Long userId, Long difficulty) {
+		Users user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다"));
+
+		user.setDifficulty(difficulty);
+		userRepository.save(user);
+	}
 }

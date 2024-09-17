@@ -19,6 +19,7 @@ import com.newlearn.backend.common.ErrorCode;
 import com.newlearn.backend.common.JwtTokenProvider;
 import com.newlearn.backend.user.dto.request.AvatarUpdateDTO;
 import com.newlearn.backend.user.dto.request.SignUpRequestDTO;
+import com.newlearn.backend.user.dto.request.UpdateDifficultyRequestDTO;
 import com.newlearn.backend.user.dto.request.UpdateNicknameRequestDto;
 import com.newlearn.backend.user.dto.response.LoginResponseDTO;
 import com.newlearn.backend.user.dto.response.RefreshTokenResponseDTO;
@@ -155,7 +156,7 @@ public class UserController {
 		}
 	}
 
-	@PutMapping("update-nickname")
+	@PutMapping("/update-nickname")
 	public ApiResponse<?> updateNickname(Authentication authentication, @RequestBody UpdateNicknameRequestDto updateNicknameRequestDto) {
 		try {
 			Users user = userService.findByEmail(authentication.getName())
@@ -164,7 +165,7 @@ public class UserController {
 			String nickname = updateNicknameRequestDto.getNickname();
 
 			if(!userService.checkNickname(nickname)) {
-				return ApiResponse.createError(ErrorCode.NICKNAME_NOT_FOUND);
+				return ApiResponse.createError(ErrorCode.NICKNAME_ALREADY_USED);
 			}
 			userService.updateNickname(user.getUserId(), nickname);
 			return ApiResponse.createSuccess(null, "닉네임 업데이트 성공");
@@ -174,4 +175,19 @@ public class UserController {
 		}
 	}
 
+	@PutMapping("/update-difficulty")
+	public ApiResponse<?> updateDifficulty(Authentication authentication, @RequestBody UpdateDifficultyRequestDTO updateDifficultyRequestDTO) {
+		try {
+			Users user = userService.findByEmail(authentication.getName())
+				.orElseThrow(() -> new Exception("회원정보 없음"));
+
+			Long difficulty = updateDifficultyRequestDTO.getDifficulty();
+
+			userService.updateDifficulty(user.getUserId(), difficulty);
+			return ApiResponse.createSuccess(null, "난이도 업데이트 성공");
+
+		} catch (Exception e) {
+			return ApiResponse.createError(ErrorCode.USER_UPDATE_FAILED);
+		}
+	}
 }

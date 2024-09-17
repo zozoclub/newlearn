@@ -17,4 +17,6 @@ public interface UserService {
 	boolean checkNickname(String nickname);
 
 	void updateNickname(Long userId, String nickname);
+
+	void updateDifficulty(Long userId, Long difficulty);
 }

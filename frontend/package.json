@@ -18,13 +18,14 @@
     "lodash": "^4.17.21",
     "microsoft-cognitiveservices-speech-sdk": "^1.40.0",
     "react": "^18.3.1",
+    "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.3.1",
     "react-media-recorder": "^1.7.1",
     "react-router-dom": "^6.26.2",
     "recoil": "^0.7.7",
+    "string-similarity": "^4.0.4",
     "styled-components": "^6.1.13",
-    "styled-reset": "^4.5.2",
-    "string-similarity": "^4.0.4"
+    "styled-reset": "^4.5.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",

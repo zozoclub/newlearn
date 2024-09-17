@@ -4,7 +4,7 @@ import Layout from "@pages/Layout";
 import MainPage from "@pages/MainPage";
 import SpeakingTestPage from "@pages/SpeakingTestPage";
 import NotFoundPage from "@pages/NotFoundPage";
-
+import MyPage from "@pages/MyPage";
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -21,6 +21,10 @@ export const router = createBrowserRouter([
       {
         path: "*",
         element: <NotFoundPage />,
+      },
+      {
+        path: "mypage",
+        element: <MyPage />,
       },
     ],
   },

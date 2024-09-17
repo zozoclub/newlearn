@@ -1,6 +1,8 @@
 import { createBrowserRouter } from "react-router-dom";
 import MainPage from "@pages/MainPage";
 import SpeakingTestPage from "@pages/SpeakingTestPage";
+import SpeakingTestResultPage from "@pages/SpeakingTestResultPage";
+import WordTestPage from "@pages/WordTestPage";
 import NotFoundPage from "@pages/NotFoundPage";
 import App from "./App";
 import NewsPage from "@pages/NewsPage";
@@ -17,6 +19,14 @@ export const router = createBrowserRouter([
       {
         path: "speak",
         element: <SpeakingTestPage />,
+      },
+      {
+        path: "speakresult",
+        element: <SpeakingTestResultPage />,
+      },
+      {
+        path: "wordtest",
+        element: <WordTestPage />,
       },
       {
         path: "news",

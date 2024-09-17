@@ -1,39 +1,44 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useReactMediaRecorder } from "react-media-recorder";
 import * as sdk from "microsoft-cognitiveservices-speech-sdk";
+import { convertToWav } from "@utils/audioUtils";
 // 유사도 측정 도구
 import _ from "lodash";
 import stringSimilarity from "string-similarity";
+// Components
+import SpeakingTestReference from "@components/SpeakingTestReference";
+import SpeakingTestRealtimeText from "@components/SpeakingTestRealtimeText";
+import SpeakingTestRecord from "@components/SpeakingTestRecord";
+// 이외 라이브러리
 import { useSetRecoilState } from "recoil";
 import locationState from "@store/locationState";
-
-// Styled Component
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 
 const SpeakingTestPage: React.FC = () => {
-  const [recognizingText, setRecognizingText] = useState<string>(""); // 실시간 인식 텍스트
-  const [recognitionResult, setRecognitionResult] = useState<string>(""); // 최종 인식 텍스트
+  const navigate = useNavigate();
 
+  // 페이지 확인
+  const setCurrentLocation = useSetRecoilState(locationState);
+  useEffect(() => {
+    setCurrentLocation("Speaking Test Page");
+  });
+
+  const [recognizingText, setRecognizingText] = useState<string>(""); // 실시간 텍스트
+  const [, setRecognitionResult] = useState<string>(""); // 최종 텍스트
+  const [audioUrl, setAudioUrl] = useState<string | undefined>("");
+  const recognizerRef = useRef<sdk.SpeechRecognizer | null>(null);
   const speechConfig = sdk.SpeechConfig.fromSubscription(
     import.meta.env.VITE_SPEECH_API_KEY,
     import.meta.env.VITE_SPEECH_REGION
   );
 
-  const [averagePronunciationScore, setAveragePronunciationScore] = useState<
-    number | null
-  >(null);
-  const [averageAccuracyScore, setAverageAccuracyScore] = useState<
-    number | null
-  >(null);
-  const [averageFluencyScore, setAverageFluencyScore] = useState<number | null>(
-    null
-  );
-  const [averageProsodyScore, setAverageProsodyScore] = useState<number | null>(
-    null
-  );
-  const [completenessScore, setCompletenessScore] = useState<number | null>(
-    null
-  );
+  // 점수 측정용 변수
+  const [, setAveragePronunciationScore] = useState<number | null>(null);
+  const [, setAverageAccuracyScore] = useState<number | null>(null);
+  const [, setAverageFluencyScore] = useState<number | null>(null);
+  const [, setAverageProsodyScore] = useState<number | null>(null);
+  const [, setCompletenessScore] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [, setAudioFile] = useState<File | null>(null);
 
@@ -45,126 +50,99 @@ const SpeakingTestPage: React.FC = () => {
 
   const recognizedTexts: string[] = []; // 인식된 텍스트들을 저장
 
+  // 이하 Realtime Speech To Text
+  const [userRecognizedText, setUserRecognizedText] = useState("");
+  const [, setUserRecognizingText] = useState("");
+  // 스피킹 테스트 시작
+  const [, setIsRecording] = useState(false);
+  const [isExplainText, setIsExplainText] = useState(true);
+
+  // 녹음이 진행 중이거나 완료된 경우에만 제출 버튼이 활성화되도록 설정
+  const isSubmitDisabled = !audioUrl || isLoading;
+
+  speechConfig.speechRecognitionLanguage = "en-US";
+
+  const startRecognition = () => {
+    const audioConfig = sdk.AudioConfig.fromDefaultMicrophoneInput();
+    const recognizer = new sdk.SpeechRecognizer(speechConfig, audioConfig);
+    recognizerRef.current = recognizer;
+
+    recognizer.recognizing = (_, e) => {
+      // 실시간 인식된 텍스트 업데이트
+      setRecognizingText(e.result.text);
+      setUserRecognizingText(e.result.text); // 이 부분이 실시간으로 반영됨
+    };
+
+    recognizer.recognized = (_, e) => {
+      if (e.result.reason === sdk.ResultReason.RecognizedSpeech) {
+        setUserRecognizedText((prevText) => prevText + " " + e.result.text);
+        setUserRecognizingText("");
+      }
+    };
+
+    recognizer.canceled = (_, e) => {
+      console.error(`Recognition canceled: ${e.reason}`);
+    };
+
+    recognizer.startContinuousRecognitionAsync();
+    setIsRecording(true);
+    setIsExplainText(false);
+  };
+
+  const stopRecognition = () => {
+    if (recognizerRef.current) {
+      recognizerRef.current.stopContinuousRecognitionAsync(() => {
+        setIsRecording(false);
+        console.log("Recognition stopped");
+      });
+    }
+  };
+
   // 예제 문장 (나중에 Back에서 받아서 출력할 문구)
   const reference_text =
     "Today was a beautiful day. We had a great time taking a long walk outside in the morning. The sun was shining brightly, and a gentle breeze made the weather feel perfect. As we strolled through the park, we noticed the trees swaying softly, and the sound of birds chirping filled the air.";
+
+  const reference_text_translate =
+    "오늘은 정말 아름다운 날이었어. 우리는 아침에 긴 산책을 하며 즐거운 시간을 보냈어. 해가 밝게 빛나고, 부드러운 바람이 날씨를 완벽하게 만들어줬어. 공원을 걷다가 나무들이 부드럽게 흔들리는 것을 봤고, 새들이 지저귀는 소리가 공기를 가득 채웠어.";
 
   // react-media-recorder 녹음 관리
   const { startRecording, stopRecording, mediaBlobUrl, status } =
     useReactMediaRecorder({ audio: true });
 
-  const handleSubmit = async () => {
+  const startUserRecording = () => {
+    setUserRecognizedText("");
+    setRecognizingText("");
+    startRecording();
+    startRecognition();
+  };
+
+  const stopUserRecording = () => {
+    stopRecording();
+    stopRecognition();
+  };
+
+  useEffect(() => {
+    setAudioUrl(mediaBlobUrl);
+  }, [mediaBlobUrl]);
+
+  const restartRecording = () => {
+    setRecognizingText("");
+    setUserRecognizedText("");
+    setAudioUrl("");
+    stopUserRecording();
+    startUserRecording();
+  };
+
+  const handleRecordingDataSubmit = async () => {
     if (!mediaBlobUrl) return;
 
     setIsLoading(true); // 로딩 시작
 
-    // Fetch the webm audio blob from mediaBlobUrl
     const response = await fetch(mediaBlobUrl);
     const webmBlob = await response.blob();
 
-    // WAV 변환 함수 사용
-    const convertToWav = async (
-      blob: Blob,
-      targetSampleRate: number = 16000
-    ): Promise<Blob> => {
-      return new Promise((resolve) => {
-        const audioContext = new (window.AudioContext || window.AudioContext)();
-
-        const reader = new FileReader();
-        reader.onload = async (e) => {
-          const arrayBuffer = e.target?.result as ArrayBuffer;
-
-          // 원본 오디오 데이터를 AudioBuffer로 디코딩
-          const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
-
-          // 기존 샘플링 레이트
-          const originalSampleRate = audioBuffer.sampleRate;
-          console.log("Original Sample Rate:", originalSampleRate);
-
-          // 필요한 경우 다운샘플링 진행
-          if (originalSampleRate !== targetSampleRate) {
-            const offlineContext = new OfflineAudioContext(
-              audioBuffer.numberOfChannels,
-              audioBuffer.duration * targetSampleRate,
-              targetSampleRate
-            );
-
-            // 원본 오디오 데이터를 OfflineAudioContext로 복사하여 샘플링 레이트 변환
-            const source = offlineContext.createBufferSource();
-            source.buffer = audioBuffer;
-            source.connect(offlineContext.destination);
-            source.start(0);
-
-            const renderedBuffer = await offlineContext.startRendering();
-
-            // WAV 헤더 작성 및 변환된 PCM 데이터 추가
-            const wavBlob = audioBufferToWav(renderedBuffer);
-            resolve(wavBlob);
-          } else {
-            // 이미 16000Hz일 경우 그대로 반환
-            const wavBlob = audioBufferToWav(audioBuffer);
-            resolve(wavBlob);
-          }
-        };
-
-        reader.readAsArrayBuffer(blob);
-      });
-    };
-
-    // AudioBuffer를 WAV 포맷으로 변환하는 함수
-    const audioBufferToWav = (buffer: AudioBuffer): Blob => {
-      const numOfChan = buffer.numberOfChannels;
-      const length = buffer.length * numOfChan * 2 + 44;
-      const bufferView = new DataView(new ArrayBuffer(length));
-      let offset = 0;
-
-      /* WAV 파일 헤더 작성 */
-      const writeString = (s: string) => {
-        for (let i = 0; i < s.length; i++) {
-          bufferView.setUint8(offset++, s.charCodeAt(i));
-        }
-      };
-
-      const write16 = (value: number) => {
-        bufferView.setUint16(offset, value, true);
-        offset += 2;
-      };
-
-      const write32 = (value: number) => {
-        bufferView.setUint32(offset, value, true);
-        offset += 4;
-      };
-
-      writeString("RIFF"); // ChunkID
-      write32(length - 8); // ChunkSize
-      writeString("WAVE"); // Format
-      writeString("fmt "); // Subchunk1ID
-      write32(16); // Subchunk1Size (PCM)
-      write16(1); // AudioFormat (PCM)
-      write16(numOfChan); // NumChannels
-      write32(buffer.sampleRate); // SampleRate
-      write32(buffer.sampleRate * numOfChan * 2); // ByteRate
-      write16(numOfChan * 2); // BlockAlign
-      write16(16); // BitsPerSample
-      writeString("data"); // Subchunk2ID
-      write32(buffer.length * numOfChan * 2); // Subchunk2Size
-
-      // PCM 데이터 작성
-      for (let i = 0; i < buffer.length; i++) {
-        for (let channel = 0; channel < numOfChan; channel++) {
-          const sample = buffer.getChannelData(channel)[i] * 0x7fff; // [-1, 1] 범위의 float을 16bit int로 변환
-          bufferView.setInt16(offset, sample, true);
-          offset += 2;
-        }
-      }
-
-      return new Blob([bufferView], { type: "audio/wav" });
-    };
-
-    // webm 파일을 wav로 변환
     const wavBlob = await convertToWav(webmBlob);
 
-    // 변환된 파일을 File 객체로 변환
     const audioFile = new File([wavBlob], "recorded_audio.wav", {
       type: "audio/wav",
     });
@@ -186,12 +164,6 @@ const SpeakingTestPage: React.FC = () => {
     const reco = new sdk.SpeechRecognizer(speechConfig, audioConfig);
     pronunciationAssessmentConfig.applyTo(reco);
 
-    reco.recognizing = (_, e) => {
-      // 실시간으로 인식 중인 텍스트를 업데이트
-      setRecognizingText(e.result.text);
-      console.log(`Recognizing: ${e.result.text}`);
-    };
-
     reco.recognized = (_, e) => {
       if (e.result.reason === sdk.ResultReason.RecognizedSpeech) {
         console.log(`Final recognized text: ${e.result.text}`);
@@ -200,14 +172,6 @@ const SpeakingTestPage: React.FC = () => {
           sdk.PronunciationAssessmentResult.fromResult(e.result);
 
         if (pronunciationResult) {
-          console.log(
-            "Pronunciation Score:",
-            pronunciationResult.pronunciationScore
-          );
-          console.log("Accuracy Score:", pronunciationResult.accuracyScore);
-          console.log("Fluency Score:", pronunciationResult.fluencyScore);
-          console.log("Prosody Score:", pronunciationResult.prosodyScore);
-
           // 각 점수를 배열에 저장
           pronunciationScores.push(pronunciationResult.pronunciationScore);
           accuracyScores.push(pronunciationResult.accuracyScore);
@@ -244,7 +208,7 @@ const SpeakingTestPage: React.FC = () => {
     };
 
     reco.sessionStopped = () => {
-      // 인식이 끝나면 각 점수의 평균을 계산하여 클라이언트에게 노출 (소수 1자리까지)
+      // 인식이 끝나면 각 점수의 평균을 계산
       const avgPronunciation = _.mean(pronunciationScores).toFixed(1);
       const avgAccuracy = _.mean(accuracyScores).toFixed(1);
       const avgFluency = _.mean(fluencyScores).toFixed(1);
@@ -267,6 +231,17 @@ const SpeakingTestPage: React.FC = () => {
       const completeness = (similarity * 100).toFixed(1);
       setCompletenessScore(Number(completeness));
       console.log("Completeness Score:", completeness);
+      // TODO : 이후 최종 결과를 Back에 저장 api 보내고 Result 페이지로 이동하는 로직 필요
+      const results = {
+        pronunciationScore: avgPronunciation,
+        accuracyScore: avgAccuracy,
+        fluencyScore: avgFluency,
+        prosodyScore: avgProsody,
+        completenessScore: completeness,
+      };
+      setIsLoading(false);
+      console.log(results);
+      navigate("/speakresult");
     };
 
     reco.startContinuousRecognitionAsync(
@@ -280,111 +255,51 @@ const SpeakingTestPage: React.FC = () => {
     );
   };
 
-  const setCurrentLocation = useSetRecoilState(locationState);
-  useEffect(() => {
-    setCurrentLocation("Speaking Test Page");
-  });
-
-  // 이하 TTS
-  // Azure Speech 서비스 구독 설정
-  speechConfig.speechSynthesisVoiceName = "en-US-JennyNeural";
-  const audioConfig = sdk.AudioConfig.fromDefaultSpeakerOutput();
-  const synthesizer = new sdk.SpeechSynthesizer(speechConfig, audioConfig);
-
-  const handleRead = () =>
-    synthesizer.speakTextAsync(
-      reference_text,
-      (result) => {
-        if (result.reason === sdk.ResultReason.SynthesizingAudioCompleted) {
-          console.log("Synthesis completed. Audio was played.");
-        } else {
-          console.error("Speech synthesis canceled: ", result.errorDetails);
-        }
-        synthesizer.close();
-      },
-      (err) => {
-        console.error("Error: ", err);
-        synthesizer.close();
-      }
-    );
-
   return (
-    <WholeContainer>
-      <h1>Speaking Test Page</h1>
+    <>
+      <MainContainer>
+        <MainLayout>
+          <SpeakingTestReference
+            referenceTest={reference_text}
+            referenceTextTranslate={reference_text_translate}
+          />
+          <SubArea>
+            <SubContainer>
+              <SpeakingTestRealtimeText
+                isExplainText={isExplainText}
+                userRecognizedText={userRecognizedText}
+                userRecognizingText={recognizingText}
+                status={status}
+              />
+            </SubContainer>
 
-      <h3>Origin Text</h3>
-      <p>{reference_text}</p>
-      <button onClick={handleRead}>음성 재생</button>
-      <SubContainer>
-        {/* 녹음 버튼 및 상태 표시 */}
-        <button onClick={startRecording} disabled={status === "recording"}>
-          {status === "recording" ? "Recording..." : "Start Recording"}
-        </button>
-        <button onClick={stopRecording} disabled={status !== "recording"}>
-          Stop Recording
-        </button>
-
-        {/* 녹음 중일 때 시각적 효과 (ex: 녹음 중 애니메이션) */}
-        {status === "recording" && (
-          <div style={{ color: "red", fontWeight: "bold" }}>녹음중...</div>
-        )}
-
-        {/* 녹음된 오디오 파일 재생 */}
-        {mediaBlobUrl && (
-          <div>
-            <h3>Recorded Audio</h3>
-            <audio controls src={mediaBlobUrl}></audio>
-          </div>
-        )}
-
-        <button onClick={handleSubmit} disabled={!mediaBlobUrl || isLoading}>
-          {isLoading ? "Processing..." : "Submit for Evaluation"}
-        </button>
-      </SubContainer>
-
-      <SubContainer>
-        {/* 실시간 인식 텍스트 표시 */}
-        {recognizingText && (
-          <div>
-            <h3>Recognizing Text...</h3>
-            <p>{recognizingText}</p>
-          </div>
-        )}
-
-        {/* 최종 인식된 텍스트 출력 */}
-        {recognitionResult && (
-          <div>
-            <h3>Final Recognition Result</h3>
-            <p>{recognitionResult}</p>
-          </div>
-        )}
-      </SubContainer>
-
-      {/* 최종 발음 평가 점수 출력 */}
-      {averagePronunciationScore !== null && (
-        <div>
-          <h3>Average Pronunciation Assessment Scores</h3>
-          <p>Average Pronunciation Score: {averagePronunciationScore}</p>
-          <p>Average Accuracy Score: {averageAccuracyScore}</p>
-          <p>Average Fluency Score: {averageFluencyScore}</p>
-          <p>Average Prosody Score: {averageProsodyScore}</p>
-        </div>
-      )}
-
-      {/* Completeness 점수 출력 */}
-      {completenessScore !== null && (
-        <div>
-          <h3>Completeness Score</h3>
-          <p>{completenessScore}%</p>
-        </div>
-      )}
-    </WholeContainer>
+            <SubContainer>
+              <SpeakingTestRecord
+                startUserRecording={startUserRecording}
+                stopUserRecording={stopUserRecording}
+                restartRecording={restartRecording}
+                audioUrl={audioUrl}
+                status={status}
+              />
+            </SubContainer>
+          </SubArea>
+        </MainLayout>
+        <SubmitButtonContainer>
+          <SubmitButton
+            onClick={handleRecordingDataSubmit}
+            disabled={isSubmitDisabled}
+          >
+            {isLoading ? "제출중일 경우 문구" : "제출하기"}
+          </SubmitButton>
+        </SubmitButtonContainer>
+      </MainContainer>
+    </>
   );
 };
 
-const WholeContainer = styled.div`
-  width: 80%;
-  min-height: 37.5rem;
+const MainContainer = styled.div`
+  width: 90%;
+  min-height: 50rem;
   margin: auto;
   padding: 0.625rem;
   background-color: ${(props) => props.theme.colors.cardBackground + "BF"};
@@ -394,16 +309,57 @@ const WholeContainer = styled.div`
   transition: box-shadow 0.5s;
 `;
 
+const MainLayout = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+const SubArea = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 80%;
+`;
+
 const SubContainer = styled.div`
-  width: 30%;
-  min-height: 12.5rem;
-  margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 90%;
+  min-height: 15rem;
+  margin: 0.75rem 0;
   padding: 0.625rem;
   background-color: ${(props) => props.theme.colors.cardBackground + "BF"};
   backdrop-filter: blur(0.25rem);
   border-radius: 0.75rem;
   box-shadow: 0.5rem 0.5rem 0.25rem ${(props) => props.theme.colors.shadow};
   transition: box-shadow 0.5s;
+`;
+
+const SubmitButtonContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1rem;
+`;
+
+const SubmitButton = styled.button<{ disabled: boolean }>`
+  padding: 1rem 2rem;
+  background-color: ${(props) =>
+    props.disabled ? "#ccc" : props.theme.colors.primary};
+  color: ${(props) => (props.disabled ? "#666" : "#fff")};
+  border: none;
+  border-radius: 0.625rem;
+  cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};
+  font-size: 1rem;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: ${(props) =>
+      props.disabled ? "#ccc" : props.theme.colors.primaryHover};
+  }
 `;
 
 export default SpeakingTestPage;

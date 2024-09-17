@@ -1,15 +1,20 @@
 package com.newlearn.backend.user.service;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.newlearn.backend.user.dto.request.AvatarUpdateDTO;
+import com.newlearn.backend.user.dto.request.UpdateAvatarDTO;
 import com.newlearn.backend.user.dto.request.SignUpRequestDTO;
 import com.newlearn.backend.user.model.Avatar;
+import com.newlearn.backend.user.model.Category;
 import com.newlearn.backend.user.model.Users;
 import com.newlearn.backend.user.repository.AvatarRepository;
+import com.newlearn.backend.user.repository.CategoryRepository;
 import com.newlearn.backend.user.repository.UserRepository;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -23,6 +28,7 @@ public class UserServiceImpl implements UserService{
 
 	private final UserRepository userRepository;
 	private final AvatarRepository avatarRepository;
+	private final CategoryRepository categoryRepository;
 
 	@Override
 	public Optional<Users> findByEmail(String email) {
@@ -32,19 +38,26 @@ public class UserServiceImpl implements UserService{
 	@Override
 	@Transactional
 	public void signUp(SignUpRequestDTO signUpRequestDTO) {
+		Users user = signUpRequestDTO.toUserEntity();
 
-		Users savedUser = userRepository.save(signUpRequestDTO.toUserEntity());
+		Set<Category> categories = new HashSet<>();
+		for(String categoryName : signUpRequestDTO.getCategories()) {
+			Category category = categoryRepository.findByCategoryName(categoryName);
+			categories.add(category);
+		}
+		user.setCategories(categories);
 
+		Users savedUser = userRepository.save(user);
 		avatarRepository.save(signUpRequestDTO.toAvatarEntity(savedUser.getUserId()));
 	}
 
 	@Override
-	public void updateAvatar(Long userId, AvatarUpdateDTO avatarUpdateDTO) {
+	public void updateAvatar(Long userId, UpdateAvatarDTO updateAvatarDTO) {
 
 		Avatar avatar = avatarRepository.findByUserId(userId).orElseThrow(() -> new EntityNotFoundException("Avatar not found"));
-		avatar.setSkin(avatarUpdateDTO.getSkin());
-		avatar.setEyes(avatarUpdateDTO.getEyes());
-		avatar.setMask(avatarUpdateDTO.getMask());
+		avatar.setSkin(updateAvatarDTO.getSkin());
+		avatar.setEyes(updateAvatarDTO.getEyes());
+		avatar.setMask(updateAvatarDTO.getMask());
 
 		avatarRepository.save(avatar);
 	}
@@ -68,6 +81,21 @@ public class UserServiceImpl implements UserService{
 		Users user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다"));
 
 		user.setDifficulty(difficulty);
+		userRepository.save(user);
+	}
+
+	@Override
+	public void updateCategory(Long userId, List<String> categories) {
+
+		Users user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다"));
+
+		Set<Category> newCategories = new HashSet<>();
+		for(String categoryName : categories) {
+			Category category = categoryRepository.findByCategoryName(categoryName);
+			newCategories.add(category);
+		}
+		user.updateCategories(newCategories);
+
 		userRepository.save(user);
 	}
 }

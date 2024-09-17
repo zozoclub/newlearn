@@ -26,6 +26,7 @@ public enum ErrorCode {
 	USER_UPDATE_FAILED("U010", HttpStatus.BAD_REQUEST, "사용자 정보 업데이트에 실패했습니다."),
 	EMAIL_ALREADY_EXIST("U011", HttpStatus.BAD_REQUEST, "이미 존재하는 이메일입니다."),
 	NICKNAME_ALREADY_USED("U012", HttpStatus.BAD_REQUEST, "닉네임 중복 조회에 실패했습니다."),
+	NICKNAME_NOT_FOUND("U013", HttpStatus.BAD_REQUEST, "닉네임 조회에 실패했습니다."),
 
 	// Unauthorized
 	AUTHENTICATION_FAILED("A001", HttpStatus.UNAUTHORIZED, "인증에 실패했습니다."),

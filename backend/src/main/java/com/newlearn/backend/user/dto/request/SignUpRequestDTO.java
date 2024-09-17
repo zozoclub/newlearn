@@ -36,9 +36,9 @@ public class SignUpRequestDTO {
 			.build();
 	}
 
-	public Avatar toAvatarEntity(Long userId) {
+	public Avatar toAvatarEntity(Users user) {
 		return Avatar.builder()
-			.userId(userId)
+			.user(user)
 			.skin(this.skin)
 			.eyes(this.eyes)
 			.mask(this.mask)

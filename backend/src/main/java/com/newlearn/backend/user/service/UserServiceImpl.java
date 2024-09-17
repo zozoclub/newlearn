@@ -47,14 +47,23 @@ public class UserServiceImpl implements UserService{
 		}
 		user.setCategories(categories);
 
-		Users savedUser = userRepository.save(user);
-		avatarRepository.save(signUpRequestDTO.toAvatarEntity(savedUser.getUserId()));
+		Avatar avatar = signUpRequestDTO.toAvatarEntity(user);
+		user.setAvatar(avatar);
+
+		userRepository.save(user);
 	}
 
 	@Override
+	@Transactional
 	public void updateAvatar(Long userId, UpdateAvatarDTO updateAvatarDTO) {
+		Users user = userRepository.findById(userId)
+			.orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다"));
 
-		Avatar avatar = avatarRepository.findByUserId(userId).orElseThrow(() -> new EntityNotFoundException("Avatar not found"));
+		Avatar avatar = user.getAvatar();
+		if (avatar == null) {
+			throw new EntityNotFoundException("아바타를 찾을 수 없습니다.");
+		}
+
 		avatar.setSkin(updateAvatarDTO.getSkin());
 		avatar.setEyes(updateAvatarDTO.getEyes());
 		avatar.setMask(updateAvatarDTO.getMask());
@@ -98,4 +107,6 @@ public class UserServiceImpl implements UserService{
 
 		userRepository.save(user);
 	}
+
+
 }

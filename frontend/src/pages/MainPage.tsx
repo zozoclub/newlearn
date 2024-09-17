@@ -6,6 +6,24 @@ import { useEffect } from "react";
 import { useSetRecoilState } from "recoil";
 import styled from "styled-components";
 
+const Container = styled.div`
+  display: flex;
+  justify-content: space-around;
+  padding: 50px;
+`;
+
+const NewsContainer = styled.div`
+  margin: 0 30px;
+`;
+
+const WidgetContainer = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-auto-rows: 240px;
+  margin: auto 0;
+`;
+
+
 const MainPage = () => {
   const setCurrentLocation = useSetRecoilState(locationState);
   const widgetList = [

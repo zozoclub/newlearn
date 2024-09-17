@@ -4,6 +4,7 @@ import SpeakingTestPage from "@pages/SpeakingTestPage";
 import SpeakingTestResultPage from "@pages/SpeakingTestResultPage";
 import WordTestPage from "@pages/WordTestPage";
 import NotFoundPage from "@pages/NotFoundPage";
+import MyPage from "@pages/MyPage";
 import App from "./App";
 import NewsPage from "@pages/NewsPage";
 
@@ -35,6 +36,10 @@ export const router = createBrowserRouter([
       {
         path: "*",
         element: <NotFoundPage />,
+      },
+      {
+        path: "mypage",
+        element: <MyPage />,
       },
     ],
   },

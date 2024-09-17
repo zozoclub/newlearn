@@ -1,6 +1,5 @@
 import React from "react";
 import styled from "styled-components";
-import { Theme } from "types/theme";
 
 type ButtonProps = {
   $varient: "primary" | "cancel";
@@ -9,7 +8,20 @@ type ButtonProps = {
   onClick: () => void;
 };
 
-const StyledButton = styled.button<ButtonProps & { theme: Theme }>`
+const Button: React.FC<ButtonProps> = ({
+  children,
+  $varient = "primary",
+  size = "medium",
+  onClick,
+}) => {
+  return (
+    <StyledButton $varient={$varient} size={size} onClick={onClick}>
+      {children}
+    </StyledButton>
+  );
+};
+
+const StyledButton = styled.button<ButtonProps>`
   padding: ${(props) => {
     switch (props.size) {
       case "small":
@@ -39,18 +51,5 @@ const StyledButton = styled.button<ButtonProps & { theme: Theme }>`
   }};
   cursor: pointer;
 `;
-
-const Button: React.FC<ButtonProps> = ({
-  children,
-  $varient = "primary",
-  size = "medium",
-  onClick,
-}) => {
-  return (
-    <StyledButton $varient={$varient} size={size} onClick={onClick}>
-      {children}
-    </StyledButton>
-  );
-};
 
 export default Button;

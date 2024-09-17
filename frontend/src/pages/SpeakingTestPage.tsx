@@ -5,11 +5,20 @@ import * as sdk from "microsoft-cognitiveservices-speech-sdk";
 import _ from "lodash";
 import stringSimilarity from "string-similarity";
 import { useSetRecoilState } from "recoil";
-import locationState from "@store/state";
+import locationState from "@store/locationState";
+
+// Styled Component
+import styled from "styled-components";
 
 const SpeakingTestPage: React.FC = () => {
   const [recognizingText, setRecognizingText] = useState<string>(""); // 실시간 인식 텍스트
   const [recognitionResult, setRecognitionResult] = useState<string>(""); // 최종 인식 텍스트
+
+  const speechConfig = sdk.SpeechConfig.fromSubscription(
+    import.meta.env.VITE_SPEECH_API_KEY,
+    import.meta.env.VITE_SPEECH_REGION
+  );
+
   const [averagePronunciationScore, setAveragePronunciationScore] = useState<
     number | null
   >(null);
@@ -33,19 +42,21 @@ const SpeakingTestPage: React.FC = () => {
   const accuracyScores: number[] = [];
   const fluencyScores: number[] = [];
   const prosodyScores: number[] = [];
+
   const recognizedTexts: string[] = []; // 인식된 텍스트들을 저장
 
+  // 예제 문장 (나중에 Back에서 받아서 출력할 문구)
   const reference_text =
     "Today was a beautiful day. We had a great time taking a long walk outside in the morning. The sun was shining brightly, and a gentle breeze made the weather feel perfect. As we strolled through the park, we noticed the trees swaying softly, and the sound of birds chirping filled the air.";
 
-  // react-media-recorder를 이용한 녹음 관리
+  // react-media-recorder 녹음 관리
   const { startRecording, stopRecording, mediaBlobUrl, status } =
     useReactMediaRecorder({ audio: true });
 
   const handleSubmit = async () => {
     if (!mediaBlobUrl) return;
 
-    setIsLoading(true);
+    setIsLoading(true); // 로딩 시작
 
     // Fetch the webm audio blob from mediaBlobUrl
     const response = await fetch(mediaBlobUrl);
@@ -161,10 +172,6 @@ const SpeakingTestPage: React.FC = () => {
     setAudioFile(audioFile);
 
     const audioConfig = sdk.AudioConfig.fromWavFileInput(audioFile);
-    const speechConfig = sdk.SpeechConfig.fromSubscription(
-      import.meta.env.VITE_SPEECH_API_KEY,
-      import.meta.env.VITE_SPEECH_REGION
-    );
 
     const pronunciationAssessmentConfig = new sdk.PronunciationAssessmentConfig(
       reference_text,
@@ -222,6 +229,10 @@ const SpeakingTestPage: React.FC = () => {
       } else if (e.result.reason === sdk.ResultReason.NoMatch) {
         console.log("No speech could be recognized.");
         alert("No speech was recognized. Please try again.");
+        // 오류 이후 행동
+        setAudioFile(null);
+        setAveragePronunciationScore(null);
+        setCompletenessScore(null);
       }
     };
     // 에러 코드 반환
@@ -274,53 +285,80 @@ const SpeakingTestPage: React.FC = () => {
     setCurrentLocation("Speaking Test Page");
   });
 
+  // 이하 TTS
+  // Azure Speech 서비스 구독 설정
+  speechConfig.speechSynthesisVoiceName = "en-US-JennyNeural";
+  const audioConfig = sdk.AudioConfig.fromDefaultSpeakerOutput();
+  const synthesizer = new sdk.SpeechSynthesizer(speechConfig, audioConfig);
+
+  const handleRead = () =>
+    synthesizer.speakTextAsync(
+      reference_text,
+      (result) => {
+        if (result.reason === sdk.ResultReason.SynthesizingAudioCompleted) {
+          console.log("Synthesis completed. Audio was played.");
+        } else {
+          console.error("Speech synthesis canceled: ", result.errorDetails);
+        }
+        synthesizer.close();
+      },
+      (err) => {
+        console.error("Error: ", err);
+        synthesizer.close();
+      }
+    );
+
   return (
-    <div>
+    <WholeContainer>
       <h1>Speaking Test Page</h1>
-
-      {/* 녹음 버튼 및 상태 표시 */}
-      <button onClick={startRecording} disabled={status === "recording"}>
-        {status === "recording" ? "Recording..." : "Start Recording"}
-      </button>
-      <button onClick={stopRecording} disabled={status !== "recording"}>
-        Stop Recording
-      </button>
-
-      {/* 녹음 중일 때 시각적 효과 (ex: 녹음 중 애니메이션) */}
-      {status === "recording" && (
-        <div style={{ color: "red", fontWeight: "bold" }}>녹음중...</div>
-      )}
-
-      {/* 녹음된 오디오 파일 재생 */}
-      {mediaBlobUrl && (
-        <div>
-          <h3>Recorded Audio</h3>
-          <audio controls src={mediaBlobUrl}></audio>
-        </div>
-      )}
-
-      <button onClick={handleSubmit} disabled={!mediaBlobUrl || isLoading}>
-        {isLoading ? "Processing..." : "Submit for Evaluation"}
-      </button>
 
       <h3>Origin Text</h3>
       <p>{reference_text}</p>
+      <button onClick={handleRead}>음성 재생</button>
+      <SubContainer>
+        {/* 녹음 버튼 및 상태 표시 */}
+        <button onClick={startRecording} disabled={status === "recording"}>
+          {status === "recording" ? "Recording..." : "Start Recording"}
+        </button>
+        <button onClick={stopRecording} disabled={status !== "recording"}>
+          Stop Recording
+        </button>
 
-      {/* 실시간 인식 텍스트 표시 */}
-      {recognizingText && (
-        <div>
-          <h3>Recognizing Text...</h3>
-          <p>{recognizingText}</p>
-        </div>
-      )}
+        {/* 녹음 중일 때 시각적 효과 (ex: 녹음 중 애니메이션) */}
+        {status === "recording" && (
+          <div style={{ color: "red", fontWeight: "bold" }}>녹음중...</div>
+        )}
 
-      {/* 최종 인식된 텍스트 출력 */}
-      {recognitionResult && (
-        <div>
-          <h3>Final Recognition Result</h3>
-          <p>{recognitionResult}</p>
-        </div>
-      )}
+        {/* 녹음된 오디오 파일 재생 */}
+        {mediaBlobUrl && (
+          <div>
+            <h3>Recorded Audio</h3>
+            <audio controls src={mediaBlobUrl}></audio>
+          </div>
+        )}
+
+        <button onClick={handleSubmit} disabled={!mediaBlobUrl || isLoading}>
+          {isLoading ? "Processing..." : "Submit for Evaluation"}
+        </button>
+      </SubContainer>
+
+      <SubContainer>
+        {/* 실시간 인식 텍스트 표시 */}
+        {recognizingText && (
+          <div>
+            <h3>Recognizing Text...</h3>
+            <p>{recognizingText}</p>
+          </div>
+        )}
+
+        {/* 최종 인식된 텍스트 출력 */}
+        {recognitionResult && (
+          <div>
+            <h3>Final Recognition Result</h3>
+            <p>{recognitionResult}</p>
+          </div>
+        )}
+      </SubContainer>
 
       {/* 최종 발음 평가 점수 출력 */}
       {averagePronunciationScore !== null && (
@@ -340,8 +378,32 @@ const SpeakingTestPage: React.FC = () => {
           <p>{completenessScore}%</p>
         </div>
       )}
-    </div>
+    </WholeContainer>
   );
 };
+
+const WholeContainer = styled.div`
+  width: 80%;
+  min-height: 37.5rem;
+  margin: auto;
+  padding: 0.625rem;
+  background-color: ${(props) => props.theme.colors.cardBackground + "BF"};
+  backdrop-filter: blur(0.25rem);
+  border-radius: 0.75rem;
+  box-shadow: 0.5rem 0.5rem 0.25rem ${(props) => props.theme.colors.shadow};
+  transition: box-shadow 0.5s;
+`;
+
+const SubContainer = styled.div`
+  width: 30%;
+  min-height: 12.5rem;
+  margin: auto;
+  padding: 0.625rem;
+  background-color: ${(props) => props.theme.colors.cardBackground + "BF"};
+  backdrop-filter: blur(0.25rem);
+  border-radius: 0.75rem;
+  box-shadow: 0.5rem 0.5rem 0.25rem ${(props) => props.theme.colors.shadow};
+  transition: box-shadow 0.5s;
+`;
 
 export default SpeakingTestPage;

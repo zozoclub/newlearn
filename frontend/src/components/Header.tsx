@@ -2,37 +2,13 @@ import styled from "styled-components";
 import { useRecoilValue } from "recoil";
 
 import LogoImage from "@assets/images/logo-full.png";
-import locationState from "@store/state";
-import Button from "@components/Button";
-import { useTheme } from "@context/ThemeContext";
-import { useNavigate } from "react-router-dom";
-
-const HeaderContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 150px;
-  padding: 0 5vw;
-`;
-
-const Logo = styled.img.attrs({
-  src: `${LogoImage}`,
-  alt: "LogoImage",
-})`
-  width: 275px;
-  height: 60px;
-  cursor: pointer;
-`;
-
-const PageInfo = styled.div`
-  font-size: 2rem;
-  font-weight: 600;
-`;
+import locationState from "@store/locationState";
+import DarkModeButton from "./DarkModeButton";
+import { usePageTransition } from "@hooks/usePageTransition";
 
 const Header = () => {
-  const navigate = useNavigate();
   const currentLocation = useRecoilValue(locationState);
-  const { toggleTheme } = useTheme();
+  const transitionTo = usePageTransition();
 
   return (
     <HeaderContainer>
@@ -40,19 +16,37 @@ const Header = () => {
       {currentLocation !== "" && (
         <Logo
           onClick={() => {
-            navigate("/");
+            transitionTo("/");
           }}
         />
       )}
-
-      {/* 테마 전환 버튼 나중에 따로 만들 예정 */}
-      <Button $varient="cancel" size="medium" onClick={toggleTheme}>
-        테마 전환(임시)
-      </Button>
-
+      <DarkModeButton />
       <PageInfo>{currentLocation}</PageInfo>
     </HeaderContainer>
   );
 };
+
+const HeaderContainer = styled.div`
+  display: flex;
+  position: relative;
+  justify-content: space-between;
+  align-items: center;
+  height: 9.375rem;
+  padding: 0 5%;
+`;
+
+const Logo = styled.img.attrs({
+  src: `${LogoImage}`,
+  alt: "LogoImage",
+})`
+  width: 17.5rem;
+  height: 3.75rem;
+  cursor: pointer;
+`;
+
+const PageInfo = styled.div`
+  font-size: 2rem;
+  font-weight: 600;
+`;
 
 export default Header;

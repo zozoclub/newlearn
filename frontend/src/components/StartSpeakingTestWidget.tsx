@@ -10,8 +10,8 @@ const StartSpeakingTestWidget: React.FC = () => {
   };
   return (
     <WidgetContainer>
-      <Title>문장 속 빈칸 단어 맞추기</Title>
-      <Explain>예문 속 빈칸에 알맞은 단어를 넣어 문장을 완성해보세요.</Explain>
+      <Title>발음 정확도 테스트</Title>
+      <Explain>제시되는 예문을 읽고 점수를 확인 해보세요.</Explain>
       <StartButton onClick={handleStartTest}>테스트 하러가기</StartButton>
     </WidgetContainer>
   );

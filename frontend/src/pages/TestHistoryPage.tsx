@@ -3,6 +3,9 @@ import { useSetRecoilState } from "recoil";
 import locationState from "@store/locationState";
 import styled from "styled-components";
 
+import StartWordTestWidget from "@components/StartWordTestWidget";
+import StartSpeakingTestWidget from "@components/StartSpeakingTestWidget";
+
 const TestHistoryPage: React.FC = () => {
   // 페이지 위치 상태 설정
   const setCurrentLocation = useSetRecoilState(locationState);
@@ -13,8 +16,12 @@ const TestHistoryPage: React.FC = () => {
   return (
     <Layout>
       <LeftContainer>
-        <SmallContainer>First</SmallContainer>
-        <SmallContainer>Second</SmallContainer>
+        <SmallContainer>
+          <StartWordTestWidget />
+        </SmallContainer>
+        <SmallContainer>
+          <StartSpeakingTestWidget />
+        </SmallContainer>
       </LeftContainer>
       <RightContainer>
         <BigContainer>Third</BigContainer>

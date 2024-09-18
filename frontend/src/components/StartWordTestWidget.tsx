@@ -91,7 +91,7 @@ const Input = styled.input`
   font-size: 1.25rem;
   border: none;
   font-family: "Righteous", sans-serif;
-  -moz-appearance: textfield;
+  -appearance: textfield;
   &::-webkit-outer-spin-button,
   &::-webkit-inner-spin-button {
     -webkit-appearance: none;

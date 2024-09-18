@@ -87,6 +87,8 @@ const TextButton = styled.button`
 const Input = styled.input`
   width: 3rem;
   text-align: center;
+  background-color: transparent;
+  color: ${(props) => props.theme.colors.text};
   font-size: 1.25rem;
   border: none;
   font-family: "Righteous", sans-serif;

@@ -44,6 +44,7 @@ public enum ErrorCode {
 
 	// Study Error
 	GOAL_CREATE_FAILED("S001", HttpStatus.BAD_REQUEST, "목표 설정에 실패했습니다."),
+	STUDY_PROGRESS_NOT_FOUND("S002", HttpStatus.NOT_FOUND, "학습 진도율 정보를 찾을 수 없습니다."),
 	;
 
 	private final String code;

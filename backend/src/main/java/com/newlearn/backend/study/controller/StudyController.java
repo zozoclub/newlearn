@@ -3,13 +3,12 @@ package com.newlearn.backend.study.controller;
 import com.newlearn.backend.common.ApiResponse;
 import com.newlearn.backend.common.ErrorCode;
 import com.newlearn.backend.study.dto.request.GoalRequestDTO;
-import com.newlearn.backend.study.model.Goal;
+import com.newlearn.backend.study.dto.response.StudyProgressDTO;
 import com.newlearn.backend.study.service.StudyService;
 import com.newlearn.backend.user.model.Users;
 import com.newlearn.backend.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,8 +39,20 @@ public class StudyController {
     }
 
     // 개인 학습 진도율 조회
+    @GetMapping("/progress")
+    public ApiResponse<?> getStudyProgress(Authentication authentication) throws Exception {
+        try {
+            Users user = userService.findByEmail(authentication.getName())
+                    .orElseThrow(() -> new Exception("회원정보 없음"));
 
+            StudyProgressDTO progress = studyService.getStudyProgress(user.getUserId());
 
+            return ApiResponse.createSuccess(progress, "개인 진도율 조회 성공");
+        } catch (Exception e) {
+            log.error("진도율 조회 중 오류 발생", e);
+            return ApiResponse.createError(ErrorCode.STUDY_PROGRESS_NOT_FOUND);
+        }
+    }
     
     // 단어 테스트 문제 가져오기
     

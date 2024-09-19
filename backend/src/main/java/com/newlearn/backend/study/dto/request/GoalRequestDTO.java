@@ -7,9 +7,6 @@ import lombok.Getter;
 @Builder
 public class GoalRequestDTO {
     private Long goalReadNewsCount;
-
     private Long goalPronounceTestScore;
-
     private Long goalCompleteWord;
-
 }

@@ -38,20 +38,24 @@ export default MainPage;
 
 const Container = styled.div`
   display: flex;
+  position: relative;
   height: 35rem;
   justify-content: space-around;
-  padding: 5rem;
+  padding: 5rem 0;
 `;
 
 const NewsContainer = styled.div`
-  width: 50%;
-  margin-right: 10%;
+  position: relative;
+  z-index: 1;
+  width: 100%;
 `;
 
 const WidgetContainer = styled.div`
   display: grid;
-  position: relative;
+  position: absolute;
+  z-index: 1;
+  right: 0;
   grid-template-columns: 1fr 1fr;
   grid-gap: 2.5rem;
-  width: 35%;
+  width: 37.5%;
 `;

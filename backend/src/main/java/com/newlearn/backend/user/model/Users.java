@@ -66,15 +66,19 @@ public class Users {
 	private Long difficulty;
 
 	@Column(name = "total_news_read_count")
+	@ColumnDefault("0")
 	private Long totalNewsReadCount;
 
 	@Column(name = "total_word_count")
+	@ColumnDefault("0")
 	private Long totalWordCount;
 
 	@Column(name = "scrap_count")
+	@ColumnDefault("0")
 	private Long scrapCount;
 
 	@Column(name = "experience")
+	@ColumnDefault("0")
 	private Long experience;
 
 	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -83,9 +87,9 @@ public class Users {
 	@Setter
 	@ManyToMany
 	@JoinTable(
-		name = "user_interest",
+		name = "user_category",
 		joinColumns = @JoinColumn(name = "user_id"),
-		inverseJoinColumns = @JoinColumn(name = "interest_id")
+		inverseJoinColumns = @JoinColumn(name = "category_id")
 	)
 	private Set<Category> categories = new HashSet<>();
 

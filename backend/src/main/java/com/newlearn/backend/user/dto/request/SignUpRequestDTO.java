@@ -33,6 +33,10 @@ public class SignUpRequestDTO {
 			.provider(this.provider)
 			.providerId(this.providerId)
 			.difficulty(this.difficulty)
+			.experience(0L)
+			.totalNewsReadCount(0L)
+			.scrapCount(0L)
+			.totalWordCount(0L)
 			.build();
 	}
 

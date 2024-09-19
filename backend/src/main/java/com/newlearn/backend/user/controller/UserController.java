@@ -3,22 +3,23 @@ package com.newlearn.backend.user.controller;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.newlearn.backend.common.ApiResponse;
 import com.newlearn.backend.common.ErrorCode;
 import com.newlearn.backend.common.JwtTokenProvider;
-import com.newlearn.backend.user.dto.request.AvatarUpdateDTO;
+import com.newlearn.backend.user.dto.request.UpdateAvatarDTO;
 import com.newlearn.backend.user.dto.request.SignUpRequestDTO;
+import com.newlearn.backend.user.dto.request.UpdateCategoryRequestDTO;
+import com.newlearn.backend.user.dto.request.UpdateDifficultyRequestDTO;
 import com.newlearn.backend.user.dto.request.UpdateNicknameRequestDto;
 import com.newlearn.backend.user.dto.response.LoginResponseDTO;
 import com.newlearn.backend.user.dto.response.RefreshTokenResponseDTO;
@@ -57,13 +58,13 @@ public class UserController {
 
 	//아바타 수정
 	@PutMapping("/update-avatar")
-	public ApiResponse<?> updateAvatar(Authentication authentication, @RequestBody AvatarUpdateDTO avatarUpdateDTO) throws
+	public ApiResponse<?> updateAvatar(Authentication authentication, @RequestBody UpdateAvatarDTO updateAvatarDTO) throws
 		Exception {
 		try {
 			Users user = userService.findByEmail(authentication.getName())
 				.orElseThrow(() -> new Exception("회원정보 없음"));
 
-			userService.updateAvatar(user.getUserId(), avatarUpdateDTO);
+			userService.updateAvatar(user.getUserId(), updateAvatarDTO);
 
 			return ApiResponse.createSuccess(null, "성공적으로 아바타 업데이트");
 		} catch (Exception e) {
@@ -155,7 +156,7 @@ public class UserController {
 		}
 	}
 
-	@PutMapping("update-nickname")
+	@PutMapping("/update-nickname")
 	public ApiResponse<?> updateNickname(Authentication authentication, @RequestBody UpdateNicknameRequestDto updateNicknameRequestDto) {
 		try {
 			Users user = userService.findByEmail(authentication.getName())
@@ -164,7 +165,7 @@ public class UserController {
 			String nickname = updateNicknameRequestDto.getNickname();
 
 			if(!userService.checkNickname(nickname)) {
-				return ApiResponse.createError(ErrorCode.NICKNAME_NOT_FOUND);
+				return ApiResponse.createError(ErrorCode.NICKNAME_ALREADY_USED);
 			}
 			userService.updateNickname(user.getUserId(), nickname);
 			return ApiResponse.createSuccess(null, "닉네임 업데이트 성공");
@@ -174,4 +175,59 @@ public class UserController {
 		}
 	}
 
+	@PutMapping("/update-difficulty")
+	public ApiResponse<?> updateDifficulty(Authentication authentication, @RequestBody UpdateDifficultyRequestDTO updateDifficultyRequestDTO) {
+		try {
+			Users user = userService.findByEmail(authentication.getName())
+				.orElseThrow(() -> new Exception("회원정보 없음"));
+
+			userService.updateDifficulty(user.getUserId(), updateDifficultyRequestDTO.getDifficulty());
+			return ApiResponse.createSuccess(null, "난이도 업데이트 성공");
+
+		} catch (Exception e) {
+			return ApiResponse.createError(ErrorCode.USER_UPDATE_FAILED);
+		}
+	}
+
+	@PutMapping("/update-interest")
+	public ApiResponse<?> updateInterest(Authentication authentication, @RequestBody UpdateCategoryRequestDTO updateCategoryRequestDTO) {
+		try {
+			Users user = userService.findByEmail(authentication.getName())
+				.orElseThrow(() -> new Exception("회원정보 없음"));
+
+
+			userService.updateCategory(user.getUserId(), updateCategoryRequestDTO.getCategories());
+			return ApiResponse.createSuccess(null, "난이도 업데이트 성공");
+
+		} catch (Exception e) {
+			return ApiResponse.createError(ErrorCode.USER_UPDATE_FAILED);
+		}
+	}
+
+	@DeleteMapping("/delete")
+	public ApiResponse<?> deleteUser(Authentication authentication, HttpServletRequest request, HttpServletResponse response) {
+		try {
+			Users user = userService.findByEmail(authentication.getName())
+				.orElseThrow(() -> new Exception("회원정보 없음"));
+
+			String refreshToken = extractRefreshToken(request);
+			if (refreshToken != null && jwtTokenProvider.validateToken(refreshToken)) {
+
+				tokenService.blacklistRefreshToken(refreshToken);
+
+				Cookie cookie = new Cookie("refreshToken", null);
+				cookie.setMaxAge(0);
+				cookie.setPath("/");
+				response.addCookie(cookie);
+			} else {
+				return ApiResponse.createError(ErrorCode.INVALID_JWT_TOKEN);
+			}
+
+			userService.deleteUser(user.getUserId());
+
+			return ApiResponse.createSuccess(null, "회원 탈퇴가 완료되었습니다.");
+		} catch (Exception e) {
+			return ApiResponse.createError(ErrorCode.USER_DELETE_FAILED);
+		}
+	}
 }

@@ -1,11 +1,16 @@
 package com.newlearn.backend.user.model;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.hibernate.annotations.ColumnDefault;
 
+import com.newlearn.backend.word.model.Word;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -14,6 +19,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -59,25 +66,35 @@ public class Users {
 	private Long difficulty;
 
 	@Column(name = "total_news_read_count")
+	@ColumnDefault("0")
 	private Long totalNewsReadCount;
 
 	@Column(name = "total_word_count")
+	@ColumnDefault("0")
 	private Long totalWordCount;
 
 	@Column(name = "scrap_count")
+	@ColumnDefault("0")
 	private Long scrapCount;
 
 	@Column(name = "experience")
+	@ColumnDefault("0")
 	private Long experience;
+
+	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Avatar avatar;
 
 	@Setter
 	@ManyToMany
 	@JoinTable(
-		name = "user_interest",
+		name = "user_category",
 		joinColumns = @JoinColumn(name = "user_id"),
-		inverseJoinColumns = @JoinColumn(name = "interest_id")
+		inverseJoinColumns = @JoinColumn(name = "category_id")
 	)
-	private Set<Category> interests = new HashSet<>();
+	private Set<Category> categories = new HashSet<>();
+
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Word> words = new ArrayList<>();
 
 	@Column(name = "created_at", nullable = false, updatable = false,
 		insertable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
@@ -89,6 +106,8 @@ public class Users {
 		this.providerId = providerId;
 	}
 
-
-
+	public void updateCategories(Set<Category> newCategories) {
+		this.categories.clear();
+		this.categories.addAll(newCategories);
+	}
 }

@@ -85,7 +85,7 @@ const SmallContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 19rem;
+  min-height: 19.675rem;
   margin: 0.75rem 0;
   padding: 0.625rem;
   background-color: ${(props) => props.theme.colors.cardBackground + "BF"};

@@ -47,9 +47,10 @@ const getLabelFromKey = (key: CountDataKey): string => {
 
 interface CategoryChartProps {
   countData: CountData;
+  height: number;
 }
 
-const CategoryChart: React.FC<CategoryChartProps> = ({ countData }) => {
+const CategoryChart: React.FC<CategoryChartProps> = ({ countData, height }) => {
   const theme = useTheme();
 
   const maxValue = Math.max(...Object.values(countData));
@@ -111,7 +112,7 @@ const CategoryChart: React.FC<CategoryChartProps> = ({ countData }) => {
   };
 
   return (
-    <ChartContainer>
+    <ChartContainer $height={height}>
       <Radar data={chartData} options={options} />
     </ChartContainer>
   );
@@ -119,7 +120,7 @@ const CategoryChart: React.FC<CategoryChartProps> = ({ countData }) => {
 
 export default CategoryChart;
 
-const ChartContainer = styled.div`
+const ChartContainer = styled.div<{ $height: number }>`
   width: 100%;
-  height: 300px;
+  height: ${(props) => props.$height};
 `;

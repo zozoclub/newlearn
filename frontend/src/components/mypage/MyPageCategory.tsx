@@ -40,7 +40,7 @@ const MyPageCategory: React.FC = () => {
   return (
     <Container>
       <ChartContainer>
-        <CategoryChart countData={countData} />
+        <CategoryChart countData={countData} height={300} />
       </ChartContainer>
       <DataContainer>
         {(Object.entries(countData) as [CountDataKey, number][]).map(

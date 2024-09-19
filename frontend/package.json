@@ -16,6 +16,7 @@
     "axios": "^1.7.7",
     "chart.js": "^4.4.4",
     "chartjs-plugin-datalabels": "^2.2.0",
+    "framer-motion": "^11.5.4",
     "lodash": "^4.17.21",
     "microsoft-cognitiveservices-speech-sdk": "^1.40.0",
     "react": "^18.3.1",
@@ -26,7 +27,8 @@
     "recoil": "^0.7.7",
     "string-similarity": "^4.0.4",
     "styled-components": "^6.1.13",
-    "styled-reset": "^4.5.2"
+    "styled-reset": "^4.5.2",
+    "swiper": "^11.1.14"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",

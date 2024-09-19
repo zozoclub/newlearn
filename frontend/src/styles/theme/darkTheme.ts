@@ -2,6 +2,7 @@ import { Theme } from "types/theme";
 
 export const darkTheme: Theme = {
   colors: {
+    background: "#000000",
     cardBackground: "#333344",
     primary: "#0099ff",
     primaryPress: "#62b7ff",

@@ -22,14 +22,15 @@ const Button: React.FC<ButtonProps> = ({
 };
 
 const StyledButton = styled.button<ButtonProps>`
+  width: ${(props) => props.size === "large" && "25rem"};
   padding: ${(props) => {
     switch (props.size) {
       case "small":
         return "0.25rem 0.5rem";
       case "large":
-        return "0.75rem 1.5rem";
+        return "1rem 1.5rem";
       default:
-        return "0.5rem 1rem";
+        return "1rem 1rem";
     }
   }};
   background-color: ${(props) =>
@@ -38,17 +39,8 @@ const StyledButton = styled.button<ButtonProps>`
       : props.theme.colors.cancel};
   color: ${(props) => props.$varient === "primary" && "#ffffff"};
   border: none;
-  border-radius: 0.25rem;
-  font-size: ${(props) => {
-    switch (props.size) {
-      case "small":
-        return "0.8rem";
-      case "large":
-        return "1.2rem";
-      default:
-        return "1rem";
-    }
-  }};
+  border-radius: 0.5rem;
+  font-size: 1rem;
   cursor: pointer;
 `;
 

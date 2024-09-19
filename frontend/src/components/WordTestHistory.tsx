@@ -222,5 +222,6 @@ const ScrollableTestHistoryList = styled.div`
   overflow-y: auto; /* 세로 스크롤 가능 */
   overflow-x: hidden; /* 좌우 스크롤 제거 */
   padding-top: 1rem;
+  padding-right: 1rem;
   margin-top: 2rem;
 `;

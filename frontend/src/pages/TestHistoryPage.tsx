@@ -3,10 +3,10 @@ import { useSetRecoilState } from "recoil";
 import locationState from "@store/locationState";
 import styled from "styled-components";
 
-import StartWordTestWidget from "@components/StartWordTestWidget";
-import StartSpeakingTestWidget from "@components/StartSpeakingTestWidget";
-import SpeakingTestHistory from "@components/SpeakingTestHistory";
-import WordTestHistory from "@components/WordTestHistory";
+import StartWordTestWidget from "@components/testpage/StartWordTestWidget";
+import StartSpeakingTestWidget from "@components/testpage/StartSpeakingTestWidget";
+import SpeakingTestHistory from "@components/testpage/SpeakingTestHistory";
+import WordTestHistory from "@components/testpage/WordTestHistory";
 
 const TestHistoryPage: React.FC = () => {
   const setCurrentLocation = useSetRecoilState(locationState);

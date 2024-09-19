@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import * as sdk from "microsoft-cognitiveservices-speech-sdk";
 import { useSetRecoilState } from "recoil";
 import locationState from "@store/locationState";
-import SpeakingTestResultReference from "@components/SpeakingTestResultReference";
-import SpeakingTestResultCharts from "@components/SpeakingTestResultCharts";
-import SpeakingTestResultInfoWidget from "@components/SpeakingTestResultInfoWidget";
+import SpeakingTestResultReference from "@components/testpage/SpeakingTestResultReference";
+import SpeakingTestResultCharts from "@components/testpage/SpeakingTestResultCharts";
+import SpeakingTestResultInfoWidget from "@components/testpage/SpeakingTestResultInfoWidget";
 
 import styled from "styled-components";
 

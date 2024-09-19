@@ -156,7 +156,7 @@ const SpeakingTestResultCharts: React.FC<Props> = ({ results }) => {
               datalabels: {
                 align: "end",
                 anchor: "end",
-                formatter: (value) => `${value}점`,
+                formatter: (value) => `${value}`,
                 font: {
                   size: 14,
                   family: "Pretendard",
@@ -201,12 +201,12 @@ const DoughnutChartContainer = styled.div`
   display: flex;
   justify-content: center;
   height: 12rem;
-  margin: 1rem;
+  margin-bottom: 1rem;
 `;
 
 const BarChartContainer = styled.div`
   display: flex;
   justify-content: center;
-  height: 12rem;
-  margin: 1rem;
+  height: 10rem;
+  margin-bottom: 1rem;
 `;

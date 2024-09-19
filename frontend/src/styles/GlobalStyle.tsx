@@ -3,7 +3,7 @@ import reset from "styled-reset";
 
 export const GlobalStyle = createGlobalStyle`
   ${reset}
-  body, button {
+  body, button, ::placeholder {
     margin: 0;
     padding: 0;
     color: ${(props) => props.theme.colors.text};

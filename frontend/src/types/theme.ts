@@ -1,5 +1,6 @@
 export type Theme = {
   colors: {
+    background: string;
     cardBackground: string;
     primary: string;
     primaryPress: string;

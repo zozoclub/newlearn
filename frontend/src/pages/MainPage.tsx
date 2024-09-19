@@ -6,23 +6,6 @@ import { useEffect } from "react";
 import { useSetRecoilState } from "recoil";
 import styled from "styled-components";
 
-const Container = styled.div`
-  display: flex;
-  justify-content: space-around;
-  padding: 50px;
-`;
-
-const NewsContainer = styled.div`
-  margin: 0 30px;
-`;
-
-const WidgetContainer = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-auto-rows: 240px;
-  margin: auto 0;
-`;
-
 const MainPage = () => {
   const setCurrentLocation = useSetRecoilState(locationState);
   const widgetList = [
@@ -52,3 +35,27 @@ const MainPage = () => {
 };
 
 export default MainPage;
+
+const Container = styled.div`
+  display: flex;
+  position: relative;
+  height: 35rem;
+  justify-content: space-around;
+  padding: 5rem 0;
+`;
+
+const NewsContainer = styled.div`
+  position: relative;
+  z-index: 1;
+  width: 100%;
+`;
+
+const WidgetContainer = styled.div`
+  display: grid;
+  position: absolute;
+  z-index: 1;
+  right: 0;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 2.5rem;
+  width: 40rem;
+`;

@@ -3,12 +3,16 @@ import MainPage from "@pages/MainPage";
 import SpeakingTestPage from "@pages/SpeakingTestPage";
 import SpeakingTestResultPage from "@pages/SpeakingTestResultPage";
 import WordTestPage from "@pages/WordTestPage";
+import WordTestResultPage from "@pages/WordTestResultPage";
 import NotFoundPage from "@pages/NotFoundPage";
 import MyPage from "@pages/MyPage";
 import App from "./App";
 import NewsPage from "@pages/NewsPage";
 import MyStudyPage from "@pages/MyStudyPage";
 import VocabularyPage from "@pages/VocabularyPage";
+import TestHistoryPage from "@pages/TestHistoryPage";
+import LoginPage from "@pages/LoginPage";
+import SignInPage from "@pages/SignInPage";
 
 export const router = createBrowserRouter([
   {
@@ -18,6 +22,14 @@ export const router = createBrowserRouter([
       {
         index: true,
         element: <MainPage />,
+      },
+      {
+        path: "login",
+        element: <LoginPage />,
+      },
+      {
+        path: "signin",
+        element: <SignInPage />,
       },
       {
         path: "speak",
@@ -30,6 +42,10 @@ export const router = createBrowserRouter([
       {
         path: "wordtest",
         element: <WordTestPage />,
+      },
+      {
+        path: "wordtestresult",
+        element: <WordTestResultPage />,
       },
       {
         path: "news",
@@ -50,6 +66,10 @@ export const router = createBrowserRouter([
       {
         path: "voca",
         element: <VocabularyPage />,
+      },
+      { 
+        path: "testhistory",
+        element: <TestHistoryPage /> 
       },
     ],
   },

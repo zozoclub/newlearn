@@ -7,6 +7,11 @@ import BackArrow from "@assets/icons/BackArrow";
 import WordTestResultWordList from "@components/testpage/WordTestResultWordList";
 import WordTestResultWordDetail from "@components/testpage/WordTestResultWordDetail";
 
+import PerfectStamp from "@assets/icons/PerfectStamp";
+import GreatStamp from "@assets/icons/GreatStamp";
+import GoodStamp from "@assets/icons/GoodStamp";
+import BadStamp from "@assets/icons/BadStamp";
+
 const WordTestResultPage: React.FC = () => {
   const setCurrentLocation = useSetRecoilState(locationState);
   useEffect(() => {
@@ -35,12 +40,12 @@ const WordTestResultPage: React.FC = () => {
       word: "fromisnine",
       userAnswer: "fromisnine",
       sentence:
-        "Fromis_9 gained a large fanbase after their debut performance on national TV.",
+        "fromisnine gained a large fanbase after their debut performance on national TV.",
       sentenceTranslation:
         "프로미스나인은 그들의 데뷔 무대 이후 많은 팬층을 확보했다.",
     },
     {
-      word: "facility",
+      word: "facilities",
       userAnswer: "facitily",
       sentence:
         "The hospital has state-of-the-art medical facilities for patient care.",
@@ -101,6 +106,15 @@ const WordTestResultPage: React.FC = () => {
         "지역 사회는 새로운 학교 프로젝트를 지원하기 위해 기금 모금 행사를 조직했다.",
     },
   ];
+  const dataDate = "2024-09-09";
+  const dataScore = 80;
+
+  const renderStamp = () => {
+    if (dataScore > 90) return <PerfectStamp />;
+    if (dataScore > 80) return <GreatStamp />;
+    if (dataScore > 70) return <GoodStamp />;
+    return <BadStamp />;
+  };
 
   return (
     <MainLayout>
@@ -126,18 +140,19 @@ const WordTestResultPage: React.FC = () => {
       </MainContainer>
       <MainContainer>
         <WordExplainContainer>
-          {currentWordIndex ? (
+          {currentWord ? (
             <WordTestResultWordDetail
+              answerWord={data[currentWordIndex].word}
               userAnswer={data[currentWordIndex].userAnswer}
               sentence={data[currentWordIndex].sentence}
               sentenceTranslation={data[currentWordIndex].sentenceTranslation}
             />
           ) : (
-            <WordTestResultWordDetail
-              userAnswer={data[currentWordIndex].userAnswer}
-              sentence={data[currentWordIndex].sentence}
-              sentenceTranslation={data[currentWordIndex].sentenceTranslation}
-            />
+            <>
+              <div>평가 날짜 : {dataDate}</div>
+              <div>평가 점수 : {dataScore}</div>
+              <div>{renderStamp()}</div>
+            </>
           )}
         </WordExplainContainer>
       </MainContainer>

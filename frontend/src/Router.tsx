@@ -11,6 +11,7 @@ import NewsPage from "@pages/NewsPage";
 import TestHistoryPage from "@pages/TestHistoryPage";
 import LoginPage from "@pages/LoginPage";
 import SignInPage from "@pages/SignInPage";
+import VocabularyPage from "@pages/VocabularyPage";
 
 export const router = createBrowserRouter([
   {
@@ -58,6 +59,7 @@ export const router = createBrowserRouter([
         element: <MyPage />,
       },
       { path: "testhistory", element: <TestHistoryPage /> },
+      {path: "vocabulary", element: <VocabularyPage/> }
     ],
   },
 ]);

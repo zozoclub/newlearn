@@ -7,6 +7,7 @@ import NotFoundPage from "@pages/NotFoundPage";
 import MyPage from "@pages/MyPage";
 import App from "./App";
 import NewsPage from "@pages/NewsPage";
+import TestHistoryPage from "@pages/TestHistoryPage";
 
 export const router = createBrowserRouter([
   {
@@ -41,6 +42,7 @@ export const router = createBrowserRouter([
         path: "mypage",
         element: <MyPage />,
       },
+      { path: "testhistory", element: <TestHistoryPage /> },
     ],
   },
 ]);

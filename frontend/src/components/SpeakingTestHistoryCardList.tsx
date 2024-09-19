@@ -5,13 +5,24 @@ import PerfectStamp from "@assets/icons/PerfectStamp";
 import GreatStamp from "@assets/icons/GreatStamp";
 import GoodStamp from "@assets/icons/GoodStamp";
 import BadStamp from "@assets/icons/BadStamp";
+import { useNavigate } from "react-router-dom";
 
 type Props = {
   score: number;
   date: string;
+  resultId?: number;
 };
 
-const SpeakingTestHistoryCardList: React.FC<Props> = ({ date, score }) => {
+const SpeakingTestHistoryCardList: React.FC<Props> = ({
+  date,
+  score,
+  resultId,
+}) => {
+  const navigate = useNavigate();
+
+  const intoDetailHandler = () => {
+    navigate(`/${resultId}`);
+  };
   const renderStamp = () => {
     if (score > 90) return <PerfectStamp />;
     if (score > 80) return <GreatStamp />;
@@ -28,6 +39,11 @@ const SpeakingTestHistoryCardList: React.FC<Props> = ({ date, score }) => {
         </ScoreContainer>
       </ListDetailContainer>
       <ScoreStamp>{renderStamp()}</ScoreStamp>
+      <DetailButtonContainer>
+        <IntoDetailButton onClick={intoDetailHandler}>
+          상세보기
+        </IntoDetailButton>
+      </DetailButtonContainer>
     </MainContainer>
   );
 };
@@ -79,4 +95,26 @@ const ScoreSpan = styled.span`
   font-size: 2rem;
   font-weight: 700;
   color: ${(props) => props.theme.colors.primary};
+`;
+
+const DetailButtonContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1rem;
+`;
+
+const IntoDetailButton = styled.button`
+  padding: 0.5rem 0.5rem;
+  background-color: ${(props) => props.theme.colors.primary};
+  color: white;
+  border: none;
+  border-radius: 0.625rem;
+  font-size: 0.875rem;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+  &:hover {
+    background-color: ${(props) => props.theme.colors.primaryPress};
+  }
 `;

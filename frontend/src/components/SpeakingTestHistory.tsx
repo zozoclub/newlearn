@@ -22,7 +22,7 @@ ChartJS.register(
   Legend
 );
 
-const SpeakTestHistory: React.FC = () => {
+const SpeakingTestHistory: React.FC = () => {
   // styled-components의 테마에 접근
   const theme = useTheme();
 
@@ -91,7 +91,7 @@ const SpeakTestHistory: React.FC = () => {
   );
 };
 
-export default SpeakTestHistory;
+export default SpeakingTestHistory;
 
 const MainContainer = styled.div`
   display: flex;

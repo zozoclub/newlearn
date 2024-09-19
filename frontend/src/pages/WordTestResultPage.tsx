@@ -120,7 +120,7 @@ const WordTestResultPage: React.FC = () => {
     <MainLayout>
       <MainContainer>
         <BackHeader>
-          <BackArrow />
+          <BackArrow width={48} height={48} />
           평가 리스트로 돌아가기
         </BackHeader>
         <WordListLayout>

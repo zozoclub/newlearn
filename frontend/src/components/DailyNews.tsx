@@ -167,18 +167,24 @@ const Container = styled.div`
     width: 580px;
     height: 380px;
     border-radius: 0.5rem;
+    opacity: 0.9;
   }
 `;
 
 const NewsContent = styled.div`
   position: absolute;
+  bottom: 0rem;
+  left: 0rem;
   width: calc(100% - 4rem);
-  bottom: 2rem;
-  left: 2rem;
+  margin: 1rem;
+  padding: 2rem 1rem;
+  border-radius: 0.5rem;
+  background-color: ${(props) => props.theme.colors.cardBackground + "33"};
+  color: #ffffff;
   h1 {
     font-size: 2rem;
     font-weight: 600;
-    margin-bottom: 0.5rem;
+    margin-bottom: 1rem;
   }
   div {
     font-size: 1rem;

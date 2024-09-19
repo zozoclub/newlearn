@@ -22,17 +22,17 @@ const Navbar = () => {
     { src: wordBookIcon, alt: "단어장", link: "/wordbook" },
     { src: trashCanIcon, alt: "휴지통", link: "/trash" },
   ];
-  const [isExtended, setIsExtended] = useState(true);
+  const [isExtended, setIsExtended] = useState(false);
 
   return (
     <Container
       onMouseEnter={() => setIsExtended(true)}
       onMouseLeave={() => setIsExtended(false)}
-      isExtended={isExtended}
+      $isExtended={isExtended}
     >
-      <ExtendArea isExtended={isExtended}>
+      <ExtendArea $isExtended={isExtended}>
         <div className="triangle-up"></div>
-        <ExtendedBar isExtended={isExtended}></ExtendedBar>
+        <ExtendedBar $isExtended={isExtended}></ExtendedBar>
       </ExtendArea>
       {iconList.map((icon, index) => (
         <NavbarItem
@@ -46,7 +46,7 @@ const Navbar = () => {
   );
 };
 
-const Container = styled.div<{ isExtended: boolean }>`
+const Container = styled.div<{ $isExtended: boolean }>`
   display: flex;
   position: relative;
   background-color: ${(props) => props.theme.colors.cardBackground + "AA"};
@@ -56,26 +56,26 @@ const Container = styled.div<{ isExtended: boolean }>`
   z-index: 1;
   left: 50%;
   transform: ${(props) =>
-    props.isExtended ? "translate(-50%, 0)" : "translate(-50%, 7rem)"};
+    props.$isExtended ? "translate(-50%, 0)" : "translate(-50%, 7rem)"};
   bottom: 1.5rem;
   box-shadow: 0.5rem 0.5rem 0.25rem ${(props) => props.theme.colors.shadow};
   transition: all 0.5s;
 `;
 
-const ExtendArea = styled.div<{ isExtended: boolean }>`
+const ExtendArea = styled.div<{ $isExtended: boolean }>`
   position: absolute;
   width: 35vw;
-  height: 10rem;
-  top: -3rem;
+  height: 7.5rem;
+  top: -5rem;
   left: 50%;
   transform: translate(-50%, 0);
   .triangle-up {
     position: absolute;
     z-index: 1;
-    top: 0.5rem;
+    top: 2.5rem;
     left: 50%;
     transform: ${(props) =>
-      props.isExtended ? "translate(-50%, 10rem)" : "translate(-50%, 0)"};
+      props.$isExtended ? "translate(-50%, 10rem)" : "translate(-50%, 0)"};
     width: 0;
     height: 0;
     border-left: 0.5rem solid transparent;
@@ -85,11 +85,12 @@ const ExtendArea = styled.div<{ isExtended: boolean }>`
   }
 `;
 
-const ExtendedBar = styled.div<{ isExtended: boolean }>`
+const ExtendedBar = styled.div<{ $isExtended: boolean }>`
   position: absolute;
+  top: 2rem;
   left: 50%;
   transform: ${(props) =>
-    props.isExtended ? "translate(-50%, 10rem)" : "translate(-50%, 0)"};
+    props.$isExtended ? "translate(-50%, 10rem)" : "translate(-50%, 0)"};
   width: 6rem;
   height: 4rem;
   border-radius: 0.5rem 0.5rem 0 0;

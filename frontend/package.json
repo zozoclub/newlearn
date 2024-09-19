@@ -16,6 +16,7 @@
     "axios": "^1.7.7",
     "chart.js": "^4.4.4",
     "chartjs-plugin-datalabels": "^2.2.0",
+    "framer-motion": "^11.5.4",
     "lodash": "^4.17.21",
     "microsoft-cognitiveservices-speech-sdk": "^1.40.0",
     "react": "^18.3.1",

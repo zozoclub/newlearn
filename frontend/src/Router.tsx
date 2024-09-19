@@ -8,6 +8,8 @@ import MyPage from "@pages/MyPage";
 import App from "./App";
 import NewsPage from "@pages/NewsPage";
 import TestHistoryPage from "@pages/TestHistoryPage";
+import LoginPage from "@pages/LoginPage";
+import SignInPage from "@pages/SignInPage";
 
 export const router = createBrowserRouter([
   {
@@ -17,6 +19,14 @@ export const router = createBrowserRouter([
       {
         index: true,
         element: <MainPage />,
+      },
+      {
+        path: "login",
+        element: <LoginPage />,
+      },
+      {
+        path: "signin",
+        element: <SignInPage />,
       },
       {
         path: "speak",

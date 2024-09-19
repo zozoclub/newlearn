@@ -3,13 +3,16 @@ import useBackPage from "@hooks/useBackPage";
 
 import { useTheme } from "styled-components";
 
-const BackArrow: React.FC = () => {
+const BackArrow: React.FC<{ width: number; height: number }> = ({
+  width,
+  height,
+}) => {
   const back = useBackPage();
   const theme = useTheme();
   return (
     <svg
-      width="48"
-      height="48"
+      width={width}
+      height={height}
       viewBox="0 0 96 96"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

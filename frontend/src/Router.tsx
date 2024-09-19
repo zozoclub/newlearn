@@ -7,6 +7,8 @@ import NotFoundPage from "@pages/NotFoundPage";
 import MyPage from "@pages/MyPage";
 import App from "./App";
 import NewsPage from "@pages/NewsPage";
+import MyStudyPage from "@pages/MyStudyPage";
+import VocabularyPage from "@pages/VocabularyPage";
 
 export const router = createBrowserRouter([
   {
@@ -40,6 +42,14 @@ export const router = createBrowserRouter([
       {
         path: "mypage",
         element: <MyPage />,
+      },
+      {
+        path: "mystudy",
+        element: <MyStudyPage />,
+      },
+      {
+        path: "voca",
+        element: <VocabularyPage />,
       },
     ],
   },

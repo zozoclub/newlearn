@@ -3,6 +3,7 @@ import MainPage from "@pages/MainPage";
 import SpeakingTestPage from "@pages/SpeakingTestPage";
 import SpeakingTestResultPage from "@pages/SpeakingTestResultPage";
 import WordTestPage from "@pages/WordTestPage";
+import WordTestResultPage from "@pages/WordTestResultPage";
 import NotFoundPage from "@pages/NotFoundPage";
 import MyPage from "@pages/MyPage";
 import App from "./App";
@@ -29,6 +30,10 @@ export const router = createBrowserRouter([
       {
         path: "wordtest",
         element: <WordTestPage />,
+      },
+      {
+        path: "wordtestresult",
+        element: <WordTestResultPage />,
       },
       {
         path: "news",

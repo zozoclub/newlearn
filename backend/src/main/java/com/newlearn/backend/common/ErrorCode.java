@@ -41,6 +41,9 @@ public enum ErrorCode {
 	INVALID_FILE_FORMAT("F002", HttpStatus.BAD_REQUEST, "유효하지 않은 파일 형식입니다."),
 	FILE_DOWNLOAD_FAILED("F003", HttpStatus.INTERNAL_SERVER_ERROR, "파일 다운로드에 실패했습니다"),
 	S3_SERVER_ERROR("F004", HttpStatus.INTERNAL_SERVER_ERROR, "S3 서버에 문제가 발생하였습니다"),
+
+	// Study Error
+	GOAL_CREATE_FAILED("S001", HttpStatus.BAD_REQUEST, "목표 설정에 실패했습니다."),
 	;
 
 	private final String code;

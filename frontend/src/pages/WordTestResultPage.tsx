@@ -4,8 +4,8 @@ import locationState from "@store/locationState";
 import styled from "styled-components";
 import BackArrow from "@assets/icons/BackArrow";
 
-import WordTestResultWordList from "@components/WordTestResultWordList";
-import WordTestResultWordDetail from "@components/WordTestResultWordDetail";
+import WordTestResultWordList from "@components/testpage/WordTestResultWordList";
+import WordTestResultWordDetail from "@components/testpage/WordTestResultWordDetail";
 
 const WordTestResultPage: React.FC = () => {
   const setCurrentLocation = useSetRecoilState(locationState);
@@ -13,10 +13,12 @@ const WordTestResultPage: React.FC = () => {
     setCurrentLocation("Word Test Page");
   }, [setCurrentLocation]);
 
-  const [currentWord, setCurrentWord] = useState<number>(0);
+  const [currentWordIndex, setCurrentWordIndex] = useState<number>(0);
+  const [currentWord, setCurrentWord] = useState<string>("");
 
   const wordExplainDetailHandler = (index: number) => {
-    setCurrentWord(index);
+    setCurrentWordIndex(index);
+    setCurrentWord(data[index].word);
   };
 
   // TODO: 예문을 어떻게 저장하는지 알아야함.
@@ -24,36 +26,79 @@ const WordTestResultPage: React.FC = () => {
     {
       word: "foundation",
       userAnswer: "foundation",
-      sentence: "The foundation of the building was laid in 1920.",
-      sentenceTranslation: "그 건물의 기초는 1920년에 놓였다.",
+      sentence:
+        "The foundation of the charity was established in 2005 to help children in need.",
+      sentenceTranslation:
+        "그 자선 단체의 기초는 2005년에 어려운 아이들을 돕기 위해 설립되었다.",
     },
     {
       word: "fromisnine",
       userAnswer: "fromisnine",
       sentence:
-        "fromisnine is a popular K-pop girl group known for their energetic performances.",
+        "Fromis_9 gained a large fanbase after their debut performance on national TV.",
       sentenceTranslation:
-        "프로미스나인은 에너지 넘치는 공연으로 유명한 K-pop 걸그룹이다.",
+        "프로미스나인은 그들의 데뷔 무대 이후 많은 팬층을 확보했다.",
     },
     {
       word: "facility",
       userAnswer: "facitily",
-      sentence: "The new sports facility will open next month.",
-      sentenceTranslation: "새로운 스포츠 시설은 다음 달에 개장할 예정이다.",
+      sentence:
+        "The hospital has state-of-the-art medical facilities for patient care.",
+      sentenceTranslation:
+        "그 병원은 환자 치료를 위한 최신식 의료 시설을 갖추고 있다.",
     },
     {
       word: "found",
       userAnswer: "fuck",
-      sentence: "The detectives found a clue that could solve the mystery.",
-      sentenceTranslation: "형사들은 그 미스터리를 풀 단서를 발견했다.",
+      sentence: "She found her keys under the pile of books on her desk.",
+      sentenceTranslation: "그녀는 책 더미 아래에서 열쇠를 발견했다.",
     },
     {
       word: "firebase",
       userAnswer: "firebase",
       sentence:
-        "Developers use Firebase for building mobile and web applications.",
+        "Firebase allows developers to quickly deploy and manage applications.",
       sentenceTranslation:
-        "개발자들은 모바일 및 웹 애플리케이션을 구축하기 위해 Firebase를 사용한다.",
+        "Firebase는 개발자들이 애플리케이션을 빠르게 배포하고 관리할 수 있게 해준다.",
+    },
+    {
+      word: "inspiration",
+      userAnswer: "inspiration",
+      sentence:
+        "The artist found inspiration for her latest work while traveling through Europe.",
+      sentenceTranslation:
+        "그 예술가는 유럽을 여행하는 동안 그녀의 최신 작품에 대한 영감을 얻었다.",
+    },
+    {
+      word: "architecture",
+      userAnswer: "architecture",
+      sentence:
+        "The architecture of the ancient temple was both intricate and breathtaking.",
+      sentenceTranslation:
+        "고대 사원의 건축 양식은 복잡하면서도 숨이 멎을 만큼 아름다웠다.",
+    },
+    {
+      word: "technology",
+      userAnswer: "technology",
+      sentence:
+        "Advances in technology have transformed the way we communicate.",
+      sentenceTranslation: "기술의 발전은 우리의 의사소통 방식을 변화시켰다.",
+    },
+    {
+      word: "sustainability",
+      userAnswer: "sustainability",
+      sentence:
+        "Sustainability is at the heart of their business model, focusing on renewable resources.",
+      sentenceTranslation:
+        "지속 가능성은 그들의 비즈니스 모델의 핵심이며, 재생 가능한 자원에 중점을 둔다.",
+    },
+    {
+      word: "community",
+      userAnswer: "community",
+      sentence:
+        "The local community organized a fundraiser to support the new school project.",
+      sentenceTranslation:
+        "지역 사회는 새로운 학교 프로젝트를 지원하기 위해 기금 모금 행사를 조직했다.",
     },
   ];
 
@@ -69,8 +114,11 @@ const WordTestResultPage: React.FC = () => {
             return (
               <WordTestResultWordList
                 word={data.word}
+                userAnswer={data.userAnswer}
+                index={index}
                 key={index}
                 onClick={() => wordExplainDetailHandler(index)}
+                isFocusWord={data.word === currentWord}
               />
             );
           })}
@@ -78,17 +126,17 @@ const WordTestResultPage: React.FC = () => {
       </MainContainer>
       <MainContainer>
         <WordExplainContainer>
-          {currentWord ? (
+          {currentWordIndex ? (
             <WordTestResultWordDetail
-              userAnswer={data[currentWord].userAnswer}
-              sentence={data[currentWord].sentence}
-              sentenceTranslation={data[currentWord].sentenceTranslation}
+              userAnswer={data[currentWordIndex].userAnswer}
+              sentence={data[currentWordIndex].sentence}
+              sentenceTranslation={data[currentWordIndex].sentenceTranslation}
             />
           ) : (
             <WordTestResultWordDetail
-              userAnswer={data[currentWord].userAnswer}
-              sentence={data[currentWord].sentence}
-              sentenceTranslation={data[currentWord].sentenceTranslation}
+              userAnswer={data[currentWordIndex].userAnswer}
+              sentence={data[currentWordIndex].sentence}
+              sentenceTranslation={data[currentWordIndex].sentenceTranslation}
             />
           )}
         </WordExplainContainer>
@@ -106,6 +154,7 @@ const MainContainer = styled.div`
 
   width: 90%;
   min-height: 45rem;
+  max-height: 45rem;
 
   margin: 0 0.5rem;
   padding: 0.5rem;
@@ -135,11 +184,16 @@ const MainLayout = styled.div`
   justify-content: space-between;
 `;
 
+// 스크롤 추가
 const WordListLayout = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  width: 100%;
+  padding-top: 12rem;
+  overflow-y: auto;
+  overflow-x: hidden;
 `;
 
 const WordExplainContainer = styled.div`
@@ -148,6 +202,5 @@ const WordExplainContainer = styled.div`
   padding: 1rem;
   border-radius: 0.75rem;
   width: 100%;
-  max-width: 600px;
   text-align: center;
 `;

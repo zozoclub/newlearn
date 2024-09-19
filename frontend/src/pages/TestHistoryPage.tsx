@@ -5,7 +5,7 @@ import styled from "styled-components";
 
 import StartWordTestWidget from "@components/StartWordTestWidget";
 import StartSpeakingTestWidget from "@components/StartSpeakingTestWidget";
-import SpeakTestHistory from "@components/SpeakTestHistory";
+import SpeakingTestHistory from "@components/SpeakingTestHistory";
 import WordTestHistory from "@components/WordTestHistory";
 
 const TestHistoryPage: React.FC = () => {
@@ -51,7 +51,7 @@ const TestHistoryPage: React.FC = () => {
 
           {/* 조건부 렌더링 */}
           <Nav>
-            {activeTab === "speak" && <SpeakTestHistory />}
+            {activeTab === "speak" && <SpeakingTestHistory />}
             {activeTab === "word" && <WordTestHistory />}
           </Nav>
         </BigContainer>
@@ -85,7 +85,7 @@ const SmallContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 16rem;
+  min-height: 19.675rem;
   margin: 0.75rem 0;
   padding: 0.625rem;
   background-color: ${(props) => props.theme.colors.cardBackground + "BF"};

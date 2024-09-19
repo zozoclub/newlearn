@@ -5,10 +5,8 @@ const DailyNews = () => {
 };
 
 const Container = styled.div`
-  width: 800px;
-  height: 500px;
-  margin: 20px 0;
-  padding: 10px;
+  width: 100%;
+  height: 80%;
   background-color: #333344;
   border-radius: 0.75rem;
 `;

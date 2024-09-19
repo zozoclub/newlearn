@@ -34,9 +34,9 @@ const calculateTime = (time: Date): string[] => {
   hours = hours % 12;
   hours = hours ? hours : 12; // 0시를 12시로 변경
 
-  const formattedTime = `${hours}:${minutes} ${ampm}`;
+  const formattedTime = `${hours}:${minutes}`;
 
-  return [`${formattedTime}`, `${day}, ${month} ${date}`];
+  return [`${formattedTime}`, `${ampm}`, `${day}, ${month} ${date}`];
 };
 
 export default calculateTime;

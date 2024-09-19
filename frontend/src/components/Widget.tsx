@@ -5,7 +5,7 @@ const Widget: React.FC<{ variety: string }> = ({ variety }) => {
     case "profile":
       return <Container>프로필임</Container>;
     case "chart":
-      return <Container>chart임</Container>;
+      return <Container>차트임</Container>;
     case "ranking":
       return <Container>랭킹임</Container>;
     case "goal":
@@ -14,9 +14,7 @@ const Widget: React.FC<{ variety: string }> = ({ variety }) => {
 };
 
 const Container = styled.div`
-  width: 200px;
-  margin: 10px;
-  padding: 10px;
+  aspect-ratio: 1;
   background-color: ${(props) => props.theme.colors.cardBackground + "BF"};
   border-radius: 0.75rem;
   transition: box-shadow 0.5s;

@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import styled, { useTheme } from "styled-components";
 import { Line } from "react-chartjs-2";
+import WordTestHistoryCardList from "./WordTestHistoryCardList";
+
 import {
   Chart as ChartJS,
   LineElement,
@@ -22,9 +24,10 @@ ChartJS.register(
   Legend
 );
 
-const TestHistoryPage: React.FC = () => {
-  // styled-components의 테마에 접근
-  const theme = useTheme();
+const WordTestHistory: React.FC = () => {
+  const [wordNum] = useState<number>(89);
+  const average = 90;
+  const theme = useTheme(); // styled-components의 테마에 접근
 
   const data = {
     labels: ["3월", "4월", "5월", "6월", "7월", "8월", "9월"], // X축
@@ -69,12 +72,56 @@ const TestHistoryPage: React.FC = () => {
     },
   };
 
+  const carddata = [
+    {
+      date: "2024.09.09",
+      score: 85,
+    },
+    {
+      date: "2024.09.09",
+      score: 72,
+    },
+    {
+      date: "2024.09.09",
+      score: 53,
+    },
+    {
+      date: "2024.09.09",
+      score: 68,
+    },
+    {
+      date: "2024.09.09",
+      score: 97,
+    },
+    {
+      date: "2024.09.09",
+      score: 77,
+    },
+    {
+      date: "2024.09.09",
+      score: 85,
+    },
+    {
+      date: "2024.09.09",
+      score: 96,
+    },
+  ];
+
   return (
     <MainContainer>
       <Layout>
         <InfoContainer>
           <TitleText>최근 평균보다 많이 학습했어요!</TitleText>
-          <InfoText>9월에 학습된 단어 개수: 90개</InfoText>
+          <InfoText>
+            9월에 학습된 단어 개수 :
+            {wordNum ? (
+              wordNum >= average ? (
+                <InfoTextEmphasizeBlue>{wordNum}</InfoTextEmphasizeBlue>
+              ) : (
+                <InfoTextEmphasizeRed>{wordNum}</InfoTextEmphasizeRed>
+              )
+            ) : null}
+          </InfoText>
           <StatsHistory>
             <StatItem>테스트 횟수: 5회</StatItem>
             <StatItem>맞춘 단어수: 80개</StatItem>
@@ -86,12 +133,24 @@ const TestHistoryPage: React.FC = () => {
           <Line data={data} options={options} />
         </ChartContainer>
       </Layout>
-      <TestHistoryList>테스트리스트 예정</TestHistoryList>
+
+      {/* 고정된 높이 및 스크롤 가능한 영역 */}
+      <ScrollableTestHistoryList>
+        {carddata.map((data, index) => {
+          return (
+            <WordTestHistoryCardList
+              score={data.score}
+              date={data.date}
+              key={index}
+            />
+          );
+        })}
+      </ScrollableTestHistoryList>
     </MainContainer>
   );
 };
 
-export default TestHistoryPage;
+export default WordTestHistory;
 
 const MainContainer = styled.div`
   display: flex;
@@ -109,23 +168,39 @@ const Layout = styled.div`
 `;
 
 const InfoContainer = styled.div`
+  width: 100%;
   display: flex;
+  justify-content: center;
   flex-direction: column;
-  width: 50%;
 `;
 
 const ChartContainer = styled.div`
-  width: 50%;
+  width: 100%;
+  justify-content: center;
 `;
 
 const TitleText = styled.h1`
-  font-size: 1.5rem;
+  font-size: 2rem;
+  font-weight: 700;
   margin-bottom: 1rem;
 `;
 
 const InfoText = styled.p`
   font-size: 1.25rem;
+  font-weight: 600;
   margin-bottom: 1.5rem;
+`;
+
+const InfoTextEmphasizeRed = styled.span`
+  margin-left: 0.25rem;
+  font-size: 2rem;
+  color: #ff6573;
+`;
+
+const InfoTextEmphasizeBlue = styled.span`
+  margin-left: 0.25rem;
+  font-size: 2rem;
+  color: ${(props) => props.theme.colors.primary};
 `;
 
 const StatsHistory = styled.div`
@@ -138,7 +213,14 @@ const StatItem = styled.p`
   margin-bottom: 0.5rem;
 `;
 
-const TestHistoryList = styled.div`
+const ScrollableTestHistoryList = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
   width: 100%;
+  max-height: 300px;
+  overflow-y: auto; /* 세로 스크롤 가능 */
+  overflow-x: hidden; /* 좌우 스크롤 제거 */
+  padding-top: 1rem;
   margin-top: 2rem;
 `;

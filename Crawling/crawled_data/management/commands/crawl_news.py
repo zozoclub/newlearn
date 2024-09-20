@@ -79,9 +79,9 @@ class Command(BaseCommand):
                 return None
 
         all_hrefs = {}
-        sids = [100, 101, 102, 103, 104, 105]  # sid 100~105로 설정
+        sids = [100]  # sid 100~105로 설정
         for sid in sids:
-            all_hrefs[sid] = re_tag(sid, num_pages=3)  # 예를 들어 3페이지까지 크롤링
+            all_hrefs[sid] = re_tag(sid, num_pages=1)  # 예를 들어 3페이지까지 크롤링
 
         artdic_list = []
         for sid, hrefs in all_hrefs.items():

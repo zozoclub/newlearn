@@ -6,7 +6,16 @@ const EditIcon: React.FC<EditIconProps> = ({ onClick }) => {
   return (
     <svg
       onClick={onClick}
-      cursor="pointer"
+      style={{
+        cursor: "pointer",
+        transition: "transform 0.2s ease-in-out",
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.transform = "scale(1.05)";
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.transform = "scale(1)";
+      }}
       xmlns="http://www.w3.org/2000/svg"
       width="1.25rem"
       height="1.25rem"

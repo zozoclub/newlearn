@@ -12,7 +12,7 @@ type CountDataKey =
   | "societyCount"
   | "cultureCount"
   | "scienceCount"
-  | "entertainCount";
+  | "globalCount";
 
 type CountData = {
   [K in CountDataKey]: number;
@@ -25,7 +25,7 @@ const Widget: React.FC<{ variety: string }> = ({ variety }) => {
     societyCount: 4,
     cultureCount: 16,
     scienceCount: 3,
-    entertainCount: 7,
+    globalCount: 7,
   };
   const championCategory = ["Reading Champion", "Point Champion"];
   const [currentIndex, setCurrentIndex] = useState(0);

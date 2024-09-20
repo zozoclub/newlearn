@@ -40,12 +40,12 @@ const MyPage = () => {
           </FlexItem>
         </FlexContainer>
         <FlexContainer>
-          <FlexItem $flex={1}>
+          <FlexItem $flex={7}>
             <WidgetContainer>
               <MyPageCategory />
             </WidgetContainer>
           </FlexItem>
-          <FlexItem $flex={1}>
+          <FlexItem $flex={8}>
             <WidgetContainer>
               <MyPageGrass />
             </WidgetContainer>

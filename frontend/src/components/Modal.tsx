@@ -84,7 +84,7 @@ const ModalContent = styled.div<{ $isOpen: boolean }>`
   width: auto;
   min-width: 300px;
   max-width: 90%;
-  padding: 1.5rem;
+  padding: 2rem;
   background-color: ${(props) => props.theme.colors.cardBackground};
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   border-radius: 0.5rem;
@@ -101,16 +101,19 @@ const ModalContent = styled.div<{ $isOpen: boolean }>`
 const ModalHeader = styled.div`
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
+  align-items: start;
+  margin-bottom: 1.5rem;
 `;
 
 const ModalTitle = styled.div`
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   font-weight: bold;
 `;
 
 const CloseButton = styled.button`
+  position: absolute;
+  top: 1.25rem;
+  right: 1.5rem;
   background: none;
   border: none;
   font-size: 1.75rem;
@@ -121,5 +124,5 @@ const CloseButton = styled.button`
 `;
 
 const ModalBody = styled.div`
-  padding: 1rem 0;
+  padding-top: 1rem;
 `;

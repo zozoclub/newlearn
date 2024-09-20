@@ -31,8 +31,9 @@ public class UserServiceImpl implements UserService{
 	private final CategoryRepository categoryRepository;
 
 	@Override
-	public Optional<Users> findByEmail(String email) {
-		return Optional.empty();
+	public Users findByEmail(String email) throws Exception {
+
+		return userRepository.findByEmail(email).get();
 	}
 
 	@Override

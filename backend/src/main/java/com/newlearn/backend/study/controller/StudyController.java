@@ -32,8 +32,11 @@ public class StudyController {
     public ApiResponse<?> setStudyGoal(Authentication authentication,
                                        @RequestBody GoalRequestDTO goalRequestDTO) throws Exception {
         try {
-            Users user = userService.findByEmail(authentication.getName())
-                    .orElseThrow(() -> new Exception("회원정보 없음"));
+            System.out.println(authentication.getName());
+            Users user = userService.findByEmail(authentication.getName());
+            if (user == null) {
+                return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
+            }
 
             studyService.saveGoal(user.getUserId(), goalRequestDTO);
 
@@ -48,8 +51,10 @@ public class StudyController {
     @GetMapping("/progress")
     public ApiResponse<?> getStudyProgress(Authentication authentication) throws Exception {
         try {
-            Users user = userService.findByEmail(authentication.getName())
-                    .orElseThrow(() -> new Exception("회원정보 없음"));
+            Users user = userService.findByEmail(authentication.getName());
+            if (user == null) {
+                return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
+            }
 
             StudyProgressDTO progress = studyService.getStudyProgress(user.getUserId());
 
@@ -65,8 +70,10 @@ public class StudyController {
     public ApiResponse<?> getStudyWordTest(Authentication authentication,
                                        @RequestBody WordTestRequestDTO wordTestRequestDTO) throws Exception {
         try {
-            Users user = userService.findByEmail(authentication.getName())
-                    .orElseThrow(() -> new Exception("회원정보 없음"));
+            Users user = userService.findByEmail(authentication.getName());
+            if (user == null) {
+                return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
+            }
 
             List<WordTestResponseDTO> tests = studyService.getWordTestProblems(user, wordTestRequestDTO.getTotalCount());
 

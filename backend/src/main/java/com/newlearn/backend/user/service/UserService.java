@@ -9,7 +9,7 @@ import com.newlearn.backend.user.model.Users;
 
 public interface UserService {
 
-	Optional<Users> findByEmail(String email);
+	Users findByEmail(String email) throws Exception;
 
 	void signUp(SignUpRequestDTO signUpRequestDTO);
 

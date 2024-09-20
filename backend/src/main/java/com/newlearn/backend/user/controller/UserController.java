@@ -61,9 +61,10 @@ public class UserController {
 	public ApiResponse<?> updateAvatar(Authentication authentication, @RequestBody UpdateAvatarDTO updateAvatarDTO) throws
 		Exception {
 		try {
-			Users user = userService.findByEmail(authentication.getName())
-				.orElseThrow(() -> new Exception("회원정보 없음"));
-
+			Users user = userService.findByEmail(authentication.getName());
+			if(user == null) {
+				return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
+			}
 			userService.updateAvatar(user.getUserId(), updateAvatarDTO);
 
 			return ApiResponse.createSuccess(null, "성공적으로 아바타 업데이트");
@@ -159,8 +160,10 @@ public class UserController {
 	@PutMapping("/update-nickname")
 	public ApiResponse<?> updateNickname(Authentication authentication, @RequestBody UpdateNicknameRequestDto updateNicknameRequestDto) {
 		try {
-			Users user = userService.findByEmail(authentication.getName())
-				.orElseThrow(() -> new Exception("회원정보 없음"));
+			Users user = userService.findByEmail(authentication.getName());
+			if (user == null) {
+				return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
+			}
 
 			String nickname = updateNicknameRequestDto.getNickname();
 
@@ -178,8 +181,10 @@ public class UserController {
 	@PutMapping("/update-difficulty")
 	public ApiResponse<?> updateDifficulty(Authentication authentication, @RequestBody UpdateDifficultyRequestDTO updateDifficultyRequestDTO) {
 		try {
-			Users user = userService.findByEmail(authentication.getName())
-				.orElseThrow(() -> new Exception("회원정보 없음"));
+			Users user = userService.findByEmail(authentication.getName());
+			if (user == null) {
+				return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
+			}
 
 			userService.updateDifficulty(user.getUserId(), updateDifficultyRequestDTO.getDifficulty());
 			return ApiResponse.createSuccess(null, "난이도 업데이트 성공");
@@ -192,8 +197,10 @@ public class UserController {
 	@PutMapping("/update-interest")
 	public ApiResponse<?> updateInterest(Authentication authentication, @RequestBody UpdateCategoryRequestDTO updateCategoryRequestDTO) {
 		try {
-			Users user = userService.findByEmail(authentication.getName())
-				.orElseThrow(() -> new Exception("회원정보 없음"));
+			Users user = userService.findByEmail(authentication.getName());
+			if (user == null) {
+				return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
+			}
 
 
 			userService.updateCategory(user.getUserId(), updateCategoryRequestDTO.getCategories());
@@ -207,9 +214,10 @@ public class UserController {
 	@DeleteMapping("/delete")
 	public ApiResponse<?> deleteUser(Authentication authentication, HttpServletRequest request, HttpServletResponse response) {
 		try {
-			Users user = userService.findByEmail(authentication.getName())
-				.orElseThrow(() -> new Exception("회원정보 없음"));
-
+			Users user = userService.findByEmail(authentication.getName());
+			if (user == null) {
+				return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
+			}
 			String refreshToken = extractRefreshToken(request);
 			if (refreshToken != null && jwtTokenProvider.validateToken(refreshToken)) {
 

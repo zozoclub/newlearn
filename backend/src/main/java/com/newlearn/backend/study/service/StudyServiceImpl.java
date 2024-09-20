@@ -3,13 +3,8 @@ package com.newlearn.backend.study.service;
 import com.newlearn.backend.study.dto.request.GoalRequestDTO;
 import com.newlearn.backend.study.dto.request.WordTestResultDTO;
 import com.newlearn.backend.study.dto.response.StudyProgressDTO;
-import com.newlearn.backend.study.dto.response.WordTestResponseDTO;
 import com.newlearn.backend.study.model.Goal;
 import com.newlearn.backend.study.repository.StudyRepository;
-import com.newlearn.backend.word.model.Word;
-import com.newlearn.backend.word.model.WordQuiz;
-import com.newlearn.backend.word.model.WordQuizQuestion;
-import com.newlearn.backend.word.model.WordSentence;
 import com.newlearn.backend.word.repository.WordQuizQuestionRepository;
 import com.newlearn.backend.word.repository.WordRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -17,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor

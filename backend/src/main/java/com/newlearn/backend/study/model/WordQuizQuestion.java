@@ -1,5 +1,6 @@
-package com.newlearn.backend.word.model;
+package com.newlearn.backend.study.model;
 
+import com.newlearn.backend.word.model.Word;
 import jakarta.persistence.*;
 import lombok.*;
 

@@ -1,8 +1,7 @@
 package com.newlearn.backend.word.repository;
 
-import com.newlearn.backend.study.model.Goal;
 import com.newlearn.backend.word.model.Word;
-import com.newlearn.backend.word.model.WordQuizQuestion;
+import com.newlearn.backend.study.model.WordQuizQuestion;
 import com.newlearn.backend.word.model.WordSentence;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

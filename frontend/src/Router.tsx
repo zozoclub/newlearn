@@ -8,6 +8,8 @@ import NotFoundPage from "@pages/NotFoundPage";
 import MyPage from "@pages/MyPage";
 import App from "./App";
 import NewsPage from "@pages/NewsPage";
+import MyStudyPage from "@pages/MyStudyPage";
+import VocabularyPage from "@pages/VocabularyPage";
 import TestHistoryPage from "@pages/TestHistoryPage";
 import LoginPage from "@pages/LoginPage";
 import SignInPage from "@pages/SignInPage";
@@ -58,8 +60,16 @@ export const router = createBrowserRouter([
         path: "mypage",
         element: <MyPage />,
       },
+      {
+        path: "mystudy",
+        element: <MyStudyPage />,
+      },
+      {
+        path: "testhistory",
+        element: <TestHistoryPage />,
+      },
       { path: "testhistory", element: <TestHistoryPage /> },
-      {path: "vocabulary", element: <VocabularyPage/> }
+      { path: "vocabulary", element: <VocabularyPage /> },
     ],
   },
 ]);

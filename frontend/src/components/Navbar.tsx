@@ -19,7 +19,8 @@ const Navbar = () => {
     { src: myPageIcon, alt: "마이 페이지", link: "/mypage" },
     { src: calendarIcon, alt: "달력", link: "/calendar" },
     { src: searchIcon, alt: "검색", link: "/search" },
-    { src: wordBookIcon, alt: "단어장", link: "/wordbook" },
+    { src: wordBookIcon, alt: "단어장", link: "/voca" },
+    { src: wordBookIcon, alt: "나의 학습", link: "/mystudy" },
     { src: trashCanIcon, alt: "휴지통", link: "/trash" },
   ];
   const [isExtended, setIsExtended] = useState(false);

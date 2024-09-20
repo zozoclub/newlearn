@@ -47,7 +47,7 @@ public class OAuthController {
 
 	@GetMapping("/login/{provider}")
 	public ResponseEntity<Map<String, String>> getOAuthLoginUrl(@PathVariable String provider) {
-		String redirectUrl = baseUrl + "/oauth2/authorization/" + provider;
+		String redirectUrl = baseUrl + "api/oauth2/authorization/" + provider;
 		Map<String, String> response = new HashMap<>();
 		response.put("url", redirectUrl);
 		return ResponseEntity.ok(response);
@@ -83,7 +83,7 @@ public class OAuthController {
 		try {
 			OAuthCodeToken oAuthCodeToken = oAuthCodeTokenRepository.findById(code)
 				.orElseThrow(() -> new Exception("코드가 유효하지 않습니다."));
-
+			System.out.println("Das");
 			String accessToken =oAuthCodeToken.getAccessToken();
 			String refreshToken =oAuthCodeToken.getRefreshToken();
 			String userEmail = oAuthCodeToken.getUserEmail();

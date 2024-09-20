@@ -13,7 +13,6 @@ import VocabularyPage from "@pages/VocabularyPage";
 import TestHistoryPage from "@pages/TestHistoryPage";
 import LoginPage from "@pages/LoginPage";
 import SignInPage from "@pages/SignInPage";
-import VocabularyPage from "@pages/VocabularyPage";
 
 export const router = createBrowserRouter([
   {

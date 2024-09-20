@@ -12,7 +12,6 @@ import com.newlearn.backend.word.model.Word;
 import com.newlearn.backend.word.model.WordSentence;
 import com.newlearn.backend.word.repository.WordQuizQuestionRepository;
 import com.newlearn.backend.word.repository.WordQuizRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -30,13 +29,21 @@ public class StudyServiceImpl implements StudyService{
     private final WordQuizQuestionRepository wordQuizQuestionRepository;
 
     @Override
-    public void saveGoal(Long userId, GoalRequestDTO goalRequestDTO) {
-        Goal goal = studyRepository.findByUserId(userId)
-                .orElseThrow(() -> new EntityNotFoundException("Goal not found"));
-        goal.setGoalReadNewsCount(goalRequestDTO.getGoalReadNewsCount());
-        goal.setGoalPronounceTestScore(goalRequestDTO.getGoalPronounceTestScore());
-        goal.setGoalCompleteWord(goalRequestDTO.getGoalCompleteWord());
+    public boolean isGoalExist(Long userId) {
+        return studyRepository.existsByUserId(userId);
+    }
 
+    @Override
+    public void saveGoal(Long userId, GoalRequestDTO goalRequestDTO) {
+        Goal goal = Goal.builder()
+                .userId(userId)
+                .goalReadNewsCount(goalRequestDTO.getGoalReadNewsCount())
+                .goalPronounceTestScore(goalRequestDTO.getGoalPronounceTestScore())
+                .goalCompleteWord(goalRequestDTO.getGoalCompleteWord())
+                .currentReadNewsCount(0L)
+                .currentPronounceTestScore(0L)
+                .currentCompleteWord(0L)
+                .build();
         studyRepository.save(goal);
     }
 

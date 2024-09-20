@@ -32,13 +32,17 @@ public class StudyController {
     public ApiResponse<?> setStudyGoal(Authentication authentication,
                                        @RequestBody GoalRequestDTO goalRequestDTO) throws Exception {
         try {
-            System.out.println(authentication.getName());
             Users user = userService.findByEmail(authentication.getName());
             if (user == null) {
                 return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
             }
 
-            studyService.saveGoal(user.getUserId(), goalRequestDTO);
+            boolean isGoalExist = studyService.isGoalExist(user.getUserId());   // 목표가 이미 존재하면 재설정 불가
+            if (isGoalExist) {
+                return ApiResponse.createError(ErrorCode.GOAL_ALREADY_EXISTS);
+            }
+
+            studyService.saveGoal(user.getUserId(), goalRequestDTO);    // 새로운 목표 저장
 
             return ApiResponse.createSuccess(null, "학습 목표 설정 성공");
         } catch (Exception e) {

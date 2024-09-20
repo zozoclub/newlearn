@@ -14,4 +14,6 @@ public interface StudyRepository extends JpaRepository<Goal, Long> {
 
     Optional<Goal> findByUserId(Long userId);
 
+    Boolean existsByUserId(Long userId);
+
 }

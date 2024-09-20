@@ -11,6 +11,8 @@ import java.util.List;
 
 public interface StudyService {
 
+    boolean isGoalExist(Long userId);
+
     void saveGoal(Long userId, GoalRequestDTO goalRequestDTO);
 
     StudyProgressDTO getStudyProgress(Long userId);

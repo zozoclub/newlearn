@@ -4,6 +4,7 @@ import com.newlearn.backend.study.model.Goal;
 import com.newlearn.backend.word.model.Word;
 import com.newlearn.backend.word.model.WordSentence;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -15,5 +16,9 @@ public interface StudyRepository extends JpaRepository<Goal, Long> {
     Optional<Goal> findByUserId(Long userId);
 
     Boolean existsByUserId(Long userId);
+
+    @Modifying
+    @Query("DELETE FROM Goal")
+    void deleteAllGoals();
 
 }

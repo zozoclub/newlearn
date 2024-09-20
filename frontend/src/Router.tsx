@@ -64,13 +64,11 @@ export const router = createBrowserRouter([
         element: <MyStudyPage />,
       },
       {
-        path: "voca",
-        element: <VocabularyPage />,
-      },
-      { 
         path: "testhistory",
-        element: <TestHistoryPage /> 
+        element: <TestHistoryPage />,
       },
+      { path: "testhistory", element: <TestHistoryPage /> },
+      { path: "vocabulary", element: <VocabularyPage /> },
     ],
   },
 ]);

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import {
   DragDropContext,
@@ -7,8 +7,10 @@ import {
   DropResult,
   DraggableLocation,
 } from "@hello-pangea/dnd";
+import locationState from "@store/locationState";
 
 import Collapsible from "@components/Collapsible";
+import { useSetRecoilState } from "recoil";
 
 type Word = {
   id: string;
@@ -18,6 +20,11 @@ type Word = {
 };
 
 const VocabularyPage: React.FC = () => {
+  const setCurrentLocation = useSetRecoilState(locationState);
+  useEffect(() => {
+    setCurrentLocation("Word Test Page");
+  }, [setCurrentLocation]);
+
   const [toStudyWords, setToStudyWords] = useState<Word[]>([
     {
       id: "1",
@@ -54,16 +61,24 @@ const VocabularyPage: React.FC = () => {
     if (!destination) return;
 
     if (source.droppableId === destination.droppableId) {
+      console.log("목적지가 같은 리스트인 경우");
+      return;
       const list =
         source.droppableId === "toStudy" ? toStudyWords : learnedWords;
       const setList =
         source.droppableId === "toStudy" ? setToStudyWords : setLearnedWords;
-      const reorderedItems = reorder(list, source.index, destination.index);
+      const reorderedItems = reorder(list, source.index, destination!.index);
       setList(reorderedItems);
     } else {
       if (source.droppableId === "toStudy") {
+        console.log(
+          "출발지가 공부해야 할 단어 리스트이므로 공부 -> 외운 api 호출"
+        );
         moveItemBetweenLists(toStudyWords, learnedWords, source, destination);
       } else {
+        console.log(
+          "출발지가 내가 외운 단어 리스트이므로 외운 -> 공부 api 호출"
+        );
         moveItemBetweenLists(learnedWords, toStudyWords, source, destination);
       }
     }
@@ -189,11 +204,11 @@ const MainLayout = styled.div`
 const MainContainer = styled.div`
   width: 45%;
   padding: 1rem;
-  background-color: ${(props) =>
-    props.theme.colors.cardBackground || "#f9f9f9"};
-  box-shadow: 0.5rem 0.5rem 0.25rem rgba(0, 0, 0, 0.1);
+  background-color: ${(props) => `${props.theme.colors.cardBackground}BF`};
   border-radius: 0.75rem;
-  min-height: 300px;
+  min-height: 600px;
+  box-shadow: 0.5rem 0.5rem 0.25rem ${(props) => props.theme.colors.shadow};
+  transition: box-shadow 0.5s;
 `;
 
 const Title = styled.h2`
@@ -203,10 +218,5 @@ const Title = styled.h2`
 `;
 
 const Item = styled.div<{ $isDragging: boolean }>`
-  padding: 1rem;
-  margin-bottom: 0.5rem;
-  background-color: ${(props) => (props.$isDragging ? "#f0f0f0" : "#fff")};
-  border: 1px solid #ccc;
-  border-radius: 0.5rem;
   cursor: grab;
 `;

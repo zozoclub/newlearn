@@ -16,4 +16,6 @@ public interface StudyService {
 
     List<WordTestResponseDTO> getWordTestProblems(Long userId, Long totalCount);
 
+    void saveWordTestResults(Long userId, List<WordTestResultDTO> wordTestResults);
+
 }

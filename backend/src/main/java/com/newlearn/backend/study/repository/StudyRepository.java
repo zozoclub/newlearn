@@ -14,10 +14,4 @@ public interface StudyRepository extends JpaRepository<Goal, Long> {
 
     Optional<Goal> findByUserId(Long userId);
 
-    @Query("SELECT w FROM Word w WHERE w.user.userId = :userId ORDER BY FUNCTION('RAND') LIMIT :totalCount")
-    List<Word> findRandomWords(@Param("userId") Long userId, @Param("totalCount") Long totalCount);
-
-    @Query("SELECT ws FROM WordSentence ws WHERE ws.word.wordId = :wordId ORDER BY FUNCTION('RAND') LIMIT 1")
-    WordSentence findRandomSentenceByWordId(@Param("wordId") Long wordId);
-
 }

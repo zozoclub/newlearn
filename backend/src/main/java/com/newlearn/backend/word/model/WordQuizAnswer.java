@@ -3,11 +3,11 @@ package com.newlearn.backend.word.model;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Getter
-@NoArgsConstructor
-@Table(name = "word_quiz_answer")
+@Data
 @Entity
 @Builder
+@Table(name = "word_quiz_answer")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class WordQuizAnswer {
 

@@ -6,11 +6,11 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Getter
-@NoArgsConstructor
-@Table(name = "word_quiz")
+@Data
 @Entity
 @Builder
+@Table(name = "word_quiz")
+@NoArgsConstructor
 @AllArgsConstructor
 public class WordQuiz {
 

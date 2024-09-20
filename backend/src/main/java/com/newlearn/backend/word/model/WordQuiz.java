@@ -1,4 +1,4 @@
-package com.newlearn.backend.study.model;
+package com.newlearn.backend.word.model;
 
 import com.newlearn.backend.user.model.Users;
 import jakarta.persistence.*;

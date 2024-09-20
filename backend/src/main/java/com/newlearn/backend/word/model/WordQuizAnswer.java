@@ -1,4 +1,4 @@
-package com.newlearn.backend.study.model;
+package com.newlearn.backend.word.model;
 
 import jakarta.persistence.*;
 import lombok.*;

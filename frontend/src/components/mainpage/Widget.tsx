@@ -86,7 +86,7 @@ const Widget: React.FC<{ variety: string }> = ({ variety }) => {
       return (
         <Container>
           <Descripsion>My Information</Descripsion>
-          <ProfileImage persentage={25}>
+          <ProfileImage $persentage={25}>
             <img src={PuzzleIcon} />
           </ProfileImage>
           <div>Lv.32 Coding Larva</div>
@@ -211,14 +211,14 @@ const Descripsion = styled.div`
   font-size: 0.875rem;
 `;
 
-const ProfileImage = styled.div<{ persentage: number }>`
+const ProfileImage = styled.div<{ $persentage: number }>`
   position: relative;
   border-radius: 100%;
   width: 50%;
   height: 50%;
   margin: 1rem 0 0.5rem 0;
   background: conic-gradient(
-    ${(props) => props.theme.colors.primary} 0% ${(props) => props.persentage}%,
+    ${(props) => props.theme.colors.primary} 0% ${(props) => props.$persentage}%,
     transparent 25% 100%
   );
   img {

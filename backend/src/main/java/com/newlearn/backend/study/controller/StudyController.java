@@ -68,7 +68,7 @@ public class StudyController {
             Users user = userService.findByEmail(authentication.getName())
                     .orElseThrow(() -> new Exception("회원정보 없음"));
 
-            List<WordTestResponseDTO> tests = studyService.getWordTestProblems(user.getUserId(), wordTestRequestDTO.getTotalCount());
+            List<WordTestResponseDTO> tests = studyService.getWordTestProblems(user, wordTestRequestDTO.getTotalCount());
 
             return ApiResponse.createSuccess(tests, "단어 상세 조회 성공");
         } catch (Exception e) {
@@ -77,22 +77,22 @@ public class StudyController {
         }
     }
     
-    // 단어 테스트 결과 저장
-    @PostMapping("/word/test")
-    public ApiResponse<?> saveStudyWordTest(Authentication authentication,
-                                            @RequestBody List<WordTestResultDTO> wordTestResults) throws Exception {
-        try {
-            Users user = userService.findByEmail(authentication.getName())
-                    .orElseThrow(() -> new Exception("회원정보 없음"));
-
-            studyService.saveWordTestResults(user.getUserId(), wordTestResults);
-
-            return ApiResponse.createSuccess(null, "단어 테스트 저장 성공");
-        } catch (Exception e) {
-            log.error("단어 테스트 결과 저장 중 오류 발생", e);
-            return ApiResponse.createError(ErrorCode.WORD_TEST_RESULT_CREATE_FAILED);
-        }
-    }
+//    // 단어 테스트 결과 저장
+//    @PostMapping("/word/test")
+//    public ApiResponse<?> saveStudyWordTest(Authentication authentication,
+//                                            @RequestBody List<WordTestResultDTO> wordTestResults) throws Exception {
+//        try {
+//            Users user = userService.findByEmail(authentication.getName())
+//                    .orElseThrow(() -> new Exception("회원정보 없음"));
+//
+//            studyService.saveWordTestResults(user.getUserId(), wordTestResults);
+//
+//            return ApiResponse.createSuccess(null, "단어 테스트 저장 성공");
+//        } catch (Exception e) {
+//            log.error("단어 테스트 결과 저장 중 오류 발생", e);
+//            return ApiResponse.createError(ErrorCode.WORD_TEST_RESULT_CREATE_FAILED);
+//        }
+//    }
     
     // 단어 테스트 결과 리스트 조회
     

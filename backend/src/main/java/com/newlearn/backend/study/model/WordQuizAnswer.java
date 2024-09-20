@@ -7,7 +7,7 @@ import lombok.*;
 @Entity
 @Builder
 @Table(name = "word_quiz_answer")
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @AllArgsConstructor
 public class WordQuizAnswer {
 

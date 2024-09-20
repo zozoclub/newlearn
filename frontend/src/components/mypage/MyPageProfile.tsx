@@ -1,10 +1,12 @@
+import { useState } from "react";
 import defaultProfile from "@assets/images/defaultProfile.jpg";
 import styled from "styled-components";
 import EditIcon from "@assets/icons/EditIcon";
 import SocialNaver from "@assets/icons/SocialNaver";
 import SocialKakao from "@assets/icons/SocialKakao";
+import Modal from "@components/Modal";
 
-// interface Profile {
+// type Profile = {
 //   profileImg?: string;
 //   level: number;
 //   nickname: string;
@@ -24,9 +26,17 @@ const MyPageProfile: React.FC = () => {
   const email = "asdf@gmail.com";
   const percentage = (300 / 500) * 100;
 
-  const handleNicknameEdit = () => {
-    alert("편집 버튼 클릭");
+  // 모달 설정
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const openModal = () => {
+    setIsModalOpen(true);
   };
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
+  // 닉네임 설정
+  const handleSaveNickname = () => {};
   return (
     <div>
       <Container>
@@ -36,7 +46,17 @@ const MyPageProfile: React.FC = () => {
             <div>
               Lv.{level} {nickname}
             </div>
-            <EditIcon onClick={handleNicknameEdit} />
+            <EditIcon onClick={openModal} />
+            <Modal
+              isOpen={isModalOpen}
+              onClose={closeModal}
+              title="닉네임 수정"
+            >
+              <NicknameEditInput type="text" />
+              <ButtonContainer>
+                <SaveButton onClick={handleSaveNickname}>저장</SaveButton>
+              </ButtonContainer>
+            </Modal>
           </NicknameContainer>
           <ExperienceContainer>
             <ExperienceBarContainer>
@@ -73,12 +93,58 @@ const ProfileInfoContainer = styled.div`
   flex-direction: column;
   justify-content: space-between;
 `;
+
 // 닉네임
 const NicknameContainer = styled.div`
   display: flex;
   font-size: 1.5rem;
   font-weight: bold;
   justify-content: space-between;
+`;
+
+const NicknameEditInput = styled.input`
+  display: block;
+  text-align: center;
+  width: 100%;
+  max-width: 200px;
+
+  margin: 0 auto 2rem;
+  padding: 0.25rem;
+
+  background-color: ${(props) => props.theme.colors.cardBackground};
+  box-sizing: border-box;
+  outline: none;
+  border: none;
+  border-bottom: 2px solid ${(props) => props.theme.colors.text01};
+  font-size: 1.25rem;
+  &:focus {
+    border-bottom-color: ${(props) => props.theme.colors.primary};
+  }
+`;
+
+// 모달 버튼
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+`;
+
+const CustomButton = styled.button`
+  padding: 0.5rem 1rem;
+  background: none;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+`;
+
+const SaveButton = styled(CustomButton)`
+  color: white;
+  background-color: ${(props) => props.theme.colors.primary};
+  &:hover {
+    background-color: ${(props) => props.theme.colors.primaryPress};
+  }
 `;
 
 // 경험치
@@ -106,7 +172,6 @@ const ExperienceBarFill = styled.div<{ width: number }>`
 const ExperienceText = styled.div`
   font-size: 0.9rem;
   white-space: nowrap;
-
   margin-top: 0.25rem;
 `;
 

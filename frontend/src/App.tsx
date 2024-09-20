@@ -25,7 +25,7 @@ const App: React.FC = () => {
                                                              \n\
 Welcome To NewsLearn!"
     );
-  });
+  }, []);
 
   return (
     <ThemeProvider theme={theme}>

@@ -1,7 +1,13 @@
 import BackArrow from "@assets/icons/BackArrow";
 import Button from "@components/Button";
-import { useState } from "react";
+import { getOAuthInformation } from "@services/userService";
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import styled from "styled-components";
+
+const useQuery = () => {
+  return new URLSearchParams(useLocation().search);
+};
 
 const SignInPage = () => {
   const categories = [
@@ -19,6 +25,8 @@ const SignInPage = () => {
   ];
   const [selectedCategory, setSelectedCategory] = useState<string[]>([]);
   const [selectedDifficulty, setSelectedDifficulty] = useState("");
+  const [token, setToken] = useState<string | null>(null);
+  const query = useQuery();
 
   const handleCategoryClick = (categoryName: string) => {
     setSelectedCategory((prevSelected) => {
@@ -34,6 +42,26 @@ const SignInPage = () => {
   const handleDifficultyClick = (difficulty: string) => {
     setSelectedDifficulty(difficulty);
   };
+
+  useEffect(() => {
+    const token = query.get("token");
+    setToken(token);
+  }, [query]);
+
+  useEffect(() => {
+    const getOAuth = async () => {
+      try {
+        if (token !== null) {
+          const response = await getOAuthInformation(token);
+          console.log("getOAuth: ", response);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    getOAuth();
+  }, [token]);
 
   return (
     <Container>

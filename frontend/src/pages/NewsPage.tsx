@@ -12,6 +12,9 @@ const NewsPage = () => {
 
   useEffect(() => {
     setCurrentLocation("news Page");
+    return () => {
+      setCurrentLocation("");
+    };
   }, [setCurrentLocation]);
 
   return (

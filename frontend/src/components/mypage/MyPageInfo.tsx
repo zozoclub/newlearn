@@ -26,7 +26,7 @@ const MyPageInfo: React.FC = () => {
         <TitleContainer>카테고리</TitleContainer>
         <ContentContainer>
           {category.map((item) => (
-            <div>{item}</div>
+            <div key={item}>{item}</div>
           ))}
         </ContentContainer>
         <IconContainer>

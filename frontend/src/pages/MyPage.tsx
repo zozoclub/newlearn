@@ -5,42 +5,54 @@ import MyPageCount from "@components/mypage/MyPageCount";
 import MyPageCategory from "@components/mypage/MyPageCategory";
 import MyPageGrass from "@components/mypage/MyPageGrass";
 import MyPageScrapNews from "@components/mypage/MyPageScrapNews";
+import { useEffect } from "react";
+import { useSetRecoilState } from "recoil";
+import locationState from "@store/locationState";
 
 const MyPage = () => {
+  const setCurrentLocation = useSetRecoilState(locationState);
+
+  useEffect(() => {
+    setCurrentLocation("My Page");
+    return () => {
+      setCurrentLocation("");
+    };
+  }, [setCurrentLocation]);
+
   return (
     <div>
       <MyPageContainer>
         <FlexContainer>
-          <FlexItem flex={3}>
+          <FlexItem $flex={3}>
             <WidgetContainer>
               <MyPageProfile />
             </WidgetContainer>
           </FlexItem>
-          <FlexItem flex={2}>
+          <FlexItem $flex={2}>
             <WidgetContainer>
               <MyPageInfo />
             </WidgetContainer>
           </FlexItem>
-          <FlexItem flex={2}>
+          <FlexItem $flex={2}>
             <WidgetContainer>
               <MyPageCount />
             </WidgetContainer>
           </FlexItem>
         </FlexContainer>
         <FlexContainer>
-          <FlexItem flex={1}>
+          <FlexItem $flex={1}>
             <WidgetContainer>
               <MyPageCategory />
             </WidgetContainer>
           </FlexItem>
-          <FlexItem flex={1}>
+          <FlexItem $flex={1}>
             <WidgetContainer>
               <MyPageGrass />
             </WidgetContainer>
           </FlexItem>
         </FlexContainer>
         <FlexContainer>
-          <FlexItem flex={1}>
+          <FlexItem $flex={1}>
             <WidgetContainer>
               <MyPageScrapNews />
             </WidgetContainer>
@@ -63,8 +75,8 @@ const FlexContainer = styled.div`
   gap: 1.5rem;
 `;
 
-const FlexItem = styled.div<{ flex: number }>`
-  flex: ${(props) => props.flex};
+const FlexItem = styled.div<{ $flex: number }>`
+  flex: ${(props) => props.$flex};
   margin: 1rem 0;
 `;
 

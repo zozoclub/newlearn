@@ -3,7 +3,7 @@ import Logo from "@assets/images/logo-full.png";
 import NavarButton from "@assets/images/naverButton.png";
 import KakaoButton from "@assets/images/kakaoButton.png";
 import { usePageTransition } from "@hooks/usePageTransition";
-import { naverLogin } from "@services/userService";
+import { kakaoLogin, naverLogin } from "@services/userService";
 
 const LoginPage = () => {
   const transitionTo = usePageTransition();
@@ -18,7 +18,13 @@ const LoginPage = () => {
         height="55"
         onClick={naverLogin}
       />
-      <img src={KakaoButton} alt="kakao" width="400" height="55" />
+      <img
+        src={KakaoButton}
+        alt="kakao"
+        width="400"
+        height="55"
+        onClick={kakaoLogin}
+      />
     </Container>
   );
 };

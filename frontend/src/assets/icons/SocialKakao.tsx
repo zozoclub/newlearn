@@ -10,7 +10,7 @@ const SocialKakao = () => {
     >
       <g
         id="SVGRepo_bgCarrier"
-        stroke-width="0"
+        strokeWidth="0"
         transform="translate(0,0), scale(1)"
       >
         <rect
@@ -24,10 +24,10 @@ const SocialKakao = () => {
       </g>
       <g
         id="SVGRepo_tracerCarrier"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
         stroke="#CCCCCC"
-        stroke-width="2.048"
+        strokeWidth="2.048"
       ></g>
       <g id="SVGRepo_iconCarrier">
         <path

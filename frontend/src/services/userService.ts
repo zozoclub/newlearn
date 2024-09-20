@@ -21,6 +21,17 @@ export const naverLogin = async () => {
   }
 };
 
+export const kakaoLogin = async () => {
+  try {
+    const response = await axios.get(`oauth/login/kakao`);
+    console.log(response);
+    window.location.href = response.data.url;
+  } catch (error) {
+    console.error("kakao Login failed:", error);
+    throw error;
+  }
+};
+
 export const getOAuthAccessToken = async (
   code: string
 ): Promise<LoginResponse> => {

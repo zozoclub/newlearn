@@ -17,6 +17,9 @@ const MainPage = () => {
 
   useEffect(() => {
     setCurrentLocation("Main Page");
+    return () => {
+      setCurrentLocation("");
+    };
   }, [setCurrentLocation]);
 
   return (

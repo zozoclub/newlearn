@@ -45,7 +45,7 @@ const TitleContainer = styled.div`
 
 const YearContainer = styled.div`
   font-weight: bold;
-  font-size: 2rem;
+  font-size: 1.75rem;
 `;
 
 const NewsContainer = styled.div`

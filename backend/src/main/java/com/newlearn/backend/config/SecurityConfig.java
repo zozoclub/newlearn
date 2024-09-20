@@ -1,6 +1,7 @@
 package com.newlearn.backend.config;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -15,9 +16,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.OAuth2AuthorizationSuccessHandler;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 
 import com.newlearn.backend.common.JwtTokenProvider;
+import com.newlearn.backend.filter.JwtAuthenticationFilter;
 import com.newlearn.backend.oauth.service.CustomOAuth2UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -45,10 +48,12 @@ public class SecurityConfig {
 				config.setAllowedMethods(Arrays.asList(allowedMethods));
 				config.setAllowCredentials(true);
 				config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+				config.setExposedHeaders(List.of("Authorization"));
 				config.setMaxAge(3600L);
 				return config;
 			}))
 			.csrf(AbstractHttpConfigurer::disable)
+			.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
 			.authorizeHttpRequests(requests -> requests
 				.requestMatchers("/api/oauth/**", "/api/user/sign-up").permitAll()
 				.anyRequest().authenticated())

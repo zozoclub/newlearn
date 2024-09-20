@@ -10,6 +10,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import com.newlearn.backend.config.CustomUserDetailsService;
 import com.newlearn.backend.exception.TokenExpiredException;
 
 import io.jsonwebtoken.Claims;
@@ -27,6 +28,8 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public class JwtTokenProvider {
+
+	private final CustomUserDetailsService customUserDetailsService;
 
 	@Value("${jwt.accessToken-expiration}")
 	private long accessTokenExpiration;
@@ -103,5 +106,11 @@ public class JwtTokenProvider {
 		} catch (JwtException | IllegalArgumentException exception) {
 			return false;
 		}
+	}
+
+	public Authentication getAuthentication(String token) {
+		String userEmail = this.getUserEmail(token);
+		UserDetails userDetails = customUserDetailsService.loadUserByUsername(userEmail);
+		return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
 	}
 }

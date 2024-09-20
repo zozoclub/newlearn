@@ -47,7 +47,7 @@ public class OAuthController {
 
 	@GetMapping("/login/{provider}")
 	public ResponseEntity<Map<String, String>> getOAuthLoginUrl(@PathVariable String provider) {
-		String redirectUrl = baseUrl + "/api/oauth2/authorization/" + provider;
+		String redirectUrl = baseUrl + "/oauth2/authorization/" + provider;
 		Map<String, String> response = new HashMap<>();
 		response.put("url", redirectUrl);
 		return ResponseEntity.ok(response);

@@ -1,6 +1,6 @@
-import Clock from "@components/Clock";
-import DailyNews from "@components/DailyNews";
-import Widget from "@components/Widget";
+import Clock from "@components/mainpage/Clock";
+import DailyNews from "@components/mainpage/DailyNews";
+import Widget from "@components/mainpage/Widget";
 import locationState from "@store/locationState";
 import { useEffect } from "react";
 import { useSetRecoilState } from "recoil";

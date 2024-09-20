@@ -1,8 +1,10 @@
 import styled from "styled-components";
-import PuzzleIcon from "@assets/icons/puzzleIcon.png";
-import CategoryChart from "./CategoryChart";
 import { useCallback, useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+
+import CategoryChart from "@components/CategoryChart";
+
+import PuzzleIcon from "@assets/icons/puzzleIcon.png";
 
 type CountDataKey =
   | "economyCount"

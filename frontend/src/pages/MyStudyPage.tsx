@@ -171,7 +171,7 @@ const MenuItemBase = styled.div`
 
   &:hover::before {
     filter: grayscale(0%);
-    transform: scale(1.01);
+    transform: scale();
   }
 `;
 

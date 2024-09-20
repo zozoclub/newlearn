@@ -45,7 +45,7 @@ Welcome To NewsLearn!"
 const AppContainer = styled.div`
   position: relative;
   width: 90vw;
-  padding: 0 5vw;
+  padding: 0 calc(5vw - 0.1875rem);
 `;
 
 export default App;

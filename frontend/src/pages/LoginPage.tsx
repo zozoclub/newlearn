@@ -3,6 +3,7 @@ import Logo from "@assets/images/logo-full.png";
 import NavarButton from "@assets/images/naverButton.png";
 import KakaoButton from "@assets/images/kakaoButton.png";
 import { usePageTransition } from "@hooks/usePageTransition";
+import { naverLogin } from "@services/userService";
 
 const LoginPage = () => {
   const transitionTo = usePageTransition();
@@ -10,7 +11,13 @@ const LoginPage = () => {
   return (
     <Container>
       <img src={Logo} alt="LogoImage" width="300" height="65" />
-      <img src={NavarButton} alt="naver" width="400" height="55" />
+      <img
+        src={NavarButton}
+        alt="naver"
+        width="400"
+        height="55"
+        onClick={naverLogin}
+      />
       <img src={KakaoButton} alt="kakao" width="400" height="55" />
     </Container>
   );

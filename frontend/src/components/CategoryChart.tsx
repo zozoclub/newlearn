@@ -27,7 +27,7 @@ type CountDataKey =
   | "societyCount"
   | "cultureCount"
   | "scienceCount"
-  | "entertainCount";
+  | "globalCount";
 
 type CountData = {
   [K in CountDataKey]: number;
@@ -40,7 +40,7 @@ const getLabelFromKey = (key: CountDataKey): string => {
     societyCount: "사회",
     cultureCount: "생활/문화",
     scienceCount: "IT/과학",
-    entertainCount: "연예",
+    globalCount: "세계",
   };
   return labelMap[key] || key;
 };

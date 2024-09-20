@@ -212,7 +212,7 @@ const ColorLegend = styled.div`
   display: flex;
   align-items: center;
   justify-content: end;
-  margin-top: 1rem;
+  margin-top: 1.5rem;
 `;
 
 const LegendColor = styled.div<{ color: string }>`

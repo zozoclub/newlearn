@@ -1,4 +1,6 @@
 import logging
+from datetime import datetime
+
 from django.core.management.base import BaseCommand
 import pandas as pd
 from Crawling import settings
@@ -23,12 +25,12 @@ def translate_news(title, content, domain="general", style="formal"):
     Returns:
         dict: 번역 결과를 담은 JSON 형식의 딕셔너리
     """
-    prompt = (f"제목: {title}. 내용: {content}. "
-              f"다음 지침에 따라 이 정보를 정확하게 영어로 번역해 주세요.\n"
-              f"1. 영어로 세 가지 난이도(어려운, 중간, 쉬운)로 번역해 주세요.\n"
-              f"2. 문장 수가 반드시 일치해야 하며, 문장의 기준은 마침표(.)의 개수입니다. 절대 문장을 합치지 마세요.\n"
-              f"3. 내용 안에 사용된 모든 \"는 '로 변환해 주세요. 단, JSON 문법에서 사용되는 \"는 그대로 유지해야 합니다.\n"
-              f"4. 번역된 내용은 아래의 JSON 형식으로 제공해 주세요:\n"
+    prompt = (f"Title: {title}. Content: {content}. "
+              f"Please translate this information accurately into English according to the following guidelines. You can skip translating any information unrelated to the article content (e.g., names of journalists or newspapers).\n"
+              f"1. Translate the content into three levels of difficulty (hard, medium, easy) in English.\n"
+              f"2. Periods should only be used at the end of a sentence.\n"
+              f"3. Do not use any special characters except for periods at the end of sentences. For example, avoid using quotation marks (' or \").\n"
+              f"4. Provide the translated content in the following JSON format:\n"
               f"{{ "
               f"   \"high\": \"...\", "
               f"   \"medium\": \"...\", "
@@ -39,7 +41,7 @@ def translate_news(title, content, domain="general", style="formal"):
 
     try:
         response_text = response.text
-        print(response_text)
+
 
         high_start = response_text.find('"high": "') + 9
         medium_start = response_text.find('"medium": "') + 11
@@ -54,10 +56,12 @@ def translate_news(title, content, domain="general", style="formal"):
             logging.warning("번역 결과 누락")
             return None
 
-        high_translation = response_text[high_start:high_end].strip()
-        medium_translation = response_text[medium_start:medium_end].strip()
-        low_translation = response_text[low_start:low_end].strip()
-
+        high_translation = response_text[high_start:high_end].strip().replace('\\', '')
+        medium_translation = response_text[medium_start:medium_end].strip().replace('\\', '')
+        low_translation = response_text[low_start:low_end].strip().replace('\\', '')
+        print(high_translation)
+        print(medium_translation)
+        print(low_translation)
         return {
             "high": high_translation,
             "medium": medium_translation,
@@ -78,12 +82,14 @@ def translate_to_korean(sentences):
     Args:
         sentences (list): 영어 문장 리스트
     Returns:
-        list: 번역된 한국어 문장 리스트
+        str: 번역된 한국어 문장
     """
     sentences_str = ', '.join(f'"{sentence}"' for sentence in sentences)
 
-    prompt = (f"다음 영어 문장들을 한국어로 번역해 주세요: [{sentences_str}]. "
-              f"각 문장의 순서를 유지하고, 각 문장을 개별적으로 번역해 주세요.\n"
+    prompt = (f"Please translate the following English sentences into Korean in the exact order as provided: [{sentences_str}]. "
+              f"Each sentence must be translated into a **single** sentence. Under no circumstances should the translation result in multiple sentences. "
+              f"The number of translated sentences **must match** the number of original sentences. Keep the original sentence order intact.\n"
+              f"Do not use any special characters. Ensure that every sentence ends with exactly one period (.)\n"
               f"{{ "
               f"   \"translated_sentences\": [\"...\", \"...\", \"...\"]"
               f" }}\n")
@@ -100,9 +106,34 @@ def translate_to_korean(sentences):
             logging.warning("번역 결과 누락")
             return None
 
+        # 번역된 문장을 리스트로 나눈 뒤, 각 문장의 앞뒤 공백과 " 제거 후 하나로 합침
         translated_sentences = response_text[sentences_start:sentences_end].strip()
 
-        return translated_sentences.split('", "')  # 번역된 문장들을 리스트로 반환
+        sentences_list = translated_sentences.split('", "')
+
+        # 각 문장에서 "를 제거하고 앞뒤 공백을 제거하는 과정
+        sentences_list = [s.strip('"').strip() for s in sentences_list]
+
+        # 줄바꿈 제거, 문장 합치기, 마침표 뒤에 공백 추가
+        processed_sentences = []
+        for sentence in sentences_list:
+            sentence = sentence.replace(',\n        ', ' ').strip()
+            sentence = sentence.replace(', \n        ', ' ').strip()
+            sentence = sentence.replace('"', '')
+            sentence = sentence.replace('\\', '')
+            # 문장 중복 마침표 방지 (.. -> .)
+            sentence = sentence.replace('..', '.')
+            print(sentence)
+            processed_sentences.append(sentence)
+
+        # 문장들을 한 문장으로 합치기 (마침표 뒤 한 칸 띄어쓰기 포함)
+        final_result = ' '.join(processed_sentences).strip()
+
+        # 마지막에 마침표가 없다면 추가
+        if not final_result.endswith('.'):
+            final_result += '.'
+
+        return final_result
     except Exception as e:
         logging.error(f"Error processing response: {e}")
         if 'response_text' in locals():
@@ -151,17 +182,17 @@ def translate_csv(filename, chunksize=5):
                 low_kor_result = translate_to_korean(low_sentences)
 
                 if high_kor_result:
-                    chunk.loc[index, 'translated_high_kor'] = '. '.join(high_kor_result)
+                    chunk.loc[index, 'translated_high_kor'] = high_kor_result
                 else:
                     chunk.loc[index, 'translated_high_kor'] = ''
 
                 if medium_kor_result:
-                    chunk.loc[index, 'translated_medium_kor'] = '. '.join(medium_kor_result)
+                    chunk.loc[index, 'translated_medium_kor'] = medium_kor_result
                 else:
                     chunk.loc[index, 'translated_medium_kor'] = ''
 
                 if low_kor_result:
-                    chunk.loc[index, 'translated_low_kor'] = '. '.join(low_kor_result)
+                    chunk.loc[index, 'translated_low_kor'] = low_kor_result
                 else:
                     chunk.loc[index, 'translated_low_kor'] = ''
 
@@ -182,6 +213,7 @@ class Command(BaseCommand):
     help = 'Translates news articles from CSV file'
 
     def handle(self, *args, **options):
-        filename = "20240919.csv"  # CSV 파일 경로를 적절히 수정하세요
+        current_date = datetime.now().strftime("%Y%m%d")
+        filename =  f"{current_date}.csv"  # CSV 파일 경로를 적절히 수정하세요
         translate_csv(filename)
         self.stdout.write(self.style.SUCCESS('Successfully translated news articles'))

@@ -15,7 +15,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         def clean_text(text):
-            # Remove unwanted whitespace and special characters
             text = text.replace('\n', ' ').strip()
             text = re.sub(r'\s+', ' ', text)  # Replace multiple spaces with a single space
             text = re.sub(r'\s*[\.\?!]\s*', '. ', text)  # Ensure proper spacing after punctuation
@@ -59,7 +58,6 @@ class Command(BaseCommand):
                 html.raise_for_status()
                 soup = BeautifulSoup(html.text, "lxml")
 
-                # Only proceed if the main content exists
                 main_content = soup.select_one(selectors["main"])
                 if not main_content:
                     return None  # If main content is None, return None
@@ -67,7 +65,6 @@ class Command(BaseCommand):
                 art_dic = {key: clean_text(soup.select_one(selector).text) if soup.select_one(selector) else ""
                            for key, selector in selectors.items()}
 
-                # Special handling for press and image
                 press = soup.select_one(selectors["press"])
                 art_dic["press"] = press['alt'].strip() if press else ""
                 image = soup.select_one(selectors["image"])
@@ -78,28 +75,44 @@ class Command(BaseCommand):
                 logging.error(f"Request error while crawling article: {e}")
                 return None
 
+        def update_section(sid):
+            section_map = {
+                100: 1,
+                101: 2,
+                102: 3,
+                103: 4,
+                104: 5,
+                105: 6
+            }
+            return section_map.get(sid, sid)
+
         all_hrefs = {}
         sids = [100]  # sid 100~105로 설정
         for sid in sids:
-            all_hrefs[sid] = re_tag(sid, num_pages=1)  # 예를 들어 3페이지까지 크롤링
+            all_hrefs[sid] = re_tag(sid, num_pages=1)
 
         artdic_list = []
         for sid, hrefs in all_hrefs.items():
             for url in hrefs:
                 art_dic = art_crawl(url)
                 if art_dic and art_dic.get("main"):  # Check if the main content exists before adding
-                    art_dic["section"] = sid
+                    art_dic["section"] = update_section(sid)  # section 값을 변환하여 저장
                     art_dic["url"] = url
                     artdic_list.append(art_dic)
 
-        if artdic_list:  # If there is any data to save
+        if artdic_list:
             art_df = pd.DataFrame(artdic_list)
 
-            # 현재 날짜를 기준으로 파일명 생성
-            current_date = datetime.now().strftime("%Y%m%d")  # YYYYMMDD 형식
+            # 컬럼 이름 변경
+            art_df = art_df.rename(columns={
+                "date": "published_date",
+                "main": "content",
+                "image": "thumbnail_image_url"
+            })
+
+            current_date = datetime.now().strftime("%Y%m%d")
             filename = f"{current_date}.csv"
 
-            # CSV 파일로 저장
             art_df.to_csv(filename, index=False)
             self.stdout.write(self.style.SUCCESS(f'크롤링 및 CSV 저장 완료! 파일명: {filename}'))
         else:

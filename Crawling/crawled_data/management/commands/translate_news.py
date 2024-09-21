@@ -161,7 +161,7 @@ def translate_csv(filename, chunksize=5):
             print(f"Processing row: {index}")
 
             # 영어 번역
-            result = translate_news(row['title'], row['main'])
+            result = translate_news(row['title'], row['content'])
 
             if result:
                 chunk.loc[index, 'translated_high'] = result.get('high', '')

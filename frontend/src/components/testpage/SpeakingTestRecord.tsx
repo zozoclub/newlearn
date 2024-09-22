@@ -91,9 +91,15 @@ const SpeakingTestRecord: React.FC<Props> = ({
       {!isRecording && isRecorded && (
         <>
           <CompletionText>녹음이 완료되었습니다!</CompletionText>
-          {audioUrl && <AudioPlayer controls src={audioUrl} />}
-          <RestartRecordingIconStyled onClick={handleRestartRecording} />
-          <RestartText>다시 녹음하기</RestartText>
+          {audioUrl && (
+            <>
+              <AudioPlayer controls src={audioUrl} />
+            </>
+          )}
+          <RestartRecordingContainer>
+            <RestartText>다시 녹음하기</RestartText>
+            <RestartRecordingIconStyled onClick={handleRestartRecording} />
+          </RestartRecordingContainer>
         </>
       )}
     </>
@@ -186,24 +192,27 @@ const AudioPlayer = styled.audio`
   max-width: 20rem;
 `;
 
-// 재녹음 아이콘 스타일
+const RestartRecordingContainer = styled.div`
+  display: flex;
+  align-items: center;
+  margin-top: 1rem;
+`;
+
 const RestartRecordingIconStyled = styled(RestartRecordingIcon)`
   width: 2rem;
   height: 2rem;
   cursor: pointer;
-  margin-top: 1rem;
+  margin-right: 0.5rem;
 
   &:hover {
     opacity: 0.8;
   }
 `;
 
-// 재녹음 텍스트 스타일
 const RestartText = styled.p`
   color: ${(props) => props.theme.colors.primary};
   font-size: 1rem;
   font-weight: bold;
-  margin-top: 0.5rem;
   cursor: pointer;
 
   &:hover {
@@ -211,9 +220,8 @@ const RestartText = styled.p`
   }
 `;
 
-// 녹음 전 프롬프트 텍스트
 const PromptText = styled.p`
-  color: ${(props) => props.theme.colors.textSecondary};
+  color: ${(props) => props.theme.colors.text};
   font-size: 1.125rem;
   margin-top: 0.5rem;
 `;

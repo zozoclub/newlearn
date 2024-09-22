@@ -27,6 +27,8 @@ const SpeakingTestRealtimeText: React.FC<Props> = ({
             userRecognizingText ? (
               <RecognizingText>
                 인식된 텍스트
+                <br />
+                <br />
                 {userRecognizingText}
               </RecognizingText>
             ) : (
@@ -36,8 +38,10 @@ const SpeakingTestRealtimeText: React.FC<Props> = ({
             <FinalText>
               <RecognizingText>최종 인식된 텍스트</RecognizingText>
               <Explain>
-                인식된 텍스트는 문장의 완성도 점수에서 확인 가능합니다. 문단이
-                제대로 나누어지지 않아도 점수에는 큰 영향 없습니다.
+                인식된 텍스트는 문장의 완성도 점수에서 확인 가능합니다.
+                <br />
+                <br />
+                문단이 제대로 나누어지지 않아도 점수에는 큰 영향 없습니다.
               </Explain>
               {splitRecognizedText.map((sentence, index) => (
                 <span key={index}>

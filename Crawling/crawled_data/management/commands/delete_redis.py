@@ -4,7 +4,7 @@ from django.core.management.base import BaseCommand
 
 try:
     redis_client = redis.StrictRedis(
-        host='54.180.158.165',
+        host=settings.REDIS_HOST,
         port=6379,
         db=1,
         username=settings.REDIS_USERNAME,

@@ -1,5 +1,4 @@
 from datetime import datetime
-
 import pandas as pd
 import redis
 from pymongo import MongoClient
@@ -9,20 +8,31 @@ from django.core.management.base import BaseCommand
 from Crawling import settings
 
 
-# Redis 클라이언트 설정
-redis_client = redis.StrictRedis(
-    host=settings.REDIS_HOST,
-    port=6379,
-    db=1,
-    username=settings.REDIS_USERNAME,  # 사용자 이름
-    password=settings.REDIS_PASSWORD  # 비밀번호
-)
+try:
+    redis_client = redis.StrictRedis(
+        host='54.180.158.165',
+        port=6379,
+        db=1,
+        username=settings.REDIS_USERNAME,
+        password=settings.REDIS_PASSWORD
+    )
 
-# MongoDB 클라이언트 설정
-mongo_client = MongoClient(f"mongodb://{settings.MONGO_USERNAME}:{settings.MONGO_PASSWORD}@{settings.MONGO_HOST}:{settings.MONGO_PORT}/")
-db = mongo_client[settings.MONGO_DB_NAME]
-collection = db[settings.MONGO_COLLECTION_NAME]
+    # Redis ping 테스트
+    response = redis_client.ping()
+    print(f"Redis 연결 성공: {response}")
+except redis.ConnectionError as e:
+    print(f"Redis 연결 실패: {e}")
 
+uri = f"mongodb://{settings.MONGO_USERNAME}:{settings.MONGO_PASSWORD}@{settings.MONGO_HOST}:{settings.MONGO_PORT}/newlearn?authSource=admin"
+client = MongoClient(uri)
+try:
+    client.admin.command('ping')
+    print("MongoDB 연결 성공!")
+except Exception as e:
+    print(f"MongoDB 연결 실패: {e}")
+
+db = client['newlearn']
+collection = db['news']
 
 def process_translated_csv(filename, chunksize=5):
     """
@@ -39,43 +49,52 @@ def process_translated_csv(filename, chunksize=5):
         for index, row in chunk.iterrows():
             print(f"Processing row: {index}")
 
-            # 필드 검사
             url = row.get('url')
             translated_high = row.get('translated_high')
             translated_medium = row.get('translated_medium')
             translated_low = row.get('translated_low')
             translated_high_kor = row.get('translated_high_kor')
-            translated_medium_kor = row.get('translated_medium')
-            translated_low_kor = row.get('translated_low')
+            translated_medium_kor = row.get('translated_medium_kor')
+            translated_low_kor = row.get('translated_low_kor')
 
-            # 필수 필드 확인 (url, translated fields)
-            if not url or pd.isna(translated_high) or pd.isna(translated_medium) or pd.isna(translated_low) or pd.isna(translated_high_kor):
-                print("null 있음요")
+            if not url or pd.isna(translated_high) or pd.isna(translated_medium) or pd.isna(translated_low) or pd.isna(translated_high_kor) \
+                    or pd.isna(translated_medium_kor) or pd.isna(translated_low_kor):
+                print("필수 값이 비어 있음")
                 continue
 
-            # translated_high와 translated_high_kor의 문장 갯수 확인
-            if len(translated_high.split('.')) != len(translated_high_kor.split('.')):
-                print("high 갯수차이")
+            if isinstance(translated_high, str) and isinstance(translated_high_kor, str):
+                if len(translated_high.split('.')) != len(translated_high_kor.split('.')):
+                    print("high 문장 수 불일치")
+                    continue
+            else:
+                print("high 필드가 유효하지 않음")
                 continue
 
-            if len(translated_medium.split('.')) != len(translated_medium_kor.split('.')):
-                print("medium 갯수차이")
+            if isinstance(translated_medium, str) and isinstance(translated_medium_kor, str):
+                if len(translated_medium.split('.')) != len(translated_medium_kor.split('.')):
+                    print("medium 문장 수 불일치")
+                    continue
+            else:
+                print("medium 필드가 유효하지 않음")
                 continue
 
-            if len(translated_low.split('.')) != len(translated_low_kor.split('.')):
-                print("low 갯수차이")
+            if isinstance(translated_low, str) and isinstance(translated_low_kor, str):
+                if len(translated_low.split('.')) != len(translated_low_kor.split('.')):
+                    print("low 문장 수 불일치")
+                    continue
+            else:
+                print("low 필드가 유효하지 않음")
                 continue
 
-            # Redis에서 URL 존재 여부 확인
             if redis_client.exists(url):
-                print(f"이미 URL이 등록되어 있슴다.: {url}")
+                print(f"이미 등록된 URL: {url}")
                 continue
             else:
                 redis_client.set(url, 1)
 
                 row_dict = row.to_dict()
 
-                # numpy 타입을 파이썬 기본 타입으로 변환
+                # numpy 타입 변환
                 for key in row_dict:
                     if pd.isna(row_dict[key]):
                         row_dict[key] = None
@@ -89,7 +108,7 @@ def process_translated_csv(filename, chunksize=5):
                 try:
                     collection.insert_one(row_dict)
                 except Exception as e:
-                    logging.error(f"Error inserting into MongoDB: {e}")
+                    logging.error(f"MongoDB 삽입 오류: {e}")
 
                 rows_to_add.append(row)
 
@@ -99,10 +118,10 @@ def process_translated_csv(filename, chunksize=5):
             is_first_chunk = False
 
 class Command(BaseCommand):
-    help = 'Processes translated news articles for duplicates and stores them in MongoDB'
+    help = 'MongoDB와 Redis에서 중복 여부를 확인하는 코드'
 
     def handle(self, *args, **options):
         current_date = datetime.now().strftime("%Y%m%d")
         filename = f"translated_{current_date}.csv"
         process_translated_csv(filename)
-        self.stdout.write(self.style.SUCCESS('Successfully processed translated news articles'))
+        self.stdout.write(self.style.SUCCESS('성공적으로 처리했습니다.'))

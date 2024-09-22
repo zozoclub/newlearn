@@ -7,10 +7,10 @@ import logging
 from django.core.management.base import BaseCommand
 from Crawling import settings
 
-
+# Redis 및 MongoDB 연결 설정
 try:
     redis_client = redis.StrictRedis(
-        host='54.180.158.165',
+        host=settings.REDIS_HOST,
         port=6379,
         db=1,
         username=settings.REDIS_USERNAME,
@@ -34,12 +34,11 @@ except Exception as e:
 db = client['newlearn']
 collection = db['news']
 
-def process_translated_csv(filename, chunksize=5):
+def process_translated_csv(filename, output_filename, chunksize=5):
     """
     번역된 CSV 파일을 처리하여 중복 검사 및 유효성 검사를 한 후 MongoDB에 저장하는 함수
     """
     reader = pd.read_csv(filename, chunksize=chunksize)
-    output_filename = "final_" + filename
 
     is_first_chunk = True
 
@@ -120,8 +119,12 @@ def process_translated_csv(filename, chunksize=5):
 class Command(BaseCommand):
     help = 'MongoDB와 Redis에서 중복 여부를 확인하는 코드'
 
+    def add_arguments(self, parser):
+        parser.add_argument('--filename', type=str, help="입력 CSV 파일 경로", required=True)
+        parser.add_argument('--output', type=str, help="출력 CSV 파일 경로", required=True)
+
     def handle(self, *args, **options):
-        current_date = datetime.now().strftime("%Y%m%d")
-        filename = f"translated_{current_date}.csv"
-        process_translated_csv(filename)
+        filename = options['filename']
+        output = options['output']
+        process_translated_csv(filename, output)
         self.stdout.write(self.style.SUCCESS('성공적으로 처리했습니다.'))

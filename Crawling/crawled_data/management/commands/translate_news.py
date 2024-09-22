@@ -1,30 +1,21 @@
 import logging
 from datetime import datetime
-
 from django.core.management.base import BaseCommand
 import pandas as pd
 from Crawling import settings
 import google.generativeai as genai
-
-GEN_AI_SECRET_KEY = settings.GEN_AI_SECRET_KEY
-OPEN_AI_API_KEY = settings.OPEN_AI_API_KEY
+import os
 
 # Gemini API 설정
+GEN_AI_SECRET_KEY = settings.GEN_AI_SECRET_KEY
 genai.configure(api_key=GEN_AI_SECRET_KEY)
 model = genai.GenerativeModel('gemini-1.5-flash')
-
 
 def translate_news(title, content, domain="general", style="formal"):
     """
     뉴스 기사를 영어로만 번역하고 JSON 형식으로 반환하는 함수
-    Args:
-        title (str): 뉴스 기사 제목
-        content (str): 뉴스 기사 내용
-        domain (str, optional): 뉴스 기사 도메인 (예: technology, finance, etc.). Defaults to "general".
-        style (str, optional): 번역 스타일 (예: formal, informal, casual). Defaults to "formal".
-    Returns:
-        dict: 번역 결과를 담은 JSON 형식의 딕셔너리
     """
+    # 번역 로직은 기존과 동일합니다.
     prompt = (f"Title: {title}. Content: {content}. "
               f"Please translate this information accurately into English according to the following guidelines. You can skip translating any information unrelated to the article content (e.g., names of journalists or newspapers).\n"
               f"1. Translate the content into three levels of difficulty (hard, medium, easy) in English.\n"
@@ -41,7 +32,6 @@ def translate_news(title, content, domain="general", style="formal"):
 
     try:
         response_text = response.text
-
 
         high_start = response_text.find('"high": "') + 9
         medium_start = response_text.find('"medium": "') + 11
@@ -75,14 +65,9 @@ def translate_news(title, content, domain="general", style="formal"):
             logging.error("No response text available")
         return None
 
-
 def translate_to_korean(sentences):
     """
     영어 문장을 한국어로 번역하는 함수
-    Args:
-        sentences (list): 영어 문장 리스트
-    Returns:
-        str: 번역된 한국어 문장
     """
     sentences_str = ', '.join(f'"{sentence}"' for sentence in sentences)
 
@@ -106,30 +91,23 @@ def translate_to_korean(sentences):
             logging.warning("번역 결과 누락")
             return None
 
-        # 번역된 문장을 리스트로 나눈 뒤, 각 문장의 앞뒤 공백과 " 제거 후 하나로 합침
         translated_sentences = response_text[sentences_start:sentences_end].strip()
 
         sentences_list = translated_sentences.split('", "')
-
-        # 각 문장에서 "를 제거하고 앞뒤 공백을 제거하는 과정
         sentences_list = [s.strip('"').strip() for s in sentences_list]
 
-        # 줄바꿈 제거, 문장 합치기, 마침표 뒤에 공백 추가
         processed_sentences = []
         for sentence in sentences_list:
             sentence = sentence.replace(',\n        ', ' ').strip()
             sentence = sentence.replace(', \n        ', ' ').strip()
             sentence = sentence.replace('"', '')
             sentence = sentence.replace('\\', '')
-            # 문장 중복 마침표 방지 (.. -> .)
             sentence = sentence.replace('..', '.')
             print(sentence)
             processed_sentences.append(sentence)
 
-        # 문장들을 한 문장으로 합치기 (마침표 뒤 한 칸 띄어쓰기 포함)
         final_result = ' '.join(processed_sentences).strip()
 
-        # 마지막에 마침표가 없다면 추가
         if not final_result.endswith('.'):
             final_result += '.'
 
@@ -142,17 +120,11 @@ def translate_to_korean(sentences):
             logging.error("No response text available")
         return None
 
-
-def translate_csv(filename, chunksize=5):
+def translate_csv(filename, output_filename, chunksize=5):
     """
     CSV 파일을 chunk 단위로 읽어 번역하는 함수
-
-    Args:
-        filename (str): CSV 파일 이름
-        chunksize (int, optional): 한 번에 읽어들일 데이터 개수. 기본값은 5.
     """
     reader = pd.read_csv(filename, chunksize=chunksize)
-    output_filename = "translated_" + filename
 
     is_first_chunk = True
 
@@ -208,12 +180,15 @@ def translate_csv(filename, chunksize=5):
         chunk.to_csv(output_filename, mode='a', header=is_first_chunk, index=False)
         is_first_chunk = False
 
-
 class Command(BaseCommand):
     help = 'Translates news articles from CSV file'
 
+    def add_arguments(self, parser):
+        parser.add_argument('--filename', type=str, help="입력 CSV 파일 경로", required=True)
+        parser.add_argument('--output', type=str, help="출력 CSV 파일 경로", required=True)
+
     def handle(self, *args, **options):
-        current_date = datetime.now().strftime("%Y%m%d")
-        filename =  f"{current_date}.csv"  # CSV 파일 경로를 적절히 수정하세요
-        translate_csv(filename)
+        filename = options['filename']
+        output = options['output']
+        translate_csv(filename, output)
         self.stdout.write(self.style.SUCCESS('Successfully translated news articles'))

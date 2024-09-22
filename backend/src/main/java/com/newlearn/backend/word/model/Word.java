@@ -50,9 +50,6 @@ public class Word {
 	@Column(name = "restudy_level")
 	private int restudyLevel = 0;
 
-	@Column(name = "is_pending_restudy")
-	private boolean isPendingRestudy = false;
-
 	@Column(name = "last_restudy_date")
 	private LocalDateTime lastRestudyDate;
 
@@ -75,7 +72,6 @@ public class Word {
 			resetLevel();
 		}
 		this.lastRestudyDate = LocalDateTime.now();
-		this.isPendingRestudy = false;
 	}
 
 	private void levelUp() {
@@ -98,8 +94,4 @@ public class Word {
 		}
 	}
 
-	//나중에 하기로 한놈
-	public void markForReview() {
-		this.isPendingRestudy = true;
-	}
 }

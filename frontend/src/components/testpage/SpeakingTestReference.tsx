@@ -17,23 +17,26 @@ const SpeakingTestReference: React.FC<Props> = ({
   const koreanSentences = referenceTextTranslate
     .split(". ")
     .map((sentence) => sentence.trim());
+
   return (
     <>
       <SentenceArea>
-        {englishSentences.map((sentence, index) => {
-          return (
-            <div key={index}>
-              <EnglishSentence>
-                {sentence}.
-                <br />
-              </EnglishSentence>
+        {englishSentences.map((sentence, index) => (
+          <div key={index}>
+            <EnglishSentence>
+              {sentence}
+              {index !== englishSentences.length - 1 && "."}
               <br />
-              <KoreanSentence>{koreanSentences[index]}</KoreanSentence>
-              <br />
-              <br />
-            </div>
-          );
-        })}
+            </EnglishSentence>
+            <br />
+            <KoreanSentence>
+              {koreanSentences[index]}
+              {index !== koreanSentences.length - 1 && "."}
+            </KoreanSentence>
+            <br />
+            <br />
+          </div>
+        ))}
       </SentenceArea>
     </>
   );

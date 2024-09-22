@@ -69,7 +69,7 @@ const SpeakingTestRecord: React.FC<Props> = ({
       {!isRecording && !isRecorded && (
         <>
           <StartRecordingIcon onClick={startUserRecording} />
-          <p>마이크 버튼을 눌러 녹음을 시작하세요.</p>
+          <PromptText>마이크 버튼을 눌러 녹음을 시작하세요.</PromptText>
         </>
       )}
 
@@ -81,7 +81,7 @@ const SpeakingTestRecord: React.FC<Props> = ({
             <RecordingIconStyled />
           </RecordingContainer>
           {/* 녹음 중일 때 시각적 효과 */}
-          <div style={{ color: "red", fontWeight: "bold" }}>녹음중입니다.</div>
+          <RecordingStatus>녹음 중입니다...</RecordingStatus>
           <RecordingTime>{formatTime(recordingTime)}</RecordingTime>
           <StopButton onClick={handleStopRecording}>녹음 정지</StopButton>
         </>
@@ -90,11 +90,10 @@ const SpeakingTestRecord: React.FC<Props> = ({
       {/* 녹음이 완료된 상태 */}
       {!isRecording && isRecorded && (
         <>
-          <p>
-            녹음이 완료되었습니다. 아래에서 확인하거나 다시 녹음할 수 있습니다.
-          </p>
-          {audioUrl && <audio controls src={audioUrl} />}
-          <RestartRecordingIcon onClick={handleRestartRecording} />
+          <CompletionText>녹음이 완료되었습니다!</CompletionText>
+          {audioUrl && <AudioPlayer controls src={audioUrl} />}
+          <RestartRecordingIconStyled onClick={handleRestartRecording} />
+          <RestartText>다시 녹음하기</RestartText>
         </>
       )}
     </>
@@ -162,4 +161,59 @@ const StopButton = styled.div`
 const RecordingTime = styled.div`
   margin-top: 1rem;
   font-size: 1.25rem;
+  font-weight: bold;
+`;
+
+const RecordingStatus = styled.div`
+  color: red;
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin-top: 0.5rem;
+`;
+
+// 녹음 완료 시 텍스트 스타일
+const CompletionText = styled.p`
+  color: ${(props) => props.theme.colors.success};
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+`;
+
+// 오디오 플레이어 스타일
+const AudioPlayer = styled.audio`
+  margin: 1rem 0;
+  width: 100%;
+  max-width: 20rem;
+`;
+
+// 재녹음 아이콘 스타일
+const RestartRecordingIconStyled = styled(RestartRecordingIcon)`
+  width: 2rem;
+  height: 2rem;
+  cursor: pointer;
+  margin-top: 1rem;
+
+  &:hover {
+    opacity: 0.8;
+  }
+`;
+
+// 재녹음 텍스트 스타일
+const RestartText = styled.p`
+  color: ${(props) => props.theme.colors.primary};
+  font-size: 1rem;
+  font-weight: bold;
+  margin-top: 0.5rem;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
+`;
+
+// 녹음 전 프롬프트 텍스트
+const PromptText = styled.p`
+  color: ${(props) => props.theme.colors.textSecondary};
+  font-size: 1.125rem;
+  margin-top: 0.5rem;
 `;

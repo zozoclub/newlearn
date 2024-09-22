@@ -299,9 +299,10 @@ const SpeakingTestPage: React.FC = () => {
 
 const MainContainer = styled.div`
   width: 90%;
-  min-height: 50rem;
+  min-height: 30rem;
   margin: auto;
-  padding: 0.625rem;
+  margin-bottom: 2rem;
+  padding: 1rem;
   background-color: ${(props) => props.theme.colors.cardBackground + "BF"};
   backdrop-filter: blur(0.25rem);
   border-radius: 0.75rem;

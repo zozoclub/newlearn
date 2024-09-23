@@ -1,6 +1,7 @@
 package com.newlearn.backend.study.service;
 
 import com.newlearn.backend.study.dto.request.GoalRequestDTO;
+import com.newlearn.backend.study.dto.response.PronounceTestResponseDTO;
 import com.newlearn.backend.study.dto.response.StudyProgressDTO;
 import com.newlearn.backend.study.dto.response.WordTestResponseDTO;
 import com.newlearn.backend.study.model.Goal;
@@ -12,7 +13,7 @@ import com.newlearn.backend.word.model.Word;
 import com.newlearn.backend.word.model.WordSentence;
 import com.newlearn.backend.word.repository.WordQuizQuestionRepository;
 import com.newlearn.backend.word.repository.WordQuizRepository;
-import jakarta.persistence.EntityNotFoundException;
+import com.newlearn.backend.word.repository.WordRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -28,15 +29,24 @@ public class StudyServiceImpl implements StudyService{
     private final StudyRepository studyRepository;
     private final WordQuizRepository wordQuizRepository;
     private final WordQuizQuestionRepository wordQuizQuestionRepository;
+    private final WordRepository wordRepository;
+
+    @Override
+    public boolean isGoalExist(Long userId) {
+        return studyRepository.existsByUserId(userId);
+    }
 
     @Override
     public void saveGoal(Long userId, GoalRequestDTO goalRequestDTO) {
-        Goal goal = studyRepository.findByUserId(userId)
-                .orElseThrow(() -> new EntityNotFoundException("Goal not found"));
-        goal.setGoalReadNewsCount(goalRequestDTO.getGoalReadNewsCount());
-        goal.setGoalPronounceTestScore(goalRequestDTO.getGoalPronounceTestScore());
-        goal.setGoalCompleteWord(goalRequestDTO.getGoalCompleteWord());
-
+        Goal goal = Goal.builder()
+                .userId(userId)
+                .goalReadNewsCount(goalRequestDTO.getGoalReadNewsCount())
+                .goalPronounceTestScore(goalRequestDTO.getGoalPronounceTestScore())
+                .goalCompleteWord(goalRequestDTO.getGoalCompleteWord())
+                .currentReadNewsCount(0L)
+                .currentPronounceTestScore(0L)
+                .currentCompleteWord(0L)
+                .build();
         studyRepository.save(goal);
     }
 
@@ -56,14 +66,14 @@ public class StudyServiceImpl implements StudyService{
     }
 
     @Override
-    public List<WordTestResponseDTO> getWordTestProblems(Users user, Long totalCount) {
+    public List<WordTestResponseDTO> getWordTestProblems(Long userId, Users user, Long totalCount) {
         WordQuiz newQuiz = new WordQuiz();
         newQuiz.setUser(user);
         newQuiz.setTotalCount(totalCount);
         newQuiz.setCorrectCount(0L);
         wordQuizRepository.save(newQuiz);
 
-        List<Word> words = wordQuizQuestionRepository.findRandomWords(user.getUserId(), totalCount);
+        List<Word> words = wordQuizQuestionRepository.findRandomWords(userId, totalCount);
         List<WordTestResponseDTO> tests = new ArrayList<>();
 
         for (Word word : words) {
@@ -83,6 +93,25 @@ public class StudyServiceImpl implements StudyService{
                     .sentence(sentence.getSentence())
                     .sentenceMeaning(sentence.getSentenceMeaning())
                     .build());
+        }
+        return tests;
+    }
+
+    @Override
+    public List<PronounceTestResponseDTO> getPronounceTestProblems(Long userId, Users user) {
+        // 랜덤 단어 3개 가져오기
+        List<Word> words = wordQuizQuestionRepository.findRandomWords(userId, 3L);
+        List<PronounceTestResponseDTO> tests = new ArrayList<>();
+
+        for (Word word : words) {
+            WordSentence sentence = wordQuizQuestionRepository.findRandomSentenceByWordId(word.getWordId());
+
+            PronounceTestResponseDTO problem = PronounceTestResponseDTO.builder()
+                    .sentence(sentence.getSentence())
+                    .sentenceMeaning(sentence.getSentenceMeaning())
+                    .build();
+
+            tests.add(problem);
         }
         return tests;
     }

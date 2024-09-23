@@ -47,7 +47,10 @@ public enum ErrorCode {
 	GOAL_CREATE_FAILED("S001", HttpStatus.BAD_REQUEST, "목표 설정에 실패했습니다."),
 	STUDY_PROGRESS_NOT_FOUND("S002", HttpStatus.NOT_FOUND, "학습 진도율 정보를 찾을 수 없습니다."),
 	WORD_TEST_NOT_FOUND("S003", HttpStatus.NOT_FOUND, "단어 테스트 문제를 찾을 수 없습니다."),
-	WORD_TEST_RESULT_CREATE_FAILED("S004", HttpStatus.BAD_REQUEST, "단어 테스트 결과 저장에 실패했습니다.")
+	WORD_TEST_RESULT_CREATE_FAILED("S004", HttpStatus.BAD_REQUEST, "단어 테스트 결과 저장에 실패했습니다."),
+
+	// Word Error
+	WORD_CREATE_FAILED("WOO1", HttpStatus.BAD_REQUEST, "단어 저장에 실패했습니다")
 	;
 
 	private final String code;

@@ -56,4 +56,20 @@ public class WordServiceImpl implements WordService {
 
 		return response;
 	}
+
+	@Override
+	public List<WordResponseDTO> getCompleteWords(Users user) {
+
+		List<Word> findAllWords = wordRepository.findByIsCompleteTrueAndUser(user);
+
+		List<WordResponseDTO> response = new ArrayList<>();
+
+		for(final Word word : findAllWords) {
+			WordResponseDTO wordResponseDTO = new WordResponseDTO(word.getWordId(), word.getWord(),
+				word.getWordMeaning(), word.isComplete());
+			response.add(wordResponseDTO);
+		}
+
+		return response;
+	}
 }

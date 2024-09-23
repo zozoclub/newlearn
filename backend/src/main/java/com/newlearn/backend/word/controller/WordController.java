@@ -71,7 +71,7 @@ public class WordController {
 			if(user == null) {
 				return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
 			}
-			List<WordResponseDTO> response = wordService.getWords(user);
+			List<WordResponseDTO> response = wordService.getCompleteWords(user);
 
 			return ApiResponse.createSuccess(response, "단어 목록 죄회 성공");
 		} catch (Exception e) {

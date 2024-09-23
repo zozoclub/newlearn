@@ -1,3 +1,13 @@
+import { Navigate, Outlet } from "react-router-dom";
+
+const isLogin = localStorage.getItem("accessToken");
+
+const PrivateRoute = () => {
+  return isLogin ? <Outlet /> : <Navigate to="/login" />;
+};
+
+export default PrivateRoute;
+
 import { createBrowserRouter } from "react-router-dom";
 import MainPage from "@pages/MainPage";
 import SpeakingTestPage from "@pages/SpeakingTestPage";
@@ -12,7 +22,7 @@ import MyStudyPage from "@pages/MyStudyPage";
 import VocabularyPage from "@pages/VocabularyPage";
 import TestHistoryPage from "@pages/TestHistoryPage";
 import LoginPage from "@pages/LoginPage";
-import SignInPage from "@pages/SignInPage";
+import SignUpPage from "@pages/SignUpPage";
 
 export const router = createBrowserRouter([
   {
@@ -28,8 +38,9 @@ export const router = createBrowserRouter([
         element: <LoginPage />,
       },
       {
-        path: "signin",
-        element: <SignInPage />,
+        // 임시 path
+        path: "tmpsignup",
+        element: <SignUpPage />,
       },
       {
         path: "speak",

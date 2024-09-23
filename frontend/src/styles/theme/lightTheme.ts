@@ -1,6 +1,7 @@
 import { Theme } from "types/theme";
 
 export const lightTheme: Theme = {
+  mode: "light",
   colors: {
     background: "#ffffff",
     cardBackground: "#ffffff",

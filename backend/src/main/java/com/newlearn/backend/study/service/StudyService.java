@@ -3,10 +3,7 @@ package com.newlearn.backend.study.service;
 
 import com.newlearn.backend.study.dto.request.GoalRequestDTO;
 import com.newlearn.backend.study.dto.request.WordTestResultRequestDTO;
-import com.newlearn.backend.study.dto.response.PronounceTestResponseDTO;
-import com.newlearn.backend.study.dto.response.StudyProgressDTO;
-import com.newlearn.backend.study.dto.response.WordTestResponseDTO;
-import com.newlearn.backend.study.dto.response.WordTestResultResponseDTO;
+import com.newlearn.backend.study.dto.response.*;
 import com.newlearn.backend.user.model.Users;
 
 import java.util.List;
@@ -23,7 +20,9 @@ public interface StudyService {
 
     void saveWordTestResult(Long userId, WordTestResultRequestDTO wordTestResultRequestDTO);
 
-    List<WordTestResultResponseDTO> getWordTestResult(Long userId);
+    List<WordTestResultResponseDTO> getWordTestResults(Long userId);
+
+    WordTestResultDetailResponseDTO getWordTestResult(Long userId, Long quizId);
 
     List<PronounceTestResponseDTO> getPronounceTestProblems(Long userId, Users user);
 

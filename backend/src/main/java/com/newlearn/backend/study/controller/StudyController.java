@@ -5,10 +5,7 @@ import com.newlearn.backend.common.ErrorCode;
 import com.newlearn.backend.study.dto.request.GoalRequestDTO;
 import com.newlearn.backend.study.dto.request.WordTestRequestDTO;
 import com.newlearn.backend.study.dto.request.WordTestResultRequestDTO;
-import com.newlearn.backend.study.dto.response.PronounceTestResponseDTO;
-import com.newlearn.backend.study.dto.response.StudyProgressDTO;
-import com.newlearn.backend.study.dto.response.WordTestResponseDTO;
-import com.newlearn.backend.study.dto.response.WordTestResultResponseDTO;
+import com.newlearn.backend.study.dto.response.*;
 import com.newlearn.backend.study.service.StudyService;
 import com.newlearn.backend.user.model.Users;
 import com.newlearn.backend.user.service.UserService;
@@ -117,7 +114,7 @@ public class StudyController {
                 return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
             }
 
-            List<WordTestResultResponseDTO> results = studyService.getWordTestResult(user.getUserId());
+            List<WordTestResultResponseDTO> results = studyService.getWordTestResults(user.getUserId());
 
             return ApiResponse.createSuccess(results, "단어 테스트 결과 리스트 조회 성공");
         } catch (Exception e) {
@@ -128,6 +125,23 @@ public class StudyController {
     }
 
     // 단어 문장 빈칸 테스트 결과 상세 조회
+    @GetMapping("/word/test/{quizId}")
+    public ApiResponse<?> getStudyWordTest(Authentication authentication,
+                                           @RequestParam("quizId") Long quizId) throws Exception {
+        try {
+            Users user = userService.findByEmail(authentication.getName());
+            if (user == null) {
+                return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
+            }
+
+            WordTestResultDetailResponseDTO result = studyService.getWordTestResult(user.getUserId(), quizId);
+
+            return ApiResponse.createSuccess(result, "단어 테스트 결과 상세 조회 성공");
+        } catch (Exception e) {
+            log.error("단어 테스트 결과 상세 조회 중 오류 발생", e);
+            return ApiResponse.createError(ErrorCode.WORD_TEST_NOT_FOUND);
+        }
+    }
     
     // 발음 테스트 예문 가져오기
     @GetMapping("/pronounce/test")

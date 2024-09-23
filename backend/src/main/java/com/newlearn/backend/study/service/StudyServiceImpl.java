@@ -2,10 +2,7 @@ package com.newlearn.backend.study.service;
 
 import com.newlearn.backend.study.dto.request.GoalRequestDTO;
 import com.newlearn.backend.study.dto.request.WordTestResultRequestDTO;
-import com.newlearn.backend.study.dto.response.PronounceTestResponseDTO;
-import com.newlearn.backend.study.dto.response.StudyProgressDTO;
-import com.newlearn.backend.study.dto.response.WordTestResponseDTO;
-import com.newlearn.backend.study.dto.response.WordTestResultResponseDTO;
+import com.newlearn.backend.study.dto.response.*;
 import com.newlearn.backend.study.model.Goal;
 import com.newlearn.backend.word.model.*;
 import com.newlearn.backend.study.repository.StudyRepository;
@@ -13,14 +10,13 @@ import com.newlearn.backend.user.model.Users;
 import com.newlearn.backend.word.repository.WordQuizAnswerRepository;
 import com.newlearn.backend.word.repository.WordQuizQuestionRepository;
 import com.newlearn.backend.word.repository.WordQuizRepository;
-import com.newlearn.backend.word.repository.WordRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -29,7 +25,6 @@ import java.util.stream.Collectors;
 public class StudyServiceImpl implements StudyService{
 
     private final StudyRepository studyRepository;
-    private final WordRepository wordRepository;
     private final WordQuizRepository wordQuizRepository;
     private final WordQuizAnswerRepository wordQuizAnswerRepository;
     private final WordQuizQuestionRepository wordQuizQuestionRepository;
@@ -127,7 +122,7 @@ public class StudyServiceImpl implements StudyService{
     }
 
     @Override
-    public List<WordTestResultResponseDTO> getWordTestResult(Long userId) {
+    public List<WordTestResultResponseDTO> getWordTestResults(Long userId) {
         // 유저와 관련된 모든 시험 가져오기
         List<WordQuiz> wordQuizzes = wordQuizRepository.findByUserId(userId);
 
@@ -146,6 +141,41 @@ public class StudyServiceImpl implements StudyService{
                     .createAt(quiz.getCreatedAt())
                     .build();
         }).collect(Collectors.toList());
+    }
+
+    @Override
+    public WordTestResultDetailResponseDTO getWordTestResult(Long userId, Long quizId) {
+        // 퀴즈 가져오기
+        WordQuiz quiz = wordQuizRepository.findById(quizId)
+                .orElseThrow(() -> new IllegalArgumentException("퀴즈를 찾을 수 없습니다."));
+
+        // 퀴즈 질문 가져오기
+        List<WordQuizQuestion> questions = wordQuizQuestionRepository.findByQuizId(quizId);
+
+        // 결과 리스트는 하나의 질문과 답변만 포함
+        if (questions.isEmpty()) {
+            throw new IllegalArgumentException("퀴즈 질문이 없습니다.");
+        }
+
+        WordQuizQuestion question = questions.get(0);
+
+        // 해당 질문에 대한 답변 찾기
+        List<WordQuizAnswer> answers = wordQuizAnswerRepository.findByQuizIdAndQuestionId(quizId, question.getWordQuizQuestionId());
+
+        // 첫 번째 답변을 기준으로 결과 생성
+        String answer = answers.isEmpty() ? "" : answers.get(0).getAnswer();
+        boolean isCorrect = !answers.isEmpty() && answers.get(0).getIsCorrect();
+
+        WordTestResultDetailResponseDTO resultDetail = WordTestResultDetailResponseDTO.builder()
+                .quizId(question.getWordQuizQuestionId())
+                .answer(answer)
+                .correctAnswer(question.getCorrectAnswer())
+                .isCorrect(isCorrect)
+                .sentence(question.getSentence())
+                .createAt(quiz.getCreatedAt())
+                .build();
+
+        return resultDetail;
     }
 
     @Override

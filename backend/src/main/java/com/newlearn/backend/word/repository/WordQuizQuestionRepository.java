@@ -11,6 +11,8 @@ import java.util.List;
 
 public interface WordQuizQuestionRepository extends JpaRepository<WordQuizQuestion, Long> {
 
+    List<WordQuizQuestion> findByQuizId(Long quizId);
+
     @Query("SELECT w FROM Word w WHERE w.user.userId = :userId ORDER BY FUNCTION('RAND') LIMIT :totalCount")
     List<Word> findRandomWords(@Param("userId") Long userId, @Param("totalCount") Long totalCount);
 

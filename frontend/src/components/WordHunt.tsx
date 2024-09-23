@@ -1,8 +1,5 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { extractWords, countWordFrequencies, getTopWords } from "@components/WordProcessor";
-import { createGrid } from "@components/WordGridCreator";
-import { handleMouseDown, handleMouseOver, handleMouseUp } from "@components/WordMouseHandlers";
 
 const WordHunt: React.FC = () => {
   const text = [
@@ -14,16 +11,164 @@ const WordHunt: React.FC = () => {
     "Hong Myung-bo's words, imbued with a mixture of introspection and determination, reflect the immense pressure facing the South Korean squad as they embark on this critical juncture in their World Cup qualifying journey.",
   ];
 
-  const [grid, setGrid] = useState<string[][]>([]);
-  const [selectedPositions, setSelectedPositions] = useState<[number, number][]>([]);
-  const [incorrectSelection, setIncorrectSelection] = useState<boolean>(false);
-  const [placedWords, setPlacedWords] = useState<string[]>([]);
-  const [placedWordPositions, setPlacedWordPositions] = useState<
-    { word: string; positions: [number, number][] }[]
-  >([]);
-  const [correctSelections, setCorrectSelections] = useState<[number, number][]>([]);
-  const [showAnswer, setShowAnswer] = useState<boolean>(false);
-  const [isDisabled, setIsDisabled] = useState<boolean>(false); // 드래그 비활성화 상태 추가
+  const extractWords = (textArray: string[]) => {
+    const text = textArray.join(" ");
+    const words = text.match(/\b\w+\b/g);
+    const stopWordsSet = new Set([
+      "the",
+      "and",
+      "is",
+      "in",
+      "on",
+      "at",
+      "of",
+      "a",
+      "to",
+      "for",
+      "with",
+      "as",
+      "by",
+      "this",
+      "that",
+      "it",
+      "they",
+      "their",
+      "them",
+      "his",
+      "her",
+      "he",
+      "she",
+      "i",
+      "you",
+      "we",
+      "us",
+      "me",
+      "my",
+      "your",
+      "its",
+      "our",
+      "those",
+      "these",
+      "who",
+      "whom",
+      "which",
+      "what",
+      "when",
+      "where",
+      "why",
+      "how",
+      "some",
+      "any",
+      "no",
+      "all",
+      "both",
+      "each",
+      "few",
+      "many",
+      "much",
+      "neither",
+      "either",
+      "none",
+    ]);
+
+    return words
+      ? words.filter((word) => {
+          const notStopWord = !stopWordsSet.has(word.toLowerCase());
+          const notCapitalized = word[0] !== word[0].toUpperCase();
+          const isLongEnough = word.length > 3 && word.length <= 12;
+          return notStopWord && notCapitalized && isLongEnough;
+        })
+      : [];
+  };
+
+  const countWordFrequencies = (words: string[]) => {
+    const wordCounts: { [key: string]: number } = {};
+    words.forEach((word) => {
+      wordCounts[word.toUpperCase()] =
+        (wordCounts[word.toUpperCase()] || 0) + 1;
+    });
+    return wordCounts;
+  };
+
+  const getTopWords = (
+    wordCounts: { [key: string]: number },
+    count: number
+  ) => {
+    const sortedWords = Object.entries(wordCounts).sort((a, b) => b[1] - a[1]);
+
+    const topWords = sortedWords.slice(0, count);
+
+    const lastFrequency = topWords[topWords.length - 1][1];
+    const extraWords = sortedWords
+      .slice(count)
+      .filter((word) => word[1] === lastFrequency);
+    if (extraWords.length > 0) {
+      const randomIndex = Math.floor(Math.random() * extraWords.length);
+      topWords[topWords.length - 1] = extraWords[randomIndex];
+    }
+
+    return topWords.map((word) => word[0]);
+  };
+
+  const createGrid = (words: string[], gridSize: number) => {
+    const grid = Array.from({ length: gridSize }, () =>
+      Array(gridSize).fill("")
+    );
+
+    const wordPositions: { word: string; positions: [number, number][] }[] = [];
+
+    words.forEach((word) => {
+      let placed = false;
+      while (!placed) {
+        const direction = Math.random() > 0.5 ? "horizontal" : "vertical";
+        const startRow = Math.floor(
+          Math.random() *
+            (direction === "horizontal" ? gridSize : gridSize - word.length)
+        );
+        const startCol = Math.floor(
+          Math.random() *
+            (direction === "vertical" ? gridSize : gridSize - word.length)
+        );
+
+        let fits = true;
+        const positions: [number, number][] = [];
+
+        for (let i = 0; i < word.length; i++) {
+          if (direction === "horizontal") {
+            if (grid[startRow][startCol + i] !== "") {
+              fits = false;
+              break;
+            }
+            positions.push([startRow, startCol + i]);
+          } else {
+            if (grid[startRow + i][startCol] !== "") {
+              fits = false;
+              break;
+            }
+            positions.push([startRow + i, startCol]);
+          }
+        }
+
+        if (fits) {
+          positions.forEach(([row, col], idx) => {
+            grid[row][col] = word[idx];
+          });
+          wordPositions.push({ word, positions });
+          placed = true;
+        }
+      }
+    });
+
+    for (let i = 0; i < gridSize; i++) {
+      for (let j = 0; j < gridSize; j++) {
+        if (grid[i][j] === "") {
+          grid[i][j] = String.fromCharCode(65 + Math.floor(Math.random() * 26));
+        }
+      }
+    }
+
+    return { grid, wordPositions };
+  };
 
   const handleExtractWords = () => {
     const words = extractWords(text);
@@ -31,22 +176,16 @@ const WordHunt: React.FC = () => {
     const topWords = getTopWords(wordCounts, 10);
     const { grid, wordPositions } = createGrid(topWords, 12);
     setGrid(grid);
-    setPlacedWordPositions(wordPositions);
-    setPlacedWords(topWords);
+    setPlacedWordPositions(wordPositions); // 배치된 단어와 그 위치 저장
+    setPlacedWords(topWords); // 배치된 단어 목록 저장
   };
 
-  // 그리드 영역 밖으로 나가면 틀림 이벤트를 발생
-  const handleMouseLeaveGrid = () => {
-    if (selectedPositions.length > 0) {
-      setIncorrectSelection(true); // 틀린 이벤트 발생
-      setIsDisabled(true); // 드래그 비활성화
-      setTimeout(() => {
-        setIncorrectSelection(false);
-        setSelectedPositions([]); // 선택 초기화
-        setIsDisabled(false); // 다시 활성화
-      }, 1000);
-    }
-  };
+  const [grid, setGrid] = useState<string[][]>([]);
+  const [showAnswer, setShowAnswer] = useState<boolean>(false);
+  const [placedWords, setPlacedWords] = useState<string[]>([]); // 배치된 단어 상태
+  const [placedWordPositions, setPlacedWordPositions] = useState<
+    { word: string; positions: [number, number][] }[]
+  >([]); // 배치된 단어의 위치 상태
 
   return (
     <Container>
@@ -65,64 +204,18 @@ const WordHunt: React.FC = () => {
         </ul>
       </WordList>
 
-      <GridContainer onMouseLeave={handleMouseLeaveGrid}> {/* 마우스가 그리드 밖으로 나가면 처리 */}
+      <GridContainer>
         <h2>12x12 Grid:</h2>
         <Grid>
           {grid.map((row, rowIndex) =>
             row.map((letter, colIndex) => {
-              const isSelected = selectedPositions.some(
-                ([r, c]) => r === rowIndex && c === colIndex
-              );
-              const isCorrect = correctSelections.some(
-                ([r, c]) => r === rowIndex && c === colIndex
-              );
-              const isIncorrect =
-                incorrectSelection && isSelected && !isCorrect;
               const isAnswer =
                 showAnswer &&
                 placedWordPositions.some(({ positions }) =>
                   positions.some(([r, c]) => r === rowIndex && c === colIndex)
                 );
-
               return (
-                <Cell
-                  key={`${rowIndex}-${colIndex}`}
-                  $isSelected={isSelected}
-                  $isCorrect={isCorrect}
-                  $isIncorrect={isIncorrect}
-                  $isAnswer={isAnswer}
-                  onMouseDown={() =>
-                    handleMouseDown(
-                      rowIndex,
-                      colIndex,
-                      setSelectedPositions,
-                      setIncorrectSelection,
-                      isDisabled,
-                      correctSelections
-                    )
-                  }
-                  onMouseOver={() =>
-                    handleMouseOver(
-                      rowIndex,
-                      colIndex,
-                      selectedPositions,
-                      setSelectedPositions,
-                      isDisabled,
-                      grid
-                    )
-                  }
-                  onMouseUp={() =>
-                    handleMouseUp(
-                      grid,
-                      selectedPositions,
-                      placedWordPositions,
-                      setCorrectSelections,
-                      setIncorrectSelection,
-                      setSelectedPositions,
-                      setIsDisabled,
-                    )
-                  }
-                >
+                <Cell key={`${rowIndex}-${colIndex}`} isAnswer={isAnswer}>
                   {letter}
                 </Cell>
               );
@@ -136,12 +229,13 @@ const WordHunt: React.FC = () => {
 
 export default WordHunt;
 
+// Styled components
+
 const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 2rem;
-  user-select: none; /* Prevents text selection on drag */
 `;
 
 const Title = styled.h1`
@@ -193,32 +287,20 @@ const GridContainer = styled.div`
 
 const Grid = styled.div`
   display: grid;
-  grid-template-columns: repeat(12, 2rem);
+  grid-template-columns: repeat(12, 20px);
+  grid-gap: 0.5rem;
 `;
 
-const Cell = styled.div<{
-  $isSelected: boolean;
-  $isCorrect: boolean;
-  $isIncorrect: boolean;
-  $isAnswer: boolean;
-}>`
+const Cell = styled.div<{ isAnswer: boolean }>`
+  width: 20px;
+  height: 20px;
   text-align: center;
-  line-height: 2rem;
+  line-height: 20px;
+  font-weight: bold;
   background-color: ${(props) =>
-    props.$isAnswer
-      ? props.theme.colors.primary
-      : props.$isCorrect
-        ? props.theme.colors.primary
-        : props.$isIncorrect
-          ? "red"
-          : props.$isSelected
-            ? "yellow"
-            : "white"};
-  color: ${(props) =>
-    props.$isCorrect || props.$isIncorrect || props.$isAnswer
-      ? "white"
-      : "black"};
+    props.isAnswer ? props.theme.colors.primary : "white"};
+  color: ${(props) => (props.isAnswer ? "white" : "black")};
   border: 1px solid ${(props) => props.theme.colors.border};
   border-radius: 0.25rem;
-  cursor: pointer;
+  cursor: ${(props) => (props.isAnswer ? "pointer" : "default")};
 `;

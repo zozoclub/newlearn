@@ -7,6 +7,7 @@ import { kakaoLogin, naverLogin } from "@services/userService";
 
 const LoginPage = () => {
   const transitionTo = usePageTransition();
+  console.log(transitionTo);
 
   return (
     <Container>

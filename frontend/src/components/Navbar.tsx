@@ -1,27 +1,21 @@
 import styled from "styled-components";
-
-import puzzleIcon from "@assets/icons/puzzleIcon.png";
-import pronounceTestIcon from "@assets/icons/pronounceTestIcon.png";
+import homeIcon from "@assets/icons/homeIcon.png";
 import newsIcon from "@assets/icons/newsIcon.png";
-import myPageIcon from "@assets/icons/myPageIcon.png";
-import calendarIcon from "@assets/icons/calendarIcon.png";
-import searchIcon from "@assets/icons/searchIcon.png";
 import wordBookIcon from "@assets/icons/wordBookIcon.png";
-import trashCanIcon from "@assets/icons/trashCanIcon.png";
+import testIcon from "@assets/icons/testIcon.png";
+import puzzleIcon from "@assets/icons/puzzleIcon.png";
+import myPageIcon from "@assets/icons/myPageIcon.png";
 import NavbarItem from "@components/NavbarItem";
 import { useState } from "react";
 
 const Navbar = () => {
   const iconList = [
-    { src: puzzleIcon, alt: "퍼즐", link: "/puzzle" },
-    { src: pronounceTestIcon, alt: "발음 테스트", link: "/speak" },
+    { src: homeIcon, alt: "메인 홈", link: "/" },
     { src: newsIcon, alt: "뉴스", link: "/news" },
-    { src: myPageIcon, alt: "마이 페이지", link: "/mypage" },
-    { src: calendarIcon, alt: "달력", link: "/calendar" },
-    { src: searchIcon, alt: "검색", link: "/search" },
+    { src: puzzleIcon, alt: "퍼즐", link: "/puzzle" },
     { src: wordBookIcon, alt: "단어장", link: "/voca" },
-    { src: wordBookIcon, alt: "나의 학습", link: "/mystudy" },
-    { src: trashCanIcon, alt: "휴지통", link: "/trash" },
+    { src: testIcon, alt: "스터디", link: "/mystudy" },
+    { src: myPageIcon, alt: "마이 페이지", link: "/mypage" },
   ];
   const [isExtended, setIsExtended] = useState(false);
 

@@ -42,8 +42,8 @@ export const getOAuthAccessToken = async (
         code,
       },
     });
-    console.log(response);
-    const accessToken = response.data.accessToken;
+    // console.log(response);
+    const accessToken = response.data.data.accessToken;
     let userInfo: UserInfo;
     if (accessToken) {
       userInfo = await getOAuthInformation(accessToken);

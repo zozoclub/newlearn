@@ -1,5 +1,6 @@
 import BackArrow from "@assets/icons/BackArrow";
 import Button from "@components/Button";
+import { usePageTransition } from "@hooks/usePageTransition";
 import { getOAuthInformation, signUp } from "@services/userService";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -49,7 +50,7 @@ const SignUpPage = () => {
   const [activeButton, setActiveButton] = useState(false);
   const [token, setToken] = useState<string | null>(null);
   const query = useQuery();
-  const navigate = useNavigate();
+  const transitionTo = usePageTransition();
 
   function handleNicknameChange(nickname: string) {
     if (nickname.length <= 8) {
@@ -208,7 +209,7 @@ const SignUpPage = () => {
                     eyes,
                     mask,
                   });
-                  navigate("/");
+                  transitionTo("/login");
                 } catch (error) {
                   console.log(error);
                 }

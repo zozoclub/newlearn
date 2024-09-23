@@ -13,6 +13,7 @@ import VocabularyPage from "@pages/VocabularyPage";
 import TestHistoryPage from "@pages/TestHistoryPage";
 import LoginPage from "@pages/LoginPage";
 import SignUpPage from "@pages/SignUpPage";
+import PrivateRoute from "@hooks/PrivateRoute";
 
 export const router = createBrowserRouter([
   {
@@ -20,55 +21,62 @@ export const router = createBrowserRouter([
     element: <App />,
     children: [
       {
-        index: true,
-        element: <MainPage />,
+        element: <PrivateRoute />,
+        children: [
+          {
+            index: true,
+            element: <MainPage />,
+          },
+          {
+            path: "speak",
+            element: <SpeakingTestPage />,
+          },
+          {
+            path: "speakresult",
+            element: <SpeakingTestResultPage />,
+          },
+          {
+            path: "wordtest",
+            element: <WordTestPage />,
+          },
+          {
+            path: "wordtestresult",
+            element: <WordTestResultPage />,
+          },
+          {
+            path: "news",
+            element: <NewsPage />,
+          },
+          {
+            path: "mypage",
+            element: <MyPage />,
+          },
+          {
+            path: "mystudy",
+            element: <MyStudyPage />,
+          },
+          {
+            path: "testhistory",
+            element: <TestHistoryPage />,
+          },
+          {
+            path: "voca",
+            element: <VocabularyPage />,
+          },
+        ],
       },
       {
         path: "login",
         element: <LoginPage />,
       },
       {
-        // 임시 path
-        path: "tmpsignup",
+        path: "signup",
         element: <SignUpPage />,
-      },
-      {
-        path: "speak",
-        element: <SpeakingTestPage />,
-      },
-      {
-        path: "speakresult",
-        element: <SpeakingTestResultPage />,
-      },
-      {
-        path: "wordtest",
-        element: <WordTestPage />,
-      },
-      {
-        path: "wordtestresult",
-        element: <WordTestResultPage />,
-      },
-      {
-        path: "news",
-        element: <NewsPage />,
       },
       {
         path: "*",
         element: <NotFoundPage />,
       },
-      {
-        path: "mypage",
-        element: <MyPage />,
-      },
-      {
-        path: "mystudy",
-        element: <MyStudyPage />,
-      },
-      {
-        path: "testhistory",
-        element: <TestHistoryPage />,
-      },
-      { path: "voca", element: <VocabularyPage /> },
     ],
   },
 ]);

@@ -10,6 +10,7 @@ const NewsList: React.FC<{ selectedCategory: number }> = ({
     { title: "누스 타이틀 투" },
     { title: "누스 타이틀 쓰리" },
   ]);
+  console.log(setNewsList);
 
   useEffect(() => {
     switch (selectedCategory) {

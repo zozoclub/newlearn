@@ -1,4 +1,6 @@
+import { SignUpType } from "@pages/SignUpPage";
 import axios from "axios";
+import axiosInstance from "./axiosInstance";
 
 type UserInfo = {
   email: string;
@@ -41,8 +43,8 @@ export const getOAuthAccessToken = async (
         code,
       },
     });
-    console.log(response);
-    const accessToken = response.data.accessToken;
+    // console.log(response);
+    const accessToken = response.data.data.accessToken;
     let userInfo: UserInfo;
     if (accessToken) {
       userInfo = await getOAuthInformation(accessToken);
@@ -65,10 +67,42 @@ export const getOAuthInformation = async (token: string): Promise<UserInfo> => {
         token,
       },
     });
-    console.log(response);
-    return response.data;
+    // console.log(response.data.data);
+    return response.data.data;
   } catch (error) {
     console.error("getOAuthInformation failed:", error);
+    throw error;
+  }
+};
+
+export const signUp = async (signUpForm: SignUpType) => {
+  console.log(signUpForm);
+  try {
+    const response = await axios.post(`user/sign-up`, {
+      email: signUpForm.email,
+      name: signUpForm.name,
+      provider: signUpForm.provider,
+      providerId: signUpForm.providerId,
+      nickname: signUpForm.nickname,
+      difficulty: signUpForm.difficulty,
+      categories: signUpForm.categories,
+      skin: signUpForm.skin,
+      eyes: signUpForm.eyes,
+      mask: signUpForm.mask,
+    });
+    console.log(response);
+  } catch (error) {
+    console.log("signUp failed: ", error);
+    throw error;
+  }
+};
+
+export const logout = async () => {
+  try {
+    const response = await axiosInstance.post(`user/logout`, "");
+    console.log(response);
+  } catch (error) {
+    console.error("logout failed: ", error);
     throw error;
   }
 };

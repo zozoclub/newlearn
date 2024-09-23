@@ -2,11 +2,20 @@ import styled from "styled-components";
 import Logo from "@assets/images/logo-full.png";
 import NavarButton from "@assets/images/naverButton.png";
 import KakaoButton from "@assets/images/kakaoButton.png";
-import { usePageTransition } from "@hooks/usePageTransition";
 import { kakaoLogin, naverLogin } from "@services/userService";
+import { useEffect } from "react";
+import { usePageTransition } from "@hooks/usePageTransition";
 
 const LoginPage = () => {
+  const isLogin = sessionStorage.getItem("accessToken");
   const transitionTo = usePageTransition();
+  console.log(transitionTo);
+
+  useEffect(() => {
+    if (isLogin) {
+      transitionTo("/");
+    }
+  }, [isLogin, transitionTo]);
 
   return (
     <Container>

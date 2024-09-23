@@ -110,4 +110,9 @@ public class Users {
 		this.categories.clear();
 		this.categories.addAll(newCategories);
 	}
+
+	public void addWord(Word word) {
+		this.words.add(word);
+		word.setUser(this);
+	}
 }

@@ -16,10 +16,11 @@ import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Getter
+@Data
 @NoArgsConstructor
 @Table(name = "word")
 @Entity
@@ -48,21 +49,18 @@ public class Word {
 	private LocalDateTime nextRestudyDate;
 
 	@Column(name = "restudy_level")
-	private int restudyLevel = 0;
-
-	@Column(name = "last_restudy_date")
-	private LocalDateTime lastRestudyDate;
+	private Long restudyLevel = 0L;
 
 	@Column(name = "is_final_complete")
 	private boolean isFinalComplete = false;
 
 	@Column(name = "created_at")
-	private LocalDateTime createdAt = LocalDateTime.now();
+	private LocalDateTime createdAt;
 
 	public void completeWord() {
 		this.isComplete = true;
 		this.nextRestudyDate = LocalDateTime.now().plusDays(1);
-		this.restudyLevel = 1;
+		this.restudyLevel = 1L;
 	}
 
 	public void restudy(boolean remembered) {
@@ -71,26 +69,38 @@ public class Word {
 		} else {
 			resetLevel();
 		}
-		this.lastRestudyDate = LocalDateTime.now();
 	}
 
 	private void levelUp() {
 		this.restudyLevel++;
-		this.nextRestudyDate = LocalDateTime.now().plusDays(getNextReviewInterval());
+		if(this.restudyLevel == 6L) {
+			this.isFinalComplete = true;
+		}
+		else {
+			this.nextRestudyDate = LocalDateTime.now().plusDays(getNextReviewInterval());
+		}
 	}
 
 	private void resetLevel() {
-		this.restudyLevel = 1;
+		this.restudyLevel = 1L;
 		this.nextRestudyDate = LocalDateTime.now().plusDays(1);
 	}
 
 	private int getNextReviewInterval() {
-		switch (this.restudyLevel) {
-			case 1: return 1;  // 1일 후
-			case 2: return 3;  // 3일 후
-			case 3: return 7;  // 7일 후
-			case 4: return 30; // 30일 후
-			default: return 60; // 60일 후 (또는 다른 적절한 간격)
+		if(this.restudyLevel==1L) {
+			return 1;
+		}
+		else if(this.restudyLevel==2L) {
+			return 3;
+		}
+		else if(this.restudyLevel==3L) {
+			return 7;
+		}
+		else if(this.restudyLevel==4L) {
+			return 30;
+		}
+		else {
+			return 60;
 		}
 	}
 

@@ -67,8 +67,7 @@ export const router = createBrowserRouter([
         path: "testhistory",
         element: <TestHistoryPage />,
       },
-      { path: "testhistory", element: <TestHistoryPage /> },
-      { path: "vocabulary", element: <VocabularyPage /> },
+      { path: "voca", element: <VocabularyPage /> },
     ],
   },
 ]);

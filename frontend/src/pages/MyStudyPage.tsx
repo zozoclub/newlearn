@@ -21,6 +21,10 @@ const MyStudyPage = () => {
     navigate("/voca");
   };
 
+  const handleTestClick = () => {
+    navigate("/testhistory");
+  };
+
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const openModal = () => {
@@ -56,7 +60,7 @@ const MyStudyPage = () => {
             <MenuDescription>내가 저장한 단어</MenuDescription>
           </Overlay>
         </VocaMenu>
-        <WordMenu>
+        <WordMenu onClick={handleTestClick}>
           <Overlay>
             <MenuTitle>Test</MenuTitle>
             <MenuDescription>내가 저장한 단어 테스트</MenuDescription>

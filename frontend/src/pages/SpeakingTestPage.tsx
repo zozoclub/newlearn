@@ -27,6 +27,11 @@ const SpeakingTestPage: React.FC = () => {
     submitModal();
   };
 
+  // 녹음 시작 모달
+  const [isStartRecordModal, setIsStartRecordModal] = useState(false);
+  const startRecordingModal = () => setIsStartRecordModal(true);
+  const closeRecordingModal = () => setIsStartRecordModal(false);
+
   // 페이지 확인
   const setCurrentLocation = useSetRecoilState(locationState);
   useEffect(() => {
@@ -289,6 +294,9 @@ const SpeakingTestPage: React.FC = () => {
                 restartRecording={restartRecording}
                 audioUrl={audioUrl}
                 status={status}
+                isStartRecordModal={isStartRecordModal}
+                startRecordingModal={startRecordingModal}
+                closeRecordingModal={closeRecordingModal}
               />
             </SubContainer>
           </SubArea>

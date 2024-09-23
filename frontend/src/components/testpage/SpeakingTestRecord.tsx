@@ -4,6 +4,7 @@ import styled, { keyframes } from "styled-components";
 import RecordingIcon from "@assets/icons/RecordingIcon";
 import StartRecordingIcon from "@assets/icons/StartRecordingIcon";
 import RestartRecordingIcon from "@assets/icons/RestartRecordingIcon";
+import Modal from "@components/Modal";
 
 type Props = {
   startUserRecording: () => void;
@@ -11,6 +12,9 @@ type Props = {
   restartRecording: () => void;
   audioUrl?: string;
   status: string;
+  isStartRecordModal: boolean;
+  startRecordingModal: () => void;
+  closeRecordingModal: () => void;
 };
 
 const SpeakingTestRecord: React.FC<Props> = ({
@@ -19,6 +23,9 @@ const SpeakingTestRecord: React.FC<Props> = ({
   restartRecording,
   audioUrl,
   status,
+  isStartRecordModal,
+  startRecordingModal,
+  closeRecordingModal,
 }) => {
   const [recordingTime, setRecordingTime] = useState<number>(0);
   const [isRecording, setIsRecording] = useState(false);
@@ -58,6 +65,11 @@ const SpeakingTestRecord: React.FC<Props> = ({
     setRecordingTime(0);
   };
 
+  // 재녹음 시작 모달
+  const [isReStartRecordModal, setReIsStartRecordModal] = useState(false);
+  const reStartRecordingModal = () => setReIsStartRecordModal(true);
+  const closeReRecordingModal = () => setReIsStartRecordModal(false);
+
   const handleRestartRecording = () => {
     restartRecording();
     setIsRecorded(false); // 재녹음
@@ -68,8 +80,24 @@ const SpeakingTestRecord: React.FC<Props> = ({
       {/* 아무것도 녹음되지 않은 상태 */}
       {!isRecording && !isRecorded && (
         <>
-          <StartRecordingIcon onClick={startUserRecording} />
+          <StartRecordingIcon onClick={startRecordingModal} />
           <PromptText>마이크 버튼을 눌러 녹음을 시작하세요.</PromptText>
+          {/* 녹음 모달 */}
+          <Modal
+            isOpen={isStartRecordModal}
+            onClose={closeRecordingModal}
+            title="Speaking Test"
+          >
+            <p>녹음 준비가 완료되었으면 확인 버튼을 눌러주세요</p>
+            <ModalButtonContainer>
+              <ModalCancelButton onClick={closeRecordingModal}>
+                취소
+              </ModalCancelButton>
+              <ModalConfirmButton onClick={startUserRecording}>
+                확인
+              </ModalConfirmButton>
+            </ModalButtonContainer>
+          </Modal>
         </>
       )}
 
@@ -98,7 +126,23 @@ const SpeakingTestRecord: React.FC<Props> = ({
           )}
           <RestartRecordingContainer>
             <RestartText>다시 녹음하기</RestartText>
-            <RestartRecordingIconStyled onClick={handleRestartRecording} />
+            <RestartRecordingIconStyled onClick={reStartRecordingModal} />
+            {/* 녹음 모달 */}
+            <Modal
+              isOpen={isReStartRecordModal}
+              onClose={closeReRecordingModal}
+              title="Speaking Test"
+            >
+              <p>이전 테스트 녹음 파일은 삭제됩니다.</p>
+              <ModalButtonContainer>
+                <ModalCancelButton onClick={closeReRecordingModal}>
+                  취소
+                </ModalCancelButton>
+                <ModalConfirmButton onClick={handleRestartRecording}>
+                  확인
+                </ModalConfirmButton>
+              </ModalButtonContainer>
+            </Modal>
           </RestartRecordingContainer>
         </>
       )}
@@ -224,4 +268,35 @@ const PromptText = styled.p`
   color: ${(props) => props.theme.colors.text};
   font-size: 1.125rem;
   margin-top: 0.5rem;
+`;
+
+const ModalButtonContainer = styled.div`
+  display: flex;
+  justify-content: space-around;
+  margin-top: 2rem;
+`;
+
+const ModalCancelButton = styled.button`
+  padding: 0.5rem 1.5rem;
+  background-color: ${(props) => props.theme.colors.placeholder};
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+
+  &:hover {
+    background-color: ${(props) => props.theme.colors.danger};
+  }
+`;
+const ModalConfirmButton = styled.button`
+  padding: 0.5rem 1.5rem;
+  background-color: ${(props) => props.theme.colors.primary};
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+
+  &:hover {
+    background-color: ${(props) => props.theme.colors.primaryPress};
+  }
 `;

@@ -47,6 +47,11 @@ const SignUpPage = () => {
   const [skin, setSkin] = useState(0);
   const [eyes, setEyes] = useState(0);
   const [mask, setMask] = useState(0);
+  // 잠정 빌드 오류 콘솔 출력
+  console.log(setSkin);
+  console.log(setEyes);
+  console.log(setMask);
+
   const [activeButton, setActiveButton] = useState(false);
   const [token, setToken] = useState<string | null>(null);
   const query = useQuery();

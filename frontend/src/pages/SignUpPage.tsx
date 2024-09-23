@@ -3,7 +3,7 @@ import Button from "@components/Button";
 import { usePageTransition } from "@hooks/usePageTransition";
 import { getOAuthInformation, signUp } from "@services/userService";
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import styled from "styled-components";
 
 export type SignUpType = {
@@ -127,6 +127,14 @@ const SignUpPage = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [nickname, selectedDifficulty, selectedCategories]);
+
+  // 로그인이 되어있는 상태라면 메인으로 이동
+  const isLogin = sessionStorage.getItem("accessToken");
+  useEffect(() => {
+    if (isLogin) {
+      transitionTo("/");
+    }
+  }, [isLogin, transitionTo]);
 
   return (
     <Container>

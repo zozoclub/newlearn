@@ -5,6 +5,7 @@ import LogoImage from "@assets/images/logo-full.png";
 import locationState from "@store/locationState";
 import DarkModeButton from "./DarkModeButton";
 import { usePageTransition } from "@hooks/usePageTransition";
+import UserProfile from "./UserProfile";
 
 const Header = () => {
   const currentLocation = useRecoilValue(locationState);
@@ -20,8 +21,11 @@ const Header = () => {
           }}
         />
       )}
-      <DarkModeButton />
-      <PageInfo>{currentLocation}</PageInfo>
+      <div className="right-side">
+        <PageInfo>{currentLocation}</PageInfo>
+        <UserProfile />
+        <DarkModeButton />
+      </div>
     </HeaderContainer>
   );
 };
@@ -32,7 +36,11 @@ const HeaderContainer = styled.div`
   justify-content: space-between;
   align-items: center;
   height: 9.375rem;
-  padding: 0 5%;
+  padding: 0 2.5%;
+  .right-side {
+    display: flex;
+    align-items: center;
+  }
 `;
 
 const Logo = styled.img.attrs({
@@ -45,6 +53,7 @@ const Logo = styled.img.attrs({
 `;
 
 const PageInfo = styled.div`
+  margin-right: 1rem;
   font-family: "Righteous";
   font-size: 2rem;
 `;

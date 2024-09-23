@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 import PuzzleIcon from "@assets/icons/puzzleIcon.png";
 
-const ProfileWidget = () => {
+const Profile = () => {
   return (
     <>
       <ProfileImage $persentage={25}>
@@ -71,4 +71,4 @@ const ReadStatusNum = styled.div`
   text-align: center;
 `;
 
-export default ProfileWidget;
+export default Profile;

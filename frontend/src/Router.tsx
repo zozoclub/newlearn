@@ -1,3 +1,13 @@
+import { Navigate, Outlet } from "react-router-dom";
+
+const isLogin = localStorage.getItem("accessToken");
+
+const PrivateRoute = () => {
+  return isLogin ? <Outlet /> : <Navigate to="/login" />;
+};
+
+export default PrivateRoute;
+
 import { createBrowserRouter } from "react-router-dom";
 import MainPage from "@pages/MainPage";
 import SpeakingTestPage from "@pages/SpeakingTestPage";
@@ -13,7 +23,6 @@ import VocabularyPage from "@pages/VocabularyPage";
 import TestHistoryPage from "@pages/TestHistoryPage";
 import LoginPage from "@pages/LoginPage";
 import SignUpPage from "@pages/SignUpPage";
-import PrivateRoute from "@hooks/PrivateRoute";
 
 export const router = createBrowserRouter([
   {
@@ -21,62 +30,55 @@ export const router = createBrowserRouter([
     element: <App />,
     children: [
       {
-        element: <PrivateRoute />,
-        children: [
-          {
-            index: true,
-            element: <MainPage />,
-          },
-          {
-            path: "speak",
-            element: <SpeakingTestPage />,
-          },
-          {
-            path: "speakresult",
-            element: <SpeakingTestResultPage />,
-          },
-          {
-            path: "wordtest",
-            element: <WordTestPage />,
-          },
-          {
-            path: "wordtestresult",
-            element: <WordTestResultPage />,
-          },
-          {
-            path: "news",
-            element: <NewsPage />,
-          },
-          {
-            path: "mypage",
-            element: <MyPage />,
-          },
-          {
-            path: "mystudy",
-            element: <MyStudyPage />,
-          },
-          {
-            path: "testhistory",
-            element: <TestHistoryPage />,
-          },
-          {
-            path: "voca",
-            element: <VocabularyPage />,
-          },
-        ],
+        index: true,
+        element: <MainPage />,
       },
       {
         path: "login",
         element: <LoginPage />,
       },
       {
-        path: "signup",
+        // 임시 path
+        path: "tmpsignup",
         element: <SignUpPage />,
+      },
+      {
+        path: "speak",
+        element: <SpeakingTestPage />,
+      },
+      {
+        path: "speakresult",
+        element: <SpeakingTestResultPage />,
+      },
+      {
+        path: "wordtest",
+        element: <WordTestPage />,
+      },
+      {
+        path: "wordtestresult",
+        element: <WordTestResultPage />,
+      },
+      {
+        path: "news",
+        element: <NewsPage />,
       },
       {
         path: "*",
         element: <NotFoundPage />,
       },
+      {
+        path: "mypage",
+        element: <MyPage />,
+      },
+      {
+        path: "mystudy",
+        element: <MyStudyPage />,
+      },
+      {
+        path: "testhistory",
+        element: <TestHistoryPage />,
+      },
+      { path: "voca", element: <VocabularyPage /> },
     ],
   },
 ]);

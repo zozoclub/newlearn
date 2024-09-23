@@ -1,7 +1,6 @@
 import styled from "styled-components";
 
 import CategoryChart from "@components/CategoryChart";
-import ProfileWidget from "./ProfileWidget";
 import RankingWidget from "./RankingWidget";
 
 type CountDataKey =
@@ -27,11 +26,11 @@ const Widget: React.FC<{ variety: string }> = ({ variety }) => {
   };
 
   switch (variety) {
+    // 다른 걸로 대체 예정
     case "profile":
       return (
         <Container>
           <Descripsion>My Information</Descripsion>
-          <ProfileWidget />
         </Container>
       );
     case "chart":

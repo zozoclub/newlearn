@@ -1,5 +1,6 @@
 import { SignUpType } from "@pages/SignUpPage";
 import axios from "axios";
+import axiosInstance from "./axiosInstance";
 
 type UserInfo = {
   email: string;
@@ -92,6 +93,16 @@ export const signUp = async (signUpForm: SignUpType) => {
     console.log(response);
   } catch (error) {
     console.log("signUp failed: ", error);
+    throw error;
+  }
+};
+
+export const logout = async () => {
+  try {
+    const response = await axiosInstance.post(`user/logout`, "");
+    console.log(response);
+  } catch (error) {
+    console.error("logout failed: ", error);
     throw error;
   }
 };

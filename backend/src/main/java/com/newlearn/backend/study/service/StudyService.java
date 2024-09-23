@@ -17,7 +17,7 @@ public interface StudyService {
 
     StudyProgressDTO getStudyProgress(Long userId);
 
-    List<WordTestResponseDTO> getWordTestProblems(Users user, Long totalCount);
+    List<WordTestResponseDTO> getWordTestProblems(Long userId, Users user, Long totalCount);
 
 //    void saveWordTestResults(Long userId, List<WordTestResultDTO> wordTestResults);
 

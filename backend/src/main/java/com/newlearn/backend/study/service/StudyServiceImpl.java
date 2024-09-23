@@ -63,14 +63,14 @@ public class StudyServiceImpl implements StudyService{
     }
 
     @Override
-    public List<WordTestResponseDTO> getWordTestProblems(Users user, Long totalCount) {
+    public List<WordTestResponseDTO> getWordTestProblems(Long userId, Users user, Long totalCount) {
         WordQuiz newQuiz = new WordQuiz();
         newQuiz.setUser(user);
         newQuiz.setTotalCount(totalCount);
         newQuiz.setCorrectCount(0L);
         wordQuizRepository.save(newQuiz);
 
-        List<Word> words = wordQuizQuestionRepository.findRandomWords(user.getUserId(), totalCount);
+        List<Word> words = wordQuizQuestionRepository.findRandomWords(userId, totalCount);
         List<WordTestResponseDTO> tests = new ArrayList<>();
 
         for (Word word : words) {

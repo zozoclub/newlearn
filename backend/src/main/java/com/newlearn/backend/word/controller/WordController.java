@@ -16,6 +16,7 @@ import com.newlearn.backend.common.ErrorCode;
 import com.newlearn.backend.user.model.Users;
 import com.newlearn.backend.user.service.UserService;
 import com.newlearn.backend.word.dto.request.WordRequestDto;
+import com.newlearn.backend.word.dto.response.WordDetailResponseDTO;
 import com.newlearn.backend.word.dto.response.WordResponseDTO;
 import com.newlearn.backend.word.service.WordService;
 
@@ -94,6 +95,22 @@ public class WordController {
 			return ApiResponse.createSuccess(null, "성공적 삭제");
 		} catch (Exception e) {
 			return ApiResponse.createError(ErrorCode.WORD_DELETE_FAILED);
+		}
+	}
+
+	//단어 상세조회
+	@GetMapping("/{word}")
+	public ApiResponse<?> getWord(Authentication authentication, @PathVariable String word) {
+
+		try {
+			Users user = userService.findByEmail(authentication.getName());
+			if(user == null) {
+				return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
+			}
+			WordDetailResponseDTO responseDTO = wordService.getWordDetail(word, user);
+			return ApiResponse.createSuccess(responseDTO, "성공적으로 상세 조회 완료");
+		}catch (Exception e) {
+			return ApiResponse.createError(ErrorCode.WORD_FIND_FAILED);
 		}
 	}
 }

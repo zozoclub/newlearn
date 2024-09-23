@@ -5,6 +5,7 @@ import com.newlearn.backend.study.dto.request.WordTestResultRequestDTO;
 import com.newlearn.backend.study.dto.response.PronounceTestResponseDTO;
 import com.newlearn.backend.study.dto.response.StudyProgressDTO;
 import com.newlearn.backend.study.dto.response.WordTestResponseDTO;
+import com.newlearn.backend.study.dto.response.WordTestResultResponseDTO;
 import com.newlearn.backend.study.model.Goal;
 import com.newlearn.backend.word.model.*;
 import com.newlearn.backend.study.repository.StudyRepository;
@@ -19,6 +20,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -121,6 +124,28 @@ public class StudyServiceImpl implements StudyService{
                     .build();
             wordQuizAnswerRepository.save(answer);
         }
+    }
+
+    @Override
+    public List<WordTestResultResponseDTO> getWordTestResult(Long userId) {
+        // 유저와 관련된 모든 시험 가져오기
+        List<WordQuiz> wordQuizzes = wordQuizRepository.findByUserId(userId);
+
+        return wordQuizzes.stream().map(quiz -> {
+            // 시험에 관련된 답변 가져오기
+            List<WordQuizAnswer> answers = wordQuizAnswerRepository.findByQuizId(quiz.getQuizId());
+
+            String answer = answers.isEmpty() ? "" : answers.get(0).getAnswer();    // 정답이 안비었는지
+            boolean isCorrect = quiz.getCorrectCount() > 0; // 정답 수가 0보다 큰지
+
+            return WordTestResultResponseDTO.builder()
+                    .quizId(quiz.getQuizId())
+                    .answer(answer)
+                    .totalCnt(String.valueOf(quiz.getTotalCount()))
+                    .correctCnt(isCorrect)
+                    .createAt(quiz.getCreatedAt())
+                    .build();
+        }).collect(Collectors.toList());
     }
 
     @Override

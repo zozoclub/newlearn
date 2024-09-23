@@ -4,19 +4,17 @@ import com.newlearn.backend.common.ApiResponse;
 import com.newlearn.backend.common.ErrorCode;
 import com.newlearn.backend.study.dto.request.GoalRequestDTO;
 import com.newlearn.backend.study.dto.request.WordTestRequestDTO;
-import com.newlearn.backend.study.dto.request.WordTestResultDTO;
 import com.newlearn.backend.study.dto.request.WordTestResultRequestDTO;
 import com.newlearn.backend.study.dto.response.PronounceTestResponseDTO;
 import com.newlearn.backend.study.dto.response.StudyProgressDTO;
 import com.newlearn.backend.study.dto.response.WordTestResponseDTO;
+import com.newlearn.backend.study.dto.response.WordTestResultResponseDTO;
 import com.newlearn.backend.study.service.StudyService;
 import com.newlearn.backend.user.model.Users;
 import com.newlearn.backend.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.User;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -108,10 +106,28 @@ public class StudyController {
             log.error("단어 테스트 결과 저장 중 오류 발생", e);
             return ApiResponse.createError(ErrorCode.WORD_TEST_RESULT_CREATE_FAILED);
         }
-
     }
     
     // 단어 테스트 결과 리스트 조회
+    @GetMapping("/word/test/list")
+    public ApiResponse<?> getStudyWordTestList(Authentication authentication) throws Exception {
+        try {
+            Users user = userService.findByEmail(authentication.getName());
+            if (user == null) {
+                return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
+            }
+
+            List<WordTestResultResponseDTO> results = studyService.getWordTestResult(user.getUserId());
+
+            return ApiResponse.createSuccess(results, "단어 테스트 결과 리스트 조회 성공");
+        } catch (Exception e) {
+            log.error("단어 테스트 결과 리스트 조회 중 오류 발생", e);
+            return ApiResponse.createError(ErrorCode.WORD_TEST_RESULT_NOT_FOUND);
+        }
+
+    }
+
+    // 단어 문장 빈칸 테스트 결과 상세 조회
     
     // 발음 테스트 예문 가져오기
     @GetMapping("/pronounce/test")

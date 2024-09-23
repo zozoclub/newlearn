@@ -1,9 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styled, { keyframes } from "styled-components";
 
 import RecordingIcon from "@assets/icons/RecordingIcon";
 import StartRecordingIcon from "@assets/icons/StartRecordingIcon";
 import RestartRecordingIcon from "@assets/icons/RestartRecordingIcon";
+import Modal from "@components/Modal";
+
+import "@styles/AudioStyle.css";
 
 type Props = {
   startUserRecording: () => void;
@@ -11,18 +14,48 @@ type Props = {
   restartRecording: () => void;
   audioUrl?: string;
   status: string;
+  isStartRecordModal: boolean;
+  startRecordingModal: () => void;
+  closeRecordingModal: () => void;
 };
 
 const SpeakingTestRecord: React.FC<Props> = ({
   startUserRecording,
   stopUserRecording,
-  restartRecording,
   audioUrl,
   status,
+  isStartRecordModal,
+  startRecordingModal,
+  closeRecordingModal,
 }) => {
   const [recordingTime, setRecordingTime] = useState<number>(0);
   const [isRecording, setIsRecording] = useState(false);
   const [isRecorded, setIsRecorded] = useState(false);
+  const audioPlayerRef = useRef<HTMLDivElement>(null); // Green Audio Player ref
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const greenAudioPlayerInstance = useRef<any>(null);
+
+  // Green Audio Player 초기화
+  useEffect(() => {
+    if (audioUrl && audioPlayerRef.current) {
+      // 이전 인스턴스가 있으면 정리
+      if (greenAudioPlayerInstance.current) {
+        greenAudioPlayerInstance.current.destroy();
+      }
+
+      // 새로운 Green Audio Player 초기화
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      greenAudioPlayerInstance.current = new (window as any).GreenAudioPlayer(
+        audioPlayerRef.current
+      );
+    }
+
+    return () => {
+      if (greenAudioPlayerInstance.current) {
+        greenAudioPlayerInstance.current = null;
+      }
+    };
+  }, [audioUrl]);
 
   useEffect(() => {
     let timer: NodeJS.Timeout | null = null;
@@ -58,9 +91,15 @@ const SpeakingTestRecord: React.FC<Props> = ({
     setRecordingTime(0);
   };
 
+  // 재녹음 시작 모달
+  const [isReStartRecordModal, setReIsStartRecordModal] = useState(false);
+  const reStartRecordingModal = () => setReIsStartRecordModal(true);
+  const closeReRecordingModal = () => setReIsStartRecordModal(false);
+
   const handleRestartRecording = () => {
-    restartRecording();
+    closeReRecordingModal();
     setIsRecorded(false); // 재녹음
+    startRecordingModal();
   };
 
   return (
@@ -68,8 +107,24 @@ const SpeakingTestRecord: React.FC<Props> = ({
       {/* 아무것도 녹음되지 않은 상태 */}
       {!isRecording && !isRecorded && (
         <>
-          <StartRecordingIcon onClick={startUserRecording} />
-          <p>마이크 버튼을 눌러 녹음을 시작하세요.</p>
+          <StartRecordingIcon onClick={startRecordingModal} />
+          <PromptText>마이크 버튼을 눌러 녹음을 시작하세요.</PromptText>
+          {/* 녹음 모달 */}
+          <Modal
+            isOpen={isStartRecordModal}
+            onClose={closeRecordingModal}
+            title="Speaking Test"
+          >
+            <p>녹음 준비가 완료되었으면 확인 버튼을 눌러주세요</p>
+            <ModalButtonContainer>
+              <ModalCancelButton onClick={closeRecordingModal}>
+                취소
+              </ModalCancelButton>
+              <ModalConfirmButton onClick={startUserRecording}>
+                확인
+              </ModalConfirmButton>
+            </ModalButtonContainer>
+          </Modal>
         </>
       )}
 
@@ -81,7 +136,7 @@ const SpeakingTestRecord: React.FC<Props> = ({
             <RecordingIconStyled />
           </RecordingContainer>
           {/* 녹음 중일 때 시각적 효과 */}
-          <div style={{ color: "red", fontWeight: "bold" }}>녹음중입니다.</div>
+          <RecordingStatus>녹음 중입니다...</RecordingStatus>
           <RecordingTime>{formatTime(recordingTime)}</RecordingTime>
           <StopButton onClick={handleStopRecording}>녹음 정지</StopButton>
         </>
@@ -90,11 +145,37 @@ const SpeakingTestRecord: React.FC<Props> = ({
       {/* 녹음이 완료된 상태 */}
       {!isRecording && isRecorded && (
         <>
-          <p>
-            녹음이 완료되었습니다. 아래에서 확인하거나 다시 녹음할 수 있습니다.
-          </p>
-          {audioUrl && <audio controls src={audioUrl} />}
-          <RestartRecordingIcon onClick={handleRestartRecording} />
+          <CompletionText>녹음이 완료되었습니다!</CompletionText>
+          {audioUrl && (
+            <StyledAudioPlayer
+              ref={audioPlayerRef}
+              className="green-audio-player"
+            >
+              <audio controls style={{ display: "none" }}>
+                <source src={audioUrl} type="audio/mpeg" />
+              </audio>
+            </StyledAudioPlayer>
+          )}
+          <RestartRecordingContainer>
+            <RestartText>다시 녹음하기</RestartText>
+            <RestartRecordingIconStyled onClick={reStartRecordingModal} />
+            {/* 녹음 모달 */}
+            <Modal
+              isOpen={isReStartRecordModal}
+              onClose={closeReRecordingModal}
+              title="Speaking Test"
+            >
+              <p>이전 테스트 녹음 파일은 삭제됩니다.</p>
+              <ModalButtonContainer>
+                <ModalCancelButton onClick={closeReRecordingModal}>
+                  취소
+                </ModalCancelButton>
+                <ModalConfirmButton onClick={handleRestartRecording}>
+                  확인
+                </ModalConfirmButton>
+              </ModalButtonContainer>
+            </Modal>
+          </RestartRecordingContainer>
         </>
       )}
     </>
@@ -150,7 +231,7 @@ const RecordingContainer = styled.div`
 const StopButton = styled.div`
   width: 5rem;
   height: 2rem;
-  background-color: red;
+  background-color: ${(props) => props.theme.colors.danger};
   color: white;
   text-align: center;
   line-height: 2rem;
@@ -162,4 +243,91 @@ const StopButton = styled.div`
 const RecordingTime = styled.div`
   margin-top: 1rem;
   font-size: 1.25rem;
+  font-weight: bold;
+`;
+
+const RecordingStatus = styled.div`
+  color: ${(props) => props.theme.colors.danger};
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin-top: 0.5rem;
+`;
+
+// 녹음 완료 시 텍스트 스타일
+const CompletionText = styled.p`
+  color: ${(props) => props.theme.colors.text};
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+`;
+
+const RestartRecordingContainer = styled.div`
+  display: flex;
+  align-items: center;
+  margin-top: 1rem;
+`;
+
+const RestartRecordingIconStyled = styled(RestartRecordingIcon)`
+  width: 2rem;
+  height: 2rem;
+  cursor: pointer;
+  margin-right: 0.5rem;
+
+  &:hover {
+    opacity: 0.8;
+  }
+`;
+
+const RestartText = styled.p`
+  color: ${(props) => props.theme.colors.primary};
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
+`;
+
+const PromptText = styled.p`
+  color: ${(props) => props.theme.colors.text};
+  font-size: 1.125rem;
+  margin-top: 0.5rem;
+`;
+
+const ModalButtonContainer = styled.div`
+  display: flex;
+  justify-content: space-around;
+  margin-top: 2rem;
+`;
+
+const ModalCancelButton = styled.button`
+  padding: 0.5rem 1.5rem;
+  background-color: ${(props) => props.theme.colors.placeholder};
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+
+  &:hover {
+    background-color: ${(props) => props.theme.colors.danger};
+  }
+`;
+const ModalConfirmButton = styled.button`
+  padding: 0.5rem 1.5rem;
+  background-color: ${(props) => props.theme.colors.primary};
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+
+  &:hover {
+    background-color: ${(props) => props.theme.colors.primaryPress};
+  }
+`;
+
+// 플레이어 배경 색깔
+const StyledAudioPlayer = styled.div`
+  background-color: ${(props) => props.theme.colors.shadow}5A;
+  margin: 0 1rem;
 `;

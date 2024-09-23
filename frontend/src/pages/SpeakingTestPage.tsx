@@ -9,6 +9,7 @@ import stringSimilarity from "string-similarity";
 import SpeakingTestReference from "@components/testpage/SpeakingTestReference";
 import SpeakingTestRealtimeText from "@components/testpage/SpeakingTestRealtimeText";
 import SpeakingTestRecord from "@components/testpage/SpeakingTestRecord";
+import Modal from "@components/Modal";
 // 이외 라이브러리
 import { useSetRecoilState } from "recoil";
 import locationState from "@store/locationState";
@@ -17,6 +18,19 @@ import { useNavigate } from "react-router-dom";
 
 const SpeakingTestPage: React.FC = () => {
   const navigate = useNavigate();
+
+  // 제출 모달
+  const [isSubmitModal, setIsSubmitModal] = useState<boolean>(false);
+  const submitModal = () => setIsSubmitModal(true);
+  const closeSubmitModal = () => setIsSubmitModal(false);
+  const handleRecordingDataSubmit = () => {
+    submitModal();
+  };
+
+  // 녹음 시작 모달
+  const [isStartRecordModal, setIsStartRecordModal] = useState(false);
+  const startRecordingModal = () => setIsStartRecordModal(true);
+  const closeRecordingModal = () => setIsStartRecordModal(false);
 
   // 페이지 확인
   const setCurrentLocation = useSetRecoilState(locationState);
@@ -133,7 +147,7 @@ const SpeakingTestPage: React.FC = () => {
     startUserRecording();
   };
 
-  const handleRecordingDataSubmit = async () => {
+  const handleSubmitConfirm = async () => {
     if (!mediaBlobUrl) return;
 
     setIsLoading(true); // 로딩 시작
@@ -280,6 +294,9 @@ const SpeakingTestPage: React.FC = () => {
                 restartRecording={restartRecording}
                 audioUrl={audioUrl}
                 status={status}
+                isStartRecordModal={isStartRecordModal}
+                startRecordingModal={startRecordingModal}
+                closeRecordingModal={closeRecordingModal}
               />
             </SubContainer>
           </SubArea>
@@ -292,6 +309,22 @@ const SpeakingTestPage: React.FC = () => {
             {isLoading ? "제출중일 경우 문구" : "제출하기"}
           </SubmitButton>
         </SubmitButtonContainer>
+        {/* 제출 모달 */}
+        <Modal
+          isOpen={isSubmitModal}
+          onClose={closeSubmitModal}
+          title="Speaking Test"
+        >
+          <p>정말로 제출하시겠습니까?</p>
+          <ModalButtonContainer>
+            <ModalCancelButton onClick={closeSubmitModal}>
+              취소
+            </ModalCancelButton>
+            <ModalConfirmButton onClick={handleSubmitConfirm}>
+              확인
+            </ModalConfirmButton>
+          </ModalButtonContainer>
+        </Modal>
       </MainContainer>
     </>
   );
@@ -299,9 +332,10 @@ const SpeakingTestPage: React.FC = () => {
 
 const MainContainer = styled.div`
   width: 90%;
-  min-height: 50rem;
+  min-height: 30rem;
   margin: auto;
-  padding: 0.625rem;
+  margin-bottom: 2rem;
+  padding: 1rem;
   background-color: ${(props) => props.theme.colors.cardBackground + "BF"};
   backdrop-filter: blur(0.25rem);
   border-radius: 0.75rem;
@@ -347,8 +381,10 @@ const SubmitButtonContainer = styled.div`
 const SubmitButton = styled.button<{ disabled: boolean }>`
   padding: 1rem 2rem;
   background-color: ${(props) =>
-    props.disabled ? "#ccc" : props.theme.colors.primary};
-  color: ${(props) => (props.disabled ? "#666" : "#fff")};
+    props.disabled
+      ? props.theme.colors.placeholder
+      : props.theme.colors.primary};
+  color: white;
   border: none;
   border-radius: 0.625rem;
   cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};
@@ -359,6 +395,37 @@ const SubmitButton = styled.button<{ disabled: boolean }>`
   &:hover {
     background-color: ${(props) =>
       props.disabled ? "#ccc" : props.theme.colors.primaryHover};
+  }
+`;
+
+const ModalButtonContainer = styled.div`
+  display: flex;
+  justify-content: space-around;
+  margin-top: 2rem;
+`;
+
+const ModalCancelButton = styled.button`
+  padding: 0.5rem 1.5rem;
+  background-color: ${(props) => props.theme.colors.placeholder};
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+
+  &:hover {
+    background-color: ${(props) => props.theme.colors.danger};
+  }
+`;
+const ModalConfirmButton = styled.button`
+  padding: 0.5rem 1.5rem;
+  background-color: ${(props) => props.theme.colors.primary};
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+
+  &:hover {
+    background-color: ${(props) => props.theme.colors.primaryPress};
   }
 `;
 

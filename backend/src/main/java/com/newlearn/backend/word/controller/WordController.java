@@ -3,7 +3,9 @@ package com.newlearn.backend.word.controller;
 import java.util.List;
 
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -59,7 +61,7 @@ public class WordController {
 
 			return ApiResponse.createSuccess(response, "단어 목록 죄회 성공");
 		} catch (Exception e) {
-			throw new RuntimeException(e);
+			return ApiResponse.createError(ErrorCode.WORD_FIND_FAILED);
 		}
 	}
 
@@ -75,7 +77,23 @@ public class WordController {
 
 			return ApiResponse.createSuccess(response, "단어 목록 죄회 성공");
 		} catch (Exception e) {
-			throw new RuntimeException(e);
+			return ApiResponse.createError(ErrorCode.WORD_FIND_FAILED);
+		}
+	}
+
+	//단어 삭제
+	@DeleteMapping("/{wordId}")
+	public ApiResponse<?> deleteWord(Authentication authentication, @PathVariable Long wordId) {
+
+		try {
+			Users user = userService.findByEmail(authentication.getName());
+			if(user == null) {
+				return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
+			}
+			wordService.deleteWord(wordId);
+			return ApiResponse.createSuccess(null, "성공적 삭제");
+		} catch (Exception e) {
+			return ApiResponse.createError(ErrorCode.WORD_DELETE_FAILED);
 		}
 	}
 }

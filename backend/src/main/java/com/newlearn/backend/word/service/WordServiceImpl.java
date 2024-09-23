@@ -72,4 +72,20 @@ public class WordServiceImpl implements WordService {
 
 		return response;
 	}
+
+	@Override
+	public void deleteWord(Long wordId) {
+		Word word = wordRepository.findById(wordId)
+			.orElseThrow(() -> new IllegalArgumentException("단어로 찾을 수 없습니다. " + wordId));
+
+		// 연관된 사용자로부터 단어 제거
+		Users user = word.getUser();
+		if (user != null) {
+			user.removeWord(word);
+		}
+
+		wordRepository.delete(word);
+	}
+
+
 }

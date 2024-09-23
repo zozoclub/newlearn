@@ -13,4 +13,6 @@ public interface WordService {
 	List<WordResponseDTO> getWords(Users user);
 
 	List<WordResponseDTO> getCompleteWords(Users user);
+
+	void deleteWord(Long wordId);
 }

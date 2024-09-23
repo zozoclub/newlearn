@@ -11,11 +11,10 @@ import { darkTheme } from "@styles/theme/darkTheme";
 import { lightTheme } from "@styles/theme/lightTheme";
 import TransitionContent from "@components/TransitionContent";
 import { useEffect } from "react";
-import navbarState from "@store/navbarStats";
 
 const App: React.FC = () => {
   const theme = useRecoilValue(themeState) === "dark" ? darkTheme : lightTheme;
-  const navbar = useRecoilValue(navbarState);
+  const isLogin = sessionStorage.getItem("accessToken");
   useEffect(() => {
     console.log(
       " _   _                       _                               \n\
@@ -38,7 +37,7 @@ Welcome To NewsLearn!"
         <TransitionContent>
           <Outlet />
         </TransitionContent>
-        {navbar && <Navbar />}
+        {isLogin && <Navbar />}
       </AppContainer>
     </ThemeProvider>
   );

@@ -32,7 +32,7 @@ axiosInstance.interceptors.response.use(
         console.log("check refreshToken");
         const newToken = await getRefreshToken();
         // getRefreshToken에서 axiosInstance.defaults.headers['Authorization']을 바꿔주는데 굳이?
-        // originalRequest.headers["Authorization"] = newToken;
+        originalRequest.headers["Authorization"] = newToken;
         return axiosInstance(originalRequest);
       } catch (refreshError) {
         // await logout();

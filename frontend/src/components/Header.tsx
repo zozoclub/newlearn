@@ -12,7 +12,7 @@ const Header = () => {
   const transitionTo = usePageTransition();
 
   return (
-    <HeaderContainer>
+    <HeaderContainer $currentLocation={currentLocation}>
       {/* NotFoundPage일 때 Logo 표시 안 함 */}
       {currentLocation !== "" && (
         <Logo
@@ -23,17 +23,19 @@ const Header = () => {
       )}
       <div className="right-side">
         <PageInfo>{currentLocation}</PageInfo>
-        <UserProfile />
+        {/* 페이지 정보 없을 때 유저 프로필 표시 안 함 */}
+        {currentLocation !== "" && <UserProfile />}
         <DarkModeButton />
       </div>
     </HeaderContainer>
   );
 };
 
-const HeaderContainer = styled.div`
+const HeaderContainer = styled.div<{ $currentLocation: string }>`
   display: flex;
   position: relative;
-  justify-content: space-between;
+  justify-content: ${(props) =>
+    props.$currentLocation ? "space-between" : "end"};
   align-items: center;
   height: 9.375rem;
   padding: 0 2.5%;

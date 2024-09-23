@@ -21,5 +21,6 @@ RUN pip install python-dotenv
 RUN python manage.py collectstatic --noinput
 
 # 환경 변수 로드 및 서버 실행 명령
-CMD ["sh", "-c", "export $(cat .env | xargs) && python manage.py main 0.0.0.0:8000"]
+# CMD ["sh", "-c", "export $(cat .env | xargs) && python manage.py main 0.0.0.0:8000"]
+CMD ["python", "manage.py", "main", "0.0.0.0:8000"]
 

@@ -136,6 +136,8 @@ const SignUpPage = () => {
           setName(response.name);
           setProvider(response.provider);
           setProviderId(response.providerId);
+        } else {
+          transitionTo("/login");
         }
       } catch (error) {
         console.error(error);

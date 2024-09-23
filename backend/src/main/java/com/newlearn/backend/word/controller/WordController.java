@@ -113,4 +113,19 @@ public class WordController {
 			return ApiResponse.createError(ErrorCode.WORD_FIND_FAILED);
 		}
 	}
+
+	//단어 외움처리
+	@PostMapping("/{wordId}/complete")
+	public ApiResponse<?> completeWord(Authentication authentication, @PathVariable Long wordId) {
+		try {
+			Users user = userService.findByEmail(authentication.getName());
+			if(user == null) {
+				return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
+			}
+			wordService.completeWord(wordId, user);
+			return ApiResponse.createSuccess(null, "성공적으로 단어 완료 하였슴다");
+		} catch (Exception e) {
+			return ApiResponse.createError(ErrorCode.WORD_FIND_FAILED);
+		}
+	}
 }

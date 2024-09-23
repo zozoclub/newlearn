@@ -110,4 +110,16 @@ public class WordServiceImpl implements WordService {
 
 	}
 
+	@Transactional
+	public void completeWord(Long wordId, Users user) {
+		Word word = wordRepository.findById(wordId)
+			.orElseThrow(() -> new IllegalArgumentException("해당 단어를 찾을 수 없"));
+
+		if (!word.getUser().equals(user)) {
+			throw new IllegalStateException("사용자와 단어가 일치하지 않습니다.");
+		}
+
+		word.completeWord();
+		wordRepository.save(word);
+	}
 }

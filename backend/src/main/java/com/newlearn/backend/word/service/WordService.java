@@ -18,4 +18,6 @@ public interface WordService {
 	void deleteWord(Long wordId);
 
 	WordDetailResponseDTO getWordDetail(String word, Users user) throws Exception;
+
+	void completeWord(Long wordId, Users user);
 }

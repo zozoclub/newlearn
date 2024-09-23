@@ -1,16 +1,15 @@
 package com.newlearn.backend.study.service;
 
 import com.newlearn.backend.study.dto.request.GoalRequestDTO;
+import com.newlearn.backend.study.dto.request.WordTestResultRequestDTO;
 import com.newlearn.backend.study.dto.response.PronounceTestResponseDTO;
 import com.newlearn.backend.study.dto.response.StudyProgressDTO;
 import com.newlearn.backend.study.dto.response.WordTestResponseDTO;
 import com.newlearn.backend.study.model.Goal;
-import com.newlearn.backend.word.model.WordQuiz;
-import com.newlearn.backend.word.model.WordQuizQuestion;
+import com.newlearn.backend.word.model.*;
 import com.newlearn.backend.study.repository.StudyRepository;
 import com.newlearn.backend.user.model.Users;
-import com.newlearn.backend.word.model.Word;
-import com.newlearn.backend.word.model.WordSentence;
+import com.newlearn.backend.word.repository.WordQuizAnswerRepository;
 import com.newlearn.backend.word.repository.WordQuizQuestionRepository;
 import com.newlearn.backend.word.repository.WordQuizRepository;
 import com.newlearn.backend.word.repository.WordRepository;
@@ -27,9 +26,10 @@ import java.util.List;
 public class StudyServiceImpl implements StudyService{
 
     private final StudyRepository studyRepository;
-    private final WordQuizRepository wordQuizRepository;
-    private final WordQuizQuestionRepository wordQuizQuestionRepository;
     private final WordRepository wordRepository;
+    private final WordQuizRepository wordQuizRepository;
+    private final WordQuizAnswerRepository wordQuizAnswerRepository;
+    private final WordQuizQuestionRepository wordQuizQuestionRepository;
 
     @Override
     public boolean isGoalExist(Long userId) {
@@ -73,6 +73,7 @@ public class StudyServiceImpl implements StudyService{
         newQuiz.setCorrectCount(0L);
         wordQuizRepository.save(newQuiz);
 
+        // 랜덤 단어 ${totalCount}개 가져오기
         List<Word> words = wordQuizQuestionRepository.findRandomWords(userId, totalCount);
         List<WordTestResponseDTO> tests = new ArrayList<>();
 
@@ -98,6 +99,31 @@ public class StudyServiceImpl implements StudyService{
     }
 
     @Override
+    public void saveWordTestResult(Long userId, WordTestResultRequestDTO wordTestResultRequestDTO) {
+        for (WordTestResultRequestDTO.WordTestDetail result : wordTestResultRequestDTO.getResults()) {
+            // 퀴즈 가져오기
+            WordQuiz quiz = wordQuizRepository.findById(wordTestResultRequestDTO.getQuizId())
+                    .orElseThrow(() -> new IllegalArgumentException("퀴즈를 찾을 수 없습니다."));
+
+            // 질문 저장
+            WordQuizQuestion question = WordQuizQuestion.builder()
+                    .quiz(quiz) // 퀴즈
+                    .sentence(result.getSentence())
+                    .correctAnswer(result.getCorrectAnswer())
+                    .build();
+            wordQuizQuestionRepository.save(question);
+
+            // 답안 저장
+            WordQuizAnswer answer = WordQuizAnswer.builder()
+                    .wordQuizQuestion(question) // 질문
+                    .answer(result.getAnswer())
+                    .isCorrect(result.isCorrect())
+                    .build();
+            wordQuizAnswerRepository.save(answer);
+        }
+    }
+
+    @Override
     public List<PronounceTestResponseDTO> getPronounceTestProblems(Long userId, Users user) {
         // 랜덤 단어 3개 가져오기
         List<Word> words = wordQuizQuestionRepository.findRandomWords(userId, 3L);
@@ -106,12 +132,10 @@ public class StudyServiceImpl implements StudyService{
         for (Word word : words) {
             WordSentence sentence = wordQuizQuestionRepository.findRandomSentenceByWordId(word.getWordId());
 
-            PronounceTestResponseDTO problem = PronounceTestResponseDTO.builder()
+            tests.add(PronounceTestResponseDTO.builder()
                     .sentence(sentence.getSentence())
                     .sentenceMeaning(sentence.getSentenceMeaning())
-                    .build();
-
-            tests.add(problem);
+                    .build());
         }
         return tests;
     }

@@ -9,7 +9,6 @@ import { usePageTransition } from "@hooks/usePageTransition";
 const LoginPage = () => {
   const isLogin = sessionStorage.getItem("accessToken");
   const transitionTo = usePageTransition();
-  console.log(transitionTo);
 
   useEffect(() => {
     if (isLogin) {

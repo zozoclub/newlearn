@@ -1,3 +1,4 @@
+import { SignUpType } from "@pages/SignUpPage";
 import axios from "axios";
 
 type UserInfo = {
@@ -65,10 +66,32 @@ export const getOAuthInformation = async (token: string): Promise<UserInfo> => {
         token,
       },
     });
-    console.log(response);
-    return response.data;
+    // console.log(response.data.data);
+    return response.data.data;
   } catch (error) {
     console.error("getOAuthInformation failed:", error);
+    throw error;
+  }
+};
+
+export const signUp = async (signUpForm: SignUpType) => {
+  console.log(signUpForm);
+  try {
+    const response = await axios.post(`user/sign-up`, {
+      email: signUpForm.email,
+      name: signUpForm.name,
+      provider: signUpForm.provider,
+      providerId: signUpForm.providerId,
+      nickname: signUpForm.nickname,
+      difficulty: signUpForm.difficulty,
+      categories: signUpForm.categories,
+      skin: signUpForm.skin,
+      eyes: signUpForm.eyes,
+      mask: signUpForm.mask,
+    });
+    console.log(response);
+  } catch (error) {
+    console.log("signUp failed: ", error);
     throw error;
   }
 };

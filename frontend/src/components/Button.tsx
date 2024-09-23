@@ -42,6 +42,7 @@ const StyledButton = styled.button<ButtonProps>`
   border-radius: 0.5rem;
   font-size: 1rem;
   cursor: pointer;
+  transition: all 0.5s;
 `;
 
 export default Button;

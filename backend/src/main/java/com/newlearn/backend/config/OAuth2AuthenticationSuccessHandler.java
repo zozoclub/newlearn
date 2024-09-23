@@ -46,7 +46,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 		if (oAuth2User.getAttribute("tempToken") != null) {
 			// 임시 토큰이 존재하는 경우 := 새로운 사용자인 경우
 			String tempToken = oAuth2User.getAttribute("tempToken");
-			targetUrl = UriComponentsBuilder.fromUriString(frontendUrl + "/user/signup/information")
+			targetUrl = UriComponentsBuilder.fromUriString(frontendUrl + "/signin")
 				.queryParam("token", tempToken)
 				.build().toUriString();
 		} else {

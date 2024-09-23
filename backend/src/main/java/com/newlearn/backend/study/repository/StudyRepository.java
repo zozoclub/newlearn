@@ -22,3 +22,4 @@ public interface StudyRepository extends JpaRepository<Goal, Long> {
     void deleteAllGoals();
 
 }
+

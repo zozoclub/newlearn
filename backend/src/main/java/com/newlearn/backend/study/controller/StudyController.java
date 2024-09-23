@@ -27,11 +27,11 @@ public class StudyController {
 
     private final UserService userService;
     private final StudyService studyService;
-    
+
     // 학습 목표 설정
     @PostMapping("/goal")
     public ApiResponse<?> setStudyGoal(Authentication authentication,
-                                       @RequestBody GoalRequestDTO goalRequestDTO) throws Exception {
+        @RequestBody GoalRequestDTO goalRequestDTO) throws Exception {
         try {
             Users user = userService.findByEmail(authentication.getName());
             if (user == null) {
@@ -69,11 +69,11 @@ public class StudyController {
             return ApiResponse.createError(ErrorCode.STUDY_PROGRESS_NOT_FOUND);
         }
     }
-    
+
     // 단어 테스트 문제 가져오기
     @GetMapping("/word/test")
     public ApiResponse<?> getStudyWordTest(Authentication authentication,
-                                       @RequestBody WordTestRequestDTO wordTestRequestDTO) throws Exception {
+        @RequestBody WordTestRequestDTO wordTestRequestDTO) throws Exception {
         try {
             Users user = userService.findByEmail(authentication.getName());
             if (user == null) {
@@ -88,11 +88,11 @@ public class StudyController {
             return ApiResponse.createError(ErrorCode.WORD_TEST_NOT_FOUND);
         }
     }
-    
+
     // 단어 테스트 결과 저장
-    
+
     // 단어 테스트 결과 리스트 조회
-    
+
     // 발음 테스트 예문 가져오기
     @GetMapping("/pronounce/test")
     public ApiResponse<?> getPronounceWordTest(Authentication authentication) throws Exception {
@@ -110,11 +110,12 @@ public class StudyController {
             return ApiResponse.createError(ErrorCode.PRONOUNCE_TEST_NOT_FOUND);
         }
     }
-    
+
     // 발음 테스트 결과 저장
-    
+
     // 발음 테스트 결과 리스트 조회
-    
+
     // 발음 테스트 결과 상세 조회
 
 }
+

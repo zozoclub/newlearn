@@ -17,10 +17,6 @@ COPY . .
 # 환경 변수 설정을 위한 패키지 설치
 RUN pip install python-dotenv
 
-# static 파일 모으기
-RUN python manage.py collectstatic --noinput
-
 # 환경 변수 로드 및 서버 실행 명령
-# CMD ["sh", "-c", "export $(cat .env | xargs) && python manage.py main 0.0.0.0:8000"]
 CMD ["python", "manage.py", "main", "0.0.0.0:8000"]
 

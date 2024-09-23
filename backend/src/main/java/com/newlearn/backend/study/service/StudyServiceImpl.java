@@ -79,7 +79,7 @@ public class StudyServiceImpl implements StudyService{
 
             tests.add(WordTestResponseDTO.builder()
                     .word(word.getWord())
-                    .wordMeaning(word.getMeaning())
+                    .wordMeaning(word.getWordMeaning())
                     .sentence(sentence.getSentence())
                     .sentenceMeaning(sentence.getSentenceMeaning())
                     .build());

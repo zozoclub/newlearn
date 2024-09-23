@@ -11,10 +11,11 @@ import { darkTheme } from "@styles/theme/darkTheme";
 import { lightTheme } from "@styles/theme/lightTheme";
 import TransitionContent from "@components/TransitionContent";
 import { useEffect } from "react";
+import loginState from "@store/loginState";
 
 const App: React.FC = () => {
   const theme = useRecoilValue(themeState) === "dark" ? darkTheme : lightTheme;
-  const isLogin = sessionStorage.getItem("accessToken");
+  const isLogin = useRecoilValue(loginState);
   useEffect(() => {
     console.log(
       " _   _                       _                               \n\

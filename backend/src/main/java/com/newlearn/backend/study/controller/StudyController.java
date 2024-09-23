@@ -5,6 +5,7 @@ import com.newlearn.backend.common.ErrorCode;
 import com.newlearn.backend.study.dto.request.GoalRequestDTO;
 import com.newlearn.backend.study.dto.request.WordTestRequestDTO;
 import com.newlearn.backend.study.dto.request.WordTestResultDTO;
+import com.newlearn.backend.study.dto.response.PronounceTestResponseDTO;
 import com.newlearn.backend.study.dto.response.StudyProgressDTO;
 import com.newlearn.backend.study.dto.response.WordTestResponseDTO;
 import com.newlearn.backend.study.service.StudyService;
@@ -26,19 +27,23 @@ public class StudyController {
 
     private final UserService userService;
     private final StudyService studyService;
-    
+
     // 학습 목표 설정
     @PostMapping("/goal")
     public ApiResponse<?> setStudyGoal(Authentication authentication,
-                                       @RequestBody GoalRequestDTO goalRequestDTO) throws Exception {
+        @RequestBody GoalRequestDTO goalRequestDTO) throws Exception {
         try {
-            System.out.println(authentication.getName());
             Users user = userService.findByEmail(authentication.getName());
             if (user == null) {
                 return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
             }
 
-            studyService.saveGoal(user.getUserId(), goalRequestDTO);
+            boolean isGoalExist = studyService.isGoalExist(user.getUserId());   // 목표가 이미 존재하면 재설정 불가
+            if (isGoalExist) {
+                return ApiResponse.createError(ErrorCode.GOAL_ALREADY_EXISTS);
+            }
+
+            studyService.saveGoal(user.getUserId(), goalRequestDTO);    // 새로운 목표 저장
 
             return ApiResponse.createSuccess(null, "학습 목표 설정 성공");
         } catch (Exception e) {
@@ -64,18 +69,18 @@ public class StudyController {
             return ApiResponse.createError(ErrorCode.STUDY_PROGRESS_NOT_FOUND);
         }
     }
-    
+
     // 단어 테스트 문제 가져오기
     @GetMapping("/word/test")
     public ApiResponse<?> getStudyWordTest(Authentication authentication,
-                                       @RequestBody WordTestRequestDTO wordTestRequestDTO) throws Exception {
+        @RequestBody WordTestRequestDTO wordTestRequestDTO) throws Exception {
         try {
             Users user = userService.findByEmail(authentication.getName());
             if (user == null) {
                 return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
             }
 
-            List<WordTestResponseDTO> tests = studyService.getWordTestProblems(user, wordTestRequestDTO.getTotalCount());
+            List<WordTestResponseDTO> tests = studyService.getWordTestProblems(user.getUserId(), user, wordTestRequestDTO.getTotalCount());
 
             return ApiResponse.createSuccess(tests, "단어 상세 조회 성공");
         } catch (Exception e) {
@@ -83,17 +88,34 @@ public class StudyController {
             return ApiResponse.createError(ErrorCode.WORD_TEST_NOT_FOUND);
         }
     }
-    
+
     // 단어 테스트 결과 저장
-    
+
     // 단어 테스트 결과 리스트 조회
-    
+
     // 발음 테스트 예문 가져오기
-    
+    @GetMapping("/pronounce/test")
+    public ApiResponse<?> getPronounceWordTest(Authentication authentication) throws Exception {
+        try {
+            Users user = userService.findByEmail(authentication.getName());
+            if (user == null) {
+                return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
+            }
+
+            List<PronounceTestResponseDTO> tests = studyService.getPronounceTestProblems(user.getUserId(), user);
+
+            return ApiResponse.createSuccess(tests, "발음 테스트 예문 가져오기 성공");
+        } catch (Exception e) {
+            log.error("발음 테스트 문제 조회 중 오류 발생", e);
+            return ApiResponse.createError(ErrorCode.PRONOUNCE_TEST_NOT_FOUND);
+        }
+    }
+
     // 발음 테스트 결과 저장
-    
+
     // 발음 테스트 결과 리스트 조회
-    
+
     // 발음 테스트 결과 상세 조회
 
 }
+

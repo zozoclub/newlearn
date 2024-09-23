@@ -2,6 +2,7 @@ package com.newlearn.backend.study.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 @Data
 @Entity
@@ -28,12 +29,16 @@ public class Goal {
     @Column(name = "goal_complete_word")
     private Long goalCompleteWord;
 
-    @Column(name = "current_read_news_count", nullable = false, columnDefinition = "BIGINT DEFAULT 0")
+    @Column(name = "current_read_news_count", nullable = false)
+    @ColumnDefault("0")
     private Long currentReadNewsCount = 0L;
 
-    @Column(name = "current_pronounce_test_score", nullable = false, columnDefinition = "BIGINT DEFAULT 0")
+    @Column(name = "current_pronounce_test_score", nullable = false)
+    @ColumnDefault("0")
     private Long currentPronounceTestScore = 0L;
 
-    @Column(name = "current_complete_word", nullable = false, columnDefinition = "BIGINT DEFAULT 0")
+    @Column(name = "current_complete_word", nullable = false)
+    @ColumnDefault("0")
     private Long currentCompleteWord = 0L;
 }
+

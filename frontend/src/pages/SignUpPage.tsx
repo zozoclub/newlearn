@@ -1,7 +1,11 @@
 import BackArrow from "@assets/icons/BackArrow";
 import Button from "@components/Button";
 import { usePageTransition } from "@hooks/usePageTransition";
-import { getOAuthInformation, signUp } from "@services/userService";
+import {
+  checkNicknameDup,
+  getOAuthInformation,
+  signUp,
+} from "@services/userService";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import styled from "styled-components";
@@ -85,6 +89,30 @@ const SignUpPage = () => {
 
   function checkDifficulty(): boolean {
     return selectedDifficulty !== 0;
+  }
+
+  async function handleSubmitButton() {
+    if (activeButton) {
+      try {
+        if (await checkNicknameDup(nickname)) {
+          signUp({
+            email,
+            name,
+            provider,
+            providerId,
+            nickname,
+            difficulty: selectedDifficulty,
+            categories: selectedCategories,
+            skin,
+            eyes,
+            mask,
+          });
+          transitionTo("/login");
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
   }
 
   // 주소로부터 토큰 획득
@@ -202,27 +230,7 @@ const SignUpPage = () => {
           <Button
             $varient={activeButton ? "primary" : "cancel"}
             size="large"
-            onClick={() => {
-              if (activeButton) {
-                try {
-                  signUp({
-                    email,
-                    name,
-                    provider,
-                    providerId,
-                    nickname,
-                    difficulty: selectedDifficulty,
-                    categories: selectedCategories,
-                    skin,
-                    eyes,
-                    mask,
-                  });
-                  transitionTo("/login");
-                } catch (error) {
-                  console.log(error);
-                }
-              }
-            }}
+            onClick={handleSubmitButton}
           >
             입력 완료
           </Button>

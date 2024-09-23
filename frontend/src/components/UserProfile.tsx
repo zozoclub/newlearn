@@ -2,14 +2,21 @@ import { useState } from "react";
 import styled from "styled-components";
 import ProfileWidget from "./Profile";
 import { logout } from "@services/userService";
+import { usePageTransition } from "@hooks/usePageTransition";
 
 const UserProfile = () => {
   const [isOpened, setIsOpened] = useState(false);
+  const translateTo = usePageTransition();
 
-  function handleLogoutButton() {
+  async function handleLogoutButton() {
     try {
-      logout();
+      await logout();
       sessionStorage.removeItem("accessToken");
+      history.pushState(null, "", location.href);
+      window.onpopstate = function () {
+        history.go(-2);
+      };
+      translateTo("/login");
     } catch (error) {
       console.error("logout failed: ", error);
     }

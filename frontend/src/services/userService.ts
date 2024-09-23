@@ -27,7 +27,7 @@ export const kakaoLogin = async () => {
   try {
     const response = await axios.get(`oauth/login/kakao`);
     console.log(response);
-    window.location.href = response.data.url;
+    window.location.replace(response.data.url);
   } catch (error) {
     console.error("kakao Login failed:", error);
     throw error;
@@ -71,6 +71,17 @@ export const getOAuthInformation = async (token: string): Promise<UserInfo> => {
     return response.data.data;
   } catch (error) {
     console.error("getOAuthInformation failed:", error);
+    throw error;
+  }
+};
+
+export const checkNicknameDup = async (nickname: string): Promise<boolean> => {
+  try {
+    const response = await axios.get(`user/check/${nickname}`);
+    console.log(response);
+    return response.data.data.isDuplicate;
+  } catch (error) {
+    console.error(error);
     throw error;
   }
 };

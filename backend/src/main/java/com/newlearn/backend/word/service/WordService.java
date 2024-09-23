@@ -11,4 +11,6 @@ public interface WordService {
 	void addWord(WordRequestDto wordRequestDto, Users user);
 
 	List<WordResponseDTO> getWords(Users user);
+
+	List<WordResponseDTO> getCompleteWords(Users user);
 }

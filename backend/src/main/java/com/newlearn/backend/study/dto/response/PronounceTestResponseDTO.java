@@ -6,6 +6,6 @@ import lombok.Getter;
 @Getter
 @Builder
 public class PronounceTestResponseDTO {
-    private String sentence;
-    private String sentenceMeaning;
+	private String sentence;
+	private String sentenceMeaning;
 }

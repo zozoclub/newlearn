@@ -3,6 +3,7 @@ package com.newlearn.backend.study.service;
 
 import com.newlearn.backend.study.dto.request.GoalRequestDTO;
 import com.newlearn.backend.study.dto.request.WordTestResultDTO;
+import com.newlearn.backend.study.dto.response.PronounceTestResponseDTO;
 import com.newlearn.backend.study.dto.response.StudyProgressDTO;
 import com.newlearn.backend.study.dto.response.WordTestResponseDTO;
 import com.newlearn.backend.user.model.Users;
@@ -19,6 +20,6 @@ public interface StudyService {
 
     List<WordTestResponseDTO> getWordTestProblems(Long userId, Users user, Long totalCount);
 
-//    void saveWordTestResults(Long userId, List<WordTestResultDTO> wordTestResults);
+    List<PronounceTestResponseDTO> getPronounceTestProblems(Long userId, Users user);
 
 }

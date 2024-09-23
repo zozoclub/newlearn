@@ -1,6 +1,7 @@
 package com.newlearn.backend.study.service;
 
 import com.newlearn.backend.study.dto.request.GoalRequestDTO;
+import com.newlearn.backend.study.dto.response.PronounceTestResponseDTO;
 import com.newlearn.backend.study.dto.response.StudyProgressDTO;
 import com.newlearn.backend.study.dto.response.WordTestResponseDTO;
 import com.newlearn.backend.study.model.Goal;
@@ -12,6 +13,7 @@ import com.newlearn.backend.word.model.Word;
 import com.newlearn.backend.word.model.WordSentence;
 import com.newlearn.backend.word.repository.WordQuizQuestionRepository;
 import com.newlearn.backend.word.repository.WordQuizRepository;
+import com.newlearn.backend.word.repository.WordRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -27,6 +29,7 @@ public class StudyServiceImpl implements StudyService{
     private final StudyRepository studyRepository;
     private final WordQuizRepository wordQuizRepository;
     private final WordQuizQuestionRepository wordQuizQuestionRepository;
+    private final WordRepository wordRepository;
 
     @Override
     public boolean isGoalExist(Long userId) {
@@ -90,6 +93,25 @@ public class StudyServiceImpl implements StudyService{
                     .sentence(sentence.getSentence())
                     .sentenceMeaning(sentence.getSentenceMeaning())
                     .build());
+        }
+        return tests;
+    }
+
+    @Override
+    public List<PronounceTestResponseDTO> getPronounceTestProblems(Long userId, Users user) {
+        // 랜덤 단어 3개 가져오기
+        List<Word> words = wordQuizQuestionRepository.findRandomWords(userId, 3L);
+        List<PronounceTestResponseDTO> tests = new ArrayList<>();
+
+        for (Word word : words) {
+            WordSentence sentence = wordQuizQuestionRepository.findRandomSentenceByWordId(word.getWordId());
+
+            PronounceTestResponseDTO problem = PronounceTestResponseDTO.builder()
+                    .sentence(sentence.getSentence())
+                    .sentenceMeaning(sentence.getSentenceMeaning())
+                    .build();
+
+            tests.add(problem);
         }
         return tests;
     }

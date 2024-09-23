@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styled, { keyframes } from "styled-components";
 
 import RecordingIcon from "@assets/icons/RecordingIcon";
 import StartRecordingIcon from "@assets/icons/StartRecordingIcon";
 import RestartRecordingIcon from "@assets/icons/RestartRecordingIcon";
 import Modal from "@components/Modal";
+
+import "@styles/AudioStyle.css";
 
 type Props = {
   startUserRecording: () => void;
@@ -20,7 +22,6 @@ type Props = {
 const SpeakingTestRecord: React.FC<Props> = ({
   startUserRecording,
   stopUserRecording,
-  restartRecording,
   audioUrl,
   status,
   isStartRecordModal,
@@ -30,6 +31,31 @@ const SpeakingTestRecord: React.FC<Props> = ({
   const [recordingTime, setRecordingTime] = useState<number>(0);
   const [isRecording, setIsRecording] = useState(false);
   const [isRecorded, setIsRecorded] = useState(false);
+  const audioPlayerRef = useRef<HTMLDivElement>(null); // Green Audio Player ref
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const greenAudioPlayerInstance = useRef<any>(null);
+
+  // Green Audio Player 초기화
+  useEffect(() => {
+    if (audioUrl && audioPlayerRef.current) {
+      // 이전 인스턴스가 있으면 정리
+      if (greenAudioPlayerInstance.current) {
+        greenAudioPlayerInstance.current.destroy();
+      }
+
+      // 새로운 Green Audio Player 초기화
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      greenAudioPlayerInstance.current = new (window as any).GreenAudioPlayer(
+        audioPlayerRef.current
+      );
+    }
+
+    return () => {
+      if (greenAudioPlayerInstance.current) {
+        greenAudioPlayerInstance.current = null;
+      }
+    };
+  }, [audioUrl]);
 
   useEffect(() => {
     let timer: NodeJS.Timeout | null = null;
@@ -71,8 +97,9 @@ const SpeakingTestRecord: React.FC<Props> = ({
   const closeReRecordingModal = () => setReIsStartRecordModal(false);
 
   const handleRestartRecording = () => {
-    restartRecording();
+    closeReRecordingModal();
     setIsRecorded(false); // 재녹음
+    startRecordingModal();
   };
 
   return (
@@ -120,9 +147,14 @@ const SpeakingTestRecord: React.FC<Props> = ({
         <>
           <CompletionText>녹음이 완료되었습니다!</CompletionText>
           {audioUrl && (
-            <>
-              <AudioPlayer controls src={audioUrl} />
-            </>
+            <StyledAudioPlayer
+              ref={audioPlayerRef}
+              className="green-audio-player"
+            >
+              <audio controls style={{ display: "none" }}>
+                <source src={audioUrl} type="audio/mpeg" />
+              </audio>
+            </StyledAudioPlayer>
           )}
           <RestartRecordingContainer>
             <RestartText>다시 녹음하기</RestartText>
@@ -199,7 +231,7 @@ const RecordingContainer = styled.div`
 const StopButton = styled.div`
   width: 5rem;
   height: 2rem;
-  background-color: red;
+  background-color: ${(props) => props.theme.colors.danger};
   color: white;
   text-align: center;
   line-height: 2rem;
@@ -215,7 +247,7 @@ const RecordingTime = styled.div`
 `;
 
 const RecordingStatus = styled.div`
-  color: red;
+  color: ${(props) => props.theme.colors.danger};
   font-size: 1.25rem;
   font-weight: bold;
   margin-top: 0.5rem;
@@ -223,17 +255,10 @@ const RecordingStatus = styled.div`
 
 // 녹음 완료 시 텍스트 스타일
 const CompletionText = styled.p`
-  color: ${(props) => props.theme.colors.success};
+  color: ${(props) => props.theme.colors.text};
   font-size: 1.25rem;
   font-weight: bold;
   margin-bottom: 1rem;
-`;
-
-// 오디오 플레이어 스타일
-const AudioPlayer = styled.audio`
-  margin: 1rem 0;
-  width: 100%;
-  max-width: 20rem;
 `;
 
 const RestartRecordingContainer = styled.div`
@@ -299,4 +324,10 @@ const ModalConfirmButton = styled.button`
   &:hover {
     background-color: ${(props) => props.theme.colors.primaryPress};
   }
+`;
+
+// 플레이어 배경 색깔
+const StyledAudioPlayer = styled.div`
+  background-color: ${(props) => props.theme.colors.shadow}5A;
+  margin: 0 1rem;
 `;

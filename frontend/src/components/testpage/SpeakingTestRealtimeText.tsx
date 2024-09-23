@@ -30,9 +30,19 @@ const SpeakingTestRealtimeText: React.FC<Props> = ({
                 <br />
                 <br />
                 {userRecognizingText}
+                <br />
+                <br />
               </RecognizingText>
             ) : (
-              <InstructionText>실시간 텍스트가 출력됩니다.</InstructionText>
+              <>
+                <InstructionText>실시간 텍스트가 출력됩니다.</InstructionText>
+                <br />
+                <br />
+                <Explain>
+                  발음 시 본 화면이 바뀌지 않는다면, 마이크 설정을 확인해
+                  주세요.
+                </Explain>
+              </>
             )
           ) : userRecognizedText ? (
             <FinalText>

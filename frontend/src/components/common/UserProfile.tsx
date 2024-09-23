@@ -1,6 +1,6 @@
 import { useState } from "react";
 import styled from "styled-components";
-import ProfileWidget from "./Profile";
+import ProfileWidget from "@components/common/Profile";
 import { logout } from "@services/userService";
 import { usePageTransition } from "@hooks/usePageTransition";
 

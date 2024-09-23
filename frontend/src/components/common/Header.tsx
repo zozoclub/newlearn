@@ -3,9 +3,9 @@ import { useRecoilValue } from "recoil";
 
 import LogoImage from "@assets/images/logo-full.png";
 import locationState from "@store/locationState";
-import DarkModeButton from "./DarkModeButton";
+import DarkModeButton from "@components/common/DarkModeButton";
 import { usePageTransition } from "@hooks/usePageTransition";
-import UserProfile from "./UserProfile";
+import UserProfile from "@components/common/UserProfile";
 
 const Header = () => {
   const currentLocation = useRecoilValue(locationState);

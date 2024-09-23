@@ -1,14 +1,21 @@
-import BackArrow from "@assets/icons/BackArrow";
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+import { useRecoilState } from "recoil";
+import styled from "styled-components";
+
 import Button from "@components/Button";
+import NicknameInput from "@components/signupPage/NicknameInput";
+import SelectCategory from "@components/signupPage/SelectCategory";
+import SelectDifficulty from "@components/signupPage/SelectDifficulty";
+import SignupHeader from "@components/signupPage/SignupHeader";
 import { usePageTransition } from "@hooks/usePageTransition";
 import {
   checkNicknameDup,
   getOAuthInformation,
   signUp,
 } from "@services/userService";
-import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
-import styled from "styled-components";
+import signupState from "@store/signupState";
+import AvatarSetting from "@components/signupPage/AvatarSetting";
 
 export type SignUpType = {
   email: string;
@@ -28,58 +35,16 @@ const useQuery = () => {
 };
 
 const SignUpPage = () => {
-  const categories = [
-    { name: "전체" },
-    { name: "경제" },
-    { name: "사회" },
-    { name: "연예" },
-    { name: "IT/과학" },
-    { name: "몰라" },
-  ];
-  const difficulties = [
-    { id: 1, difficulty: "초급" },
-    { id: 2, difficulty: "중급" },
-    { id: 3, difficulty: "고급" },
-  ];
-  const [nickname, setNickname] = useState("");
-  const [email, setEmail] = useState("");
-  const [name, setName] = useState("");
-  const [provider, setProvider] = useState("");
-  const [providerId, setProviderId] = useState("");
-  const [selectedDifficulty, setSelectedDifficulty] = useState(0);
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [skin, setSkin] = useState(0);
-  const [eyes, setEyes] = useState(0);
-  const [mask, setMask] = useState(0);
-  // 잠정 빌드 오류 콘솔 출력
-  console.log(setSkin);
-  console.log(setEyes);
-  console.log(setMask);
+  const [signupData, setSignupData] = useRecoilState(signupState);
+  const nickname = signupData.nickname;
+  const categories = signupData.categories;
+  const difficulty = signupData.difficulty;
+  const [pageNum, setPageNum] = useState(1);
 
   const [activeButton, setActiveButton] = useState(false);
   const [token, setToken] = useState<string | null>(null);
   const query = useQuery();
   const transitionTo = usePageTransition();
-
-  function handleNicknameChange(nickname: string) {
-    if (nickname.length <= 8) {
-      setNickname(nickname);
-    }
-  }
-  const handleCategoryClick = (CategoryName: string) => {
-    setSelectedCategories((prevSelected) => {
-      if (prevSelected.includes(CategoryName)) {
-        return prevSelected.filter((name) => name !== CategoryName);
-      } else if (prevSelected.length < 3) {
-        return [...prevSelected, CategoryName];
-      }
-      return prevSelected;
-    });
-  };
-
-  const handleDifficultyClick = (difficulty: number) => {
-    setSelectedDifficulty(difficulty);
-  };
 
   function checkNickname(): boolean {
     if (nickname.length < 3) {
@@ -89,29 +54,18 @@ const SignUpPage = () => {
   }
 
   function checkInterest(): boolean {
-    return selectedCategories.length === 3;
+    return categories.length === 3;
   }
 
   function checkDifficulty(): boolean {
-    return selectedDifficulty !== 0;
+    return difficulty !== 0;
   }
 
   async function handleSubmitButton() {
     if (activeButton) {
       try {
         if (await checkNicknameDup(nickname)) {
-          signUp({
-            email,
-            name,
-            provider,
-            providerId,
-            nickname,
-            difficulty: selectedDifficulty,
-            categories: selectedCategories,
-            skin,
-            eyes,
-            mask,
-          });
+          signUp(signupData);
           transitionTo("/login");
         }
       } catch (error) {
@@ -123,7 +77,12 @@ const SignUpPage = () => {
   // 주소로부터 토큰 획득
   useEffect(() => {
     const token = query.get("token");
+    // 소셜 로그인이 아닌 접근 방지
+    if (token === null) {
+      transitionTo("login");
+    }
     setToken(token);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query]);
 
   // 토큰으로 유저 정보(이메일, 이름, 제공자) 가져오기
@@ -132,18 +91,20 @@ const SignUpPage = () => {
       try {
         if (token !== null) {
           const response = await getOAuthInformation(token);
-          setEmail(response.email);
-          setName(response.name);
-          setProvider(response.provider);
-          setProviderId(response.providerId);
-        } else {
-          transitionTo("/login");
+          setSignupData({
+            ...signupData,
+            email: response.email,
+            name: response.name,
+            provider: response.provider,
+            providerId: response.providerId,
+          });
         }
       } catch (error) {
         console.error(error);
       }
     };
     getOAuth();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
   // 유효성 검사
@@ -161,7 +122,7 @@ const SignUpPage = () => {
       setActiveButton(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [nickname, selectedDifficulty, selectedCategories]);
+  }, [nickname, categories, difficulty]);
 
   // 로그인이 되어있는 상태라면 메인으로 이동
   const isLogin = sessionStorage.getItem("accessToken");
@@ -172,82 +133,46 @@ const SignUpPage = () => {
   }, [isLogin, transitionTo]);
 
   return (
-    <Container>
-      <Header>
-        <BackArrowDiv>
-          <BackArrow width={36} height={36} />
-        </BackArrowDiv>
-        회원가입
-      </Header>
+    <Container $pageNum={pageNum}>
+      <SignupHeader />
       <form onSubmit={(event) => event.preventDefault()}>
-        {/* 닉네임 */}
-        <div>
-          <div className="desc">닉네임</div>
-          <Input
-            placeholder="닉네임 (최소 3자에서 최대 8자의 한글)"
-            value={nickname}
-            onChange={(event) => handleNicknameChange(event.target.value)}
-          />
-        </div>
-        {/* 관심 카테고리 */}
-        <div className="category">
-          <div className="desc">
-            관심 카테고리
-            <CategoryCount>{selectedCategories.length}/3</CategoryCount>
+        <FirstPage $pageNum={pageNum}>
+          {/* 아바타 */}
+          <AvatarSetting />
+          {/* 닉네임 */}
+          <NicknameInput />
+          <div>
+            <Button
+              $varient={activeButton ? "primary" : "cancel"}
+              size="large"
+              onClick={() => setPageNum(2)}
+            >
+              다음
+            </Button>
           </div>
-          <div className="buttons">
-            {categories.map((category) => (
-              <Button
-                key={category.name}
-                $varient={
-                  selectedCategories.includes(category.name)
-                    ? "primary"
-                    : "cancel"
-                }
-                size={"medium"}
-                onClick={() => {
-                  handleCategoryClick(category.name);
-                }}
-              >
-                {category.name}
-              </Button>
-            ))}
+        </FirstPage>
+        <SecondPage $pageNum={pageNum}>
+          {/* 관심 카테고리 */}
+          <SelectCategory />
+          {/* 영어 실력 */}
+          <SelectDifficulty />
+          {/* 입력 완료 버튼 */}
+          <div>
+            <Button
+              $varient={activeButton ? "primary" : "cancel"}
+              size="large"
+              onClick={handleSubmitButton}
+            >
+              입력 완료
+            </Button>
           </div>
-        </div>
-        {/* 영어 실력 */}
-        <div className="difficulty">
-          <div className="desc">영어 실력</div>
-          <div className="buttons">
-            {difficulties.map((difficulty) => (
-              <Button
-                key={difficulty.difficulty}
-                $varient={
-                  selectedDifficulty === difficulty.id ? "primary" : "cancel"
-                }
-                size={"medium"}
-                onClick={() => handleDifficultyClick(difficulty.id)}
-              >
-                {difficulty.difficulty}
-              </Button>
-            ))}
-          </div>
-        </div>
-        {/* 입력 완료 버튼 */}
-        <div>
-          <Button
-            $varient={activeButton ? "primary" : "cancel"}
-            size="large"
-            onClick={handleSubmitButton}
-          >
-            입력 완료
-          </Button>
-        </div>
+        </SecondPage>
       </form>
     </Container>
   );
 };
 
-const Container = styled.div`
+const Container = styled.div<{ $pageNum: number }>`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -255,12 +180,15 @@ const Container = styled.div`
   left: 50%;
   transform: translate(-50%, 0);
   width: 27.25rem;
+  height: ${(props) => (props.$pageNum === 1 ? "40rem" : "33rem")};
   padding: 2rem 2rem 2rem 2rem;
   border-radius: 0.5rem;
   background-color: ${(props) => props.theme.colors.cardBackground + "7F"};
   transition: box-shadow 0.5s;
   backdrop-filter: blur(4px);
   box-shadow: 0.5rem 0.5rem 0.25rem ${(props) => props.theme.colors.shadow};
+  transition: all 0.5s;
+  overflow: hidden;
   ::placeholder {
     font-weight: 600;
     color: ${(props) => props.theme.colors.placeholder};
@@ -282,40 +210,19 @@ const Container = styled.div`
   }
 `;
 
-const Header = styled.div`
-  display: flex;
-  position: relative;
-  width: 100%;
-  margin-bottom: 2rem;
-  font-size: 1.75rem;
-  justify-content: center;
-  align-items: center;
-`;
-
-const BackArrowDiv = styled.div`
+const FirstPage = styled.div<{ $pageNum: number }>`
   position: absolute;
-  left: 0;
+  left: 3rem;
+  transform: ${(props) =>
+    props.$pageNum === 1 ? "translateX(0)" : "translateX(-31.25rem)"};
+  transition: transform 0.5s;
 `;
-
-const Input = styled.input`
-  width: 21rem;
-  height: 1.75rem;
-  margin: 0 0 1.5rem 0;
-  padding: 1rem 2rem;
-  color: ${(props) => props.theme.colors.text};
-  background-color: ${(props) => props.theme.colors.background + "3F"};
-  border: ${(props) => (props.theme.mode === "dark" ? "none" : "solid 1px")};
-  border-color: ${(props) => props.theme.colors.placeholder};
-  border-radius: 0.5rem;
-  &:focus {
-    outline: solid 1px ${(props) => props.theme.colors.primary};
-  }
-`;
-
-const CategoryCount = styled.div`
-  margin-left: 0.5rem;
-  color: ${(props) => props.theme.colors.primary};
-  font-size: 1rem;
+const SecondPage = styled.div<{ $pageNum: number }>`
+  position: absolute;
+  left: 3rem;
+  transform: ${(props) =>
+    props.$pageNum === 1 ? "translateX(31.25rem)" : "translateX(0)"};
+  transition: transform 0.5s;
 `;
 
 export default SignUpPage;

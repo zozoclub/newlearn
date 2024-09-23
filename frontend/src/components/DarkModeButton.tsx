@@ -57,8 +57,7 @@ const DarkModeButton = () => {
 };
 
 const ToggleButtonWrapper = styled.div`
-  position: absolute;
-  right: 0;
+  margin: 0 1rem;
   --hue: 223;
   --fg: hsl(var(--hue), 10%, 10%);
   --trans-dur: 0.3s;

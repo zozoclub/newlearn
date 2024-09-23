@@ -1,6 +1,7 @@
 import { Theme } from "types/theme";
 
 export const darkTheme: Theme = {
+  mode: "dark",
   colors: {
     background: "#000000",
     cardBackground: "#333344",

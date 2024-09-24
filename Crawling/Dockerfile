@@ -8,6 +8,7 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y \
     gcc \
     python3-dev \
+    cron \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -28,6 +29,25 @@ COPY . .
 # 환경 변수 설정을 위한 패키지 설치
 RUN pip install python-dotenv
 
-# 환경 변수 로드 및 서버 실행 명령
-CMD ["python", "manage.py", "main"]
+# 스크립트 복사 및 실행 권한 부여
+COPY run_crawler.sh /app/run_crawler.sh
+COPY start.sh /app/start.sh
+RUN chmod +x /app/run_crawler.sh /app/start.sh
 
+# 크론 작업 설정
+## 크론 작업의 출력 : /var/log/cron.log 파일에 기록됨
+# RUN echo "0 11,23 * * * /app/run_crawler.sh >> /var/log/cron.log 2>&1" > /etc/cron.d/crawler-cron # 11시, 23시
+RUN echo "0 2 8 * * * /app/run_crawler.sh >> /var/log/cron.log 2>&1" > /etc/cron.d/crawler-cron
+
+
+# 크론 작업 파일에 대한 권한 설정
+RUN chmod 0644 /etc/cron.d/crawler-cron
+
+# 크론 작업 등록
+RUN crontab /etc/cron.d/crawler-cron
+
+# 한국 시간대 설정
+RUN ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime
+
+# 시작 스크립트 실행
+CMD ["/app/start.sh"]

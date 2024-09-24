@@ -13,6 +13,8 @@ import TransitionContent from "@components/common/TransitionContent";
 import { useEffect } from "react";
 import loginState from "@store/loginState";
 
+import { getToken, messaging } from "./firebase"
+
 const App: React.FC = () => {
   const theme = useRecoilValue(themeState) === "dark" ? darkTheme : lightTheme;
   const isLogin = useRecoilValue(loginState);
@@ -29,6 +31,29 @@ Welcome To NewsLearn!"
     );
   }, []);
 
+  const requestPermission = async () => {
+    try {
+      const permission = await Notification.requestPermission();
+      if (permission === "granted") {
+        console.log("알림 권한이 허용되었습니다.");
+        const token = await getToken(messaging, {
+          vapidKey: import.meta.env.VITE_FIREBASE_VAPIDKEY, // Firebase Console에서 제공하는 VAPID Key
+        });
+        if (token) {
+          console.log("토큰을 얻었습니다:", token);
+          // 여기서 서버로 토큰을 전송하여 저장
+        }
+      } else {
+        console.log("알림 권한이 거부되었습니다.");
+      }
+    } catch (error) {
+      console.error("알림 권한 요청 중 오류 발생:", error);
+    }
+  };
+
+  useEffect(() => {
+    requestPermission();
+  }, []);
   return (
     <ThemeProvider theme={theme}>
       <GlobalStyle />

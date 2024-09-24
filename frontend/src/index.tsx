@@ -22,3 +22,15 @@ createRoot(document.getElementById("root")!).render(
   </RecoilRoot>
   // </StrictMode>,
 );
+
+// 서비스 워커 등록
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker
+    .register("/firebase-messaging-sw.js")
+    .then((registration) => {
+      console.log("서비스 워커가 등록되었습니다.", registration.scope);
+    })
+    .catch((error) => {
+      console.log("서비스 워커 등록 실패:", error);
+    });
+}

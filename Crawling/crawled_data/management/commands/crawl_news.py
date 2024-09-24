@@ -7,6 +7,8 @@ import requests
 from Crawling import settings
 import logging
 import os
+import time
+import random
 
 CRAWLING_USER_AGENT = settings.CRAWLING_USER_AGENT
 
@@ -32,6 +34,7 @@ class Command(BaseCommand):
             url = f"https://news.naver.com/main/main.naver?mode=LSD&mid=shm&sid1={sid}&page={page}"
             headers = {"User-Agent": CRAWLING_USER_AGENT}
             try:
+                time.sleep(random.uniform(2, 8))  # 2~8초 사이 랜덤 대기 시간 추가
                 html = requests.get(url, headers=headers)
                 html.raise_for_status()
                 soup = BeautifulSoup(html.text, "lxml")
@@ -65,6 +68,7 @@ class Command(BaseCommand):
             }
 
             try:
+                time.sleep(random.uniform(2, 8))  # 2~8초 사이 랜덤 대기 시간 추가
                 html = requests.get(url, headers=headers)
                 html.raise_for_status()
                 soup = BeautifulSoup(html.text, "lxml")

@@ -1,11 +1,11 @@
 import styled from "styled-components";
 import { useRecoilValue } from "recoil";
 
-import LogoImage from "@assets/images/logo-full.png";
 import locationState from "@store/locationState";
 import DarkModeButton from "@components/common/DarkModeButton";
 import { usePageTransition } from "@hooks/usePageTransition";
 import UserProfile from "@components/common/UserProfile";
+import FullLogo from "./FullLogo";
 
 const Header = () => {
   const currentLocation = useRecoilValue(locationState);
@@ -19,12 +19,18 @@ const Header = () => {
           onClick={() => {
             transitionTo("/");
           }}
-        />
+        >
+          <FullLogo width={360} height={60} />
+        </Logo>
       )}
       <div className="right-side">
-        <PageInfo>{currentLocation}</PageInfo>
-        {/* 페이지 정보 없을 때 유저 프로필 표시 안 함 */}
-        {currentLocation !== "" && <UserProfile />}
+        {currentLocation !== "login" && (
+          <>
+            <PageInfo>{currentLocation}</PageInfo>
+            {/* 페이지 정보 없을 때 유저 프로필 표시 안 함 */}
+            <UserProfile />
+          </>
+        )}
         <DarkModeButton />
       </div>
     </HeaderContainer>
@@ -44,10 +50,7 @@ const HeaderContainer = styled.div<{ $currentLocation: string }>`
   }
 `;
 
-const Logo = styled.img.attrs({
-  src: `${LogoImage}`,
-  alt: "LogoImage",
-})`
+const Logo = styled.div`
   width: 17.5rem;
   height: 3.75rem;
   cursor: pointer;

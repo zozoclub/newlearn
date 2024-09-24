@@ -1,14 +1,22 @@
 import styled from "styled-components";
-import Logo from "@assets/images/logo-full.png";
 import NavarButton from "@assets/images/naverButton.png";
 import KakaoButton from "@assets/images/kakaoButton.png";
+import FullLogo from "@components/common/FullLogo";
 import { kakaoLogin, naverLogin } from "@services/userService";
 import { useEffect } from "react";
 import { usePageTransition } from "@hooks/usePageTransition";
+import { useSetRecoilState } from "recoil";
+import locationState from "@store/locationState";
 
 const LoginPage = () => {
   const isLogin = sessionStorage.getItem("accessToken");
   const transitionTo = usePageTransition();
+  const setCurrentLocation = useSetRecoilState(locationState);
+
+  useEffect(() => {
+    setCurrentLocation("login");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (isLogin) {
@@ -18,7 +26,7 @@ const LoginPage = () => {
 
   return (
     <Container>
-      <img src={Logo} alt="LogoImage" width="300" height="65" />
+      <FullLogo width={360} height={60} />
       <img
         src={NavarButton}
         alt="naver"

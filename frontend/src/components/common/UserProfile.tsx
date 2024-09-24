@@ -3,15 +3,20 @@ import styled from "styled-components";
 import ProfileWidget from "@components/common/Profile";
 import { logout } from "@services/userService";
 import { usePageTransition } from "@hooks/usePageTransition";
+import { useSetRecoilState } from "recoil";
+import locationState from "@store/locationState";
 
 const UserProfile = () => {
   const [isOpened, setIsOpened] = useState(false);
+  const setCurrentLocation = useSetRecoilState(locationState);
   const translateTo = usePageTransition();
 
   async function handleLogoutButton() {
     try {
       await logout();
       sessionStorage.removeItem("accessToken");
+      setCurrentLocation("");
+      setIsOpened(false);
       history.pushState(null, "", location.href);
       window.onpopstate = function () {
         history.go(-2);

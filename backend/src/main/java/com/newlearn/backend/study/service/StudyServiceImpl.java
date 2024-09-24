@@ -1,9 +1,14 @@
 package com.newlearn.backend.study.service;
 
+import com.newlearn.backend.config.S3ObjectStorage;
 import com.newlearn.backend.study.dto.request.GoalRequestDTO;
+import com.newlearn.backend.study.dto.request.PronounceRequestDTO;
 import com.newlearn.backend.study.dto.request.WordTestResultRequestDTO;
 import com.newlearn.backend.study.dto.response.*;
 import com.newlearn.backend.study.model.Goal;
+import com.newlearn.backend.study.model.UserAudioFile;
+import com.newlearn.backend.study.repository.UserAudioFileRepository;
+import com.newlearn.backend.user.repository.UserRepository;
 import com.newlearn.backend.word.model.*;
 import com.newlearn.backend.study.repository.StudyRepository;
 import com.newlearn.backend.user.model.Users;
@@ -13,9 +18,11 @@ import com.newlearn.backend.word.repository.WordQuizRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,10 +31,13 @@ import java.util.stream.Collectors;
 @Slf4j
 public class StudyServiceImpl implements StudyService{
 
+    private final UserRepository userRepository;
     private final StudyRepository studyRepository;
     private final WordQuizRepository wordQuizRepository;
     private final WordQuizAnswerRepository wordQuizAnswerRepository;
     private final WordQuizQuestionRepository wordQuizQuestionRepository;
+    private final UserAudioFileRepository userAudioFileRepository;
+    private final S3ObjectStorage s3ObjectStorage;
 
     @Override
     public boolean isGoalExist(Long userId) {
@@ -192,5 +202,41 @@ public class StudyServiceImpl implements StudyService{
                     .build());
         }
         return tests;
+    }
+
+    @Override
+    public void savePronounceTestResult(Long userId, PronounceRequestDTO pronounceRequestDTO, MultipartFile file) {
+        // 파일이 비어 있는지 확인
+        if (file == null || file.isEmpty()) {
+            throw new IllegalArgumentException("발음 테스트를 위한 파일이 제공되지 않았습니다.");
+        }
+
+        // 사용자 조회
+        Users user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + userId));
+
+        // S3에 파일 업로드
+        String fileUrl = s3ObjectStorage.uploadFile(file);
+        log.info("File uploaded to S3 with URL: {}", fileUrl);
+
+        // DB에 파일 정보 저장
+        UserAudioFile userAudioFile = UserAudioFile.builder()
+                .userId(userId)
+                .pronunciationScore(pronounceRequestDTO.getTotalScore())
+                .audioFileUrl(fileUrl)
+                .createdAt(LocalDateTime.now(ZoneId.of("Asia/Seoul")))
+                .build();
+        userAudioFileRepository.save(userAudioFile);
+
+        // 목표 업데이트
+        Goal userGoal = studyRepository.findByUserId(userId)
+                .orElseThrow(() -> new IllegalArgumentException("No study goal found for user with id: " + userId));
+
+        // 현재 발음 테스트 점수 업데이트
+        long updatedScore = userGoal.getCurrentPronounceTestScore() + pronounceRequestDTO.getTotalScore();
+        userGoal.setCurrentPronounceTestScore(updatedScore);
+        studyRepository.save(userGoal);
+
+        log.info("발음 테스트 결과가 성공적으로 저장되었습니다. 사용자 ID: {}, 점수: {}", userId, pronounceRequestDTO.getTotalScore());
     }
 }

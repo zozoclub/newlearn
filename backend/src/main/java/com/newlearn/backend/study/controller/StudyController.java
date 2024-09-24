@@ -3,6 +3,7 @@ package com.newlearn.backend.study.controller;
 import com.newlearn.backend.common.ApiResponse;
 import com.newlearn.backend.common.ErrorCode;
 import com.newlearn.backend.study.dto.request.GoalRequestDTO;
+import com.newlearn.backend.study.dto.request.PronounceRequestDTO;
 import com.newlearn.backend.study.dto.request.WordTestRequestDTO;
 import com.newlearn.backend.study.dto.request.WordTestResultRequestDTO;
 import com.newlearn.backend.study.dto.response.*;
@@ -11,8 +12,10 @@ import com.newlearn.backend.user.model.Users;
 import com.newlearn.backend.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -162,6 +165,40 @@ public class StudyController {
     }
 
     // 발음 테스트 결과 저장
+    @PostMapping(value = "/pronounce/test", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ApiResponse<?> setPronounceWordTest(Authentication authentication,
+                                               @RequestParam("exampleSentence") String exampleSentence,
+                                               @RequestParam("accuracyScore") long accuracyScore,
+                                               @RequestParam("fluencyScore") long fluencyScore,
+                                               @RequestParam("completenessScore") long completenessScore,
+                                               @RequestParam("prosodyScore") long prosodyScore,
+                                               @RequestParam("totalScore") long totalScore,
+                                               @RequestParam("files") MultipartFile file) throws Exception {
+        try {
+            Users user = userService.findByEmail(authentication.getName());
+            if (user == null) {
+                return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
+            }
+
+            PronounceRequestDTO pronounceRequestDTO = PronounceRequestDTO.builder()
+                    .exampleSentence(exampleSentence)
+                    .accuracyScore(accuracyScore)
+                    .fluencyScore(fluencyScore)
+                    .completenessScore(completenessScore)
+                    .prosodyScore(prosodyScore)
+                    .totalScore(totalScore)
+                    .build();
+
+            studyService.savePronounceTestResult(user.getUserId(), pronounceRequestDTO, file);
+
+            return ApiResponse.createSuccess(null, "발음 테스트 결과 저장 성공");
+
+        } catch (Exception e) {
+            log.error("발음 테스트 결과 저장 중 오류 발생", e);
+            return ApiResponse.createError(ErrorCode.PRONOUNCE_TEST_RESULT_UPDATE_FAILED);
+        }
+    }
+
 
     // 발음 테스트 결과 리스트 조회
 

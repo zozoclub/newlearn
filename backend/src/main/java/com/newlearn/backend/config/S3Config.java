@@ -29,4 +29,11 @@ public class S3Config {
                 .withCredentials(new AWSStaticCredentialsProvider(awsCredentials))
                 .build();
     }
+
+    @Bean
+    public S3ObjectStorage awsS3ObjectStorageUpload(AmazonS3 amazonS3) {
+        S3ObjectStorage s3ObjectStorageUpload = new S3ObjectStorage(amazonS3);
+        s3ObjectStorageUpload.setBucket(bucket);
+        return s3ObjectStorageUpload;
+    }
 }

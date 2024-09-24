@@ -76,19 +76,22 @@ public class UserController {
 	//로그아웃
 	@PostMapping("/logout")
 	public ApiResponse<?> logout(HttpServletRequest request, HttpServletResponse response) {
-		String refreshToken = extractRefreshToken(request);
+		try {
+			String refreshToken = extractRefreshToken(request);
 
-		if (refreshToken != null && jwtTokenProvider.validateToken(refreshToken)) {
-			tokenService.blacklistRefreshToken(refreshToken);
+			if (refreshToken != null && jwtTokenProvider.validateToken(refreshToken)) {
+				tokenService.blacklistRefreshToken(refreshToken);
 
-			Cookie cookie = new Cookie("refreshToken", null);
-			cookie.setMaxAge(0);
-			cookie.setPath("/");
-			response.addCookie(cookie);
-
+				Cookie cookie = new Cookie("refreshToken", null);
+				cookie.setMaxAge(0);
+				cookie.setPath("/");
+				response.addCookie(cookie);
+			}
 			return ApiResponse.createSuccess(null, "로그아웃이 완료되었습니다.");
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ApiResponse.createError(ErrorCode.INVALID_JWT_TOKEN);
 		}
-		return ApiResponse.createError(ErrorCode.INVALID_JWT_TOKEN);
 	}
 
 	private String extractRefreshToken(HttpServletRequest request) {

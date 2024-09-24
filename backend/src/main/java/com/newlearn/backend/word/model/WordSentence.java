@@ -24,7 +24,7 @@ public class WordSentence {
     @Column(name = "news_id")
     private Long newsId;
 
-    private int difficulty;
+    private Long difficulty;
 
     @Column(name = "sentence")
     private String sentence;
@@ -33,5 +33,5 @@ public class WordSentence {
     private String sentenceMeaning;
 
     @Column(name = "created_at")
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime createdAt;
 }

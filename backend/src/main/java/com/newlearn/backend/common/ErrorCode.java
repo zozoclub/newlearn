@@ -51,6 +51,11 @@ public enum ErrorCode {
 	WORD_TEST_RESULT_CREATE_FAILED("S006", HttpStatus.BAD_REQUEST, "단어 테스트 결과 저장에 실패했습니다."),
 	WORD_TEST_RESULT_NOT_FOUND("S007", HttpStatus.NOT_FOUND, "단어 테스트 결과 리스트를 찾을 수 없습니다."),
 	PRONOUNCE_TEST_NOT_FOUND("S008", HttpStatus.NOT_FOUND, "발음 테스트 문제를 찾을 수 없습니다."),
+
+	// Word Error
+	WORD_CREATE_FAILED("W001", HttpStatus.BAD_REQUEST, "단어를 추가할 수 없습니다"),
+	WORD_FIND_FAILED("W002", HttpStatus.BAD_REQUEST, "단어 목록을 찾을 수 없습니다"),
+	WORD_DELETE_FAILED("W001", HttpStatus.BAD_REQUEST, "단어를 삭제할 수 없습니다"),
 	;
 
 	private final String code;

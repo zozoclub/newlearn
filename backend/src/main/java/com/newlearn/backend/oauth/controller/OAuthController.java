@@ -83,7 +83,6 @@ public class OAuthController {
 		try {
 			OAuthCodeToken oAuthCodeToken = oAuthCodeTokenRepository.findById(code)
 				.orElseThrow(() -> new Exception("코드가 유효하지 않습니다."));
-			System.out.println("Das");
 			String accessToken =oAuthCodeToken.getAccessToken();
 			String refreshToken =oAuthCodeToken.getRefreshToken();
 			String userEmail = oAuthCodeToken.getUserEmail();
@@ -93,14 +92,15 @@ public class OAuthController {
 
 			ResponseCookie responseCookie = ResponseCookie.from("refreshToken", refreshToken)
 				.httpOnly(true)
-				.secure(true)
+				.secure(false) //이거 나중에 수정해줘야하는데 true로
 				.maxAge(60*60*24*14)
 				.path("/")
 				.sameSite("None")
-				.domain("j11d105.p.ssafy.io")
+				//.domain("j11d105.p.ssafy.io")
 				.build();
 
-			response.setHeader(HttpHeaders.SET_COOKIE, responseCookie.toString());
+
+			response.addHeader(HttpHeaders.SET_COOKIE, responseCookie.toString());
 
 			accessToken = "Bearer " + accessToken;
 			LoginResponseDTO loginResponseDTO = new LoginResponseDTO();

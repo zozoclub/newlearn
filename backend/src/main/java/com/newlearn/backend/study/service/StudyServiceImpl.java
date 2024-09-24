@@ -37,30 +37,30 @@ public class StudyServiceImpl implements StudyService{
     @Override
     public void saveGoal(Long userId, GoalRequestDTO goalRequestDTO) {
         Goal goal = Goal.builder()
-                .userId(userId)
-                .goalReadNewsCount(goalRequestDTO.getGoalReadNewsCount())
-                .goalPronounceTestScore(goalRequestDTO.getGoalPronounceTestScore())
-                .goalCompleteWord(goalRequestDTO.getGoalCompleteWord())
-                .currentReadNewsCount(0L)
-                .currentPronounceTestScore(0L)
-                .currentCompleteWord(0L)
-                .build();
+            .userId(userId)
+            .goalReadNewsCount(goalRequestDTO.getGoalReadNewsCount())
+            .goalPronounceTestScore(goalRequestDTO.getGoalPronounceTestScore())
+            .goalCompleteWord(goalRequestDTO.getGoalCompleteWord())
+            .currentReadNewsCount(0L)
+            .currentPronounceTestScore(0L)
+            .currentCompleteWord(0L)
+            .build();
         studyRepository.save(goal);
     }
 
     @Override
     public StudyProgressDTO getStudyProgress(Long userId) {
         Goal goal = studyRepository.findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("목표가 없습니다."));
+            .orElseThrow(() -> new RuntimeException("목표가 없습니다."));
 
         return StudyProgressDTO.builder()
-                .goalReadNewsCount(goal.getGoalReadNewsCount())
-                .goalPronounceTestScore(goal.getGoalPronounceTestScore())
-                .goalCompleteWord(goal.getGoalCompleteWord())
-                .currentReadNewsCount(goal.getCurrentReadNewsCount())
-                .currentPronounceTestScore(goal.getCurrentPronounceTestScore())
-                .currentCompleteWord(goal.getCurrentCompleteWord())
-                .build();
+            .goalReadNewsCount(goal.getGoalReadNewsCount())
+            .goalPronounceTestScore(goal.getGoalPronounceTestScore())
+            .goalCompleteWord(goal.getGoalCompleteWord())
+            .currentReadNewsCount(goal.getCurrentReadNewsCount())
+            .currentPronounceTestScore(goal.getCurrentPronounceTestScore())
+            .currentCompleteWord(goal.getCurrentCompleteWord())
+            .build();
     }
 
     @Override
@@ -87,11 +87,11 @@ public class StudyServiceImpl implements StudyService{
             wordQuizQuestionRepository.save(question);
 
             tests.add(WordTestResponseDTO.builder()
-                    .word(word.getWord())
-                    .wordMeaning(word.getMeaning())
-                    .sentence(sentence.getSentence())
-                    .sentenceMeaning(sentence.getSentenceMeaning())
-                    .build());
+                .word(word.getWord())
+                .wordMeaning(word.getWordMeaning())
+                .sentence(sentence.getSentence())
+                .sentenceMeaning(sentence.getSentenceMeaning())
+                .build());
         }
         return tests;
     }

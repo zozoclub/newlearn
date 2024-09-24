@@ -14,6 +14,7 @@ import TestHistoryPage from "@pages/TestHistoryPage";
 import LoginPage from "@pages/LoginPage";
 import SignUpPage from "@pages/SignUpPage";
 import PrivateRoute from "@hooks/PrivateRoute";
+import LandingPage from "@pages/LandingPage";
 
 export const router = createBrowserRouter([
   {
@@ -64,6 +65,10 @@ export const router = createBrowserRouter([
             element: <VocabularyPage />,
           },
         ],
+      },
+      {
+        path: "landing",
+        element: <LandingPage />,
       },
       {
         path: "login",

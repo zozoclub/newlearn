@@ -38,7 +38,6 @@ const HeaderContainer = styled.div<{ $currentLocation: string }>`
     props.$currentLocation ? "space-between" : "end"};
   align-items: center;
   height: 9.375rem;
-  padding: 0 2.5%;
   .right-side {
     display: flex;
     align-items: center;

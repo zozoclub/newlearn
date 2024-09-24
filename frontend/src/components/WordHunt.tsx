@@ -1,10 +1,19 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { extractWords, countWordFrequencies, getTopWords } from "@components/WordProcessor";
+import {
+  extractWords,
+  countWordFrequencies,
+  getTopWords,
+} from "@components/WordProcessor";
 import { createGrid } from "@components/WordGridCreator";
-import { handleMouseDown, handleMouseOver, handleMouseUp } from "@components/WordMouseHandlers";
+import {
+  handleMouseDown,
+  handleMouseOver,
+  handleMouseUp,
+} from "@components/WordMouseHandlers";
 
 const WordHunt: React.FC = () => {
+  // 예문
   const text = [
     "Facing mounting pressure following a contentious draw against Palestine in their most recent World Cup qualifier, South Korea's national football team has arrived in Oman, their next destination in the arduous quest for a coveted spot in the 2026 FIFA World Cup.",
     "In a somber press conference upon their arrival in Muscat, Head Coach Hong Myung-bo acknowledged the palpable frustration of the South Korean fan base, acknowledging the criticism directed at both the team's performance and the Korean Football Association's overall direction.",
@@ -15,16 +24,22 @@ const WordHunt: React.FC = () => {
   ];
 
   const [grid, setGrid] = useState<string[][]>([]);
-  const [selectedPositions, setSelectedPositions] = useState<[number, number][]>([]);
+  const [selectedPositions, setSelectedPositions] = useState<
+    [number, number][]
+  >([]);
   const [incorrectSelection, setIncorrectSelection] = useState<boolean>(false);
   const [placedWords, setPlacedWords] = useState<string[]>([]);
   const [placedWordPositions, setPlacedWordPositions] = useState<
     { word: string; positions: [number, number][] }[]
   >([]);
-  const [correctSelections, setCorrectSelections] = useState<[number, number][]>([]);
+  const [correctSelections, setCorrectSelections] = useState<
+    [number, number][]
+  >([]);
   const [showAnswer, setShowAnswer] = useState<boolean>(false);
-  const [isDisabled, setIsDisabled] = useState<boolean>(false); // 드래그 비활성화 상태 추가
+  const [isDisabled, setIsDisabled] = useState<boolean>(false);
 
+  // 생성 로직 (현재는 버튼을 통해 생성하지만, 기사에 진입할 때 useEffect를 통해 생성해주어야함)
+  // TODO : 생성 가능한 단어가 10개 이하일 경우 예외 처리
   const handleExtractWords = () => {
     const words = extractWords(text);
     const wordCounts = countWordFrequencies(words);
@@ -64,8 +79,8 @@ const WordHunt: React.FC = () => {
           ))}
         </ul>
       </WordList>
-
-      <GridContainer onMouseLeave={handleMouseLeaveGrid}> {/* 마우스가 그리드 밖으로 나가면 처리 */}
+      <GridContainer onMouseLeave={handleMouseLeaveGrid}>
+        {/* 마우스가 그리드 밖으로 나가면 처리 */}
         <h2>12x12 Grid:</h2>
         <Grid>
           {grid.map((row, rowIndex) =>
@@ -119,7 +134,7 @@ const WordHunt: React.FC = () => {
                       setCorrectSelections,
                       setIncorrectSelection,
                       setSelectedPositions,
-                      setIsDisabled,
+                      setIsDisabled
                     )
                   }
                 >
@@ -141,7 +156,7 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   padding: 2rem;
-  user-select: none; /* Prevents text selection on drag */
+  user-select: none; /* 드래그 방지 */
 `;
 
 const Title = styled.h1`
@@ -208,12 +223,12 @@ const Cell = styled.div<{
     props.$isAnswer
       ? props.theme.colors.primary
       : props.$isCorrect
-        ? props.theme.colors.primary
-        : props.$isIncorrect
-          ? "red"
-          : props.$isSelected
-            ? "yellow"
-            : "white"};
+      ? props.theme.colors.primary
+      : props.$isIncorrect
+      ? props.theme.colors.danger
+      : props.$isSelected
+      ? "yellow"
+      : "white"};
   color: ${(props) =>
     props.$isCorrect || props.$isIncorrect || props.$isAnswer
       ? "white"

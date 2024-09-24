@@ -158,9 +158,23 @@ const SignUpPage = () => {
           />
           <div>
             <Button
-              $varient={activeButton ? "primary" : "cancel"}
+              $varient={
+                isNicknameAvailable &&
+                !isNicknameDuplicated &&
+                nickname.length !== 0
+                  ? "primary"
+                  : "cancel"
+              }
               size="large"
-              onClick={() => setPageNum(2)}
+              onClick={() => {
+                if (
+                  isNicknameAvailable &&
+                  !isNicknameDuplicated &&
+                  nickname.length !== 0
+                ) {
+                  setPageNum(2);
+                }
+              }}
             >
               다음
             </Button>

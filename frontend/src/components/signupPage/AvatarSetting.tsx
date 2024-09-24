@@ -3,6 +3,8 @@ import styled from "styled-components";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useRecoilState } from "recoil";
 import signupState from "@store/signupState";
+import kakaoLogin from "@assets/images/kakaoButton.png";
+import naverLogin from "@assets/images/naverButton.png";
 
 const AvatarSetting = () => {
   const [signupData, setSignupData] = useRecoilState(signupState);
@@ -10,16 +12,16 @@ const AvatarSetting = () => {
   const eyesIndex = signupData.eyes;
   const maskIndex = signupData.mask;
   const [skins, setSkins] = useState([
-    { id: 0, url: "yellow" },
-    { id: 1, url: "red" },
+    { id: 0, url: kakaoLogin },
+    { id: 1, url: naverLogin },
   ]);
   const [eyes, setEyes] = useState([
-    { id: 0, url: "brown" },
-    { id: 1, url: "white" },
+    { id: 0, url: kakaoLogin },
+    { id: 1, url: naverLogin },
   ]);
   const [masks, setMasks] = useState([
-    { id: 0, url: "black" },
-    { id: 1, url: "green" },
+    { id: 0, url: kakaoLogin },
+    { id: 1, url: naverLogin },
   ]);
 
   // 추후에 DB에서 아이템 가져오는 것으로 수정
@@ -66,32 +68,34 @@ const AvatarSetting = () => {
   return (
     <Container>
       <div className="desc">아바타 설정</div>
-      <Avatar>
-        <Skin $color={skins[skinIndex].url}>
-          <LeftButton $top={90} onClick={() => cycleSkinIndex(-1)}>
-            <ChevronLeft />
-          </LeftButton>
-          <RightButton $top={90} onClick={() => cycleSkinIndex(1)}>
-            <ChevronRight />
-          </RightButton>
-        </Skin>
-        <Eyes $color={eyes[eyesIndex].url}>
-          <LeftButton $top={50} onClick={() => cycleEyesIndex(-1)}>
-            <ChevronLeft />
-          </LeftButton>
-          <RightButton $top={50} onClick={() => cycleEyesIndex(1)}>
-            <ChevronRight />
-          </RightButton>
-        </Eyes>
-        <Mask $color={masks[maskIndex].url}>
-          <LeftButton $top={50} onClick={() => cycleMaskIndex(-1)}>
-            <ChevronLeft />
-          </LeftButton>
-          <RightButton $top={50} onClick={() => cycleMaskIndex(1)}>
-            <ChevronRight />
-          </RightButton>
-        </Mask>
-      </Avatar>
+      <AvatarDiv>
+        <Avatar>
+          <Eyes $imageUrl={eyes[eyesIndex].url}></Eyes>
+          <Mask $imageUrl={masks[maskIndex].url}></Mask>
+          <Skin $imageUrl={skins[skinIndex].url}></Skin>
+        </Avatar>
+        {/* 피부 */}
+        <LeftButton $top={90} onClick={() => cycleSkinIndex(-1)}>
+          <ChevronLeft />
+        </LeftButton>
+        <RightButton $top={90} onClick={() => cycleSkinIndex(1)}>
+          <ChevronRight />
+        </RightButton>
+        {/* 마스크 */}
+        <LeftButton $top={50} onClick={() => cycleMaskIndex(-1)}>
+          <ChevronLeft />
+        </LeftButton>
+        <RightButton $top={50} onClick={() => cycleMaskIndex(1)}>
+          <ChevronRight />
+        </RightButton>
+        {/* 눈 */}
+        <LeftButton $top={20} onClick={() => cycleEyesIndex(-1)}>
+          <ChevronLeft />
+        </LeftButton>
+        <RightButton $top={20} onClick={() => cycleEyesIndex(1)}>
+          <ChevronRight />
+        </RightButton>
+      </AvatarDiv>
     </Container>
   );
 };
@@ -101,39 +105,67 @@ const Container = styled.div`
   height: 20rem;
 `;
 
-const Avatar = styled.div`
+const AvatarDiv = styled.div`
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, calc(-50% + 1rem));
-  width: 10rem;
+  width: 15rem;
   height: 15rem;
-  background-color: blue;
 `;
 
-const Skin = styled.div<{ $color: string }>`
-  position: absolute;
+const Avatar = styled.div`
   width: 100%;
   height: 100%;
-  background-color: ${(props) => props.$color};
-  transition: background-color 0.3s ease-in-out;
+  /* clip-path 말고 image-mask 사용하는 것이 좋아보임 */
+  clip-path: polygon(
+    15% 60%,
+    15% 20%,
+    30% 0,
+    70% 0,
+    85% 20%,
+    85% 60%,
+    70% 75%,
+    85% 80%,
+    100% 100%,
+    0 100%,
+    15% 80%,
+    30% 75%
+  );
 `;
 
-const Eyes = styled.div<{ $color: string }>`
+const Skin = styled.div<{ $imageUrl: string }>`
   position: absolute;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  background-image: url(${(props) => props.$imageUrl});
+  background-size: cover;
+  background-position: center;
+  transition: background-image 0.3s ease-in-out;
+`;
+
+const Eyes = styled.div<{ $imageUrl: string }>`
+  position: absolute;
+  z-index: 2;
   width: 100%;
   height: 40%;
-  background-color: ${(props) => props.$color};
-  transition: background-color 0.3s ease-in-out;
+  background-image: url(${(props) => props.$imageUrl});
+  background-size: cover;
+  background-position: center;
+  transition: background-image 0.3s ease-in-out;
 `;
 
-const Mask = styled.div<{ $color: string }>`
+const Mask = styled.div<{ $imageUrl: string }>`
   position: absolute;
+  z-index: 3;
   width: 100%;
   height: 40%;
   top: 40%;
-  background-color: ${(props) => props.$color};
-  transition: background-color 0.3s ease-in-out;
+  background-image: url(${(props) => props.$imageUrl});
+  background-size: cover;
+  background-position: center;
+  transition: background-image 0.3s ease-in-out;
 `;
 
 const LeftButton = styled.button<{ $top: number }>`

@@ -2,6 +2,10 @@ import { Theme } from "types/theme";
 
 export const darkTheme: Theme = {
   mode: "dark",
+  size: {
+    mobile: "767px",
+    desktop: "768px",
+  },
   colors: {
     background: "#000000",
     cardBackground: "#333344",

@@ -77,7 +77,7 @@ public class StudyController {
                 return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
             }
 
-            List<WordTestResponseDTO> tests = studyService.getWordTestProblems(user.getUserId(), user, wordTestRequestDTO.getTotalCount());
+            List<WordTestResponseDTO> tests = studyService.getWordTestProblems(user.getUserId(), wordTestRequestDTO.getTotalCount());
 
             return ApiResponse.createSuccess(tests, "단어 상세 조회 성공");
         } catch (Exception e) {

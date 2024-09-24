@@ -4,7 +4,6 @@ import com.newlearn.backend.word.model.WordQuiz;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface WordQuizRepository extends JpaRepository<WordQuiz, Long> {
     List<WordQuiz> findByUserId(Long userId);

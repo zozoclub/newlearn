@@ -7,7 +7,8 @@ import java.util.List;
 
 public interface WordQuizAnswerRepository extends JpaRepository<WordQuizAnswer, Long> {
 
-    List<WordQuizAnswer> findByQuizId(Long quizId);
-    List<WordQuizAnswer> findByQuizIdAndQuestionId(Long quizId, Long questionId);
+    List<WordQuizAnswer> findByWordQuizQuestion_WordQuiz_QuizId(Long quizId);
+    List<WordQuizAnswer> findByWordQuizQuestion_WordQuiz_QuizIdAndWordQuizQuestion_WordQuizQuestionId(Long quizId, Long questionId);
+
 
 }

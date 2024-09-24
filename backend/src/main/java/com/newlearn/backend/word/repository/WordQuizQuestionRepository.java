@@ -1,6 +1,7 @@
 package com.newlearn.backend.word.repository;
 
 import com.newlearn.backend.word.model.Word;
+import com.newlearn.backend.word.model.WordQuiz;
 import com.newlearn.backend.word.model.WordQuizQuestion;
 import com.newlearn.backend.word.model.WordSentence;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,7 +12,7 @@ import java.util.List;
 
 public interface WordQuizQuestionRepository extends JpaRepository<WordQuizQuestion, Long> {
 
-    List<WordQuizQuestion> findByQuizId(Long quizId);
+    List<WordQuizQuestion> findByWordQuiz(WordQuiz wordQuiz);
 
     @Query("SELECT w FROM Word w WHERE w.user.userId = :userId ORDER BY FUNCTION('RAND') LIMIT :totalCount")
     List<Word> findRandomWords(@Param("userId") Long userId, @Param("totalCount") Long totalCount);

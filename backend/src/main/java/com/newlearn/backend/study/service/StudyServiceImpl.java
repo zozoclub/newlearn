@@ -64,9 +64,9 @@ public class StudyServiceImpl implements StudyService{
     }
 
     @Override
-    public List<WordTestResponseDTO> getWordTestProblems(Long userId, Users user, Long totalCount) {
+    public List<WordTestResponseDTO> getWordTestProblems(Long userId, Long totalCount) {
         WordQuiz newQuiz = new WordQuiz();
-        newQuiz.setUser(user);
+        newQuiz.setUserId(userId);
         newQuiz.setTotalCount(totalCount);
         newQuiz.setCorrectCount(0L);
         wordQuizRepository.save(newQuiz);
@@ -79,8 +79,7 @@ public class StudyServiceImpl implements StudyService{
             WordSentence sentence = wordQuizQuestionRepository.findRandomSentenceByWordId(word.getWordId());
 
             WordQuizQuestion question = new WordQuizQuestion();
-            question.setQuiz(newQuiz);
-            question.setWord(word);
+            question.setWordQuiz(newQuiz);
             question.setSentence(sentence.getSentence());
             question.setSentenceMeaning(sentence.getSentenceMeaning());
             question.setCorrectAnswer(word.getWord());
@@ -105,7 +104,7 @@ public class StudyServiceImpl implements StudyService{
 
             // 질문 저장
             WordQuizQuestion question = WordQuizQuestion.builder()
-                    .quiz(quiz) // 퀴즈
+                    .wordQuiz(quiz) // 퀴즈
                     .sentence(result.getSentence())
                     .correctAnswer(result.getCorrectAnswer())
                     .build();
@@ -128,7 +127,7 @@ public class StudyServiceImpl implements StudyService{
 
         return wordQuizzes.stream().map(quiz -> {
             // 시험에 관련된 답변 가져오기
-            List<WordQuizAnswer> answers = wordQuizAnswerRepository.findByQuizId(quiz.getQuizId());
+            List<WordQuizAnswer> answers = wordQuizAnswerRepository.findByWordQuizQuestion_WordQuiz_QuizId(quiz.getQuizId());
 
             String answer = answers.isEmpty() ? "" : answers.get(0).getAnswer();    // 정답이 안비었는지
             boolean isCorrect = quiz.getCorrectCount() > 0; // 정답 수가 0보다 큰지
@@ -150,7 +149,7 @@ public class StudyServiceImpl implements StudyService{
                 .orElseThrow(() -> new IllegalArgumentException("퀴즈를 찾을 수 없습니다."));
 
         // 퀴즈 질문 가져오기
-        List<WordQuizQuestion> questions = wordQuizQuestionRepository.findByQuizId(quizId);
+        List<WordQuizQuestion> questions = wordQuizQuestionRepository.findByWordQuiz(quiz);
 
         // 결과 리스트는 하나의 질문과 답변만 포함
         if (questions.isEmpty()) {
@@ -160,7 +159,7 @@ public class StudyServiceImpl implements StudyService{
         WordQuizQuestion question = questions.get(0);
 
         // 해당 질문에 대한 답변 찾기
-        List<WordQuizAnswer> answers = wordQuizAnswerRepository.findByQuizIdAndQuestionId(quizId, question.getWordQuizQuestionId());
+        List<WordQuizAnswer> answers = wordQuizAnswerRepository.findByWordQuizQuestion_WordQuiz_QuizIdAndWordQuizQuestion_WordQuizQuestionId(quizId, question.getWordQuizQuestionId());
 
         // 첫 번째 답변을 기준으로 결과 생성
         String answer = answers.isEmpty() ? "" : answers.get(0).getAnswer();

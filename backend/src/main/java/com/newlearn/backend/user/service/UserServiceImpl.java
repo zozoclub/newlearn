@@ -39,6 +39,13 @@ public class UserServiceImpl implements UserService{
 	@Override
 	@Transactional
 	public void signUp(SignUpRequestDTO signUpRequestDTO) {
+
+		Optional<Users> existingUser = userRepository.findByEmail(signUpRequestDTO.getEmail());
+
+		if (existingUser.isPresent()) {
+			throw new IllegalStateException("이미 사용자가 존재합니다.");
+		}
+
 		Users user = signUpRequestDTO.toUserEntity();
 
 		Set<Category> categories = new HashSet<>();

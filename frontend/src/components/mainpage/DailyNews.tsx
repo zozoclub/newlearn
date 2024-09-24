@@ -97,12 +97,12 @@ const DailyNews: React.FC = () => {
 };
 
 const Container = styled.div`
-  display: flex;
+  display: absolute;
   justify-content: flex-start;
   position: absolute;
   top: 5rem;
-  left: -25vw;
-  width: 120vw;
+  left: -5vw;
+  width: 100vw;
   overflow: hidden;
   .swiper {
     padding-top: 50px;

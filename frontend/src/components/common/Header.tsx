@@ -53,6 +53,9 @@ const HeaderContainer = styled.div<{ $currentLocation: string }>`
     display: flex;
     align-items: center;
   }
+  @media (max-width: ${(props) => props.theme.size.mobile}) {
+    display: none;
+  }
 `;
 
 const Logo = styled.div`

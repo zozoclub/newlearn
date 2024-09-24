@@ -23,7 +23,7 @@ const LightBackgroundImg = styled.img.attrs({
   width: 100vw;
   height: 100vh;
   transition: opacity 0.5s;
-  @media (max-width: 768px) {
+  @media (max-width: ${(props) => props.theme.size.mobile}) {
     opacity: 0;
   }
 `;
@@ -38,7 +38,7 @@ const DarkBackgroundImg = styled.img.attrs({
   height: 100vh;
   transition: opacity 0.5s;
   opacity: ${(props) => props.theme.opacities.background};
-  @media (max-width: 768px) {
+  @media (max-width: ${(props) => props.theme.size.mobile}) {
     opacity: 0;
   }
 `;
@@ -48,6 +48,7 @@ const BackgroundDiv = styled.div`
   z-index: 1;
   width: 100vw;
   height: 100vh;
+  transition: opacity 0.5s;
   opacity: ${(props) => props.theme.opacities.background};
   background-color: ${(props) => props.theme.colors.background};
 `;

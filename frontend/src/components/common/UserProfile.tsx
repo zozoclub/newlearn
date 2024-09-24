@@ -59,6 +59,7 @@ const ProfileAvatar = styled.div`
   height: 2.5rem;
   border-radius: 100%;
   background-color: blue;
+  cursor: pointer;
 `;
 
 const UserProfileModal = styled.div<{ $isOpened: boolean }>`

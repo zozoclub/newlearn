@@ -14,7 +14,7 @@ const Header = () => {
   return (
     <HeaderContainer $currentLocation={currentLocation}>
       {/* NotFoundPage일 때 Logo 표시 안 함 */}
-      {currentLocation !== "" && (
+      {currentLocation !== "login" && currentLocation !== "" && (
         <Logo
           onClick={() => {
             transitionTo("/");
@@ -41,7 +41,9 @@ const HeaderContainer = styled.div<{ $currentLocation: string }>`
   display: flex;
   position: relative;
   justify-content: ${(props) =>
-    props.$currentLocation ? "space-between" : "end"};
+    props.$currentLocation !== "login" && props.$currentLocation !== ""
+      ? "space-between"
+      : "end"};
   align-items: center;
   height: 9.375rem;
   .right-side {

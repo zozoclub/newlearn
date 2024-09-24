@@ -94,7 +94,7 @@ public class Users {
 	private Set<Category> categories = new HashSet<>();
 
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<Word> words = new ArrayList<>();
+	private Set<Word> words = new HashSet<>();
 
 	@Column(name = "created_at", nullable = false, updatable = false,
 		insertable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
@@ -113,6 +113,14 @@ public class Users {
 
 	public void addWord(Word word) {
 		this.words.add(word);
-		word.setUser(this);
+
+		if (word.getUser() == null || word.getUser() != this) {
+			word.setUser(this);
+		}
+	}
+
+	public void removeWord(Word word) {
+		this.words.remove(word);
+		word.setUser(null); // 단어와의 연관 관계도 해제
 	}
 }

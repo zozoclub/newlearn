@@ -1,7 +1,9 @@
+import shutil
 from datetime import datetime
 import os
 from django.core.management import call_command
 from django.core.management.base import BaseCommand
+import shutilTest
 
 class Command(BaseCommand):
     help = "카테고리 별로 뉴스 크롤링 후 번역 및 mongodb 저장을 처리하는 과정"
@@ -42,5 +44,13 @@ class Command(BaseCommand):
                 call_command('check_translated_news', '--filename', translated_file_path, '--output', final_file_path)
                 self.stdout.write(self.style.SUCCESS(f'MongoDB 저장 완료 SID: {sid}, final file: {final_file_path}'))
 
+
             except Exception as e:
                 self.stdout.write(self.style.ERROR(f'작업 중 오류 발생 SID: {sid}: {e}'))
+
+        shutil.rmtree(base_folder, ignore_errors=True)
+
+        #이제 나온 몽고디비 데이터를 mysql로 마이그레이션
+        #마이그레이션 할땐, 몽고디비내용을 csv로 저장한다음
+        #mysql에 import 한 다음 csv 파일 s3서버에 저장하고 삭제
+        call_command('migration_to_mysql')

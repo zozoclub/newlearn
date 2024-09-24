@@ -13,4 +13,6 @@ public interface WordRepository extends JpaRepository<Word, Long> {
 
 	List<Word> findByIsCompleteTrueAndUser(Users user);
 
+	List<Word> findAllByWordAndUser(String word, Users user);
+
 }

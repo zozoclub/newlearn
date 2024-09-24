@@ -1,7 +1,10 @@
 package com.newlearn.backend.word.dto.response;
 
+import java.util.List;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -22,4 +25,5 @@ public class WordResponseDTO {
 		this.wordMeaning = wordMeaning;
 		this.isComplete = isComplete;
 	}
+
 }

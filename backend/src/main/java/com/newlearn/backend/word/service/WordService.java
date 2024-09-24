@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.newlearn.backend.user.model.Users;
 import com.newlearn.backend.word.dto.request.WordRequestDto;
+import com.newlearn.backend.word.dto.response.WordDetailResponseDTO;
 import com.newlearn.backend.word.dto.response.WordResponseDTO;
 
 public interface WordService {
@@ -13,4 +14,10 @@ public interface WordService {
 	List<WordResponseDTO> getWords(Users user);
 
 	List<WordResponseDTO> getCompleteWords(Users user);
+
+	void deleteWord(Long wordId);
+
+	WordDetailResponseDTO getWordDetail(String word, Users user) throws Exception;
+
+	void completeWord(Long wordId, Users user);
 }

@@ -13,7 +13,7 @@ const Header = () => {
 
   return (
     <HeaderContainer $currentLocation={currentLocation}>
-      {/* NotFoundPage일 때 Logo 표시 안 함 */}
+      {/* 페이지 정보 없을 때 Logo 표시 안 함 */}
       {currentLocation !== "login" && currentLocation !== "" && (
         <Logo
           onClick={() => {
@@ -24,9 +24,12 @@ const Header = () => {
         </Logo>
       )}
       <div className="right-side">
-        {currentLocation !== "login" && (
+        {currentLocation !== "login" && currentLocation !== "" && (
           <>
-            <PageInfo>{currentLocation}</PageInfo>
+            {/* 메인 페이지에서 페이지 정보 표시 안 함 */}
+            {currentLocation !== "main" && (
+              <PageInfo>{currentLocation}</PageInfo>
+            )}
             {/* 페이지 정보 없을 때 유저 프로필 표시 안 함 */}
             <UserProfile />
           </>

@@ -25,7 +25,9 @@ const LoginPage = () => {
 
   return (
     <Container>
-      <FullLogo width={360} height={60} />
+      <LogoDiv onClick={() => transitionTo("/landing")}>
+        <FullLogo width={360} height={60} />
+      </LogoDiv>
       <img
         src={NavarButton}
         alt="naver"
@@ -57,9 +59,6 @@ const Container = styled.div`
   padding: 3rem;
   border-radius: 0.5rem;
   background-color: ${(props) => props.theme.colors.cardBackground + "AA"};
-  :first-child {
-    margin: 1rem 0 3rem 0;
-  }
   :nth-child(2) {
     margin-bottom: 1rem;
     cursor: pointer;
@@ -67,6 +66,11 @@ const Container = styled.div`
   :nth-child(3) {
     cursor: pointer;
   }
+`;
+
+const LogoDiv = styled.div`
+  margin: 1rem 0 3rem 0;
+  cursor: pointer;
 `;
 
 export default LoginPage;

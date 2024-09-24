@@ -1,4 +1,3 @@
-import DarkModeButton from "@components/common/DarkModeButton";
 import { usePageTransition } from "@hooks/usePageTransition";
 import styled from "styled-components";
 
@@ -8,7 +7,6 @@ const LandingHeader = () => {
   return (
     <Container>
       <LoginButton onClick={() => transitionTo("login")}>로그인</LoginButton>
-      <DarkModeButton />
     </Container>
   );
 };

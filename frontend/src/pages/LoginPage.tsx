@@ -1,14 +1,21 @@
 import styled from "styled-components";
-import Logo from "@assets/images/logo-full.png";
 import NavarButton from "@assets/images/naverButton.png";
 import KakaoButton from "@assets/images/kakaoButton.png";
+import FullLogo from "@components/common/FullLogo";
 import { kakaoLogin, naverLogin } from "@services/userService";
 import { useEffect } from "react";
 import { usePageTransition } from "@hooks/usePageTransition";
+import { useSetRecoilState } from "recoil";
+import locationState from "@store/locationState";
 
 const LoginPage = () => {
   const isLogin = sessionStorage.getItem("accessToken");
   const transitionTo = usePageTransition();
+  const setCurrentLocation = useSetRecoilState(locationState);
+
+  useEffect(() => {
+    setCurrentLocation("login");
+  }, [setCurrentLocation]);
 
   useEffect(() => {
     if (isLogin) {
@@ -18,7 +25,9 @@ const LoginPage = () => {
 
   return (
     <Container>
-      <img src={Logo} alt="LogoImage" width="300" height="65" />
+      <LogoDiv onClick={() => transitionTo("/landing")}>
+        <FullLogo width={360} height={60} />
+      </LogoDiv>
       <img
         src={NavarButton}
         alt="naver"
@@ -50,9 +59,6 @@ const Container = styled.div`
   padding: 3rem;
   border-radius: 0.5rem;
   background-color: ${(props) => props.theme.colors.cardBackground + "AA"};
-  :first-child {
-    margin: 1rem 0 3rem 0;
-  }
   :nth-child(2) {
     margin-bottom: 1rem;
     cursor: pointer;
@@ -60,6 +66,11 @@ const Container = styled.div`
   :nth-child(3) {
     cursor: pointer;
   }
+`;
+
+const LogoDiv = styled.div`
+  margin: 1rem 0 3rem 0;
+  cursor: pointer;
 `;
 
 export default LoginPage;

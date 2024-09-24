@@ -16,11 +16,12 @@ const MainPage = () => {
   ];
 
   useEffect(() => {
-    setCurrentLocation("Main Page");
+    setCurrentLocation("main");
     return () => {
       setCurrentLocation("");
     };
-  }, [setCurrentLocation]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <Container>

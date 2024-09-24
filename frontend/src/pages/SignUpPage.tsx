@@ -41,6 +41,9 @@ const SignUpPage = () => {
   const difficulty = signupData.difficulty;
   const [pageNum, setPageNum] = useState(1);
 
+  const [isNicknameAvailable, setIsNicknameAvailable] = useState<boolean>(true);
+  const [isNicknameDuplicated, setIsNicknameDuplicated] =
+    useState<boolean>(false);
   const [activeButton, setActiveButton] = useState(false);
   const [token, setToken] = useState<string | null>(null);
   const query = useQuery();
@@ -67,6 +70,9 @@ const SignUpPage = () => {
         if (await checkNicknameDup(nickname)) {
           signUp(signupData);
           transitionTo("/login");
+        } else {
+          setPageNum(1);
+          setIsNicknameDuplicated(true);
         }
       } catch (error) {
         console.log(error);
@@ -109,17 +115,23 @@ const SignUpPage = () => {
 
   // 유효성 검사
   useEffect(() => {
-    if (!checkNickname()) {
+    if (nickname.length > 0 && !checkNickname()) {
       console.log("닉네임 체크");
+      setIsNicknameAvailable(false);
       setActiveButton(false);
     } else if (!checkInterest()) {
       console.log("관심 카테고리 체크");
+      setIsNicknameAvailable(true);
       setActiveButton(false);
     } else if (!checkDifficulty()) {
       console.log("난이도 체크");
+      setIsNicknameAvailable(true);
       setActiveButton(false);
     } else {
-      setActiveButton(true);
+      setIsNicknameAvailable(true);
+      if (!isNicknameDuplicated) {
+        setActiveButton(true);
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [nickname, categories, difficulty]);
@@ -134,18 +146,35 @@ const SignUpPage = () => {
 
   return (
     <Container $pageNum={pageNum}>
-      <SignupHeader />
+      <SignupHeader pageNum={pageNum} setPageNum={setPageNum} />
       <form onSubmit={(event) => event.preventDefault()}>
         <FirstPage $pageNum={pageNum}>
           {/* 아바타 */}
           <AvatarSetting />
           {/* 닉네임 */}
-          <NicknameInput />
+          <NicknameInput
+            isNicknameAvailable={isNicknameAvailable}
+            isNicknameDuplicated={isNicknameDuplicated}
+          />
           <div>
             <Button
-              $varient={activeButton ? "primary" : "cancel"}
+              $varient={
+                isNicknameAvailable &&
+                !isNicknameDuplicated &&
+                nickname.length !== 0
+                  ? "primary"
+                  : "cancel"
+              }
               size="large"
-              onClick={() => setPageNum(2)}
+              onClick={() => {
+                if (
+                  isNicknameAvailable &&
+                  !isNicknameDuplicated &&
+                  nickname.length !== 0
+                ) {
+                  setPageNum(2);
+                }
+              }}
             >
               다음
             </Button>

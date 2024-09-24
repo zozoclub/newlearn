@@ -2,6 +2,10 @@ import { Theme } from "types/theme";
 
 export const lightTheme: Theme = {
   mode: "light",
+  size: {
+    mobile: "767px",
+    desktop: "768px",
+  },
   colors: {
     background: "#ffffff",
     cardBackground: "#ffffff",

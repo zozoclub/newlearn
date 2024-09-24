@@ -1,5 +1,9 @@
 export type Theme = {
   mode: "dark" | "light";
+  size: {
+    mobile: string;
+    desktop: string;
+  };
   colors: {
     background: string;
     cardBackground: string;

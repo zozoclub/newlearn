@@ -62,7 +62,9 @@ const ToggleButtonWrapper = styled.div`
   --fg: hsl(var(--hue), 10%, 10%);
   --trans-dur: 0.3s;
   --trans-timing: cubic-bezier(0.83, 0, 0.17, 1);
+  border-radius: 1.5rem;
   font-size: 15px;
+  box-shadow: 0.375rem 0.375rem 0.25rem #000000aa;
 `;
 
 const ToggleButton = styled.div`

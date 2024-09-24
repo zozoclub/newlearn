@@ -37,12 +37,14 @@ RUN chmod +x /app/run_crawler.sh /app/start.sh
 # 크론 작업 설정
 ## 크론 작업의 출력 : /var/log/cron.log 파일에 기록됨
 # RUN echo "0 11,23 * * * /app/run_crawler.sh >> /var/log/cron.log 2>&1" > /etc/cron.d/crawler-cron # 11시, 23시
-RUN echo "0 2 8 * * * /app/run_crawler.sh >> /var/log/cron.log 2>&1" > /etc/cron.d/crawler-cron
+RUN echo "0 2 8 * * * root /app/run_crawler.sh >> /var/log/cron.log 2>&1" > /etc/cron.d/crawler-cron
 
 
 # 크론 작업 파일에 대한 권한 설정
 RUN chmod 0644 /etc/cron.d/crawler-cron
 
+# 개행 추가
+RUN echo "" >> /etc/cron.d/crawler-cron
 # 크론 작업 등록
 RUN crontab /etc/cron.d/crawler-cron
 

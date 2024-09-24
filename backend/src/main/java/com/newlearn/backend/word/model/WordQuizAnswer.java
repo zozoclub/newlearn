@@ -15,13 +15,16 @@ public class WordQuizAnswer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long wordQuizAnswerId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "word_quiz_question_id")
     private WordQuizQuestion wordQuizQuestion;
 
-    @Column(name = "answer")
+//    @Column(name = "word_quiz_question_id", nullable = false)
+//    private Long wordQuizQuestionId;
+
+    @Column(name = "answer", nullable = false)
     private String answer;
 
-    @Column(name = "is_correct")
+    @Column(name = "is_correct", nullable = false)
     private Boolean isCorrect;
 }

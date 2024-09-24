@@ -15,20 +15,19 @@ public class WordQuizQuestion {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long wordQuizQuestionId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+//    @Column(name = "quiz_id", nullable = false)
+//    private Long quizId;
+
+    @ManyToOne
     @JoinColumn(name = "quiz_id")
-    private WordQuiz quiz;
+    private WordQuiz wordQuiz;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "word_id")
-    private Word word;
-
-    @Column(name = "sentence")
+    @Column(name = "sentence", nullable = false)
     private String sentence;
 
     @Column(name = "sentence_meaning")
     private String sentenceMeaning;
 
-    @Column(name = "correct_answer")
+    @Column(name = "correct_answer", nullable = false)
     private String correctAnswer;
 }

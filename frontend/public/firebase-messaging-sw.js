@@ -3,6 +3,17 @@ importScripts(
   "https://www.gstatic.com/firebasejs/8.10.0/firebase-messaging.js"
 );
 
+firebase.initializeApp({
+  apiKey: "AIzaSyBwSePpbwxALHlejMVOjKZLW-y1qokHS6s",
+  authDomain: "newlearn-66b2c.firebaseapp.com",
+  projectId: "newlearn-66b2c",
+  storageBucket: "newlearn-66b2c.appspot.com",
+  messagingSenderId: "542353120723",
+  appId: "1:542353120723:web:1ec5ed90d47e5732546326",
+});
+
+const messaging = firebase.messaging();
+
 // 푸시 이벤트 처리 (초기 로드 시 바로 등록)
 self.addEventListener("push", function (event) {
   console.log("푸시 메시지 수신:", event);
@@ -35,33 +46,15 @@ self.addEventListener("push", function (event) {
   );
 });
 
-// Firebase 설정 로드 후 백그라운드 메시지 처리
-fetch("/firebase-config.json") // 환경 변수 파일 가져오기
-  .then((response) => response.json())
-  .then((config) => {
-    // Firebase 초기화
-    firebase.initializeApp(config);
-    const messaging = firebase.messaging();
+// 백그라운드 상태에서 메시지를 수신할 때
+messaging.onBackgroundMessage(function (payload) {
+  console.log("[firebase-messaging-sw.js] 백그라운드 메시지 수신 ", payload);
 
-    // 백그라운드 상태에서 메시지를 수신할 때
-    messaging.onBackgroundMessage(function (payload) {
-      console.log(
-        "[firebase-messaging-sw.js] 백그라운드 메시지 수신 ",
-        payload
-      );
+  const notificationTitle = payload.notification.title;
+  const notificationOptions = {
+    body: payload.notification.body,
+    icon: "/firebase-logo.png",
+  };
 
-      const notificationTitle = payload.notification.title;
-      const notificationOptions = {
-        body: payload.notification.body,
-        icon: "/firebase-logo.png",
-      };
-
-      self.registration.showNotification(
-        notificationTitle,
-        notificationOptions
-      );
-    });
-  })
-  .catch((error) => {
-    console.error("Firebase 설정 로드 실패:", error);
-  });
+  self.registration.showNotification(notificationTitle, notificationOptions);
+});

@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -124,7 +125,6 @@ public class StudyController {
             log.error("단어 테스트 결과 리스트 조회 중 오류 발생", e);
             return ApiResponse.createError(ErrorCode.WORD_TEST_RESULT_NOT_FOUND);
         }
-
     }
 
     // 단어 문장 빈칸 테스트 결과 상세 조회
@@ -189,18 +189,34 @@ public class StudyController {
                     .totalScore(totalScore)
                     .build();
 
-            studyService.savePronounceTestResult(user.getUserId(), pronounceRequestDTO, file);
+            // 비동기적으로 파일 업로드
+            CompletableFuture<String> fileUploadFuture = studyService.savePronounceTestResultAsync(user.getUserId(), pronounceRequestDTO, file);
 
-            return ApiResponse.createSuccess(null, "발음 테스트 결과 저장 성공");
-
+            // 즉시 성공 응답 반환
+            return ApiResponse.createSuccess(null, "발음 테스트 결과 저장 성공. 파일 업로드 중입니다.");
         } catch (Exception e) {
             log.error("발음 테스트 결과 저장 중 오류 발생", e);
             return ApiResponse.createError(ErrorCode.PRONOUNCE_TEST_RESULT_UPDATE_FAILED);
         }
     }
 
-
     // 발음 테스트 결과 리스트 조회
+    @GetMapping("/pronounce/list")
+    public ApiResponse<?> setPronounceWordTest(Authentication authentication) throws Exception {
+        try {
+            Users user = userService.findByEmail(authentication.getName());
+            if (user == null) {
+                return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
+            }
+
+            List<PronounceTestResultResponseDTO> results = studyService.getPronounceTestResults(user.getUserId());
+
+            return ApiResponse.createSuccess(results, "발음 테스트 결과 리스트 조회 성공");
+        } catch (Exception e) {
+            log.error("발음 테스트 결과 리스트 조회 중 오류 발생", e);
+            return ApiResponse.createError(ErrorCode.PRONOUNCE_TEST_RESULT_NOT_FOUND);
+        }
+    }
 
     // 발음 테스트 결과 상세 조회
 

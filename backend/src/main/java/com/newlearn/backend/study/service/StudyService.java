@@ -1,6 +1,5 @@
 package com.newlearn.backend.study.service;
 
-
 import com.newlearn.backend.study.dto.request.GoalRequestDTO;
 import com.newlearn.backend.study.dto.request.PronounceRequestDTO;
 import com.newlearn.backend.study.dto.request.WordTestResultRequestDTO;
@@ -30,5 +29,7 @@ public interface StudyService {
     List<PronounceTestResponseDTO> getPronounceTestProblems(Long userId, Users user);
 
     CompletableFuture<String> savePronounceTestResultAsync(Long userId, PronounceRequestDTO pronounceRequestDTO, MultipartFile file);
+
+    List<PronounceTestResultResponseDTO> getPronounceTestResults(Long userId);
 
 }

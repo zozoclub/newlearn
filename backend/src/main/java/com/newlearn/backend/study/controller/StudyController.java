@@ -201,6 +201,22 @@ public class StudyController {
     }
 
     // 발음 테스트 결과 리스트 조회
+    @GetMapping("/pronounce/list")
+    public ApiResponse<?> setPronounceWordTest(Authentication authentication) throws Exception {
+        try {
+            Users user = userService.findByEmail(authentication.getName());
+            if (user == null) {
+                return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
+            }
+
+            List<PronounceTestResultResponseDTO> results = studyService.getPronounceTestResults(user.getUserId());
+
+            return ApiResponse.createSuccess(results, "발음 테스트 결과 리스트 조회 성공");
+        } catch (Exception e) {
+            log.error("발음 테스트 결과 리스트 조회 중 오류 발생", e);
+            return ApiResponse.createError(ErrorCode.PRONOUNCE_TEST_RESULT_NOT_FOUND);
+        }
+    }
 
     // 발음 테스트 결과 상세 조회
 

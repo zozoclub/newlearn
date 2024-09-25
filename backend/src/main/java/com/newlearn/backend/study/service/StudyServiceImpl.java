@@ -242,4 +242,26 @@ public class StudyServiceImpl implements StudyService{
 
         return CompletableFuture.completedFuture(fileUrl);
     }
+
+    @Override
+    public List<PronounceTestResultResponseDTO> getPronounceTestResults(Long userId) {
+        // 사용자 ID로 발음 테스트 결과 조회
+        List<UserAudioFile> audioFiles = userAudioFileRepository.findByUserId(userId);
+
+        // 결과가 없는 경우 빈 리스트 반환
+        if (audioFiles.isEmpty()) {
+            return List.of();
+        }
+
+        // 발음 테스트 결과를 DTO로 변환
+        List<PronounceTestResultResponseDTO> responseDTOs = audioFiles.stream()
+                .map(file -> PronounceTestResultResponseDTO.builder()
+                        .audioFileId(file.getAudioFileId())
+                        .pronunciationScore(file.getPronunciationScore())
+                        .createdAt(file.getCreatedAt())
+                        .build())
+                .collect(Collectors.toList());
+
+        return responseDTOs;
+    }
 }

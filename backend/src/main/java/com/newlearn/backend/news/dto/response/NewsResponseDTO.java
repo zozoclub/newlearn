@@ -15,6 +15,15 @@ public class NewsResponseDTO {
     private String category; //"정치", "경제", "사회", "생활/문화", "IT/과학", "세계"
     private String publishedDate;
 
-
+    public static NewsResponseDTO makeNewsResponseDTO(News news, String lang, int difficulty) {
+        return NewsResponseDTO.builder()
+                .newsId(news.getNewsId())
+                .title(news.getTitle())
+                .content(news.getContentByLangAndDifficulty(lang, difficulty))
+                .thumbnailImageUrl(news.getThumbnailImageUrl())
+                .category(news.getCategory().getCategoryName())
+                .publishedDate(news.getPublishedDate())
+                .build();
+    }
 
 }

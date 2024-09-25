@@ -81,6 +81,20 @@ public class News {
         }
     }
 
+    // 요청 lang & difficulty 에 따른 컬럼명 지정
+    public static String determineContentColumnName(String lang, int difficulty) {
+        String language = lang.equals("en") ? "Translation" : "Korean";
+        String difficultyLevel = difficulty == 1 ? "Low" : (difficulty == 2 ? "Medium" : "High");
+        return "content" + language + difficultyLevel;
+    }
+
+    // Language & Difficulty에 따른 content 가져오기
+    public String getContentByLangAndDifficulty(String lang, int difficulty) {
+        String columnName = determineContentColumnName(lang, difficulty);
+        return getNewsContent(columnName);
+    }
+
+    // 조회수 +1
     public void incrementHit() {
         this.hit++;
     }

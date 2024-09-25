@@ -16,9 +16,13 @@ const LoginPage = () => {
   const requestAccessToken = async () => {
     try {
       const response = await getRefreshToken();
-      setIsLogin(response);
-      console.log("refreshToken 유효, 토큰 재발급");
-      transitionTo("/");
+      if (response) {
+        setIsLogin(response);
+        console.log("refreshToken 유효, 토큰 재발급");
+        transitionTo("/");
+      } else {
+        console.log("refreshToken 만료, 다시 로그인하세요.");
+      }
     } catch {
       console.log("refreshToken 만료, 다시 로그인하세요.");
     }

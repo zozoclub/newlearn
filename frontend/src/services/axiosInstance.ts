@@ -49,10 +49,13 @@ export const getRefreshToken = async () => {
   try {
     const response = await axios.post(`/user/refresh-token`, {});
     console.log("getRefreshToken", response);
-    const accessToken = response.data.accessToken;
-    sessionStorage.setItem("accessToken", accessToken);
-    axiosInstance.defaults.headers["Authorization"] = accessToken;
-    return accessToken;
+    if (response.data.data) {
+      const accessToken = response.data.data.accessToken;
+      sessionStorage.setItem("accessToken", accessToken);
+      axiosInstance.defaults.headers["Authorization"] = accessToken;
+      return accessToken;
+    }
+    return null;
   } catch (error) {
     console.error(error);
     throw error;

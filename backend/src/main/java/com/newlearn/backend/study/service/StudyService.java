@@ -32,4 +32,7 @@ public interface StudyService {
 
     List<PronounceTestResultResponseDTO> getPronounceTestResults(Long userId);
 
+    PronounceTestResultDetailResponseDTO getPronounceTestResult(Long audioFileId);
+
+
 }

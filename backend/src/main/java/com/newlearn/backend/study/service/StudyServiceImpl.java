@@ -17,6 +17,7 @@ import com.newlearn.backend.user.model.Users;
 import com.newlearn.backend.word.repository.WordQuizAnswerRepository;
 import com.newlearn.backend.word.repository.WordQuizQuestionRepository;
 import com.newlearn.backend.word.repository.WordQuizRepository;
+import com.newlearn.backend.word.repository.WordSentenceRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -39,6 +40,7 @@ public class StudyServiceImpl implements StudyService{
     private final WordQuizRepository wordQuizRepository;
     private final WordQuizAnswerRepository wordQuizAnswerRepository;
     private final WordQuizQuestionRepository wordQuizQuestionRepository;
+    private final WordSentenceRepository wordSentenceRepository;
     private final UserAudioFileRepository userAudioFileRepository;
     private final PronounceTestRepository pronounceTestRepository;
     private final S3ObjectStorage s3ObjectStorage;
@@ -277,11 +279,57 @@ public class StudyServiceImpl implements StudyService{
         List<PronounceTestResultResponseDTO> responseDTOs = audioFiles.stream()
                 .map(file -> PronounceTestResultResponseDTO.builder()
                         .audioFileId(file.getAudioFileId())
-//                        .pronunciationScore(file.getPronunciationScore())
+                        .totalScore(file.getTotalScore())
                         .createdAt(file.getCreatedAt())
                         .build())
                 .collect(Collectors.toList());
 
         return responseDTOs;
+    }
+
+    @Override
+    public PronounceTestResultDetailResponseDTO getPronounceTestResult(Long audioFileId) {
+        // 사용자 오디오 파일 정보 조회
+        UserAudioFile userAudioFile = userAudioFileRepository.findById(audioFileId)
+                .orElse(null); // Optional 처리
+
+        // 오디오 파일 정보가 없으면 null 반환
+        if (userAudioFile == null) {
+            return null;
+        }
+
+        // 발음 테스트 결과 조회
+        List<PronounceTest> pronounceTests = pronounceTestRepository.findByAudioFileId(audioFileId);
+
+        // DTO 변환 및 반환
+        return PronounceTestResultDetailResponseDTO.builder()
+                .audioFileId(userAudioFile.getAudioFileId())
+                .audioFileUrl(userAudioFile.getAudioFileUrl())
+                .accuracyScore(userAudioFile.getAccuracyScore())
+                .fluencyScore(userAudioFile.getFluencyScore())
+                .completenessScore(userAudioFile.getCompletenessScore())
+                .prosodyScore(userAudioFile.getProsodyScore())
+                .totalScore(userAudioFile.getTotalScore())
+                .createdAt(userAudioFile.getCreatedAt())
+                .tests(getTestSentences(pronounceTests)) // 문장 정보 가져오기
+                .build();
+    }
+
+    private List<PronounceTestResultDetailResponseDTO.TestSentenceDTO> getTestSentences(List<PronounceTest> pronounceTests) {
+        List<PronounceTestResultDetailResponseDTO.TestSentenceDTO> testSentences = new ArrayList<>();
+
+        for (PronounceTest pronounceTest : pronounceTests) {
+            WordSentence wordSentence = wordSentenceRepository.findById(pronounceTest.getSentenceId()).orElse(null);
+
+            if (wordSentence != null) {
+                testSentences.add(
+                        PronounceTestResultDetailResponseDTO.TestSentenceDTO.builder()
+                                .sentence(wordSentence.getSentence())
+                                .sentenceMeaning(wordSentence.getSentenceMeaning())
+                                .build()
+                );
+            }
+        }
+        return testSentences;
     }
 }

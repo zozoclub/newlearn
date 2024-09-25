@@ -5,6 +5,8 @@ import "swiper/css";
 import "swiper/css/parallax";
 import "swiper/css/effect-coverflow";
 import "swiper/css/pagination";
+import NewsSlide from "./NewsSlide";
+import image from "@assets/images/defaultProfile.webp";
 
 const DailyNews: React.FC = () => {
   return (
@@ -14,8 +16,8 @@ const DailyNews: React.FC = () => {
         effect={"coverflow"}
         grabCursor={true}
         centeredSlides={true}
-        slidesPerView={"auto"}
-        speed={1000}
+        slidesPerView={3}
+        speed={500}
         mousewheel={true}
         coverflowEffect={{
           rotate: 50,
@@ -28,69 +30,16 @@ const DailyNews: React.FC = () => {
         modules={[EffectCoverflow, Pagination, Mousewheel]}
         className="mySwiper"
       >
-        <SwiperSlide>
-          <img src="https://swiperjs.com/demos/images/nature-1.jpg" />
-          <NewsContent>
-            <h1>뉴스 제목</h1>
-            <div>뉴스 내용 --------------------- 뉴스 내용</div>
-          </NewsContent>
-        </SwiperSlide>
-        <SwiperSlide>
-          <img src="https://swiperjs.com/demos/images/nature-2.jpg" />
-          <NewsContent>
-            <h1>뉴스 제목</h1>
-            <div>뉴스 내용 --------------------- 뉴스 내용</div>
-          </NewsContent>
-        </SwiperSlide>
-        <SwiperSlide>
-          <img src="https://swiperjs.com/demos/images/nature-3.jpg" />
-          <NewsContent>
-            <h1>뉴스 제목</h1>
-            <div>뉴스 내용 --------------------- 뉴스 내용</div>
-          </NewsContent>
-        </SwiperSlide>
-        <SwiperSlide>
-          <img src="https://swiperjs.com/demos/images/nature-4.jpg" />
-          <NewsContent>
-            <h1>뉴스 제목</h1>
-            <div>뉴스 내용 --------------------- 뉴스 내용</div>
-          </NewsContent>
-        </SwiperSlide>
-        <SwiperSlide>
-          <img src="https://swiperjs.com/demos/images/nature-5.jpg" />
-          <NewsContent>
-            <h1>뉴스 제목</h1>
-            <div>뉴스 내용 --------------------- 뉴스 내용</div>
-          </NewsContent>
-        </SwiperSlide>
-        <SwiperSlide>
-          <img src="https://swiperjs.com/demos/images/nature-6.jpg" />
-          <NewsContent>
-            <h1>뉴스 제목</h1>
-            <div>뉴스 내용 --------------------- 뉴스 내용</div>
-          </NewsContent>
-        </SwiperSlide>
-        <SwiperSlide>
-          <img src="https://swiperjs.com/demos/images/nature-7.jpg" />
-          <NewsContent>
-            <h1>뉴스 제목</h1>
-            <div>뉴스 내용 --------------------- 뉴스 내용</div>
-          </NewsContent>
-        </SwiperSlide>
-        <SwiperSlide>
-          <img src="https://swiperjs.com/demos/images/nature-8.jpg" />
-          <NewsContent>
-            <h1>뉴스 제목</h1>
-            <div>뉴스 내용 --------------------- 뉴스 내용</div>
-          </NewsContent>
-        </SwiperSlide>
-        <SwiperSlide>
-          <img src="https://swiperjs.com/demos/images/nature-9.jpg" />
-          <NewsContent>
-            <h1>뉴스 제목</h1>
-            <div>뉴스 내용 --------------------- 뉴스 내용</div>
-          </NewsContent>
-        </SwiperSlide>
+        {[...Array(10)].map((e, index) => (
+          <SwiperSlide>
+            <NewsSlide
+              key={index}
+              image={image}
+              title={"뉴스제목"}
+              content={"뉴스내용용용ㅇㅇㅇ용"}
+            />
+          </SwiperSlide>
+        ))}
       </Swiper>
     </Container>
   );
@@ -126,11 +75,11 @@ const Container = styled.div`
     right: 0;
     width: 80px;
     height: 80px;
-    border-bottom: 1px dashed white;
+    border-bottom: 1px solid ${(props) => props.theme.colors.placeholder + "AA"};
     border-right: 1px solid white;
     border-radius: 0 0 7px 0;
     content: "";
-    transition: all 0.3s ease;
+    transition: width 0.3s ease, height 0.3s ease;
   }
 
   .swiper .swiper-slide::after {
@@ -139,11 +88,11 @@ const Container = styled.div`
     left: 0;
     width: 80px;
     height: 80px;
-    border-top: 1px solid white;
-    border-left: 1px dashed white;
+    border-top: 1px solid ${(props) => props.theme.colors.placeholder + "AA"};
+    border-left: 1px solid #ffffffaa;
     border-radius: 7px 0 0 0;
     content: "";
-    transition: all 0.3s ease;
+    transition: width 0.3s ease, height 0.3s ease;
   }
 
   .swiper .swiper-slide:hover {
@@ -161,33 +110,13 @@ const Container = styled.div`
   .swiper .swiper-slide:hover::after {
     width: 170px;
     height: 170px;
-    transition: all 0.3s ease;
+    transition: width 0.3s ease, height 0.3s ease;
   }
   img {
     width: 580px;
     height: 380px;
     border-radius: 0.5rem;
     opacity: 0.9;
-  }
-`;
-
-const NewsContent = styled.div`
-  position: absolute;
-  bottom: 0rem;
-  left: 0rem;
-  width: calc(100% - 4rem);
-  margin: 1rem;
-  padding: 2rem 1rem;
-  border-radius: 0.5rem;
-  background-color: ${(props) => props.theme.colors.cardBackground + "33"};
-  color: #ffffff;
-  h1 {
-    font-size: 2rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-  }
-  div {
-    font-size: 1rem;
   }
 `;
 

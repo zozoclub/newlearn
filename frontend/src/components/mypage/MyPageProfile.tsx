@@ -1,5 +1,5 @@
 import { useState } from "react";
-import defaultProfile from "@assets/images/defaultProfile.jpg";
+import defaultProfile from "@assets/images/defaultProfile.webp";
 import styled from "styled-components";
 import EditIcon from "@assets/icons/EditIcon";
 import SocialNaver from "@assets/icons/SocialNaver";

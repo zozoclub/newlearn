@@ -1,3 +1,4 @@
+import { PWAInstallPrompt } from "@components/PWAInstallPrompt";
 import Clock from "@components/mainpage/Clock";
 import DailyNews from "@components/mainpage/DailyNews";
 import Widget from "@components/mainpage/Widget";
@@ -34,6 +35,7 @@ const MainPage = () => {
           <Widget key={index} variety={widget.variety} />
         ))}
       </WidgetContainer>
+      <PWAInstallPrompt />
     </Container>
   );
 };

@@ -3,15 +3,30 @@ import NavarButton from "@assets/images/naverButton.png";
 import KakaoButton from "@assets/images/kakaoButton.png";
 import FullLogo from "@components/common/FullLogo";
 import { kakaoLogin, naverLogin } from "@services/userService";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { usePageTransition } from "@hooks/usePageTransition";
 import { useSetRecoilState } from "recoil";
 import locationState from "@store/locationState";
+import { getRefreshToken } from "@services/axiosInstance";
 
 const LoginPage = () => {
-  const isLogin = sessionStorage.getItem("accessToken");
+  const [isLogin, setIsLogin] = useState(sessionStorage.getItem("accessToken"));
   const transitionTo = usePageTransition();
   const setCurrentLocation = useSetRecoilState(locationState);
+  const requestAccessToken = async () => {
+    try {
+      const response = await getRefreshToken();
+      if (response) {
+        setIsLogin(response);
+        console.log("refreshToken 유효, 토큰 재발급");
+        transitionTo("/");
+      } else {
+        console.log("refreshToken 만료, 다시 로그인하세요.");
+      }
+    } catch {
+      console.log("refreshToken 만료, 다시 로그인하세요.");
+    }
+  };
 
   useEffect(() => {
     setCurrentLocation("login");
@@ -20,6 +35,8 @@ const LoginPage = () => {
   useEffect(() => {
     if (isLogin) {
       transitionTo("/");
+    } else {
+      requestAccessToken();
     }
   }, [isLogin, transitionTo]);
 

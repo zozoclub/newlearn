@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.time.LocalDate;
@@ -124,20 +125,29 @@ public class NewsServiceImpl implements NewsService{
         News news = newsRepository.findById(newsReadRequestDTO.getNewsId())
                 .orElseThrow(() -> new EntityNotFoundException("뉴스를 찾을 수 없습니다."));
 
-        // 사용자의 뉴스 스크랩 처리
-        UserNewsScrap userNewsScrap = userNewsScrapRepository.findByUserAndNews(user, news)
-                .orElseGet(() -> UserNewsScrap.builder()
-                        .user(user)
-                        .news(news)
-                        .difficulty(newsReadRequestDTO.getDifficulty())
-                        .build());
+        // 사용자의 뉴스 스크랩 처리 //
 
-//        userNewsRead.markAsRead(newsReadRequestDTO.getDifficulty());
-        userNewsScrapRepository.save(userNewsScrap);
+        // 해당 사용자와 뉴스, 난이도에 대한 스크랩이 이미 존재하는지 확인
+        Optional<UserNewsScrap> existingScrap = userNewsScrapRepository.findByUserAndNewsAndDifficulty(
+                user, news, newsReadRequestDTO.getDifficulty());
 
-        // 사용자 스크랩수 +1
-        user.incrementScrapCount();
-        userRepository.save(user);
+        if (existingScrap.isPresent()) {
+            // 이미 같은 난이도뉴스를 스크랩한 경우 예외 처리
+            throw new IllegalStateException("이미 같은 난이도로 스크랩한 뉴스입니다.");
+        } else {
+            // 새로운 스크랩 생성
+            UserNewsScrap userNewsScrap = UserNewsScrap.builder()
+                    .user(user)
+                    .news(news)
+                    .difficulty(newsReadRequestDTO.getDifficulty())
+                    .build();
+
+            userNewsScrapRepository.save(userNewsScrap);
+
+            // 사용자 스크랩수 +1
+            user.incrementScrapCount();
+            userRepository.save(user);
+        }
 
     }
 }

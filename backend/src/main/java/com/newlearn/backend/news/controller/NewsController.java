@@ -140,7 +140,6 @@ public class NewsController {
 
     }
 
-
     // 뉴스 스크랩 취소
 
 

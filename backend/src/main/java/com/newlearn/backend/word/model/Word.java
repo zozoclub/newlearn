@@ -61,8 +61,8 @@ public class Word {
 	}
 
 	// 복습 관련 로직
-	public void restudy(boolean remembered) {
-		if (remembered) {
+	public void restudy(boolean isCorrect) {
+		if (isCorrect) {
 			levelUp();
 		} else {
 			resetLevel();
@@ -83,13 +83,17 @@ public class Word {
 		this.nextRestudyDate = LocalDateTime.now().plusDays(1);
 	}
 
-	private int getNextReviewInterval() {
-		switch (this.restudyLevel.intValue()) {
-			case 1: return 1;
-			case 2: return 3;
-			case 3: return 7;
-			case 4: return 30;
-			default: return 60;
+	private Long getNextReviewInterval() {
+		if (this.restudyLevel == 1L) {
+			return 1L;
+		} else if (this.restudyLevel == 2L) {
+			return 3L;
+		} else if (this.restudyLevel == 3L) {
+			return 7L;
+		} else if (this.restudyLevel == 4L) {
+			return 30L;
+		} else {
+			return 60L;
 		}
 	}
 }

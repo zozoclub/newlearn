@@ -15,7 +15,9 @@ import com.newlearn.backend.common.ApiResponse;
 import com.newlearn.backend.common.ErrorCode;
 import com.newlearn.backend.user.model.Users;
 import com.newlearn.backend.user.service.UserService;
+import com.newlearn.backend.word.dto.request.RestudyResultRequestDTO;
 import com.newlearn.backend.word.dto.request.WordRequestDto;
+import com.newlearn.backend.word.dto.response.RestudyWordResponseDTO;
 import com.newlearn.backend.word.dto.response.WordDetailResponseDTO;
 import com.newlearn.backend.word.dto.response.WordResponseDTO;
 import com.newlearn.backend.word.service.WordService;
@@ -126,6 +128,72 @@ public class WordController {
 			return ApiResponse.createSuccess(null, "성공적으로 단어 완료 하였슴다");
 		} catch (Exception e) {
 			return ApiResponse.createError(ErrorCode.WORD_FIND_FAILED);
+		}
+	}
+
+	//로그인하면 오늘의 망각곡선 단어들 가져오기
+	@GetMapping("/restudy")
+	public ApiResponse<?> getRestudyWords(Authentication authentication) {
+		try {
+			Users user = userService.findByEmail(authentication.getName());
+			if(user == null) {
+				return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
+			}
+			List<RestudyWordResponseDTO> response = wordService.getWordsForRestudy(user);
+
+			return ApiResponse.createSuccess(response, "성공적 조회");
+		}
+		catch (Exception e) {
+			return ApiResponse.createError(ErrorCode.WORD_FIND_FAILED);
+		}
+	}
+
+	//망각곡선 진짜 안나오게 하기
+	@PostMapping("/restudy/complete/{wordId}")
+	public ApiResponse<?> completeRestudyWord(Authentication authentication, @PathVariable Long wordId) {
+		try {
+			Users user = userService.findByEmail(authentication.getName());
+			if(user == null) {
+				return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
+			}
+			wordService.finalCompleteRestudy(wordId);
+			return ApiResponse.createSuccess(null, "성공적 변경");
+
+		} catch (Exception e) {
+			return ApiResponse.createError(ErrorCode.WORD_UPDATE_FAILED);
+		}
+	}
+
+	//망각곡선 내일로 미루기
+	@PostMapping("/restudy/skip/{wordId}")
+	public ApiResponse<?> skipRestudyWord(Authentication authentication, @PathVariable Long wordId) {
+		try {
+			Users user = userService.findByEmail(authentication.getName());
+			if(user == null) {
+				return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
+			}
+			wordService.skipRestudy(wordId);
+			return ApiResponse.createSuccess(null, "성공적 변경");
+
+		} catch (Exception e) {
+			return ApiResponse.createError(ErrorCode.WORD_UPDATE_FAILED);
+		}
+	}
+
+	//망각곡선 모달창 결과 저장 및 닫기
+	@PostMapping("/restudy/exit")
+	public ApiResponse<?> exitRestudyWord(Authentication authentication, @RequestBody List<RestudyResultRequestDTO> results) {
+
+		try {
+			Users user = userService.findByEmail(authentication.getName());
+			if(user == null) {
+				return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
+			}
+			wordService.exitAndSaveResult(results);
+			return ApiResponse.createSuccess(null, "단어 처리 성공");
+
+		} catch (Exception e) {
+			return ApiResponse.createError(ErrorCode.WORD_UPDATE_FAILED);
 		}
 	}
 }

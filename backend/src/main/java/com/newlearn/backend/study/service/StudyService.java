@@ -2,9 +2,11 @@ package com.newlearn.backend.study.service;
 
 
 import com.newlearn.backend.study.dto.request.GoalRequestDTO;
+import com.newlearn.backend.study.dto.request.PronounceRequestDTO;
 import com.newlearn.backend.study.dto.request.WordTestResultRequestDTO;
 import com.newlearn.backend.study.dto.response.*;
 import com.newlearn.backend.user.model.Users;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -25,5 +27,7 @@ public interface StudyService {
     WordTestResultDetailResponseDTO getWordTestResult(Long userId, Long quizId);
 
     List<PronounceTestResponseDTO> getPronounceTestProblems(Long userId, Users user);
+
+    void savePronounceTestResult(Long userId, PronounceRequestDTO pronounceRequestDTO, MultipartFile file);
 
 }

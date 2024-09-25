@@ -16,6 +16,7 @@ import com.newlearn.backend.common.ErrorCode;
 import com.newlearn.backend.user.model.Users;
 import com.newlearn.backend.user.service.UserService;
 import com.newlearn.backend.word.dto.request.WordRequestDto;
+import com.newlearn.backend.word.dto.response.RestudyWordResponseDTO;
 import com.newlearn.backend.word.dto.response.WordDetailResponseDTO;
 import com.newlearn.backend.word.dto.response.WordResponseDTO;
 import com.newlearn.backend.word.service.WordService;
@@ -128,4 +129,23 @@ public class WordController {
 			return ApiResponse.createError(ErrorCode.WORD_FIND_FAILED);
 		}
 	}
+
+	//로그인하면 오늘의 망각곡선 단어들 가져오기
+	@GetMapping("/restudy")
+	public ApiResponse<?> getRestudyWords(Authentication authentication) {
+		try {
+			Users user = userService.findByEmail(authentication.getName());
+			if(user == null) {
+				return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
+			}
+			List<RestudyWordResponseDTO> response = wordService.getWordsForRestudy(user);
+
+			return ApiResponse.createSuccess(response, "성공적 조회");
+		}
+		catch (Exception e) {
+			return ApiResponse.createError(ErrorCode.WORD_FIND_FAILED);
+		}
+	}
+
+	//망각
 }

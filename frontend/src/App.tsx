@@ -13,7 +13,7 @@ import TransitionContent from "@components/common/TransitionContent";
 import { useEffect } from "react";
 import loginState from "@store/loginState";
 
-import { getToken, messaging } from "./firebase"
+import { getToken, messaging } from "./firebase";
 
 const App: React.FC = () => {
   const theme = useRecoilValue(themeState) === "dark" ? darkTheme : lightTheme;
@@ -51,9 +51,11 @@ Welcome To NewsLearn!"
     }
   };
 
+  // 알림 권한 설정
   useEffect(() => {
     requestPermission();
   }, []);
+
   return (
     <ThemeProvider theme={theme}>
       <GlobalStyle />

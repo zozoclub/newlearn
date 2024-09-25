@@ -38,6 +38,13 @@ const PrivateRoute = () => {
           console.log(error);
           setLoginState(false);
         }
+      } else {
+        try {
+          const response = await getRefreshToken();
+          console.log(response);
+        } catch {
+          setLoginState(false);
+        }
       }
 
       setIsLoading(false);

@@ -16,7 +16,8 @@ const Clock = () => {
       }
     }, 1000);
     return () => clearInterval(id);
-  }, [time]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <Container>

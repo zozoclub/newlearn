@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import loginState from "@store/loginState";
 import { useRecoilValue, useSetRecoilState } from "recoil";
+import { getRefreshToken } from "@services/axiosInstance";
 
 const useQuery = () => {
   return new URLSearchParams(useLocation().search);

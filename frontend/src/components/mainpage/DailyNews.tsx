@@ -30,7 +30,7 @@ const DailyNews: React.FC = () => {
         modules={[EffectCoverflow, Pagination, Mousewheel]}
         className="mySwiper"
       >
-        {[...Array(10)].map((index) => (
+        {[...Array(10)].map((_, index) => (
           <SwiperSlide key={index}>
             <NewsSlide
               image={image}

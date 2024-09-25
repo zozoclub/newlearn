@@ -1,4 +1,5 @@
 import axios, { InternalAxiosRequestConfig } from "axios";
+import { logout } from "./userService";
 
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_BACKEND_URL,
@@ -36,7 +37,7 @@ axiosInstance.interceptors.response.use(
         originalRequest.headers["Authorization"] = newToken;
         return axiosInstance(originalRequest);
       } catch (refreshError) {
-        // await logout();
+        await logout();
         return Promise.reject(refreshError);
       }
     }
@@ -44,13 +45,17 @@ axiosInstance.interceptors.response.use(
   }
 );
 
-const getRefreshToken = async () => {
-  const response = await axios.post(`/user/refresh-token`, {});
-  const accessToken = response.data.accessToken;
-  sessionStorage.setItem("accessToken", accessToken);
-  axiosInstance.defaults.headers["Authorization"] = accessToken;
-
-  return accessToken;
+export const getRefreshToken = async () => {
+  try {
+    const response = await axios.post(`/user/refresh-token`, {});
+    const accessToken = response.data.accessToken;
+    sessionStorage.setItem("accessToken", accessToken);
+    axiosInstance.defaults.headers["Authorization"] = accessToken;
+    return accessToken;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
 };
 
 export default axiosInstance;

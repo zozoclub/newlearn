@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.newlearn.backend.user.model.Users;
+import com.newlearn.backend.word.dto.request.RestudyResultRequestDTO;
 import com.newlearn.backend.word.dto.request.WordRequestDto;
 import com.newlearn.backend.word.dto.response.RestudyWordResponseDTO;
 import com.newlearn.backend.word.dto.response.WordDetailResponseDTO;
@@ -32,4 +33,5 @@ public interface WordService {
 
 	void finalCompleteRestudy(Long wordId);
 
+	void exitAndSaveResult(List<RestudyResultRequestDTO> results);
 }

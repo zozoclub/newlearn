@@ -15,6 +15,7 @@ import com.newlearn.backend.common.ApiResponse;
 import com.newlearn.backend.common.ErrorCode;
 import com.newlearn.backend.user.model.Users;
 import com.newlearn.backend.user.service.UserService;
+import com.newlearn.backend.word.dto.request.RestudyResultRequestDTO;
 import com.newlearn.backend.word.dto.request.WordRequestDto;
 import com.newlearn.backend.word.dto.response.RestudyWordResponseDTO;
 import com.newlearn.backend.word.dto.response.WordDetailResponseDTO;
@@ -173,6 +174,23 @@ public class WordController {
 			}
 			wordService.skipRestudy(wordId);
 			return ApiResponse.createSuccess(null, "성공적 변경");
+
+		} catch (Exception e) {
+			return ApiResponse.createError(ErrorCode.WORD_UPDATE_FAILED);
+		}
+	}
+
+	//망각곡선 모달창 결과 저장 및 닫기
+	@PostMapping("/restudy/exit")
+	public ApiResponse<?> exitRestudyWord(Authentication authentication, @RequestBody List<RestudyResultRequestDTO> results) {
+
+		try {
+			Users user = userService.findByEmail(authentication.getName());
+			if(user == null) {
+				return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
+			}
+			wordService.exitAndSaveResult(results);
+			return ApiResponse.createSuccess(null, "단어 처리 성공");
 
 		} catch (Exception e) {
 			return ApiResponse.createError(ErrorCode.WORD_UPDATE_FAILED);

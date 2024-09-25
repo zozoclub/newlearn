@@ -6,10 +6,12 @@ import java.util.List;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.newlearn.backend.user.model.Users;
+import com.newlearn.backend.word.dto.request.RestudyResultRequestDTO;
 import com.newlearn.backend.word.dto.request.WordRequestDto;
 import com.newlearn.backend.word.dto.response.RestudyWordResponseDTO;
 import com.newlearn.backend.word.dto.response.WordDetailResponseDTO;
@@ -183,6 +185,24 @@ public class WordServiceImpl implements WordService {
 
 		word.setFinalComplete(true);
 		wordRepository.save(word);
+	}
+
+	@Override
+	public void exitAndSaveResult(List<RestudyResultRequestDTO> results) {
+
+		for(RestudyResultRequestDTO r : results) {
+			Word nowWord = wordRepository.findById(r.getWordId()).orElseThrow(() -> new EntityNotFoundException("Word not found"));
+
+			//만약 참여를 했다면,
+			if(r.isDoing()) {
+				//참여를 했는데 만약, 정답을 맞췄으면, 혹은 안했다면
+				nowWord.restudy(r.isCorrect());
+			}
+			else {
+				nowWord.setNextRestudyDate(LocalDateTime.now().plusDays(1));
+			}
+			wordRepository.save(nowWord);
+		}
 	}
 
 }

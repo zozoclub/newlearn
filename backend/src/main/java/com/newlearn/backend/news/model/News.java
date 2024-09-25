@@ -81,4 +81,8 @@ public class News {
         }
     }
 
+    public void incrementHit() {
+        this.hit++;
+    }
+
 }

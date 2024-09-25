@@ -1,10 +1,16 @@
 package com.newlearn.backend.news.service;
 
 import com.newlearn.backend.news.dto.request.AllNewsRequestDTO;
+import com.newlearn.backend.news.dto.request.NewsReadRequestDTO;
 import com.newlearn.backend.news.dto.response.NewsResponseDTO;
 import com.newlearn.backend.news.model.News;
+import com.newlearn.backend.news.model.UserNewsRead;
 import com.newlearn.backend.news.repository.NewsRepository;
+import com.newlearn.backend.news.repository.UserNewsReadRepository;
+import com.newlearn.backend.user.model.Users;
 import com.newlearn.backend.user.repository.CategoryRepository;
+import com.newlearn.backend.user.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -21,7 +27,8 @@ import java.util.List;
 public class NewsServiceImpl implements NewsService{
 
     private final NewsRepository newsRepository;
-    private final CategoryRepository categoryRepository;
+    private final UserRepository userRepository;
+    private final UserNewsReadRepository userNewsReadRepository;
 
     @Override
     public Page<NewsResponseDTO> getAllNews(AllNewsRequestDTO newsRequestDTO) {
@@ -37,6 +44,31 @@ public class NewsServiceImpl implements NewsService{
 
         // 3. 응답 DTO 리스트 만들기
         return allNewsList.map(news -> convertToDTO(news, contentColName));
+    }
+
+    @Override
+    public void readNews(Long userId, NewsReadRequestDTO newsReadRequestDTO) {
+        Users user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
+
+        News news = newsRepository.findById(newsReadRequestDTO.getNewsId())
+                .orElseThrow(() -> new EntityNotFoundException("뉴스를 찾을 수 없습니다."));
+
+        // 유저의 뉴스 읽음 처리
+        UserNewsRead userNewsRead = userNewsReadRepository.findByUserAndNews(user, news)
+                .orElseGet(() -> UserNewsRead.builder()
+                        .user(user)
+                        .news(news)
+                        .categoryId(news.getCategory().getCategoryId())
+                        .build());
+
+        userNewsRead.markAsRead(newsReadRequestDTO.getDifficulty());
+        userNewsReadRepository.save(userNewsRead);
+
+        // 뉴스 조회수 +1
+        news.incrementHit();
+        newsRepository.save(news);
+
     }
 
     // 요청 lang & difficulty 에 따른 컬럼명 지정

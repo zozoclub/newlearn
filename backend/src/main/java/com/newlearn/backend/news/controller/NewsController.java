@@ -3,6 +3,7 @@ package com.newlearn.backend.news.controller;
 import com.newlearn.backend.common.ApiResponse;
 import com.newlearn.backend.common.ErrorCode;
 import com.newlearn.backend.news.dto.request.AllNewsRequestDTO;
+import com.newlearn.backend.news.dto.request.NewsReadRequestDTO;
 import com.newlearn.backend.news.dto.response.NewsResponseDTO;
 import com.newlearn.backend.news.service.NewsService;
 import com.newlearn.backend.user.model.Users;
@@ -60,6 +61,30 @@ public class NewsController {
 
 
     // 뉴스 읽음 처리
+    @PostMapping("/read/{newsId}/{difficulty}")
+    public ApiResponse<?> readNews(Authentication authentication,
+                                   @PathVariable("newsId") long newsId,
+                                   @PathVariable("difficulty") int difficulty) throws Exception {
+        try {
+            Users user = userService.findByEmail(authentication.getName());
+            if (user == null) {
+                return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
+            }
+
+            NewsReadRequestDTO newsReadRequestDTO = NewsReadRequestDTO.builder()
+                    .newsId(newsId)
+                    .difficulty(difficulty)
+                    .build();
+            System.out.println("야");
+            newsService.readNews(user.getUserId(), newsReadRequestDTO); //뉴스 읽음 처리
+            System.out.println("야2");
+            return ApiResponse.createSuccessWithNoContent("뉴스 읽음 처리 성공");
+        } catch (Exception e) {
+            log.error("뉴스 읽음 처리 중 실패", e);
+            return ApiResponse.createError(ErrorCode.NEWS_READ_FAILED);
+        }
+
+    }
 
     // 뉴스 스크랩
 

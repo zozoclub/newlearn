@@ -3,21 +3,22 @@ package com.newlearn.backend.study.controller;
 import com.newlearn.backend.common.ApiResponse;
 import com.newlearn.backend.common.ErrorCode;
 import com.newlearn.backend.study.dto.request.GoalRequestDTO;
+import com.newlearn.backend.study.dto.request.PronounceRequestDTO;
 import com.newlearn.backend.study.dto.request.WordTestRequestDTO;
-import com.newlearn.backend.study.dto.request.WordTestResultDTO;
-import com.newlearn.backend.study.dto.response.PronounceTestResponseDTO;
-import com.newlearn.backend.study.dto.response.StudyProgressDTO;
-import com.newlearn.backend.study.dto.response.WordTestResponseDTO;
+import com.newlearn.backend.study.dto.request.WordTestResultRequestDTO;
+import com.newlearn.backend.study.dto.response.*;
 import com.newlearn.backend.study.service.StudyService;
 import com.newlearn.backend.user.model.Users;
 import com.newlearn.backend.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -80,7 +81,7 @@ public class StudyController {
                 return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
             }
 
-            List<WordTestResponseDTO> tests = studyService.getWordTestProblems(user.getUserId(), user, wordTestRequestDTO.getTotalCount());
+            List<WordTestResponseDTO> tests = studyService.getWordTestProblems(user.getUserId(), wordTestRequestDTO.getTotalCount());
 
             return ApiResponse.createSuccess(tests, "단어 상세 조회 성공");
         } catch (Exception e) {
@@ -90,9 +91,61 @@ public class StudyController {
     }
 
     // 단어 테스트 결과 저장
+    @PostMapping("/word/test")
+    public ApiResponse<?> setStudyWordTest(Authentication authentication,
+                                           @RequestBody WordTestResultRequestDTO wordTestResultRequestDTO) throws Exception {
+        try {
+            Users user = userService.findByEmail(authentication.getName());
+            if (user == null) {
+                return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
+            }
 
+            studyService.saveWordTestResult(user.getUserId(), wordTestResultRequestDTO);
+
+            return ApiResponse.createSuccess(null, "단어 테스트 저장 성공");
+        } catch (Exception e) {
+            log.error("단어 테스트 결과 저장 중 오류 발생", e);
+            return ApiResponse.createError(ErrorCode.WORD_TEST_RESULT_CREATE_FAILED);
+        }
+    }
+    
     // 단어 테스트 결과 리스트 조회
+    @GetMapping("/word/test/list")
+    public ApiResponse<?> getStudyWordTestList(Authentication authentication) throws Exception {
+        try {
+            Users user = userService.findByEmail(authentication.getName());
+            if (user == null) {
+                return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
+            }
 
+            List<WordTestResultResponseDTO> results = studyService.getWordTestResults(user.getUserId());
+
+            return ApiResponse.createSuccess(results, "단어 테스트 결과 리스트 조회 성공");
+        } catch (Exception e) {
+            log.error("단어 테스트 결과 리스트 조회 중 오류 발생", e);
+            return ApiResponse.createError(ErrorCode.WORD_TEST_RESULT_NOT_FOUND);
+        }
+    }
+
+    // 단어 문장 빈칸 테스트 결과 상세 조회
+    @GetMapping("/word/test/{quizId}")
+    public ApiResponse<?> getStudyWordTest(Authentication authentication,
+                                           @RequestParam("quizId") Long quizId) throws Exception {
+        try {
+            Users user = userService.findByEmail(authentication.getName());
+            if (user == null) {
+                return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
+            }
+
+            WordTestResultDetailResponseDTO result = studyService.getWordTestResult(user.getUserId(), quizId);
+
+            return ApiResponse.createSuccess(result, "단어 테스트 결과 상세 조회 성공");
+        } catch (Exception e) {
+            log.error("단어 테스트 결과 상세 조회 중 오류 발생", e);
+            return ApiResponse.createError(ErrorCode.WORD_TEST_NOT_FOUND);
+        }
+    }
+    
     // 발음 테스트 예문 가져오기
     @GetMapping("/pronounce/test")
     public ApiResponse<?> getPronounceWordTest(Authentication authentication) throws Exception {
@@ -112,8 +165,58 @@ public class StudyController {
     }
 
     // 발음 테스트 결과 저장
+    @PostMapping(value = "/pronounce/test", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ApiResponse<?> setPronounceWordTest(Authentication authentication,
+                                               @RequestParam("exampleSentence") String exampleSentence,
+                                               @RequestParam("accuracyScore") long accuracyScore,
+                                               @RequestParam("fluencyScore") long fluencyScore,
+                                               @RequestParam("completenessScore") long completenessScore,
+                                               @RequestParam("prosodyScore") long prosodyScore,
+                                               @RequestParam("totalScore") long totalScore,
+                                               @RequestParam("files") MultipartFile file) throws Exception {
+        try {
+            Users user = userService.findByEmail(authentication.getName());
+            if (user == null) {
+                return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
+            }
+
+            PronounceRequestDTO pronounceRequestDTO = PronounceRequestDTO.builder()
+                    .exampleSentence(exampleSentence)
+                    .accuracyScore(accuracyScore)
+                    .fluencyScore(fluencyScore)
+                    .completenessScore(completenessScore)
+                    .prosodyScore(prosodyScore)
+                    .totalScore(totalScore)
+                    .build();
+
+            // 비동기적으로 파일 업로드
+            CompletableFuture<String> fileUploadFuture = studyService.savePronounceTestResultAsync(user.getUserId(), pronounceRequestDTO, file);
+
+            // 즉시 성공 응답 반환
+            return ApiResponse.createSuccess(null, "발음 테스트 결과 저장 성공. 파일 업로드 중입니다.");
+        } catch (Exception e) {
+            log.error("발음 테스트 결과 저장 중 오류 발생", e);
+            return ApiResponse.createError(ErrorCode.PRONOUNCE_TEST_RESULT_UPDATE_FAILED);
+        }
+    }
 
     // 발음 테스트 결과 리스트 조회
+    @GetMapping("/pronounce/list")
+    public ApiResponse<?> setPronounceWordTest(Authentication authentication) throws Exception {
+        try {
+            Users user = userService.findByEmail(authentication.getName());
+            if (user == null) {
+                return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
+            }
+
+            List<PronounceTestResultResponseDTO> results = studyService.getPronounceTestResults(user.getUserId());
+
+            return ApiResponse.createSuccess(results, "발음 테스트 결과 리스트 조회 성공");
+        } catch (Exception e) {
+            log.error("발음 테스트 결과 리스트 조회 중 오류 발생", e);
+            return ApiResponse.createError(ErrorCode.PRONOUNCE_TEST_RESULT_NOT_FOUND);
+        }
+    }
 
     // 발음 테스트 결과 상세 조회
 

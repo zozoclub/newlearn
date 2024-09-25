@@ -2,9 +2,14 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
+import collections
+import collections.abc
 
 
 def main():
+    for name in ['Callable', 'Iterable', 'Iterator', 'Mapping', 'MutableMapping']:
+        if not hasattr(collections, name):
+            setattr(collections, name, getattr(collections.abc, name))
     """Run administrative tasks."""
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Crawling.settings')
     try:

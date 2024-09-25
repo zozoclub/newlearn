@@ -147,5 +147,22 @@ public class WordController {
 		}
 	}
 
-	//망각
+	//망각곡선 진짜 안나오게 하기
+	@PostMapping("/restudy/complete/{wordId}")
+	public ApiResponse<?> completeRestudyWord(Authentication authentication, @PathVariable Long wordId) {
+		try {
+			Users user = userService.findByEmail(authentication.getName());
+			if(user == null) {
+				return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
+			}
+			wordService.finalCompleteRestudy(wordId);
+			return ApiResponse.createSuccess(null, "성공적 변경");
+
+		} catch (Exception e) {
+			return ApiResponse.createError(ErrorCode.WORD_UPDATE_FAILED);
+		}
+	}
+
+	//망각곡선 내일로 미루기
+
 }

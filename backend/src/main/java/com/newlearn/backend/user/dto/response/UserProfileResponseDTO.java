@@ -1,12 +1,16 @@
 package com.newlearn.backend.user.dto.response;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+
+import com.newlearn.backend.user.model.Category;
+import com.newlearn.backend.user.model.Users;
 
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-@Builder
 public class UserProfileResponseDTO {
 
 	private Long userId;
@@ -14,7 +18,7 @@ public class UserProfileResponseDTO {
 	private String nickname;
 	private Long rank;
 	private Long difficulty;
-	private List<Integer> interestes;
+	private List<String> categories;
 	private Long experience;
 	private Long totalNewsReadCount;
 	private Long unCompleteWordCount;
@@ -22,6 +26,29 @@ public class UserProfileResponseDTO {
 	private Long scrapCount;
 
 	private Long skin;
-	private Long eye;
+	private Long eyes;
 	private Long mask;
+
+	public UserProfileResponseDTO(Users user, Long unCompleteWordCount, Long completeWordCount) {
+		this.userId = user.getUserId();
+		this.email = user.getEmail();
+		this.nickname = user.getNickname();
+		this.rank = 1L;
+		this.difficulty = user.getDifficulty();
+		this.experience = user.getExperience();
+		this.totalNewsReadCount = user.getTotalNewsReadCount();
+		this.unCompleteWordCount = unCompleteWordCount;
+		this.completeWordCount = completeWordCount;
+		this.scrapCount = user.getScrapCount();
+		this.skin = user.getAvatar().getSkin();
+		this.eyes = user.getAvatar().getEyes();
+		this.mask = user.getAvatar().getMask();
+
+		// interests 초기화
+		Set<Category> set = user.getCategories();
+		this.categories = new ArrayList<>();
+		for (Category category : set) {
+			this.categories.add(category.getCategoryName());
+		}
+	}
 }

@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import com.newlearn.backend.user.dto.request.UpdateAvatarDTO;
 import com.newlearn.backend.user.dto.request.SignUpRequestDTO;
+import com.newlearn.backend.user.dto.response.UserProfileResponseDTO;
 import com.newlearn.backend.user.model.Users;
 
 public interface UserService {
@@ -24,4 +25,6 @@ public interface UserService {
 	void updateCategory(Long userId, List<String> categories);
 
 	void deleteUser(Long userId);
+
+	UserProfileResponseDTO getProfile(Long userId);
 }

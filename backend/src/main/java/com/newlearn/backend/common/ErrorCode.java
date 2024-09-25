@@ -69,6 +69,7 @@ public enum ErrorCode {
 	NEWS_LIST_NOT_FOUND("N001", HttpStatus.NOT_FOUND, "뉴스 목록 불러오기에 실패하였습니다."),
 	NEWS_NOT_FOUND("N002", HttpStatus.NOT_FOUND, "뉴스 상세 불러오기에 실패하였습니다."),
 	NEWS_READ_FAILED("N003", HttpStatus.BAD_REQUEST, "뉴스 읽음 처리에 실패하였습니다."),
+	NEWS_SCRAP_FAILED("N004", HttpStatus.BAD_REQUEST, "뉴스 스크랩 처리에 실패하였습니다."),
 	;
 
 	private final String code;

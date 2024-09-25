@@ -115,6 +115,30 @@ public class NewsController {
     }
 
     // 뉴스 스크랩
+    @PostMapping("/scrap/{newsId}/{difficulty}")
+    public ApiResponse<?> scrapNews(Authentication authentication,
+                                   @PathVariable("newsId") long newsId,
+                                   @PathVariable("difficulty") int difficulty) throws Exception {
+        try {
+            Users user = userService.findByEmail(authentication.getName());
+            if (user == null) {
+                return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
+            }
+
+            NewsReadRequestDTO newsReadRequestDTO = NewsReadRequestDTO.builder()
+                    .newsId(newsId)
+                    .difficulty(difficulty)
+                    .build();
+
+            newsService.scrapNews(user.getUserId(), newsReadRequestDTO); //뉴스 읽음 처리
+
+            return ApiResponse.createSuccessWithNoContent("뉴스 스크랩 처리 성공");
+        } catch (Exception e) {
+            log.error("뉴스 스크랩 처리 중 실패", e);
+            return ApiResponse.createError(ErrorCode.NEWS_SCRAP_FAILED);
+        }
+
+    }
 
 
     // 뉴스 스크랩 취소

@@ -128,4 +128,12 @@ public class Users {
 	public void incrementNewsReadCnt() {
 		this.totalNewsReadCount++;
 	}
+	// 스크랩수 +1
+	public void incrementScrapCount() {
+		this.scrapCount++;
+	}
+	// 스크랩수 -1
+	public void decrementScrapCount() {
+		this.scrapCount--;
+	}
 }

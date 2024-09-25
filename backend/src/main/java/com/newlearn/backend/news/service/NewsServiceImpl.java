@@ -6,9 +6,11 @@ import com.newlearn.backend.news.dto.response.NewsResponseDTO;
 import com.newlearn.backend.news.model.News;
 import com.newlearn.backend.news.model.UserDailyNewsRead;
 import com.newlearn.backend.news.model.UserNewsRead;
+import com.newlearn.backend.news.model.UserNewsScrap;
 import com.newlearn.backend.news.repository.NewsRepository;
 import com.newlearn.backend.news.repository.UserDailyNewsReadRepository;
 import com.newlearn.backend.news.repository.UserNewsReadRepository;
+import com.newlearn.backend.news.repository.UserNewsScrapRepository;
 import com.newlearn.backend.user.model.Users;
 import com.newlearn.backend.user.repository.CategoryRepository;
 import com.newlearn.backend.user.repository.UserRepository;
@@ -38,6 +40,7 @@ public class NewsServiceImpl implements NewsService{
     private final CategoryRepository categoryRepository;
     private final UserNewsReadRepository userNewsReadRepository;
     private final UserDailyNewsReadRepository userDailyNewsReadRepository;
+    private final UserNewsScrapRepository userNewsScrapRepository;
 
     @Override
     public Page<NewsResponseDTO> getAllNews(Long userId, AllNewsRequestDTO newsRequestDTO) {
@@ -111,7 +114,30 @@ public class NewsServiceImpl implements NewsService{
 
         dailyRead.incrementNewsReadCount();
         userDailyNewsReadRepository.save(dailyRead);
-
     }
 
+    @Override
+    public void scrapNews(Long userId, NewsReadRequestDTO newsReadRequestDTO) {
+        Users user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
+
+        News news = newsRepository.findById(newsReadRequestDTO.getNewsId())
+                .orElseThrow(() -> new EntityNotFoundException("뉴스를 찾을 수 없습니다."));
+
+        // 사용자의 뉴스 스크랩 처리
+        UserNewsScrap userNewsScrap = userNewsScrapRepository.findByUserAndNews(user, news)
+                .orElseGet(() -> UserNewsScrap.builder()
+                        .user(user)
+                        .news(news)
+                        .difficulty(newsReadRequestDTO.getDifficulty())
+                        .build());
+
+//        userNewsRead.markAsRead(newsReadRequestDTO.getDifficulty());
+        userNewsScrapRepository.save(userNewsScrap);
+
+        // 사용자 스크랩수 +1
+        user.incrementScrapCount();
+        userRepository.save(user);
+
+    }
 }

@@ -167,7 +167,7 @@ public class StudyController {
     // 발음 테스트 결과 저장
     @PostMapping(value = "/pronounce/test", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ApiResponse<?> setPronounceWordTest(Authentication authentication,
-                                               @RequestParam("exampleSentence") String exampleSentence,
+                                               @RequestParam List<Long> sentenceIds,
                                                @RequestParam("accuracyScore") long accuracyScore,
                                                @RequestParam("fluencyScore") long fluencyScore,
                                                @RequestParam("completenessScore") long completenessScore,
@@ -181,7 +181,6 @@ public class StudyController {
             }
 
             PronounceRequestDTO pronounceRequestDTO = PronounceRequestDTO.builder()
-                    .exampleSentence(exampleSentence)
                     .accuracyScore(accuracyScore)
                     .fluencyScore(fluencyScore)
                     .completenessScore(completenessScore)
@@ -190,7 +189,7 @@ public class StudyController {
                     .build();
 
             // 비동기적으로 파일 업로드
-            CompletableFuture<String> fileUploadFuture = studyService.savePronounceTestResultAsync(user.getUserId(), pronounceRequestDTO, file);
+            CompletableFuture<String> fileUploadFuture = studyService.savePronounceTestResultAsync(user.getUserId(), pronounceRequestDTO, file, sentenceIds);
 
             // 즉시 성공 응답 반환
             return ApiResponse.createSuccess(null, "발음 테스트 결과 저장 성공. 파일 업로드 중입니다.");

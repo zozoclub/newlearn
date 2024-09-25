@@ -6,7 +6,9 @@ import com.newlearn.backend.study.dto.request.PronounceRequestDTO;
 import com.newlearn.backend.study.dto.request.WordTestResultRequestDTO;
 import com.newlearn.backend.study.dto.response.*;
 import com.newlearn.backend.study.model.Goal;
+import com.newlearn.backend.study.model.PronounceTest;
 import com.newlearn.backend.study.model.UserAudioFile;
+import com.newlearn.backend.study.repository.PronounceTestRepository;
 import com.newlearn.backend.study.repository.UserAudioFileRepository;
 import com.newlearn.backend.user.repository.UserRepository;
 import com.newlearn.backend.word.model.*;
@@ -38,6 +40,7 @@ public class StudyServiceImpl implements StudyService{
     private final WordQuizAnswerRepository wordQuizAnswerRepository;
     private final WordQuizQuestionRepository wordQuizQuestionRepository;
     private final UserAudioFileRepository userAudioFileRepository;
+    private final PronounceTestRepository pronounceTestRepository;
     private final S3ObjectStorage s3ObjectStorage;
 
     @Override
@@ -198,15 +201,17 @@ public class StudyServiceImpl implements StudyService{
             WordSentence sentence = wordQuizQuestionRepository.findRandomSentenceByWordId(word.getWordId());
 
             tests.add(PronounceTestResponseDTO.builder()
-                    .sentence(sentence.getSentence())
-                    .sentenceMeaning(sentence.getSentenceMeaning())
-                    .build());
+                            .sentenceId(sentence.getSentenceId())
+                            .sentence(sentence.getSentence())
+                            .sentenceMeaning(sentence.getSentenceMeaning())
+                            .build());
         }
         return tests;
     }
 
     @Override
-    public CompletableFuture<String> savePronounceTestResultAsync(Long userId, PronounceRequestDTO pronounceRequestDTO, MultipartFile file) {
+    public CompletableFuture<String> savePronounceTestResultAsync(Long userId, PronounceRequestDTO pronounceRequestDTO,
+                                                                  MultipartFile file, List<Long> sentenceIds) {
         // 파일이 비어 있는지 확인
         if (file == null || file.isEmpty()) {
             throw new IllegalArgumentException("발음 테스트를 위한 파일이 제공되지 않았습니다.");
@@ -223,12 +228,26 @@ public class StudyServiceImpl implements StudyService{
         // DB에 파일 정보 저장
         UserAudioFile userAudioFile = UserAudioFile.builder()
                 .userId(userId)
-                .exampleSentence(pronounceRequestDTO.getExampleSentence())
-                .pronunciationScore(pronounceRequestDTO.getTotalScore())
                 .audioFileUrl(fileUrl)
+                .accuracyScore(pronounceRequestDTO.getAccuracyScore())
+                .fluencyScore(pronounceRequestDTO.getFluencyScore())
+                .completenessScore(pronounceRequestDTO.getCompletenessScore())
+                .prosodyScore(pronounceRequestDTO.getProsodyScore())
+                .totalScore(pronounceRequestDTO.getTotalScore())
                 .createdAt(LocalDateTime.now(ZoneId.of("Asia/Seoul")))
                 .build();
         userAudioFileRepository.save(userAudioFile);
+
+        // 발음 테스트 문장 저장
+        for (Long sentenceId : sentenceIds) {
+            PronounceTest pronounceTest = new PronounceTest();
+            pronounceTest.setAudioFileId(userAudioFile.getAudioFileId());
+            pronounceTest.setSentenceId(sentenceId);
+            pronounceTest.setCreatedAt(LocalDateTime.now(ZoneId.of("Asia/Seoul")));
+
+            // PronounceTest 결과 저장
+            pronounceTestRepository.save(pronounceTest);
+        }
 
         // 목표 업데이트
         Goal userGoal = studyRepository.findByUserId(userId)
@@ -258,7 +277,7 @@ public class StudyServiceImpl implements StudyService{
         List<PronounceTestResultResponseDTO> responseDTOs = audioFiles.stream()
                 .map(file -> PronounceTestResultResponseDTO.builder()
                         .audioFileId(file.getAudioFileId())
-                        .pronunciationScore(file.getPronunciationScore())
+//                        .pronunciationScore(file.getPronunciationScore())
                         .createdAt(file.getCreatedAt())
                         .build())
                 .collect(Collectors.toList());

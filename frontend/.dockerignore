@@ -1,14 +1,18 @@
-# 노드 모듈 제외
+# Logs
+logs
+*.log
+
+# 노드 모듈
 node_modules
 
-# 빌드 결과물 제외
+# 빌드 결과물
 dist
 build
 
-# 환경 설정 파일 제외
+# 환경 설정 파일
 .env
 
-# 개발 관련 파일들 제외
+# 개발 관련 파일들
 .git
 .gitignore
 README.md

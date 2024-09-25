@@ -4,8 +4,10 @@ import com.newlearn.backend.news.dto.request.AllNewsRequestDTO;
 import com.newlearn.backend.news.dto.request.NewsReadRequestDTO;
 import com.newlearn.backend.news.dto.response.NewsResponseDTO;
 import com.newlearn.backend.news.model.News;
+import com.newlearn.backend.news.model.UserDailyNewsRead;
 import com.newlearn.backend.news.model.UserNewsRead;
 import com.newlearn.backend.news.repository.NewsRepository;
+import com.newlearn.backend.news.repository.UserDailyNewsReadRepository;
 import com.newlearn.backend.news.repository.UserNewsReadRepository;
 import com.newlearn.backend.user.model.Users;
 import com.newlearn.backend.user.repository.CategoryRepository;
@@ -23,6 +25,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.time.LocalDate;
+
 
 @RequiredArgsConstructor
 @Service
@@ -33,6 +37,7 @@ public class NewsServiceImpl implements NewsService{
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
     private final UserNewsReadRepository userNewsReadRepository;
+    private final UserDailyNewsReadRepository userDailyNewsReadRepository;
 
     @Override
     public Page<NewsResponseDTO> getAllNews(Long userId, AllNewsRequestDTO newsRequestDTO) {
@@ -91,13 +96,21 @@ public class NewsServiceImpl implements NewsService{
         userNewsRead.markAsRead(newsReadRequestDTO.getDifficulty());
         userNewsReadRepository.save(userNewsRead);
 
-        // 뉴스 조회수 +1
-        news.incrementHit();
-        newsRepository.save(news);
+        // 뉴스 조회수 +1 -> 뉴스 상세보기 시
+//        news.incrementHit();
+//        newsRepository.save(news);
 
         // 사용자 뉴스 읽음 +1
         user.incrementNewsReadCnt();
         userRepository.save(user);
+
+        // 사용자 뉴스 읽음 오늘 테이블 업데이트
+        LocalDate today = LocalDate.now();
+        UserDailyNewsRead dailyRead = userDailyNewsReadRepository.findByUserAndTodayDate(user, today)
+                .orElseGet(() -> UserDailyNewsRead.createForToday(user));
+
+        dailyRead.incrementNewsReadCount();
+        userDailyNewsReadRepository.save(dailyRead);
 
     }
 

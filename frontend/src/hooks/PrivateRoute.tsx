@@ -44,6 +44,7 @@ const PrivateRoute = () => {
           console.log(response);
         } catch {
           setLoginState(false);
+          setIsLoading(false);
         }
       }
 

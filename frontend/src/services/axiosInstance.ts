@@ -48,6 +48,7 @@ axiosInstance.interceptors.response.use(
 export const getRefreshToken = async () => {
   try {
     const response = await axios.post(`/user/refresh-token`, {});
+    console.log("getRefreshToken", response);
     const accessToken = response.data.accessToken;
     sessionStorage.setItem("accessToken", accessToken);
     axiosInstance.defaults.headers["Authorization"] = accessToken;

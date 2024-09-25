@@ -1,23 +1,20 @@
 import styled, { useTheme } from "styled-components";
 import { Doughnut } from "react-chartjs-2";
 import { ChartOptions } from "chart.js";
+import { StudyProgressProps } from "@services/goalService";
 
-const data = {
-  goalReadNewsCount: 100,
-  goalCompleteWord: 200,
-  goalPronounceTestScore: 500,
-  currentReadNewsCount: 34,
-  currentCompleteWord: 100,
-  currentPronounceTestScore: 236,
-};
-
-const GoalChart = () => {
+const GoalChart: React.FC<{ studyProgress: StudyProgressProps }> = ({
+  studyProgress,
+}) => {
   const perReadNewsCount =
-    (data.currentReadNewsCount / data.goalReadNewsCount) * 100;
+    (studyProgress.currentReadNewsCount / studyProgress.goalReadNewsCount) *
+    100;
   const perCompleteWord =
-    (data.currentCompleteWord / data.goalCompleteWord) * 100;
+    (studyProgress.currentCompleteWord / studyProgress.goalCompleteWord) * 100;
   const perPronounceTestScore =
-    (data.currentPronounceTestScore / data.goalPronounceTestScore) * 100;
+    (studyProgress.currentPronounceTestScore /
+      studyProgress.goalPronounceTestScore) *
+    100;
   const perAverage = Math.min(
     (perReadNewsCount + perCompleteWord + perPronounceTestScore) / 3,
     100
@@ -64,7 +61,7 @@ const GoalChart = () => {
         <BarContainer>
           <GoalItem>
             <div>뉴스 읽기</div>
-            <div>{`${data.currentReadNewsCount} / ${data.goalReadNewsCount}`}</div>
+            <div>{`${studyProgress.currentReadNewsCount} / ${studyProgress.goalReadNewsCount}`}</div>
           </GoalItem>
           <GoalBarContainer>
             <GoalBarFill width={perReadNewsCount} />
@@ -74,7 +71,7 @@ const GoalChart = () => {
         <BarContainer>
           <GoalItem>
             <div>단어 테스트</div>
-            <div>{`${data.currentCompleteWord} / ${data.goalCompleteWord}`}</div>
+            <div>{`${studyProgress.currentCompleteWord} / ${studyProgress.goalCompleteWord}`}</div>
           </GoalItem>
           <GoalBarContainer>
             <GoalBarFill width={perCompleteWord} />
@@ -84,7 +81,7 @@ const GoalChart = () => {
         <BarContainer>
           <GoalItem>
             <div>발음 테스트</div>
-            <div>{`${data.currentPronounceTestScore} / ${data.goalPronounceTestScore}`}</div>
+            <div>{`${studyProgress.currentPronounceTestScore} / ${studyProgress.goalPronounceTestScore}`}</div>
           </GoalItem>
           <GoalBarContainer>
             <GoalBarFill width={perPronounceTestScore} />

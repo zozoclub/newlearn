@@ -13,5 +13,6 @@ const firebaseConfig = {
 // Firebase 초기화
 const app = initializeApp(firebaseConfig);
 const messaging = getMessaging(app);
+console.log(firebaseConfig.projectId);
 
 export { messaging, getToken, onMessage };

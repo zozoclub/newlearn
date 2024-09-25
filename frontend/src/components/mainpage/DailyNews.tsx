@@ -30,7 +30,7 @@ const DailyNews: React.FC = () => {
         modules={[EffectCoverflow, Pagination, Mousewheel]}
         className="mySwiper"
       >
-        {[...Array(10)].map((index) => (
+        {[...Array(10)].map((_, index) => (
           <SwiperSlide key={index}>
             <NewsSlide
               image={image}
@@ -45,13 +45,13 @@ const DailyNews: React.FC = () => {
 };
 
 const Container = styled.div`
-  display: absolute;
   justify-content: flex-start;
   position: absolute;
   top: 7.5rem;
   left: -30vw;
   width: calc(125vw - 0.375rem);
   overflow: hidden;
+
   .swiper {
     padding-top: 50px;
     padding-bottom: 50px;
@@ -67,18 +67,6 @@ const Container = styled.div`
     border-radius: 0.5rem;
     backdrop-filter: blur(4px);
     box-shadow: 0.5rem 0.5rem 0.25rem ${(props) => props.theme.colors.shadow};
-  }
-  .swiper .swiper-slide::before {
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    width: 80px;
-    height: 80px;
-    border-bottom: 1px solid ${(props) => props.theme.colors.placeholder + "AA"};
-    border-right: 1px solid white;
-    border-radius: 0 0 7px 0;
-    content: "";
-    transition: width 0.3s ease, height 0.3s ease;
   }
 
   .swiper .swiper-slide::after {
@@ -105,7 +93,6 @@ const Container = styled.div`
     );
   }
 
-  .swiper .swiper-slide:hover::before,
   .swiper .swiper-slide:hover::after {
     width: 170px;
     height: 170px;

@@ -167,7 +167,6 @@ public class UserController {
 			if (user == null) {
 				return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
 			}
-			System.out.println("들어옴?");
 			String nickname = updateNicknameRequestDto.getNickname();
 
 			if(!userService.checkNickname(nickname)) {

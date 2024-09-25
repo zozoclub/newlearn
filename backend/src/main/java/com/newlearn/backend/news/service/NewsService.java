@@ -11,7 +11,7 @@ import java.util.List;
 public interface NewsService {
 
     // 전체 뉴스 조회
-    Page<NewsResponseDTO> getAllNews(AllNewsRequestDTO newsRequestDTO);
+    Page<NewsResponseDTO> getAllNews(Long userId, AllNewsRequestDTO newsRequestDTO);
 
     // 카테고리 별 전체 뉴스 조회
 

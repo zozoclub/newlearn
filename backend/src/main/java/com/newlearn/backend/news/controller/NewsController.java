@@ -44,7 +44,7 @@ public class NewsController {
                     .size(size)
                     .build();
 
-            Page<NewsResponseDTO> newsList = newsService.getAllNews(newsRequestDTO);
+            Page<NewsResponseDTO> newsList = newsService.getAllNews(user.getUserId(), newsRequestDTO);
 
             return ApiResponse.createSuccess(newsList, "전체 뉴스 조회 성공");
         } catch (Exception e) {
@@ -75,9 +75,9 @@ public class NewsController {
                     .newsId(newsId)
                     .difficulty(difficulty)
                     .build();
-            System.out.println("야");
+
             newsService.readNews(user.getUserId(), newsReadRequestDTO); //뉴스 읽음 처리
-            System.out.println("야2");
+
             return ApiResponse.createSuccessWithNoContent("뉴스 읽음 처리 성공");
         } catch (Exception e) {
             log.error("뉴스 읽음 처리 중 실패", e);

@@ -1,6 +1,7 @@
 package com.newlearn.backend.news.dto.response;
 
 import com.newlearn.backend.news.model.News;
+import com.newlearn.backend.news.model.UserNewsRead;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.data.domain.Page;
@@ -14,8 +15,10 @@ public class NewsResponseDTO {
     private String thumbnailImageUrl;
     private String category; //"정치", "경제", "사회", "생활/문화", "IT/과학", "세계"
     private String publishedDate;
+    private boolean[] isRead; // 난이도 별 읽음 표시
 
-    public static NewsResponseDTO makeNewsResponseDTO(News news, String lang, int difficulty) {
+
+    public static NewsResponseDTO makeNewsResponseDTO(News news, String lang, int difficulty, UserNewsRead userNewsRead) {
         return NewsResponseDTO.builder()
                 .newsId(news.getNewsId())
                 .title(news.getTitle())
@@ -23,6 +26,11 @@ public class NewsResponseDTO {
                 .thumbnailImageUrl(news.getThumbnailImageUrl())
                 .category(news.getCategory().getCategoryName())
                 .publishedDate(news.getPublishedDate())
+                .isRead(new boolean[]{
+                        userNewsRead != null && userNewsRead.getReadHighTranslation(),
+                        userNewsRead != null && userNewsRead.getReadMediumTranslation(),
+                        userNewsRead != null && userNewsRead.getReadLowTranslation()
+                })
                 .build();
     }
 

@@ -20,6 +20,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -31,14 +34,20 @@ public class NewsServiceImpl implements NewsService{
     private final UserNewsReadRepository userNewsReadRepository;
 
     @Override
-    public Page<NewsResponseDTO> getAllNews(AllNewsRequestDTO newsRequestDTO) {
+    public Page<NewsResponseDTO> getAllNews(Long userId, AllNewsRequestDTO newsRequestDTO) {
         // 1. NewsRepository에서 전체 뉴스 가져오기
         Page<News> allNewsList = newsRepository.findAllByOrderByNewsIdDesc(newsRequestDTO.getPageable());
 
-        // 2. News 엔티티를 NewsResponseDTO로 변환
+        // 2. 현재 사용자의 모든 UserNewsRead 정보를 가져오기
+        List<UserNewsRead> userNewsReads = userNewsReadRepository.findAllByUserUserId(userId);
+        Map<Long, UserNewsRead> userNewsReadMap = userNewsReads.stream()
+                .collect(Collectors.toMap(unr -> unr.getNews().getNewsId(), Function.identity()));
+
+        // 3. News 엔티티를 NewsResponseDTO로 변환
         return allNewsList.map(news -> NewsResponseDTO.makeNewsResponseDTO(news,
-                                     newsRequestDTO.getLang(),
-                                     newsRequestDTO.getDifficulty()));
+                newsRequestDTO.getLang(),
+                newsRequestDTO.getDifficulty(),
+                userNewsReadMap.get(news.getNewsId())));
     }
 
     @Override
@@ -63,6 +72,10 @@ public class NewsServiceImpl implements NewsService{
         // 뉴스 조회수 +1
         news.incrementHit();
         newsRepository.save(news);
+
+        // 사용자 뉴스 읽음 +1
+        user.incrementNewsReadCnt();
+        userRepository.save(user);
 
     }
 

@@ -77,9 +77,10 @@ export const handleMouseUp = (
             )
         );
     });
-
+// 정답일 경우
     if (isCorrect) {
         setCorrectSelections((prev) => [...prev, ...selectedPositions]); // 정답이면 파란색 유지
+        // 추가해야할 api 통신
         setSelectedPositions([]); // 선택된 셀 초기화
     } else {
         setIncorrectSelection(true); // 틀리면 빨간색으로 표시

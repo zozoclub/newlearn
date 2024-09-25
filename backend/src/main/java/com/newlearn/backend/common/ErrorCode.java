@@ -37,6 +37,9 @@ public enum ErrorCode {
 	REFRESH_TOKEN_BLACKLISTED("A006", HttpStatus.UNAUTHORIZED, "블랙리스트에 등록된 Refresh Token입니다."),
 	REFRESH_TOKEN_NOT_FOUND("A007", HttpStatus.UNAUTHORIZED, "Refresh Token을 찾을 수 없습니다."),
 
+	// AWS S3
+	AWS_SERVER_ERROR("A008", HttpStatus.BAD_REQUEST, "AWS S3 서버 에러가 발생했습니다."),
+
 	// File Error
 	FILE_UPLOAD_FAILED("F001", HttpStatus.INTERNAL_SERVER_ERROR, "파일 업로드에 실패했습니다."),
 	INVALID_FILE_FORMAT("F002", HttpStatus.BAD_REQUEST, "유효하지 않은 파일 형식입니다."),
@@ -51,6 +54,9 @@ public enum ErrorCode {
 	WORD_TEST_RESULT_CREATE_FAILED("S006", HttpStatus.BAD_REQUEST, "단어 테스트 결과 저장에 실패했습니다."),
 	WORD_TEST_RESULT_NOT_FOUND("S007", HttpStatus.NOT_FOUND, "단어 테스트 결과 리스트를 찾을 수 없습니다."),
 	PRONOUNCE_TEST_NOT_FOUND("S008", HttpStatus.NOT_FOUND, "발음 테스트 문제를 찾을 수 없습니다."),
+	PRONOUNCE_TEST_RESULT_UPDATE_FAILED("S009", HttpStatus.BAD_REQUEST, "발음 테스트 결과 저장에 실패했습니다."),
+	PRONOUNCE_TEST_RESULT_NOT_FOUND("S010", HttpStatus.NOT_FOUND, "발음 테스트 결과 리스트를 찾을 수 없습니다."),
+
 
 	// Word Error
 	WORD_CREATE_FAILED("W001", HttpStatus.BAD_REQUEST, "단어를 추가할 수 없습니다"),

@@ -1,10 +1,10 @@
 package com.newlearn.backend.config;
 
-
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import lombok.Data;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,9 +18,10 @@ import java.util.concurrent.CompletableFuture;
 @Service
 public class S3ObjectStorage {
 
-    private AmazonS3 amazonS3;
+    private final AmazonS3 amazonS3;
+
+    @Value("${cloud.aws.s3.bucket}")
     private String bucket;
-    private String aiS3Url;
 
     public S3ObjectStorage(AmazonS3 amazonS3) {
         this.amazonS3 = amazonS3;
@@ -37,6 +38,11 @@ public class S3ObjectStorage {
         metadata.setContentType(multipartFile.getContentType());
 
         try {
+            // 버킷 이름이 제대로 설정되어 있는지 확인
+            if (bucket == null || bucket.isEmpty()) {
+                throw new IllegalArgumentException("S3 버킷 이름이 설정되어 있지 않습니다.");
+            }
+
             amazonS3.putObject(bucket, fileName, multipartFile.getInputStream(), metadata);
             log.info("File uploaded to S3 with URL: {}", fileName);
         } catch (Exception e) {

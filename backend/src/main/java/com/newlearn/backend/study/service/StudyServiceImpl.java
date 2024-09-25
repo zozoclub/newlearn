@@ -223,6 +223,7 @@ public class StudyServiceImpl implements StudyService{
         // DB에 파일 정보 저장
         UserAudioFile userAudioFile = UserAudioFile.builder()
                 .userId(userId)
+                .exampleSentence(pronounceRequestDTO.getExampleSentence())
                 .pronunciationScore(pronounceRequestDTO.getTotalScore())
                 .audioFileUrl(fileUrl)
                 .createdAt(LocalDateTime.now(ZoneId.of("Asia/Seoul")))

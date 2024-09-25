@@ -20,12 +20,22 @@ createRoot(document.getElementById("root")!).render(
 
 // 서비스 워커 등록
 if ("serviceWorker" in navigator) {
-  navigator.serviceWorker
-    .register("/firebase-messaging-sw.js")
-    .then((registration) => {
-      console.log("서비스 워커가 등록되었습니다.", registration.scope);
-    })
-    .catch((error) => {
-      console.log("서비스 워커 등록 실패:", error);
-    });
+  navigator.serviceWorker.getRegistration().then((registration) => {
+    if (!registration) {
+      // 서비스 워커가 아직 등록되지 않은 경우에만 등록
+      navigator.serviceWorker
+        .register("/firebase-messaging-sw.js")
+        .then((registration) => {
+          console.log(
+            "서비스 워커가 성공적으로 등록되었습니다:",
+            registration.scope
+          );
+        })
+        .catch((error) => {
+          console.error("서비스 워커 등록 중 오류가 발생했습니다:", error);
+        });
+    } else {
+      console.log("이미 서비스 워커가 등록되어 있습니다:", registration.scope);
+    }
+  });
 }

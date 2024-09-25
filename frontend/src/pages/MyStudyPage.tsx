@@ -4,19 +4,31 @@ import { useNavigate } from "react-router-dom";
 
 import locationState from "@store/locationState";
 import { useSetRecoilState } from "recoil";
+import { useQuery, useMutation } from "@tanstack/react-query";
+
 import GoalChart from "@components/GoalChart";
 import GoalSetting from "@components/GoalSetting";
 import testMenuBg from "@assets/images/background-testmenu.png";
 import vocaMenuBg from "@assets/images/background-vocamenu.png";
 import Modal from "@components/Modal";
+
+import {
+  GoalSettingProps,
+  StudyProgressProps,
+  goalSetting,
+  getStudyProgress,
+} from "@services/goalService.ts";
+
 const MyStudyPage = () => {
   const navigate = useNavigate();
 
+  // 페이지 헤더
   const setCurrentLocation = useSetRecoilState(locationState);
   useEffect(() => {
     setCurrentLocation("My Study");
   }, [setCurrentLocation]);
 
+  // 페이지 이동
   const handleVocaClick = () => {
     navigate("/voca");
   };
@@ -25,6 +37,7 @@ const MyStudyPage = () => {
     navigate("/testhistory");
   };
 
+  // 모달 설정
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const openModal = () => {
@@ -35,23 +48,52 @@ const MyStudyPage = () => {
     setIsModalOpen(false);
   };
 
+  // 학습 목표 설정
+  const goalMutation = useMutation<GoalSettingProps, Error, GoalSettingProps>({
+    mutationFn: (data: GoalSettingProps) => goalSetting(data),
+    onSuccess: () => {
+      closeModal();
+      refetch();
+    },
+    onError: (error) => {
+      console.error("Goal setting Failed", error);
+    },
+  });
+
+  const { refetch } = useQuery<StudyProgressProps | null>({
+    queryKey: ["studyProgress"],
+    queryFn: getStudyProgress,
+  });
+  // 목표 현황 가져오기
+  const {
+    data: studyProgress,
+    isLoading,
+    isError,
+  } = useQuery<StudyProgressProps | null>({
+    queryKey: ["studyProgress"],
+    queryFn: getStudyProgress,
+  });
+  if (isLoading) return <div>Loading</div>;
+  if (isError) return <div>학습 목표 및 현황 가져오기 Error</div>;
+  console.log(studyProgress);
   return (
     <Container>
       <GoalContainer>
-        {/* 목표 없을 때 */}
-        <GoalSettingContainer>
-          <GoalSettingDescription>
-            설정된 목표가 없습니다.
-          </GoalSettingDescription>
-          <GoalSettingButton onClick={openModal}>
-            목표 설정하기
-          </GoalSettingButton>
-          <Modal isOpen={isModalOpen} onClose={closeModal} title="목표 설정">
-            <GoalSetting />
-          </Modal>
-        </GoalSettingContainer>
-        {/* 목표 있을 때 */}
-        <GoalChart />
+        {studyProgress === null ? (
+          <GoalSettingContainer>
+            <GoalSettingDescription>
+              설정된 목표가 없습니다.
+            </GoalSettingDescription>
+            <GoalSettingButton onClick={openModal}>
+              목표 설정하기
+            </GoalSettingButton>
+            <Modal isOpen={isModalOpen} onClose={closeModal} title="목표 설정">
+              <GoalSetting goalMutation={goalMutation} />
+            </Modal>
+          </GoalSettingContainer>
+        ) : (
+          studyProgress && <GoalChart studyProgress={studyProgress} />
+        )}
       </GoalContainer>
       <MenuContainer>
         <VocaMenu onClick={handleVocaClick}>

@@ -18,8 +18,9 @@ const LoginPage = () => {
       const response = await getRefreshToken();
       setIsLogin(response);
       console.log("refreshToken 유효, 토큰 재발급");
-    } catch {
       transitionTo("/");
+    } catch {
+      console.log("refreshToken 만료, 다시 로그인하세요.");
     }
   };
 

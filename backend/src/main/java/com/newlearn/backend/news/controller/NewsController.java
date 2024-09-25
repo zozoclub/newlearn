@@ -141,6 +141,30 @@ public class NewsController {
     }
 
     // 뉴스 스크랩 취소
+    @DeleteMapping("/scrap/{newsId}/{difficulty}")
+    public ApiResponse<?> cancelScrapedNews(Authentication authentication,
+                                    @PathVariable("newsId") long newsId,
+                                    @PathVariable("difficulty") int difficulty) throws Exception {
+        try {
+            Users user = userService.findByEmail(authentication.getName());
+            if (user == null) {
+                return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
+            }
+
+            NewsReadRequestDTO newsReadRequestDTO = NewsReadRequestDTO.builder()
+                    .newsId(newsId)
+                    .difficulty(difficulty)
+                    .build();
+
+            newsService.cancelScrapedNews(user.getUserId(), newsReadRequestDTO);
+
+            return ApiResponse.createSuccessWithNoContent("뉴스 스크랩 취소 처리 성공");
+        } catch (Exception e) {
+            log.error("뉴스 스크랩 취소 처리 중 실패", e);
+            return ApiResponse.createError(ErrorCode.NEWS_SCRAP_CANCEL_FAILED);
+        }
+
+    }
 
 
 

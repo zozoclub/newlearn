@@ -150,4 +150,22 @@ public class NewsServiceImpl implements NewsService{
         }
 
     }
+
+    @Override
+    public void cancelScrapedNews(Long userId, NewsReadRequestDTO newsReadRequestDTO) {
+        Users user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
+
+        News news = newsRepository.findById(newsReadRequestDTO.getNewsId())
+                .orElseThrow(() -> new EntityNotFoundException("뉴스를 찾을 수 없습니다."));
+
+        UserNewsScrap scrapedNews = userNewsScrapRepository.findByUserAndNewsAndDifficulty(user, news, newsReadRequestDTO.getDifficulty())
+                .orElseThrow(() -> new IllegalStateException("해당하는 스크랩을 찾을 수 없습니다."));
+
+        userNewsScrapRepository.delete(scrapedNews);
+
+        // 사용자 스크랩수 -1
+        user.decrementScrapCount();
+        userRepository.save(user);
+    }
 }

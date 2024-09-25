@@ -11,5 +11,4 @@ public interface UserNewsScrapRepository extends JpaRepository<UserNewsScrap, Lo
     Optional<UserNewsScrap> findByUserAndNews(Users user, News news);
     Optional<UserNewsScrap> findByUserAndNewsAndDifficulty(Users user, News news, Integer difficulty);
 
-
 }

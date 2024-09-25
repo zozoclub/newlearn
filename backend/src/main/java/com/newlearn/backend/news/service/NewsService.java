@@ -28,4 +28,5 @@ public interface NewsService {
     void scrapNews(Long userId, NewsReadRequestDTO newsReadRequestDTO);
 
     // 뉴스 스크랩 취소
+    void cancelScrapedNews(Long userId, NewsReadRequestDTO newsReadRequestDTO);
 }

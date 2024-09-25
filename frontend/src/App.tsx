@@ -1,3 +1,4 @@
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import styled, { ThemeProvider } from "styled-components";
 import { useRecoilValue } from "recoil";
 import { Outlet } from "react-router-dom";
@@ -13,9 +14,10 @@ import TransitionContent from "@components/common/TransitionContent";
 import { useEffect } from "react";
 import loginState from "@store/loginState";
 
-import { getToken, messaging } from "./firebase"
+import { getToken, messaging } from "./firebase";
 
 const App: React.FC = () => {
+  const queryClient = new QueryClient();
   const theme = useRecoilValue(themeState) === "dark" ? darkTheme : lightTheme;
   const isLogin = useRecoilValue(loginState);
   useEffect(() => {
@@ -55,17 +57,19 @@ Welcome To NewsLearn!"
     requestPermission();
   }, []);
   return (
-    <ThemeProvider theme={theme}>
-      <GlobalStyle />
-      <Background />
-      <AppContainer>
-        <Header />
-        <TransitionContent>
-          <Outlet />
-        </TransitionContent>
-        {isLogin && <Navbar />}
-      </AppContainer>
-    </ThemeProvider>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider theme={theme}>
+        <GlobalStyle />
+        <Background />
+        <AppContainer>
+          <Header />
+          <TransitionContent>
+            <Outlet />
+          </TransitionContent>
+          {isLogin && <Navbar />}
+        </AppContainer>
+      </ThemeProvider>
+    </QueryClientProvider>
   );
 };
 

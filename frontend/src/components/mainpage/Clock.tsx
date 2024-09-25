@@ -3,16 +3,20 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 
 const Clock = () => {
-  const [time, setTime] = useState<string[]>([]);
+  const [time, setTime] = useState(() => calculateTime(new Date()));
 
   useEffect(() => {
     setTime(calculateTime(new Date()));
 
     const id = setInterval(() => {
-      setTime(calculateTime(new Date()));
+      const newTime = calculateTime(new Date());
+      // 시간과 분 단위가 변경될 때만 상태 업데이트
+      if (newTime[0] !== time[0]) {
+        setTime(newTime);
+      }
     }, 1000);
     return () => clearInterval(id);
-  }, []);
+  }, [time]);
 
   return (
     <Container>

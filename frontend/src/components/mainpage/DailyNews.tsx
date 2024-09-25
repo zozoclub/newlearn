@@ -16,8 +16,7 @@ const DailyNews: React.FC = () => {
         effect={"coverflow"}
         grabCursor={true}
         centeredSlides={true}
-        slidesPerView={3}
-        speed={500}
+        slidesPerView={"auto"}
         mousewheel={true}
         coverflowEffect={{
           rotate: 50,
@@ -27,13 +26,13 @@ const DailyNews: React.FC = () => {
           slideShadows: true,
         }}
         pagination={true}
+        spaceBetween={30}
         modules={[EffectCoverflow, Pagination, Mousewheel]}
         className="mySwiper"
       >
         {[...Array(10)].map((e, index) => (
-          <SwiperSlide>
+          <SwiperSlide key={index}>
             <NewsSlide
-              key={index}
               image={image}
               title={"뉴스제목"}
               content={"뉴스내용용용ㅇㅇㅇ용"}
@@ -51,7 +50,7 @@ const Container = styled.div`
   position: absolute;
   top: 5rem;
   left: -5vw;
-  width: 100vw;
+  width: calc(100% + 10vw - 0.375rem);
   overflow: hidden;
   .swiper {
     padding-top: 50px;
@@ -69,31 +68,6 @@ const Container = styled.div`
     backdrop-filter: blur(4px);
     box-shadow: 0.5rem 0.5rem 0.25rem ${(props) => props.theme.colors.shadow};
   }
-  .swiper .swiper-slide::before {
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    width: 80px;
-    height: 80px;
-    border-bottom: 1px solid ${(props) => props.theme.colors.placeholder + "AA"};
-    border-right: 1px solid white;
-    border-radius: 0 0 7px 0;
-    content: "";
-    transition: width 0.3s ease, height 0.3s ease;
-  }
-
-  .swiper .swiper-slide::after {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 80px;
-    height: 80px;
-    border-top: 1px solid ${(props) => props.theme.colors.placeholder + "AA"};
-    border-left: 1px solid #ffffffaa;
-    border-radius: 7px 0 0 0;
-    content: "";
-    transition: width 0.3s ease, height 0.3s ease;
-  }
 
   .swiper .swiper-slide:hover {
     background: linear-gradient(
@@ -106,12 +80,6 @@ const Container = styled.div`
     );
   }
 
-  .swiper .swiper-slide:hover::before,
-  .swiper .swiper-slide:hover::after {
-    width: 170px;
-    height: 170px;
-    transition: width 0.3s ease, height 0.3s ease;
-  }
   img {
     width: 580px;
     height: 380px;

@@ -155,7 +155,7 @@ public class StudyController {
                 return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
             }
 
-            List<PronounceTestResponseDTO> tests = studyService.getPronounceTestProblems(user.getUserId(), user);
+            List<PronounceTestResponseDTO> tests = studyService.getPronounceTestProblems(user.getUserId());
 
             return ApiResponse.createSuccess(tests, "발음 테스트 예문 가져오기 성공");
         } catch (Exception e) {

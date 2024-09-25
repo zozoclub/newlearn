@@ -26,7 +26,7 @@ public interface StudyService {
 
     WordTestResultDetailResponseDTO getWordTestResult(Long userId, Long quizId);
 
-    List<PronounceTestResponseDTO> getPronounceTestProblems(Long userId, Users user);
+    List<PronounceTestResponseDTO> getPronounceTestProblems(Long userId);
 
     CompletableFuture<String> savePronounceTestResultAsync(Long userId, PronounceRequestDTO pronounceRequestDTO, MultipartFile file);
 

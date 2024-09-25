@@ -189,7 +189,7 @@ public class StudyServiceImpl implements StudyService{
     }
 
     @Override
-    public List<PronounceTestResponseDTO> getPronounceTestProblems(Long userId, Users user) {
+    public List<PronounceTestResponseDTO> getPronounceTestProblems(Long userId) {
         // 랜덤 단어 3개 가져오기
         List<Word> words = wordQuizQuestionRepository.findRandomWords(userId, 3L);
         List<PronounceTestResponseDTO> tests = new ArrayList<>();

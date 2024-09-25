@@ -54,6 +54,34 @@ public class NewsController {
     }
 
     // 카테고리 별 전체 뉴스 조회
+    @GetMapping("/{category}")
+    public ApiResponse<?> getAllNews(Authentication authentication,
+                                     @PathVariable("category") long categoryId,
+                                     @RequestParam("difficulty") int difficulty,
+                                     @RequestParam("lang") String lang,
+                                     @RequestParam(defaultValue = "0") int page,
+                                     @RequestParam(defaultValue = "10") int size) throws Exception {
+        try {
+            Users user = userService.findByEmail(authentication.getName());
+            if (user == null) {
+                return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
+            }
+
+            AllNewsRequestDTO newsRequestDTO = AllNewsRequestDTO.builder()
+                    .difficulty(difficulty)
+                    .lang(lang)
+                    .page(page)
+                    .size(size)
+                    .build();
+
+            Page<NewsResponseDTO> newsList = newsService.getNewsByCategory(user.getUserId(), newsRequestDTO, categoryId);
+
+            return ApiResponse.createSuccess(newsList, categoryId + " 카테고리 뉴스 조회 성공");
+        } catch (Exception e) {
+            log.error("뉴스 전체목록 불러오기 중 실패", e);
+            return ApiResponse.createError(ErrorCode.NEWS_LIST_NOT_FOUND);
+        }
+    }
 
     // 매일 TOP10 뉴스 조회
 

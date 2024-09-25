@@ -31,6 +31,7 @@ public class NewsServiceImpl implements NewsService{
 
     private final NewsRepository newsRepository;
     private final UserRepository userRepository;
+    private final CategoryRepository categoryRepository;
     private final UserNewsReadRepository userNewsReadRepository;
 
     @Override
@@ -38,13 +39,34 @@ public class NewsServiceImpl implements NewsService{
         // 1. NewsRepository에서 전체 뉴스 가져오기
         Page<News> allNewsList = newsRepository.findAllByOrderByNewsIdDesc(newsRequestDTO.getPageable());
 
-        // 2. 현재 사용자의 모든 UserNewsRead 정보를 가져오기
+        // 2. 현재 사용자의 모든 UserNewsRead 정보 가져오기
         List<UserNewsRead> userNewsReads = userNewsReadRepository.findAllByUserUserId(userId);
         Map<Long, UserNewsRead> userNewsReadMap = userNewsReads.stream()
                 .collect(Collectors.toMap(unr -> unr.getNews().getNewsId(), Function.identity()));
 
         // 3. News 엔티티를 NewsResponseDTO로 변환
         return allNewsList.map(news -> NewsResponseDTO.makeNewsResponseDTO(news,
+                newsRequestDTO.getLang(),
+                newsRequestDTO.getDifficulty(),
+                userNewsReadMap.get(news.getNewsId())));
+    }
+
+    @Override
+    public Page<NewsResponseDTO> getNewsByCategory(Long userId, AllNewsRequestDTO newsRequestDTO, long categoryId) {
+        // 카테고리 존재 여부 확인
+        categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new EntityNotFoundException("Category not found with id: " + categoryId));
+
+        // 1. NewsRepository에서 카테고리별 뉴스 가져오기
+        Page<News> newsByCategory = newsRepository.findAllByCategoryCategoryIdOrderByNewsIdDesc(categoryId, newsRequestDTO.getPageable());
+
+        // 2. 현재 사용자의 해당 카테고리 뉴스에 대한 UserNewsRead 정보 가져오기
+        List<UserNewsRead> userNewsReads = userNewsReadRepository.findAllByUserUserIdAndNewsCategoryCategoryId(userId, categoryId);
+        Map<Long, UserNewsRead> userNewsReadMap = userNewsReads.stream()
+                .collect(Collectors.toMap(unr -> unr.getNews().getNewsId(), Function.identity(), (existing, replacement) -> existing));
+
+        // 3. News 엔티티를 NewsResponseDTO로 변환
+        return newsByCategory.map(news -> NewsResponseDTO.makeNewsResponseDTO(news,
                 newsRequestDTO.getLang(),
                 newsRequestDTO.getDifficulty(),
                 userNewsReadMap.get(news.getNewsId())));

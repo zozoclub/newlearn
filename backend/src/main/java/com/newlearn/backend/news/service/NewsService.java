@@ -14,6 +14,7 @@ public interface NewsService {
     Page<NewsResponseDTO> getAllNews(Long userId, AllNewsRequestDTO newsRequestDTO);
 
     // 카테고리 별 전체 뉴스 조회
+    Page<NewsResponseDTO> getNewsByCategory(Long userId, AllNewsRequestDTO newsRequestDTO, long categoryId);
 
     // 매일 TOP 10 뉴스 조회
 

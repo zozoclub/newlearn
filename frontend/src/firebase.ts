@@ -2,12 +2,12 @@ import { initializeApp } from "firebase/app";
 import { getMessaging, getToken, onMessage } from "firebase/messaging";
 
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  apiKey: "AIzaSyBwSePpbwxALHlejMVOjKZLW-y1qokHS6s",
+  authDomain: "newlearn-66b2c.firebaseapp.com",
   projectId: "newlearn-66b2c",
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  storageBucket: "newlearn-66b2c.appspot.com",
+  messagingSenderId: "542353120723",
+  appId: "1:542353120723:web:1ec5ed90d47e5732546326",
 };
 
 // Firebase 초기화

@@ -62,7 +62,13 @@ public enum ErrorCode {
 	WORD_CREATE_FAILED("W001", HttpStatus.BAD_REQUEST, "단어를 추가할 수 없습니다"),
 	WORD_FIND_FAILED("W002", HttpStatus.BAD_REQUEST, "단어 목록을 찾을 수 없습니다"),
 	WORD_DELETE_FAILED("W003", HttpStatus.BAD_REQUEST, "단어를 삭제할 수 없습니다"),
-	WORD_UPDATE_FAILED("W004", HttpStatus.BAD_REQUEST, "단어 외움 변경을 할 수 없습니다.");
+	WORD_UPDATE_FAILED("W004", HttpStatus.BAD_REQUEST, "단어 외움 변경을 할 수 없습니다."),
+
+
+	// News Error
+	NEWS_LIST_NOT_FOUND("N001", HttpStatus.NOT_FOUND, "뉴스 목록 불러오기에 실패하였습니다."),
+	NEWS_NOT_FOUND("N002", HttpStatus.NOT_FOUND, "뉴스 상세 불러오기에 실패하였습니다."),
+	;
 
 	private final String code;
 	private final HttpStatus httpStatus;

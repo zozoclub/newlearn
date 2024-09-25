@@ -1,6 +1,31 @@
+import React, { useState } from "react";
 import styled from "styled-components";
+import { UseMutationResult } from "@tanstack/react-query";
 
-const GoalSetting = () => {
+type GoalSettingProps = {
+  goalReadNewsCount: number;
+  goalPronounceTestScore: number;
+  goalCompleteWord: number;
+};
+
+type GoalSettingComponentProps = {
+  goalMutation: UseMutationResult<GoalSettingProps, Error, GoalSettingProps>;
+};
+
+const GoalSetting: React.FC<GoalSettingComponentProps> = ({ goalMutation }) => {
+  const [goalReadNewsCount, setGoalReadNewsCount] = useState("");
+  const [goalCompleteWord, setGoalCompleteWord] = useState("");
+  const [goalPronounceTestScore, setGoalPronounceTestScore] = useState("");
+
+  const handleSave = () => {
+    const goalData: GoalSettingProps = {
+      goalReadNewsCount: parseInt(goalReadNewsCount, 10),
+      goalCompleteWord: parseInt(goalCompleteWord, 10),
+      goalPronounceTestScore: parseInt(goalPronounceTestScore, 10),
+    };
+
+    goalMutation.mutate(goalData);
+  };
   return (
     <>
       <GoalContainer>
@@ -9,7 +34,12 @@ const GoalSetting = () => {
             <GoalTitleStrong>뉴스</GoalTitleStrong> 읽기
           </GoalTitle>
           <div>
-            <GoalInput type="text" />개
+            <GoalInput
+              type="text"
+              value={goalReadNewsCount}
+              onChange={(e) => setGoalReadNewsCount(e.target.value)}
+            />
+            개
           </div>
         </GoalItem>
         <GoalItem>
@@ -17,7 +47,12 @@ const GoalSetting = () => {
             <GoalTitleStrong>단어</GoalTitleStrong> 테스트
           </GoalTitle>
           <div>
-            <GoalInput type="text" />개
+            <GoalInput
+              type="text"
+              value={goalCompleteWord}
+              onChange={(e) => setGoalCompleteWord(e.target.value)}
+            />
+            개
           </div>
         </GoalItem>
         <GoalItem>
@@ -25,12 +60,17 @@ const GoalSetting = () => {
             <GoalTitleStrong>발음</GoalTitleStrong> 연습하기
           </GoalTitle>
           <div>
-            <GoalInput type="text" />점
+            <GoalInput
+              type="text"
+              value={goalPronounceTestScore}
+              onChange={(e) => setGoalPronounceTestScore(e.target.value)}
+            />
+            점
           </div>
         </GoalItem>
       </GoalContainer>
       <ButtonContainer>
-        <GoalSaveButton>저장하기</GoalSaveButton>
+        <GoalSaveButton onClick={handleSave}>저장하기</GoalSaveButton>
       </ButtonContainer>
     </>
   );

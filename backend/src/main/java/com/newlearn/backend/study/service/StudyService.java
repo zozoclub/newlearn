@@ -9,6 +9,7 @@ import com.newlearn.backend.user.model.Users;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public interface StudyService {
 
@@ -28,6 +29,6 @@ public interface StudyService {
 
     List<PronounceTestResponseDTO> getPronounceTestProblems(Long userId, Users user);
 
-    void savePronounceTestResult(Long userId, PronounceRequestDTO pronounceRequestDTO, MultipartFile file);
+    CompletableFuture<String> savePronounceTestResultAsync(Long userId, PronounceRequestDTO pronounceRequestDTO, MultipartFile file);
 
 }

@@ -55,6 +55,8 @@ public enum ErrorCode {
 	WORD_TEST_RESULT_NOT_FOUND("S007", HttpStatus.NOT_FOUND, "단어 테스트 결과 리스트를 찾을 수 없습니다."),
 	PRONOUNCE_TEST_NOT_FOUND("S008", HttpStatus.NOT_FOUND, "발음 테스트 문제를 찾을 수 없습니다."),
 	PRONOUNCE_TEST_RESULT_UPDATE_FAILED("S009", HttpStatus.BAD_REQUEST, "발음 테스트 결과 저장에 실패했습니다."),
+	PRONOUNCE_TEST_RESULT_NOT_FOUND("S010", HttpStatus.NOT_FOUND, "발음 테스트 결과 리스트를 찾을 수 없습니다."),
+
 
 	// Word Error
 	WORD_CREATE_FAILED("W001", HttpStatus.BAD_REQUEST, "단어를 추가할 수 없습니다"),

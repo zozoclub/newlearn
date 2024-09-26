@@ -16,9 +16,7 @@ const LoginPage = () => {
   const setCurrentLocation = useSetRecoilState(locationState);
   const requestAccessToken = async () => {
     try {
-      console.log("LoginPage에서 getRefreshToken 호출");
       const response = await getRefreshToken();
-      console.log("LoginPage에서 getRefreshToken 호출 끝");
       if (response) {
         setIsLogin(response);
         console.log("refreshToken 유효, 토큰 재발급");

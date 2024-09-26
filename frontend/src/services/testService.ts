@@ -86,8 +86,15 @@ export const getWordTestResultDetail = async (
   }
 };
 
+// Dto
+export type PronounceTestListDto = {
+  sentence: string
+  sentenceId: number
+  sentenceMeaning: string
+}
+
 // 발음 테스트 예문 가져오기
-export const getPronounceTestList = async (): Promise<void> => {
+export const getPronounceTestList = async (): Promise<PronounceTestListDto[]> => {
   try {
     const response = await axiosInstance.get(`study/pronounce/test`);
     console.log(response);
@@ -101,7 +108,7 @@ export const getPronounceTestList = async (): Promise<void> => {
 };
 
 // Dto
-export type pronounceTestRequestDto = {
+export type PronounceTestRequestDto = {
   sentenceIds: number[]; // 문장
   accuracyScore: number;
   fluencyScore: number;
@@ -113,7 +120,7 @@ export type pronounceTestRequestDto = {
 
 // 발음 테스트 결과 저장
 export const postPronounceTestResult = async (
-  pronounceTestResultDataSet: pronounceTestRequestDto
+  pronounceTestResultDataSet: PronounceTestRequestDto
 ): Promise<{ audioFileId: number }> => {
   console.log(pronounceTestResultDataSet);
 

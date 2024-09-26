@@ -65,6 +65,10 @@ public enum ErrorCode {
 	WORD_DELETE_FAILED("W003", HttpStatus.BAD_REQUEST, "단어를 삭제할 수 없습니다"),
 	WORD_UPDATE_FAILED("W004", HttpStatus.BAD_REQUEST, "단어 외움 변경을 할 수 없습니다."),
 
+	// Rank Error
+	POINT_RANK_NOT_FOUND("R001", HttpStatus.NOT_FOUND, "포인트 랭킹 조회 성공"),
+	NEWS_READ_RANK_NOT_FOUND("R002", HttpStatus.NOT_FOUND, "뉴스 읽음 랭킹 조회 성공"),
+
 
 	// News Error
 	NEWS_LIST_NOT_FOUND("N001", HttpStatus.NOT_FOUND, "뉴스 목록 불러오기에 실패하였습니다."),

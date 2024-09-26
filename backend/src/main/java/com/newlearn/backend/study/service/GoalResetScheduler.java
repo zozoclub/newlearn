@@ -15,7 +15,7 @@ public class GoalResetScheduler {
 	}
 
 	// 매달 1일 오전 00:00
-	@Scheduled(cron = "0 0 0 1 * *")
+	@Scheduled(cron = "0 0 0 1 * *", zone = "Asia/Seoul")
 	@Transactional
 	public void deleteGoalsOnFirstDayOfMonth() {
 		studyRepository.deleteAllGoals();

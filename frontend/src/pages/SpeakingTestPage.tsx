@@ -10,6 +10,7 @@ import SpeakingTestReference from "@components/testpage/SpeakingTestReference";
 import SpeakingTestRealtimeText from "@components/testpage/SpeakingTestRealtimeText";
 import SpeakingTestRecord from "@components/testpage/SpeakingTestRecord";
 import Modal from "@components/Modal";
+import Spinner from "@components/Spinner";
 // 이외 라이브러리
 import { useSetRecoilState } from "recoil";
 import locationState from "@store/locationState";
@@ -20,7 +21,8 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   getPronounceTestList,
   postPronounceTestResult,
-  pronounceTestRequestDto,
+  PronounceTestRequestDto,
+  PronounceTestListDto,
 } from "@services/testService";
 
 const SpeakingTestPage: React.FC = () => {
@@ -30,9 +32,20 @@ const SpeakingTestPage: React.FC = () => {
     queryKey: ["pronounceTestData"],
     queryFn: () => getPronounceTestList(),
   });
-  console.log(isLoading);
-  console.log(error);
-  console.log(data);
+
+  // 예문
+  const [referenceText, setReferenceText] = useState<string>("");
+  const [referenceTextTranslate, setReferenceTextTranslate] = useState<string>("");
+
+  useEffect(() => {
+    if (data) {
+      // 예문을 합치는 과정 (문장 평가)
+      const text = data.map((item: PronounceTestListDto) => item.sentence).join(" ");
+      const translatedText = data.map((item: PronounceTestListDto) => item.sentenceMeaning).join(" ");
+      setReferenceText(text);
+      setReferenceTextTranslate(translatedText);
+    }
+  }, [data]);
 
   // 제출 모달
   const [isSubmitModal, setIsSubmitModal] = useState<boolean>(false);
@@ -94,7 +107,7 @@ const SpeakingTestPage: React.FC = () => {
   speechConfig.speechRecognitionLanguage = "en-US";
 
   const mutation = useMutation({
-    mutationFn: (testResult: pronounceTestRequestDto) =>
+    mutationFn: (testResult: PronounceTestRequestDto) =>
       postPronounceTestResult(testResult),
     onSuccess: (data) => {
       const { audioFileId } = data; // 응답에서 audioFileId 추출
@@ -143,13 +156,6 @@ const SpeakingTestPage: React.FC = () => {
     }
   };
 
-  // 예제 문장 (나중에 Back에서 받아서 출력할 문구)
-  const reference_text =
-    "Today was a beautiful day. We had a great time taking a long walk outside in the morning. The sun was shining brightly, and a gentle breeze made the weather feel perfect. As we strolled through the park, we noticed the trees swaying softly, and the sound of birds chirping filled the air.";
-
-  const reference_text_translate =
-    "오늘은 정말 아름다운 날이었어. 우리는 아침에 긴 산책을 하며 즐거운 시간을 보냈어. 해가 밝게 빛나고, 부드러운 바람이 날씨를 완벽하게 만들어줬어. 공원을 걷다가 나무들이 부드럽게 흔들리는 것을 봤고, 새들이 지저귀는 소리가 공기를 가득 채웠어.";
-
   // react-media-recorder 녹음 관리
   const { startRecording, stopRecording, mediaBlobUrl, status } =
     useReactMediaRecorder({ audio: true });
@@ -196,7 +202,7 @@ const SpeakingTestPage: React.FC = () => {
     const audioConfig = sdk.AudioConfig.fromWavFileInput(audioFile);
 
     const pronunciationAssessmentConfig = new sdk.PronunciationAssessmentConfig(
-      reference_text,
+      referenceText,
       sdk.PronunciationAssessmentGradingSystem.HundredMark,
       sdk.PronunciationAssessmentGranularity.Phoneme,
       true
@@ -256,7 +262,7 @@ const SpeakingTestPage: React.FC = () => {
       const recognizedTextJoined = recognizedTexts.join(" ").toLowerCase();
 
       const similarity = stringSimilarity.compareTwoStrings(
-        reference_text.toLowerCase(),
+        referenceText.toLowerCase(),
         recognizedTextJoined
       );
 
@@ -293,10 +299,16 @@ const SpeakingTestPage: React.FC = () => {
     <>
       <MainContainer>
         <MainLayout>
-          <SpeakingTestReference
-            referenceTest={reference_text}
-            referenceTextTranslate={reference_text_translate}
-          />
+          {isLoading ? (
+            <Spinner /> // 로딩 중일 때 Spinner 표시
+          ) : error ? (
+            <ErrorText>에러가 발생했습니다. 다시 시도해 주세요.</ErrorText> // 에러 발생 시 에러 메시지 표시
+          ) : (
+            <SpeakingTestReference
+              referenceTest={referenceText}
+              referenceTextTranslate={referenceTextTranslate}
+            />
+          )}
           <SubArea>
             <SubContainer>
               <SpeakingTestRealtimeText
@@ -329,7 +341,6 @@ const SpeakingTestPage: React.FC = () => {
             {isSubmitLoading ? "제출중일 경우 문구" : "제출하기"}
           </SubmitButton>
         </SubmitButtonContainer>
-        {/* 제출 모달 */}
         <Modal
           isOpen={isSubmitModal}
           onClose={closeSubmitModal}
@@ -414,7 +425,7 @@ const SubmitButton = styled.button<{ disabled: boolean }>`
 
   &:hover {
     background-color: ${(props) =>
-      props.disabled ? "#ccc" : props.theme.colors.primaryHover};
+    props.disabled ? "#ccc" : props.theme.colors.primaryHover};
   }
 `;
 
@@ -447,6 +458,12 @@ const ModalConfirmButton = styled.button`
   &:hover {
     background-color: ${(props) => props.theme.colors.primaryPress};
   }
+`;
+
+const ErrorText = styled.div`
+  color: ${(props) => props.theme.colors.danger};
+  font-size: 1.25rem;
+  text-align: center;
 `;
 
 export default SpeakingTestPage;

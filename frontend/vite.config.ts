@@ -60,4 +60,13 @@ export default defineConfig({
       "@store": path.resolve(__dirname, "./src/store"),
     },
   },
+  server: {
+    host: "localhost",
+    port: 5173,
+    hmr: {
+      host: "localhost",
+      port: 5173,
+      protocol: "ws",
+    },
+  },
 });

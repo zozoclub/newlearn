@@ -1,10 +1,11 @@
-import Recommand from "@components/Recommand";
-import NewsListHeader from "@components/NewsListHeader";
-import locationState from "@store/locationState";
 import { useEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import styled from "styled-components";
-import NewsList from "@components/NewsList";
+
+import Recommand from "@components/newspage/Recommand";
+import NewsListHeader from "@components/newspage/NewsListHeader";
+import locationState from "@store/locationState";
+import NewsList from "@components/newspage/NewsList";
 
 const NewsPage = () => {
   const setCurrentLocation = useSetRecoilState(locationState);

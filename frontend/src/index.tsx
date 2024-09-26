@@ -6,6 +6,7 @@ import axios from "axios";
 
 import { router } from "./Router.tsx";
 import "./index.css";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 axios.defaults.baseURL = import.meta.env.VITE_BACKEND_URL;
 axios.defaults.withCredentials = true;
@@ -13,7 +14,9 @@ axios.defaults.withCredentials = true;
 createRoot(document.getElementById("root")!).render(
   // <StrictMode>
   <RecoilRoot>
-    <RouterProvider router={router} />
+    <QueryClientProvider client={new QueryClient()}>
+      <RouterProvider router={router} />
+    </QueryClientProvider>
   </RecoilRoot>
   // </StrictMode>,
 );

@@ -1,11 +1,12 @@
+import { useEffect, useState } from "react";
+import { useSetRecoilState } from "recoil";
 import styled from "styled-components";
+
 import NavarButton from "@assets/images/naverButton.png";
 import KakaoButton from "@assets/images/kakaoButton.png";
 import FullLogo from "@components/common/FullLogo";
 import { kakaoLogin, naverLogin } from "@services/userService";
-import { useEffect, useState } from "react";
 import { usePageTransition } from "@hooks/usePageTransition";
-import { useSetRecoilState } from "recoil";
 import locationState from "@store/locationState";
 import { getRefreshToken } from "@services/axiosInstance";
 
@@ -38,6 +39,7 @@ const LoginPage = () => {
     } else {
       requestAccessToken();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLogin, transitionTo]);
 
   return (

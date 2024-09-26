@@ -4,10 +4,10 @@ import { useRecoilState } from "recoil";
 import styled from "styled-components";
 
 import Button from "@components/Button";
-import NicknameInput from "@components/signupPage/NicknameInput";
-import SelectCategory from "@components/signupPage/SelectCategory";
-import SelectDifficulty from "@components/signupPage/SelectDifficulty";
-import SignupHeader from "@components/signupPage/SignupHeader";
+import NicknameInput from "@components/signuppage/NicknameInput";
+import SelectCategory from "@components/signuppage/SelectCategory";
+import SelectDifficulty from "@components/signuppage/SelectDifficulty";
+import SignupHeader from "@components/signuppage/SignupHeader";
 import { usePageTransition } from "@hooks/usePageTransition";
 import {
   checkNicknameDup,
@@ -15,7 +15,7 @@ import {
   signUp,
 } from "@services/userService";
 import signupState from "@store/signupState";
-import AvatarSetting from "@components/signupPage/AvatarSetting";
+import AvatarSetting from "@components/signuppage/AvatarSetting";
 
 export type SignUpType = {
   email: string;
@@ -150,6 +150,7 @@ const SignUpPage = () => {
       <form onSubmit={(event) => event.preventDefault()}>
         <FirstPage $pageNum={pageNum}>
           {/* 아바타 */}
+          <div className="desc">아바타</div>
           <AvatarSetting />
           {/* 닉네임 */}
           <NicknameInput
@@ -209,7 +210,7 @@ const Container = styled.div<{ $pageNum: number }>`
   left: 50%;
   transform: translate(-50%, 0);
   width: 27.25rem;
-  height: ${(props) => (props.$pageNum === 1 ? "40rem" : "33rem")};
+  height: ${(props) => (props.$pageNum === 2 ? "33rem" : "38rem")};
   padding: 2rem 2rem 2rem 2rem;
   border-radius: 0.5rem;
   background-color: ${(props) => props.theme.colors.cardBackground + "7F"};

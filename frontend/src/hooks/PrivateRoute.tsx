@@ -17,6 +17,7 @@ const PrivateRoute = () => {
 
   useEffect(() => {
     const checkAuthentication = async () => {
+      // session에 accessToken이 존재하면 로그인이 된 것으로 간주
       const storedToken = sessionStorage.getItem("accessToken");
       if (storedToken) {
         setLoginState(true);
@@ -24,8 +25,9 @@ const PrivateRoute = () => {
         return;
       }
 
+      // 소셜 로그인 후 main 페이지로 이동할 때
+      // 발급 받은 code로 로그인 정보를 가져옴
       const queryCode = query.get("code");
-
       if (queryCode) {
         try {
           const response = await getOAuthAccessToken(queryCode);
@@ -38,10 +40,11 @@ const PrivateRoute = () => {
           console.log(error);
           setLoginState(false);
         }
-      } else {
+      }
+      // 세션에 accessToken 정보가 없고 소셜 로그인 후가 아니라면 쿠키에 refreshToken으로 accessToken 재발급
+      else {
         try {
-          const response = await getRefreshToken();
-          console.log(response);
+          await getRefreshToken();
         } catch {
           setLoginState(false);
           setIsLoading(false);

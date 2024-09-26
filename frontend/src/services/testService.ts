@@ -161,10 +161,26 @@ export const getPronounceTestResultList = async (): Promise<PronounceTestResultL
   }
 };
 
+// 발음 테스트 결과 상세 Dto
+export type PronounceTestResultDetailDto = {
+  audioFileId: number;
+  audioFileUrl: string;
+  accuracyScore: number;
+  fluencyScore: number;
+  completenessScore: number;
+  prosodyScore: number;
+  totalScore: number;
+  createAt: string;
+  tests: Array<{
+    sentence: string;
+    sentenceMeaning: string;
+  }>;
+};
+
 // 발음 테스트 결과 상세 조회
 export const getPronounceTestResultDetail = async (
   audioFileId: number
-): Promise<void> => {
+): Promise<PronounceTestResultDetailDto> => {
   console.log(audioFileId);
 
   try {

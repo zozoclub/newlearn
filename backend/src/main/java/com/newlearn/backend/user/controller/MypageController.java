@@ -2,9 +2,6 @@ package com.newlearn.backend.user.controller;
 
 import com.newlearn.backend.common.ApiResponse;
 import com.newlearn.backend.common.ErrorCode;
-import com.newlearn.backend.news.dto.request.AllNewsRequestDTO;
-import com.newlearn.backend.news.dto.response.NewsResponseDTO;
-import com.newlearn.backend.news.model.News;
 import com.newlearn.backend.news.service.NewsService;
 import com.newlearn.backend.user.dto.request.NewsPagenationRequestDTO;
 import com.newlearn.backend.user.dto.response.UserCategoryChartResponseDTO;

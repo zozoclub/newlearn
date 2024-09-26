@@ -2,7 +2,7 @@ package com.newlearn.backend.news.controller;
 
 import com.newlearn.backend.common.ApiResponse;
 import com.newlearn.backend.common.ErrorCode;
-import com.newlearn.backend.news.dto.request.AllNewsRequestDTO;
+import com.newlearn.backend.news.dto.request.NewsListRequestDTO;
 import com.newlearn.backend.news.dto.request.NewsDetailRequestDTO;
 import com.newlearn.backend.news.dto.request.NewsReadRequestDTO;
 import com.newlearn.backend.news.dto.response.NewsDetailResponseDTO;
@@ -15,8 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -39,7 +37,7 @@ public class NewsController {
                 return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
             }
 
-            AllNewsRequestDTO newsRequestDTO = AllNewsRequestDTO.builder()
+            NewsListRequestDTO newsRequestDTO = NewsListRequestDTO.builder()
                     .difficulty(difficulty)
                     .lang(lang)
                     .page(page)
@@ -69,7 +67,7 @@ public class NewsController {
                 return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
             }
 
-            AllNewsRequestDTO newsRequestDTO = AllNewsRequestDTO.builder()
+            NewsListRequestDTO newsRequestDTO = NewsListRequestDTO.builder()
                     .difficulty(difficulty)
                     .lang(lang)
                     .page(page)

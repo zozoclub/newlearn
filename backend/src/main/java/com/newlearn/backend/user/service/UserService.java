@@ -1,10 +1,7 @@
 package com.newlearn.backend.user.service;
 
 import java.util.List;
-import java.util.Optional;
 
-import com.newlearn.backend.news.dto.request.AllNewsRequestDTO;
-import com.newlearn.backend.news.dto.response.NewsResponseDTO;
 import com.newlearn.backend.user.dto.request.NewsPagenationRequestDTO;
 import com.newlearn.backend.user.dto.request.UpdateAvatarDTO;
 import com.newlearn.backend.user.dto.request.SignUpRequestDTO;

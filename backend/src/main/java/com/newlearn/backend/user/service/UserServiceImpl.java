@@ -4,19 +4,14 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import com.newlearn.backend.news.dto.request.AllNewsRequestDTO;
-import com.newlearn.backend.news.dto.response.NewsResponseDTO;
-import com.newlearn.backend.news.model.News;
 import com.newlearn.backend.news.model.UserNewsRead;
 import com.newlearn.backend.news.model.UserNewsScrap;
-import com.newlearn.backend.news.repository.NewsRepository;
 import com.newlearn.backend.news.repository.UserNewsReadRepository;
 import com.newlearn.backend.news.repository.UserNewsScrapRepository;
 import com.newlearn.backend.user.dto.request.NewsPagenationRequestDTO;
 import com.newlearn.backend.user.dto.response.UserCategoryChartResponseDTO;
 import com.newlearn.backend.user.dto.response.UserScrapedNewsResponseDTO;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

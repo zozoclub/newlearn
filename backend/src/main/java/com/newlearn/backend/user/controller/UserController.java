@@ -23,6 +23,7 @@ import com.newlearn.backend.user.dto.request.UpdateDifficultyRequestDTO;
 import com.newlearn.backend.user.dto.request.UpdateNicknameRequestDto;
 import com.newlearn.backend.user.dto.response.LoginResponseDTO;
 import com.newlearn.backend.user.dto.response.RefreshTokenResponseDTO;
+import com.newlearn.backend.user.dto.response.UserProfileResponseDTO;
 import com.newlearn.backend.user.model.Users;
 import com.newlearn.backend.user.service.TokenService;
 import com.newlearn.backend.user.service.UserService;
@@ -146,7 +147,17 @@ public class UserController {
 
 	@GetMapping("/profile")
 	public ApiResponse<?> getProfile(Authentication authentication) {
-		return null;
+		try {
+			Users user = userService.findByEmail(authentication.getName());
+			if(user == null) {
+				return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
+			}
+			UserProfileResponseDTO dto = userService.getProfile(user.getUserId());
+			return ApiResponse.createSuccess(dto, "조회 성공 ");
+
+		} catch (Exception e) {
+			return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
+		}
 	}
 
 	@GetMapping("/check/{nickname}")

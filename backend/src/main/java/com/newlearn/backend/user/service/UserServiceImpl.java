@@ -10,12 +10,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.newlearn.backend.user.dto.request.UpdateAvatarDTO;
 import com.newlearn.backend.user.dto.request.SignUpRequestDTO;
+import com.newlearn.backend.user.dto.response.UserProfileResponseDTO;
 import com.newlearn.backend.user.model.Avatar;
 import com.newlearn.backend.user.model.Category;
 import com.newlearn.backend.user.model.Users;
 import com.newlearn.backend.user.repository.AvatarRepository;
 import com.newlearn.backend.user.repository.CategoryRepository;
 import com.newlearn.backend.user.repository.UserRepository;
+import com.newlearn.backend.word.repository.WordRepository;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +31,7 @@ public class UserServiceImpl implements UserService{
 	private final UserRepository userRepository;
 	private final AvatarRepository avatarRepository;
 	private final CategoryRepository categoryRepository;
+	private final WordRepository wordRepository;
 
 	@Override
 	public Users findByEmail(String email) throws Exception {
@@ -120,6 +123,18 @@ public class UserServiceImpl implements UserService{
 	public void deleteUser(Long userId) {
 
 		userRepository.deleteById(userId);
+	}
+
+	@Override
+	public UserProfileResponseDTO getProfile(Long userId) {
+
+		Users user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다"));
+
+		Long unCount = wordRepository.countCompleteWordsByUser(user);
+		Long Count = wordRepository.countIncompleteWordsByUser(user);
+
+		return new UserProfileResponseDTO(user, unCount, Count);
+
 	}
 
 }

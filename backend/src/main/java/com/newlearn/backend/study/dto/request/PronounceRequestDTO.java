@@ -7,7 +7,6 @@ import lombok.Getter;
 @Builder
 public class PronounceRequestDTO {
 
-    private String exampleSentence;
     private long accuracyScore;
     private long fluencyScore;
     private long completenessScore;

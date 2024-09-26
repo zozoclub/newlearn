@@ -1,10 +1,10 @@
 import styled from "styled-components";
-import MyPageProfile from "@components/mypage/MyPageProfile";
-import MyPageInfo from "@components/mypage/MyPageInfo";
-import MyPageCount from "@components/mypage/MyPageCount";
-import MyPageCategory from "@components/mypage/MyPageCategory";
-import MyPageGrass from "@components/mypage/MyPageGrass";
-import MyPageScrapNews from "@components/mypage/MyPageScrapNews";
+import MyPageProfile from "@components/myPage/MyPageProfile";
+import MyPageInfo from "@components/myPage/MyPageInfo";
+import MyPageCount from "@components/myPage/MyPageCount";
+import MyPageCategory from "@components/myPage/MyPageCategory";
+import MyPageGrass from "@components/myPage/MyPageGrass";
+import MyPageScrapNews from "@components/myPage/MyPageScrapNews";
 import { useEffect } from "react";
 import { useSetRecoilState } from "recoil";
 import locationState from "@store/locationState";

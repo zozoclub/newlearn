@@ -1,11 +1,12 @@
 import styled from "styled-components";
+
 import homeIcon from "@assets/icons/homeIcon.png";
 import newsIcon from "@assets/icons/newsIcon.png";
 import wordBookIcon from "@assets/icons/wordBookIcon.png";
 import testIcon from "@assets/icons/testIcon.png";
 import puzzleIcon from "@assets/icons/puzzleIcon.png";
 import myPageIcon from "@assets/icons/myPageIcon.png";
-import NavbarItem from "@components/NavbarItem";
+import NavbarItem from "@components/common/NavbarItem";
 
 const Navbar = () => {
   const iconList = [

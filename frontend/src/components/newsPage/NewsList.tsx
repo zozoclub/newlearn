@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import NewsListItem from "./NewsListItem";
+
+import NewsListItem from "@components/newsPage/NewsListItem";
 
 const NewsList: React.FC<{ selectedCategory: number }> = ({
   selectedCategory,

@@ -60,7 +60,7 @@ public class UserController {
 	//아바타 수정
 	@PutMapping("/update-avatar")
 	public ApiResponse<?> updateAvatar(Authentication authentication, @RequestBody UpdateAvatarDTO updateAvatarDTO) throws
-		Exception {
+			Exception {
 		try {
 			Users user = userService.findByEmail(authentication.getName());
 			if(user == null) {
@@ -109,7 +109,7 @@ public class UserController {
 
 	@PostMapping("/refresh-token")
 	public ApiResponse<?> refreshToken(@CookieValue(name = "refreshToken", required = false) String refreshToken,
-		HttpServletResponse response) throws Exception {
+									   HttpServletResponse response) throws Exception {
 		try {
 			if(refreshToken != null || refreshToken.isEmpty()) {
 				return ApiResponse.createError(ErrorCode.REFRESH_TOKEN_NOT_FOUND);
@@ -124,13 +124,13 @@ public class UserController {
 			String newRefreshToken = responseDTO.getRefreshToken();
 
 			ResponseCookie responseCookie = ResponseCookie.from("refreshToken", newRefreshToken)
-				.httpOnly(true)
-				.secure(true)
-				.maxAge(60*60*24*14)
-				.path("/")
-				.sameSite("None")
-				.domain("j11d105.p.ssafy.io")
-				.build();
+					.httpOnly(true)
+					.secure(true)
+					.maxAge(60*60*24*14)
+					.path("/")
+					.sameSite("None")
+					.domain("j11d105.p.ssafy.io")
+					.build();
 
 			response.setHeader(HttpHeaders.SET_COOKIE, responseCookie.toString());
 

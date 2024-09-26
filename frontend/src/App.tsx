@@ -53,10 +53,10 @@ Welcome To NewsLearn!"
   //   }
   // };
 
-  // 알림 권한 설정
-  useEffect(() => {
-    requestPermission();
-  }, []);
+  // // 알림 권한 설정
+  // useEffect(() => {
+  //   requestPermission();
+  // }, []);
 
   return (
     <QueryClientProvider client={queryClient}>

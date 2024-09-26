@@ -1,5 +1,6 @@
 package com.newlearn.backend.user.service;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -7,13 +8,16 @@ import java.util.stream.Collectors;
 import com.newlearn.backend.news.dto.request.AllNewsRequestDTO;
 import com.newlearn.backend.news.dto.response.NewsResponseDTO;
 import com.newlearn.backend.news.model.News;
+import com.newlearn.backend.news.model.UserDailyNewsRead;
 import com.newlearn.backend.news.model.UserNewsRead;
 import com.newlearn.backend.news.model.UserNewsScrap;
 import com.newlearn.backend.news.repository.NewsRepository;
+import com.newlearn.backend.news.repository.UserDailyNewsReadRepository;
 import com.newlearn.backend.news.repository.UserNewsReadRepository;
 import com.newlearn.backend.news.repository.UserNewsScrapRepository;
 import com.newlearn.backend.user.dto.request.NewsPagenationRequestDTO;
 import com.newlearn.backend.user.dto.response.UserCategoryChartResponseDTO;
+import com.newlearn.backend.user.dto.response.UserGrassResponseDTO;
 import com.newlearn.backend.user.dto.response.UserScrapedNewsResponseDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -48,6 +52,7 @@ public class UserServiceImpl implements UserService{
 	private final WordRepository wordRepository;
 	private final UserNewsScrapRepository userNewsScrapRepository;
 	private final UserNewsReadRepository userNewsReadRepository;
+	private final UserDailyNewsReadRepository userDailyNewsReadRepository;
 
 	@Override
 	public Users findByEmail(String email) throws Exception {
@@ -178,6 +183,24 @@ public class UserServiceImpl implements UserService{
 		// 3. UserScrapedNewsResponseDTO로 변환 및 새로운 Page 객체 생성
 		return newsList.map(scrap -> makeScrapedNewsResponseDTO(scrap, readStatusMap.get(scrap.getNews().getNewsId()), "en", difficulty));
 
+	}
+
+	@Override
+	public List<UserGrassResponseDTO> getGrass(Long userId) {
+		Users user = userRepository.findById(userId)
+				.orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
+
+		LocalDate endDate = LocalDate.now();
+		LocalDate startDate = endDate.minusMonths(6);
+
+		List<UserDailyNewsRead> dailyReadList = userDailyNewsReadRepository.findByUserAndTodayDateBetween(user, startDate, endDate);
+
+		return dailyReadList.stream()
+				.map(dailyRead -> new UserGrassResponseDTO(
+						dailyRead.getTodayDate(),
+						Long.valueOf(dailyRead.getNewsReadCount())
+				))
+				.collect(Collectors.toList());
 	}
 
 	@Override

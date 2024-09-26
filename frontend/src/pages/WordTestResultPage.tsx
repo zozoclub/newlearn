@@ -4,8 +4,8 @@ import locationState from "@store/locationState";
 import styled from "styled-components";
 import BackArrow from "@assets/icons/BackArrow";
 
-import WordTestResultWordList from "@components/testPage/WordTestResultWordList";
-import WordTestResultWordDetail from "@components/testPage/WordTestResultWordDetail";
+import WordTestResultWordList from "@components/testpage/WordTestResultWordList";
+import WordTestResultWordDetail from "@components/testpage/WordTestResultWordDetail";
 
 import PerfectStamp from "@assets/icons/PerfectStamp";
 import GreatStamp from "@assets/icons/GreatStamp";

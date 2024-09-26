@@ -6,9 +6,9 @@ import { convertToWav } from "@utils/audioUtils";
 import _ from "lodash";
 import stringSimilarity from "string-similarity";
 // Components
-import SpeakingTestReference from "@components/testPage/SpeakingTestReference";
-import SpeakingTestRealtimeText from "@components/testPage/SpeakingTestRealtimeText";
-import SpeakingTestRecord from "@components/testPage/SpeakingTestRecord";
+import SpeakingTestReference from "@components/testpage/SpeakingTestReference";
+import SpeakingTestRealtimeText from "@components/testpage/SpeakingTestRealtimeText";
+import SpeakingTestRecord from "@components/testpage/SpeakingTestRecord";
 import Modal from "@components/Modal";
 // 이외 라이브러리
 import { useSetRecoilState } from "recoil";

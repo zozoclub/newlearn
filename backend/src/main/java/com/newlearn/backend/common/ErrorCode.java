@@ -62,7 +62,12 @@ public enum ErrorCode {
 	WORD_CREATE_FAILED("W001", HttpStatus.BAD_REQUEST, "단어를 추가할 수 없습니다"),
 	WORD_FIND_FAILED("W002", HttpStatus.BAD_REQUEST, "단어 목록을 찾을 수 없습니다"),
 	WORD_DELETE_FAILED("W003", HttpStatus.BAD_REQUEST, "단어를 삭제할 수 없습니다"),
-	WORD_UPDATE_FAILED("W004", HttpStatus.BAD_REQUEST, "단어 외움 변경을 할 수 없습니다.");
+	WORD_UPDATE_FAILED("W004", HttpStatus.BAD_REQUEST, "단어 외움 변경을 할 수 없습니다."),
+
+	// Rank Error
+	POINT_RANK_NOT_FOUND("R001", HttpStatus.NOT_FOUND, "포인트 랭킹 조회 성공"),
+	NEWS_READ_RANK_NOT_FOUND("R002", HttpStatus.NOT_FOUND, "뉴스 읽음 랭킹 조회 성공"),
+	;
 
 	private final String code;
 	private final HttpStatus httpStatus;

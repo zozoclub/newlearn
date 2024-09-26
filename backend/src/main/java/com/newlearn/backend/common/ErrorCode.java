@@ -27,6 +27,8 @@ public enum ErrorCode {
 	EMAIL_ALREADY_EXIST("U011", HttpStatus.BAD_REQUEST, "이미 존재하는 이메일입니다."),
 	NICKNAME_ALREADY_USED("U012", HttpStatus.BAD_REQUEST, "닉네임 중복 조회에 실패했습니다."),
 	NICKNAME_NOT_FOUND("U013", HttpStatus.BAD_REQUEST, "닉네임 조회에 실패했습니다."),
+	USER_GRASS_FAILED("U014", HttpStatus.BAD_REQUEST, "유저 잔디 조회에 실패했습니다."),
+	USER_NEWS_CHART_FAILED("U015", HttpStatus.BAD_REQUEST, "유저 카테고리 차트 조회에 실패했습니다."),
 
 	// Unauthorized
 	AUTHENTICATION_FAILED("A001", HttpStatus.UNAUTHORIZED, "인증에 실패했습니다."),

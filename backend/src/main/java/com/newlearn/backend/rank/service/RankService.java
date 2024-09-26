@@ -1,5 +1,7 @@
 package com.newlearn.backend.rank.service;
 
+import com.newlearn.backend.rank.dto.PointsRankDTO;
+import com.newlearn.backend.rank.dto.ReadingRankDTO;
 import com.newlearn.backend.rank.model.UserRank;
 import com.newlearn.backend.user.dto.response.UserRankDTO;
 
@@ -10,6 +12,6 @@ public interface RankService {
     void updateRankings();
     void saveRankings(List<UserRankDTO> ranks, String rankType);
 
-    List<UserRank> getTopPointUsers();
-    List<UserRank> getTopReaderUsers();
+    List<PointsRankDTO> getTopPointUsers();
+    List<ReadingRankDTO> getTopReaderUsers();
 }

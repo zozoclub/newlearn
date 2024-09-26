@@ -2,6 +2,8 @@ package com.newlearn.backend.rank.controller;
 
 import com.newlearn.backend.common.ApiResponse;
 import com.newlearn.backend.common.ErrorCode;
+import com.newlearn.backend.rank.dto.PointsRankDTO;
+import com.newlearn.backend.rank.dto.ReadingRankDTO;
 import com.newlearn.backend.rank.model.UserRank;
 import com.newlearn.backend.rank.service.RankService;
 import lombok.Getter;
@@ -25,7 +27,7 @@ public class RankController {
     @GetMapping("/point")
     public ApiResponse<?> getRankPoint() throws Exception {
         try {
-            List<UserRank> rankUsers = rankService.getTopPointUsers();
+            List<PointsRankDTO> rankUsers = rankService.getTopPointUsers();
             return ApiResponse.createSuccess(rankUsers, "포인트왕 조회 성공");
         } catch (Exception e) {
             log.error("포인트 랭킹 조회 중 오류 발생", e);
@@ -37,7 +39,7 @@ public class RankController {
     @GetMapping("/read")
     public ApiResponse<?> getRankReader() throws Exception {
         try {
-            List<UserRank> rankUsers = rankService.getTopReaderUsers();
+            List<ReadingRankDTO> rankUsers = rankService.getTopReaderUsers();
             return ApiResponse.createSuccess(rankUsers, "다독왕 조회 성공");
         } catch (Exception e) {
             log.error("뉴스 읽음 랭킹 조회 중 오류 발생", e);

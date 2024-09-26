@@ -29,34 +29,34 @@ const Widget: React.FC<{ variety: string }> = ({ variety }) => {
     // 다른 걸로 대체 예정
     case "profile":
       return (
-        <Container>
+        <WidgetContainer>
           <Descripsion>My Information</Descripsion>
-        </Container>
+        </WidgetContainer>
       );
     case "chart":
       return (
-        <Container>
+        <WidgetContainer>
           <Descripsion>Learn Category</Descripsion>
           <CategoryChart countData={countData} />
-        </Container>
+        </WidgetContainer>
       );
     case "ranking":
       return (
-        <Container>
+        <WidgetContainer>
           <Descripsion>Ranking</Descripsion>
           <RankingWidget />
-        </Container>
+        </WidgetContainer>
       );
     case "goal":
       return (
-        <Container>
+        <WidgetContainer>
           <Descripsion>study goal</Descripsion>
-        </Container>
+        </WidgetContainer>
       );
   }
 };
 
-const Container = styled.div`
+const WidgetContainer = styled.div`
   position: relative;
   display: flex;
   flex-direction: column;

@@ -1,159 +1,105 @@
+import { useState } from "react";
 import styled from "styled-components";
-import { motion, AnimatePresence } from "framer-motion";
-import { useCallback, useEffect, useState } from "react";
 
 const RankingWidget = () => {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [direction, setDirection] = useState(0);
-  const [isAnimating, setIsAnimating] = useState(false);
-  const championCategory = ["Reading Champion", "Point Champion"];
-
-  const navigate = useCallback(
-    (newDirection: number) => {
-      if (isAnimating) return;
-      setIsAnimating(true);
-      setDirection(newDirection);
-      setCurrentIndex((prevIndex) => {
-        if (newDirection === -1) {
-          return prevIndex === 0 ? championCategory.length - 1 : prevIndex - 1;
-        } else {
-          return (prevIndex + 1) % championCategory.length;
-        }
-      });
-    },
-    [championCategory.length, isAnimating]
-  );
-  const goToPrevious = useCallback(() => navigate(-1), [navigate]);
-  const goToNext = useCallback(() => navigate(1), [navigate]);
-
-  const variants = {
-    enter: (direction: number) => ({
-      x: direction > 0 ? 100 : -100,
-      opacity: 0,
-    }),
-    center: {
-      zIndex: 1,
-      x: 0,
-      opacity: 1,
-    },
-    exit: (direction: number) => ({
-      zIndex: 0,
-      x: direction < 0 ? 100 : -100,
-      opacity: 0,
-    }),
-  };
-
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "ArrowLeft") {
-        goToPrevious();
-      } else if (event.key === "ArrowRight") {
-        goToNext();
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [goToPrevious, goToNext]);
-
+  const [selectedType, setSelectedType] = useState<"point" | "read">("point");
   return (
-    <>
-      <AnimateContainer>
-        <RankingButton onClick={goToPrevious}>좌</RankingButton>
-        <AnimatePresence
-          initial={false}
-          custom={direction}
-          onExitComplete={() => setIsAnimating(false)}
+    <Container>
+      <RankingTypeContainer $type={selectedType}>
+        <RankingType
+          $isSelected={selectedType === "point"}
+          $type={"point"}
+          onClick={() => setSelectedType("point")}
         >
-          <div className="motion-div-space"></div>
-          <motion.div
-            key={currentIndex}
-            custom={direction}
-            variants={variants}
-            initial="enter"
-            animate="center"
-            exit="exit"
-            transition={{
-              x: { type: "spring", stiffness: 300, damping: 30 },
-              opacity: { duration: 0.2 },
-            }}
-            className="motion-div"
-          >
-            {championCategory[currentIndex]}
-          </motion.div>
-        </AnimatePresence>
-        <RankingButton onClick={goToNext}>우</RankingButton>
-      </AnimateContainer>
-      <MyRank>
-        My Rank <span>495</span>th
-      </MyRank>
-      <TopRank>
-        <div className="first-price">
-          Lv.32 <span>덩국이</span>
-        </div>
-        <div className="second-price">
-          Lv.32 <span>덩국이</span>
-        </div>
-        <div className="third-price">
-          Lv.32 <span>덩국이</span>
-        </div>
-      </TopRank>
-    </>
+          포인트왕
+        </RankingType>
+        <RankingType
+          $isSelected={selectedType === "read"}
+          $type={"read"}
+          onClick={() => setSelectedType("read")}
+        >
+          다독왕
+        </RankingType>
+      </RankingTypeContainer>
+      <MyRanking>
+        <div>My Rank</div>
+        <div>몇등이지</div>
+      </MyRanking>
+      <TopRanking>
+        <table width="100%">
+          <tr>
+            <th style={{ textAlign: "start" }}>등수</th>
+            <th>닉네임</th>
+            <th>읽은 수</th>
+          </tr>
+          <tr style={{ textAlign: "center" }}>
+            <td style={{ textAlign: "start" }}>1</td>
+            <td>닉네임</td>
+            <td>300</td>
+          </tr>
+        </table>
+      </TopRanking>
+    </Container>
   );
 };
 
-const AnimateContainer = styled.div`
-  display: flex;
-  justify-content: center;
+const Container = styled.div`
+  width: 90%;
+  height: 90%;
+  padding: 5%;
+`;
+
+const RankingTypeContainer = styled.div<{ $type: "point" | "read" }>`
   position: relative;
-  width: 14rem;
-  overflow: hidden;
-  margin-top: 2rem;
-  .motion-div {
-    position: absolute;
-    z-index: -1;
-  }
-  .motion-div-space {
-    width: 14rem;
-  }
-`;
-
-const RankingButton = styled.button`
-  margin: 0 1rem;
-  padding: 0;
-  background-color: transparent;
-  border: none;
+  width: 10rem;
+  height: 1rem;
+  margin: auto;
+  padding: 0.5rem 2rem;
+  color: white;
+  border-radius: 1rem;
+  box-shadow: gray 0px 0px 2px 2px inset;
+  background-color: white;
   cursor: pointer;
+  &::after {
+    content: "";
+    position: absolute;
+    transform: ${(props) =>
+      props.$type === "point" ? "translateX(0)" : "translateX(6.5rem)"};
+    transition: transform 0.5s;
+    top: 0;
+    left: 0;
+    border-radius: 1rem;
+    background-color: ${(props) => props.theme.colors.primary};
+    width: 5.5rem;
+    height: 1rem;
+    padding: 0.5rem 1rem;
+  }
 `;
 
-const MyRank = styled.div`
-  font-size: 1.25rem;
-  margin: 2.5rem 0;
+const RankingType = styled.div<{
+  $isSelected: boolean;
+  $type: "point" | "read";
+}>`
+  position: absolute;
+  z-index: 1;
+  width: 5.5rem;
+  height: 1rem;
+  padding: 0.5rem 1rem;
+  transform: translate(0, -50%);
+  color: ${(props) => (props.$isSelected ? "white" : "black")};
+  transition: color 0.5s;
+  text-align: center;
+  top: 50%;
+  left: ${(props) => (props.$type === "point" ? 0 : "6.5rem")};
 `;
 
-const TopRank = styled.div`
-  width: calc(100% - 4rem);
-  padding: 0 2rem;
-  .first-price {
-    color: yellow;
-    margin-bottom: 1.25rem;
-    :first-child {
-      font-size: 1.5rem;
-    }
-  }
-  .second-price {
-    color: silver;
-    margin-bottom: 1.25rem;
-    :first-child {
-      font-size: 1.5rem;
-    }
-  }
-  .third-price {
-    color: brown;
-    :first-child {
-      font-size: 1.5rem;
-    }
-  }
+const MyRanking = styled.div`
+  display: flex;
+  justify-content: space-between;
+  width: 8rem;
+  margin: 1rem auto;
 `;
+
+const TopRanking = styled.div``;
 
 export default RankingWidget;

@@ -10,18 +10,18 @@ import { useNavigate } from "react-router-dom";
 type Props = {
   score: number;
   date: string;
-  resultId?: number;
+  audioFileId: number;
 };
 
 const SpeakingTestHistoryCardList: React.FC<Props> = ({
   date,
   score,
-  resultId,
+  audioFileId,
 }) => {
   const navigate = useNavigate();
 
   const intoDetailHandler = () => {
-    navigate(`/${resultId}`);
+    navigate(`/speakresult/${audioFileId}`);
   };
   const renderStamp = () => {
     if (score > 90) return <PerfectStamp />;

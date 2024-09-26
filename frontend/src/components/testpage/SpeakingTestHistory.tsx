@@ -119,6 +119,7 @@ const SpeakingTestHistory: React.FC = () => {
       <ScrollableTestHistoryList>
         {data?.map((test: PronounceTestResultListDto, index: number) => (
           <SpeakingTestHistoryCardList
+          audioFileId={test.audioFileId}
             score={test.totalScore}
             date={formatDate(test.createdAt)} // 날짜 포맷 적용
             key={index}

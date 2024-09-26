@@ -11,7 +11,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
-        current_date = datetime.now().strftime("%d%m%y")
+        current_date = datetime.now().strftime("%y%m%d")
         base_folder = os.path.join("crawl_data", "220924")
 
         shutil.rmtree(base_folder, ignore_errors=True)

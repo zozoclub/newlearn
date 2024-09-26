@@ -49,6 +49,7 @@ def process_translated_csv(filename, output_filename, chunksize=5):
             print(f"Processing row: {index}")
 
             url = row.get('url')
+            title_eng = row.get('title_eng')
             translated_high = row.get('translated_high')
             translated_medium = row.get('translated_medium')
             translated_low = row.get('translated_low')
@@ -57,7 +58,7 @@ def process_translated_csv(filename, output_filename, chunksize=5):
             translated_low_kor = row.get('translated_low_kor')
 
             if not url or pd.isna(translated_high) or pd.isna(translated_medium) or pd.isna(translated_low) or pd.isna(translated_high_kor) \
-                    or pd.isna(translated_medium_kor) or pd.isna(translated_low_kor):
+                    or pd.isna(translated_medium_kor) or pd.isna(translated_low_kor) or pd.isna(title_eng):
                 print("필수 값이 비어 있음")
                 continue
 
@@ -90,7 +91,7 @@ def process_translated_csv(filename, output_filename, chunksize=5):
                 continue
             else:
                 redis_client.set(url, 1)
-
+                redis_client.expire(url, 604800)
                 row_dict = row.to_dict()
 
                 # numpy 타입 변환

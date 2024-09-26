@@ -88,7 +88,7 @@ class Command(BaseCommand):
                 return None
 
         # 날짜에 따라 폴더 및 파일명 생성
-        current_date = datetime.now().strftime("%d%m%y")
+        current_date = datetime.now().strftime("%y%m%d")
         base_folder = os.path.join("crawl_data", current_date)
         if not os.path.exists(base_folder):
             os.makedirs(base_folder)

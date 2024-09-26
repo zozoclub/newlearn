@@ -2,7 +2,9 @@ package com.newlearn.backend.news.service;
 
 
 import com.newlearn.backend.news.dto.request.AllNewsRequestDTO;
+import com.newlearn.backend.news.dto.request.NewsDetailRequestDTO;
 import com.newlearn.backend.news.dto.request.NewsReadRequestDTO;
+import com.newlearn.backend.news.dto.response.NewsDetailResponseDTO;
 import com.newlearn.backend.news.dto.response.NewsResponseDTO;
 import org.springframework.data.domain.Page;
 
@@ -20,6 +22,7 @@ public interface NewsService {
 
 
     // 뉴스 상세 조회
+    NewsDetailResponseDTO getNewsDetail(Long userId, Long newsId, NewsDetailRequestDTO newsDetailRequestDTO);
 
     // 뉴스 읽음 처리
     void readNews(Long userId, NewsReadRequestDTO newsReadRequestDTO);

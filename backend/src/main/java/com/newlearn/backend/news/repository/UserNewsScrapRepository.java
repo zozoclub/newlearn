@@ -10,5 +10,6 @@ import java.util.Optional;
 public interface UserNewsScrapRepository extends JpaRepository<UserNewsScrap, Long> {
     Optional<UserNewsScrap> findByUserAndNews(Users user, News news);
     Optional<UserNewsScrap> findByUserAndNewsAndDifficulty(Users user, News news, Integer difficulty);
+    boolean existsByUserAndNewsAndDifficulty(Users user, News news, Integer difficulty);
 
 }

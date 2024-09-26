@@ -8,7 +8,7 @@ import org.springframework.data.domain.Pageable;
 
 @Getter
 @Builder
-public class AllNewsRequestDTO {
+public class AllNewsRequestDTO { //전체 뉴스, 카테고리 뉴스 조회
     private Integer difficulty;
     private String lang;
     private Integer page;

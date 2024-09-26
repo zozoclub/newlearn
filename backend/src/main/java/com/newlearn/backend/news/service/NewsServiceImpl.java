@@ -1,7 +1,9 @@
 package com.newlearn.backend.news.service;
 
 import com.newlearn.backend.news.dto.request.AllNewsRequestDTO;
+import com.newlearn.backend.news.dto.request.NewsDetailRequestDTO;
 import com.newlearn.backend.news.dto.request.NewsReadRequestDTO;
+import com.newlearn.backend.news.dto.response.NewsDetailResponseDTO;
 import com.newlearn.backend.news.dto.response.NewsResponseDTO;
 import com.newlearn.backend.news.model.News;
 import com.newlearn.backend.news.model.UserDailyNewsRead;
@@ -81,6 +83,28 @@ public class NewsServiceImpl implements NewsService{
                 userNewsReadMap.get(news.getNewsId())));
     }
 
+
+    @Override
+    public NewsDetailResponseDTO getNewsDetail(Long userId, Long newsId, NewsDetailRequestDTO newsDetailRequestDTO) {
+        Users user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
+
+        News news = newsRepository.findById(newsId)
+                .orElseThrow(() -> new EntityNotFoundException("뉴스를 찾을 수 없습니다."));
+
+        String content = news.getContentByLangAndDifficulty(newsDetailRequestDTO.getLang(), newsDetailRequestDTO.getDifficulty());
+        boolean isScrapped = userNewsScrapRepository.existsByUserAndNewsAndDifficulty(user, news, newsDetailRequestDTO.getDifficulty());
+
+//        List<NewsDetailResponseDTO.WordInfo> words = getHighlightedWords(news, lang, difficulty);
+
+        // 뉴스 조회수 +1
+        news.incrementHit();
+        newsRepository.save(news);
+
+        return NewsDetailResponseDTO.of(news, content, isScrapped);
+
+    }
+
     @Override
     public void readNews(Long userId, NewsReadRequestDTO newsReadRequestDTO) {
         Users user = userRepository.findById(userId)
@@ -99,10 +123,6 @@ public class NewsServiceImpl implements NewsService{
 
         userNewsRead.markAsRead(newsReadRequestDTO.getDifficulty());
         userNewsReadRepository.save(userNewsRead);
-
-        // 뉴스 조회수 +1 -> 뉴스 상세보기 시
-//        news.incrementHit();
-//        newsRepository.save(news);
 
         // 사용자 뉴스 읽음 +1
         user.incrementNewsReadCnt();

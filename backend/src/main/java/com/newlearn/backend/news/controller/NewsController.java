@@ -3,7 +3,9 @@ package com.newlearn.backend.news.controller;
 import com.newlearn.backend.common.ApiResponse;
 import com.newlearn.backend.common.ErrorCode;
 import com.newlearn.backend.news.dto.request.AllNewsRequestDTO;
+import com.newlearn.backend.news.dto.request.NewsDetailRequestDTO;
 import com.newlearn.backend.news.dto.request.NewsReadRequestDTO;
+import com.newlearn.backend.news.dto.response.NewsDetailResponseDTO;
 import com.newlearn.backend.news.dto.response.NewsResponseDTO;
 import com.newlearn.backend.news.service.NewsService;
 import com.newlearn.backend.user.model.Users;
@@ -86,6 +88,30 @@ public class NewsController {
     // 매일 TOP10 뉴스 조회
 
     // 뉴스 상세 조회
+    @GetMapping("/detail/{newsId}")
+    public ApiResponse<?> getNewsDetail(Authentication authentication,
+                                        @PathVariable("newsId") long newsId,
+                                        @RequestParam("difficulty") int difficulty,
+                                        @RequestParam("lang") String lang) throws Exception {
+        try {
+            Users user = userService.findByEmail(authentication.getName());
+            if (user == null) {
+                return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
+            }
+
+            NewsDetailRequestDTO newsDetailRequestDTO = NewsDetailRequestDTO.builder()
+                    .difficulty(difficulty)
+                    .lang(lang)
+                    .build();
+
+            NewsDetailResponseDTO newsDetailResponseDTO = newsService.getNewsDetail(user.getUserId(), newsId, newsDetailRequestDTO);
+
+            return ApiResponse.createSuccess(newsDetailResponseDTO, "뉴스 상세 조회 성공");
+        } catch (Exception e) {
+            log.error("뉴스 상세 조회 중 실패", e);
+            return ApiResponse.createError(ErrorCode.NEWS_NOT_FOUND);
+        }
+    }
 
 
     // 뉴스 읽음 처리

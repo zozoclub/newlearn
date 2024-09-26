@@ -59,6 +59,9 @@ public class News {
     @Column(name = "journalist")
     private String journalist;
 
+    @Column(name = "press")
+    private String press;
+
     @Column(name = "url")
     private String url;
 

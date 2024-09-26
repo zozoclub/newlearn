@@ -15,10 +15,6 @@ import LoginPage from "@pages/LoginPage";
 import SignUpPage from "@pages/SignUpPage";
 import PrivateRoute from "@hooks/PrivateRoute";
 import LandingPage from "@pages/LandingPage";
-<<<<<<< HEAD
-// import TestPage from "@pages/TestPage";
-=======
->>>>>>> 0828f580452822e283aefb138e0c5626cc53512a
 
 export const router = createBrowserRouter([
   {
@@ -86,13 +82,6 @@ export const router = createBrowserRouter([
         path: "*",
         element: <NotFoundPage />,
       },
-<<<<<<< HEAD
-      // {
-      //   path: "test",
-      //   element: <TestPage />,
-      // },
-=======
->>>>>>> 0828f580452822e283aefb138e0c5626cc53512a
     ],
   },
 ]);

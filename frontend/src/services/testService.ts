@@ -102,12 +102,13 @@ export const getPronounceTestList = async (): Promise<void> => {
 
 // Dto
 export type pronounceTestRequestDto = {
-  exampleSentence: string; // 문장
+  sentenceIds: number[]; // 문장
   accuracyScore: number;
   fluencyScore: number;
   completenessScore: number;
   prosodyScore: number;
   totalScore: number;
+  files: File;
 };
 
 // 발음 테스트 결과 저장
@@ -121,10 +122,11 @@ export const postPronounceTestResult = async (
       pronounceTestResultDataSet,
     });
     console.log(response);
+    console.log(response.data.message);
 
-    return response.data.data;
+    return response.data.message;
   } catch (error) {
-    console.error("발음 테스트 예문 가져오기 오류", error);
+    console.error("발음 테스트 결과 저장 오류", error);
 
     throw error;
   }

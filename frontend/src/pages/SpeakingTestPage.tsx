@@ -15,9 +15,24 @@ import { useSetRecoilState } from "recoil";
 import locationState from "@store/locationState";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
+// 데이터 호출 라이브러리
+import { useMutation, useQuery } from "@tanstack/react-query";
+import {
+  getPronounceTestList,
+  postPronounceTestResult,
+  pronounceTestRequestDto,
+} from "@services/testService";
 
 const SpeakingTestPage: React.FC = () => {
   const navigate = useNavigate();
+
+  const { isLoading, error, data } = useQuery({
+    queryKey: ["pronounceTestData"],
+    queryFn: () => getPronounceTestList(),
+  });
+  console.log(isLoading);
+  console.log(error);
+  console.log(data);
 
   // 제출 모달
   const [isSubmitModal, setIsSubmitModal] = useState<boolean>(false);
@@ -36,10 +51,18 @@ const SpeakingTestPage: React.FC = () => {
   const setCurrentLocation = useSetRecoilState(locationState);
   useEffect(() => {
     setCurrentLocation("Speaking Test Page");
-  });
+  }, [setCurrentLocation]);
+
+  // 컴포넌트가 언마운트될 때 정리
+  useEffect(() => {
+    return () => {
+      if (recognizerRef.current) {
+        recognizerRef.current.stopContinuousRecognitionAsync();
+      }
+    };
+  }, []);
 
   const [recognizingText, setRecognizingText] = useState<string>(""); // 실시간 텍스트
-  const [, setRecognitionResult] = useState<string>(""); // 최종 텍스트
   const [audioUrl, setAudioUrl] = useState<string | undefined>("");
   const recognizerRef = useRef<sdk.SpeechRecognizer | null>(null);
   const speechConfig = sdk.SpeechConfig.fromSubscription(
@@ -48,13 +71,7 @@ const SpeakingTestPage: React.FC = () => {
   );
 
   // 점수 측정용 변수
-  const [, setAveragePronunciationScore] = useState<number | null>(null);
-  const [, setAverageAccuracyScore] = useState<number | null>(null);
-  const [, setAverageFluencyScore] = useState<number | null>(null);
-  const [, setAverageProsodyScore] = useState<number | null>(null);
-  const [, setCompletenessScore] = useState<number | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [, setAudioFile] = useState<File | null>(null);
+  const [isSubmitLoading, setIsSubmitLoading] = useState<boolean>(false);
 
   // 점수 저장용 배열
   const pronunciationScores: number[] = [];
@@ -72,9 +89,23 @@ const SpeakingTestPage: React.FC = () => {
   const [isExplainText, setIsExplainText] = useState(true);
 
   // 녹음이 진행 중이거나 완료된 경우에만 제출 버튼이 활성화되도록 설정
-  const isSubmitDisabled = !audioUrl || isLoading;
+  const isSubmitDisabled = !audioUrl || isSubmitLoading;
 
   speechConfig.speechRecognitionLanguage = "en-US";
+
+  const mutation = useMutation({
+    mutationFn: (testResult: pronounceTestRequestDto) =>
+      postPronounceTestResult(testResult),
+    onSuccess: (data) => {
+      const { audioFileId } = data; // 응답에서 audioFileId 추출
+      console.log("audioFileId:", audioFileId);
+      // audioFileId를 결과 페이지로 전달
+      navigate(`/speakresult/${audioFileId}`);
+    },
+    onError: (mutationError) => {
+      console.error("저장 에러", mutationError);
+    },
+  });
 
   const startRecognition = () => {
     const audioConfig = sdk.AudioConfig.fromDefaultMicrophoneInput();
@@ -148,9 +179,10 @@ const SpeakingTestPage: React.FC = () => {
   };
 
   const handleSubmitConfirm = async () => {
+    setIsSubmitModal(false);
     if (!mediaBlobUrl) return;
 
-    setIsLoading(true); // 로딩 시작
+    setIsSubmitLoading(true); // 로딩 시작
 
     const response = await fetch(mediaBlobUrl);
     const webmBlob = await response.blob();
@@ -160,8 +192,6 @@ const SpeakingTestPage: React.FC = () => {
     const audioFile = new File([wavBlob], "recorded_audio.wav", {
       type: "audio/wav",
     });
-
-    setAudioFile(audioFile);
 
     const audioConfig = sdk.AudioConfig.fromWavFileInput(audioFile);
 
@@ -195,10 +225,6 @@ const SpeakingTestPage: React.FC = () => {
           // 인식된 텍스트를 저장
           recognizedTexts.push(e.result.text);
 
-          // 최종 인식된 텍스트로 업데이트
-          setRecognitionResult(
-            (prevResult) => prevResult + " " + e.result.text
-          );
           setRecognizingText(""); // 인식이 완료되면 실시간 텍스트는 지우기
         } else {
           console.error("Pronunciation assessment failed.");
@@ -207,10 +233,6 @@ const SpeakingTestPage: React.FC = () => {
       } else if (e.result.reason === sdk.ResultReason.NoMatch) {
         console.log("No speech could be recognized.");
         alert("No speech was recognized. Please try again.");
-        // 오류 이후 행동
-        setAudioFile(null);
-        setAveragePronunciationScore(null);
-        setCompletenessScore(null);
       }
     };
     // 에러 코드 반환
@@ -218,7 +240,7 @@ const SpeakingTestPage: React.FC = () => {
       if (e.reason === sdk.CancellationReason.Error) {
         console.error("Error: ", e.errorDetails);
       }
-      setIsLoading(false);
+      setIsSubmitLoading(false);
     };
 
     reco.sessionStopped = () => {
@@ -229,10 +251,6 @@ const SpeakingTestPage: React.FC = () => {
       const avgProsody = _.mean(prosodyScores).toFixed(1);
 
       // 평균 점수 상태 업데이트
-      setAveragePronunciationScore(Number(avgPronunciation));
-      setAverageAccuracyScore(Number(avgAccuracy));
-      setAverageFluencyScore(Number(avgFluency));
-      setAverageProsodyScore(Number(avgProsody));
 
       // completenessScore 계산
       const recognizedTextJoined = recognizedTexts.join(" ").toLowerCase();
@@ -243,19 +261,21 @@ const SpeakingTestPage: React.FC = () => {
       );
 
       const completeness = (similarity * 100).toFixed(1);
-      setCompletenessScore(Number(completeness));
       console.log("Completeness Score:", completeness);
-      // TODO : 이후 최종 결과를 Back에 저장 api 보내고 Result 페이지로 이동하는 로직 필요
+      console.log("파일 명 확인", audioFile);
+      console.log("파일 타입 확인", typeof audioFile);
+
       const results = {
-        pronunciationScore: avgPronunciation,
-        accuracyScore: avgAccuracy,
-        fluencyScore: avgFluency,
-        prosodyScore: avgProsody,
-        completenessScore: completeness,
+        sentenceIds: [1, 2, 3],
+        accuracyScore: Number(avgAccuracy),
+        fluencyScore: Number(avgFluency),
+        completenessScore: Number(completeness),
+        prosodyScore: Number(avgProsody),
+        totalScore: Number(avgPronunciation),
+        files: audioFile,
       };
-      setIsLoading(false);
-      console.log(results);
-      navigate("/speakresult");
+      setIsSubmitLoading(false);
+      mutation.mutate(results);
     };
 
     reco.startContinuousRecognitionAsync(
@@ -264,7 +284,7 @@ const SpeakingTestPage: React.FC = () => {
       },
       (err) => {
         console.error("Error starting recognition:", err);
-        setIsLoading(false);
+        setIsSubmitLoading(false);
       }
     );
   };
@@ -306,7 +326,7 @@ const SpeakingTestPage: React.FC = () => {
             onClick={handleRecordingDataSubmit}
             disabled={isSubmitDisabled}
           >
-            {isLoading ? "제출중일 경우 문구" : "제출하기"}
+            {isSubmitLoading ? "제출중일 경우 문구" : "제출하기"}
           </SubmitButton>
         </SubmitButtonContainer>
         {/* 제출 모달 */}

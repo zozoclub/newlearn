@@ -27,7 +27,7 @@ const StartWordTestWidget: React.FC = () => {
 
   return (
     <WidgetContainer>
-      <Title>문장 속 빈칸 단어 맞추기</Title>
+      <Title>문장 속 빈칸 단어 맞히기</Title>
       <Explain>예문 속 빈칸에 알맞은 단어를 넣어 문장을 완성해보세요.</Explain>
 
       <CounterContainer>

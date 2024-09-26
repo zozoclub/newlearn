@@ -10,7 +10,7 @@ import WordTestHistory from "@components/testpage/WordTestHistory";
 
 const TestHistoryPage: React.FC = () => {
   const setCurrentLocation = useSetRecoilState(locationState);
-  const [activeTab, setActiveTab] = useState("speak");
+  const [activeTab, setActiveTab] = useState("word");
 
   useEffect(() => {
     setCurrentLocation("TestHistoryPage");
@@ -51,8 +51,8 @@ const TestHistoryPage: React.FC = () => {
 
           {/* 조건부 렌더링 */}
           <Nav>
-            {activeTab === "speak" && <SpeakingTestHistory />}
             {activeTab === "word" && <WordTestHistory />}
+            {activeTab === "speak" && <SpeakingTestHistory />}
           </Nav>
         </BigContainer>
       </RightContainer>

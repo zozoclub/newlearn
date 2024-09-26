@@ -33,7 +33,7 @@ export const router = createBrowserRouter([
             element: <SpeakingTestPage />,
           },
           {
-            path: "speakresult",
+            path: "speakresult/:audioFileId",
             element: <SpeakingTestResultPage />,
           },
           {

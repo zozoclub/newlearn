@@ -51,6 +51,7 @@ public enum ErrorCode {
 	GOAL_ALREADY_EXISTS("S002", HttpStatus.BAD_REQUEST, "목표가 이미 존재합니다."),
 	STUDY_PROGRESS_NOT_FOUND("S003", HttpStatus.NOT_FOUND, "학습 진도율 정보를 찾을 수 없습니다."),
 	WORD_TEST_NOT_FOUND("S004", HttpStatus.NOT_FOUND, "단어 테스트 문제를 찾을 수 없습니다."),
+	PRONOUNCE_TEST_TOO_SMALL("S011", HttpStatus.BAD_REQUEST, "단어장의 단어 개수가 적습니다."),
 	WORD_TEST_RESULT_CREATE_FAILED("S006", HttpStatus.BAD_REQUEST, "단어 테스트 결과 저장에 실패했습니다."),
 	WORD_TEST_RESULT_NOT_FOUND("S007", HttpStatus.NOT_FOUND, "단어 테스트 결과 리스트를 찾을 수 없습니다."),
 	PRONOUNCE_TEST_NOT_FOUND("S008", HttpStatus.NOT_FOUND, "발음 테스트 문제를 찾을 수 없습니다."),
@@ -67,6 +68,14 @@ public enum ErrorCode {
 	// Rank Error
 	POINT_RANK_NOT_FOUND("R001", HttpStatus.NOT_FOUND, "포인트 랭킹 조회 성공"),
 	NEWS_READ_RANK_NOT_FOUND("R002", HttpStatus.NOT_FOUND, "뉴스 읽음 랭킹 조회 성공"),
+
+
+	// News Error
+	NEWS_LIST_NOT_FOUND("N001", HttpStatus.NOT_FOUND, "뉴스 목록 불러오기에 실패하였습니다."),
+	NEWS_NOT_FOUND("N002", HttpStatus.NOT_FOUND, "뉴스 상세 조회에 실패하였습니다."),
+	NEWS_READ_FAILED("N003", HttpStatus.BAD_REQUEST, "뉴스 읽음 처리에 실패하였습니다."),
+	NEWS_SCRAP_FAILED("N004", HttpStatus.BAD_REQUEST, "뉴스 스크랩 처리에 실패하였습니다."),
+	NEWS_SCRAP_CANCEL_FAILED("N005", HttpStatus.BAD_REQUEST, "뉴스 스크랩 삭제에 실패하였습니다."),
 	;
 
 	private final String code;

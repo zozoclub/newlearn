@@ -123,4 +123,17 @@ public class Users {
 		this.words.remove(word);
 		word.setUser(null); // 단어와의 연관 관계도 해제
 	}
+
+	// 조회수 +1
+	public void incrementNewsReadCnt() {
+		this.totalNewsReadCount++;
+	}
+	// 스크랩수 +1
+	public void incrementScrapCount() {
+		this.scrapCount++;
+	}
+	// 스크랩수 -1
+	public void decrementScrapCount() {
+		this.scrapCount--;
+	}
 }

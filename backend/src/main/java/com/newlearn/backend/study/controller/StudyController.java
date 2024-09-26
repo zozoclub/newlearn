@@ -12,7 +12,9 @@ import com.newlearn.backend.user.model.Users;
 import com.newlearn.backend.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -155,7 +157,7 @@ public class StudyController {
                 return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
             }
 
-            List<PronounceTestResponseDTO> tests = studyService.getPronounceTestProblems(user.getUserId(), user);
+            List<PronounceTestResponseDTO> tests = studyService.getPronounceTestProblems(user.getUserId());
 
             return ApiResponse.createSuccess(tests, "발음 테스트 예문 가져오기 성공");
         } catch (Exception e) {
@@ -167,7 +169,7 @@ public class StudyController {
     // 발음 테스트 결과 저장
     @PostMapping(value = "/pronounce/test", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ApiResponse<?> setPronounceWordTest(Authentication authentication,
-                                               @RequestParam("exampleSentence") String exampleSentence,
+                                               @RequestParam List<Long> sentenceIds,
                                                @RequestParam("accuracyScore") long accuracyScore,
                                                @RequestParam("fluencyScore") long fluencyScore,
                                                @RequestParam("completenessScore") long completenessScore,
@@ -181,7 +183,6 @@ public class StudyController {
             }
 
             PronounceRequestDTO pronounceRequestDTO = PronounceRequestDTO.builder()
-                    .exampleSentence(exampleSentence)
                     .accuracyScore(accuracyScore)
                     .fluencyScore(fluencyScore)
                     .completenessScore(completenessScore)
@@ -190,7 +191,7 @@ public class StudyController {
                     .build();
 
             // 비동기적으로 파일 업로드
-            CompletableFuture<String> fileUploadFuture = studyService.savePronounceTestResultAsync(user.getUserId(), pronounceRequestDTO, file);
+            CompletableFuture<String> fileUploadFuture = studyService.savePronounceTestResultAsync(user.getUserId(), pronounceRequestDTO, file, sentenceIds);
 
             // 즉시 성공 응답 반환
             return ApiResponse.createSuccess(null, "발음 테스트 결과 저장 성공. 파일 업로드 중입니다.");
@@ -219,6 +220,28 @@ public class StudyController {
     }
 
     // 발음 테스트 결과 상세 조회
+    @GetMapping("/pronounce/{audioFileId}")
+    public ApiResponse<?> getPronounceTestDetail(Authentication authentication,
+                                                 @PathVariable Long audioFileId) {
+        try {
+            // 사용자 정보 조회
+            Users user = userService.findByEmail(authentication.getName());
+            if (user == null) {
+                return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
+            }
+
+            // 발음 테스트 결과 조회
+            PronounceTestResultDetailResponseDTO results = studyService.getPronounceTestResult(audioFileId);
+            if (results == null) {
+                return ApiResponse.createError(ErrorCode.PRONOUNCE_TEST_RESULT_NOT_FOUND);
+            }
+
+            return ApiResponse.createSuccess(results, "발음 테스트 결과 상세 조회 성공");
+        } catch (Exception e) {
+            log.error("발음 테스트 결과 상세 조회 중 오류 발생", e);
+            return ApiResponse.createError(ErrorCode.PRONOUNCE_TEST_RESULT_NOT_FOUND);
+        }
+    }
 
 }
 

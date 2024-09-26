@@ -26,10 +26,13 @@ public interface StudyService {
 
     WordTestResultDetailResponseDTO getWordTestResult(Long userId, Long quizId);
 
-    List<PronounceTestResponseDTO> getPronounceTestProblems(Long userId, Users user);
+    List<PronounceTestResponseDTO> getPronounceTestProblems(Long userId);
 
-    CompletableFuture<String> savePronounceTestResultAsync(Long userId, PronounceRequestDTO pronounceRequestDTO, MultipartFile file);
+    CompletableFuture<String> savePronounceTestResultAsync(Long userId, PronounceRequestDTO pronounceRequestDTO, MultipartFile file, List<Long> sentenceIds);
 
     List<PronounceTestResultResponseDTO> getPronounceTestResults(Long userId);
+
+    PronounceTestResultDetailResponseDTO getPronounceTestResult(Long audioFileId);
+
 
 }

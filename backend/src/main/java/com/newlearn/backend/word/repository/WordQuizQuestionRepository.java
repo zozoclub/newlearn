@@ -14,7 +14,7 @@ public interface WordQuizQuestionRepository extends JpaRepository<WordQuizQuesti
 
     List<WordQuizQuestion> findByWordQuiz(WordQuiz wordQuiz);
 
-    @Query("SELECT w FROM Word w WHERE w.user.userId = :userId ORDER BY FUNCTION('RAND') LIMIT :totalCount")
+    @Query("SELECT w FROM Word w WHERE w.user.userId = :userId and w.isComplete is false and w.isFinalComplete is false ORDER BY FUNCTION('RAND') LIMIT :totalCount")
     List<Word> findRandomWords(@Param("userId") Long userId, @Param("totalCount") Long totalCount);
 
     @Query("SELECT ws FROM WordSentence ws WHERE ws.word.wordId = :wordId ORDER BY FUNCTION('RAND') LIMIT 1")

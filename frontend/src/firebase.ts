@@ -1,5 +1,5 @@
-import { initializeApp } from "firebase/app";
-import { getMessaging, getToken, onMessage } from "firebase/messaging";
+// import { initializeApp } from "firebase/app";
+// import { getMessaging, getToken, onMessage } from "firebase/messaging";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBwSePpbwxALHlejMVOjKZLW-y1qokHS6s",
@@ -11,8 +11,8 @@ const firebaseConfig = {
 };
 
 // Firebase 초기화
-const app = initializeApp(firebaseConfig);
-const messaging = getMessaging(app);
+// const app = initializeApp(firebaseConfig);
+// const messaging = getMessaging(app);
 console.log(firebaseConfig.projectId);
 
-export { messaging, getToken, onMessage };
+// export { messaging, getToken, onMessage };

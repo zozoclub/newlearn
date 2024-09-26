@@ -1,10 +1,21 @@
 package com.newlearn.backend.user.service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
+import com.newlearn.backend.news.dto.request.AllNewsRequestDTO;
+import com.newlearn.backend.news.dto.response.NewsResponseDTO;
+import com.newlearn.backend.news.model.News;
+import com.newlearn.backend.news.model.UserNewsRead;
+import com.newlearn.backend.news.model.UserNewsScrap;
+import com.newlearn.backend.news.repository.NewsRepository;
+import com.newlearn.backend.news.repository.UserNewsReadRepository;
+import com.newlearn.backend.news.repository.UserNewsScrapRepository;
+import com.newlearn.backend.user.dto.request.NewsPagenationRequestDTO;
+import com.newlearn.backend.user.dto.response.UserScrapedNewsResponseDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +34,8 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import static com.newlearn.backend.user.dto.response.UserScrapedNewsResponseDTO.makeScrapedNewsResponseDTO;
+
 @RequiredArgsConstructor
 @Service
 @Slf4j
@@ -32,6 +45,8 @@ public class UserServiceImpl implements UserService{
 	private final AvatarRepository avatarRepository;
 	private final CategoryRepository categoryRepository;
 	private final WordRepository wordRepository;
+	private final UserNewsScrapRepository userNewsScrapRepository;
+	private final UserNewsReadRepository userNewsReadRepository;
 
 	@Override
 	public Users findByEmail(String email) throws Exception {
@@ -136,5 +151,33 @@ public class UserServiceImpl implements UserService{
 		return new UserProfileResponseDTO(user, unCount, Count);
 
 	}
+
+	/* 마이페이지 */
+
+	@Override
+	public Page<UserScrapedNewsResponseDTO> getScrapedNewsList(Long userId, NewsPagenationRequestDTO newsPagenationRequestDTO, int difficulty) {
+		Users user = userRepository.findById(userId)
+				.orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
+
+		// 1. UserNewsScrapRepository에서 사용자가 스크랩한 뉴스 가져오기
+		// 전체조회 (유저) : 난이도 별 조회 (유저 & difficulty)
+		Page<UserNewsScrap> newsList = (difficulty == 0)
+				? userNewsScrapRepository.findAllByUserOrderByScrapedDate(user, newsPagenationRequestDTO.getPageable())
+				: userNewsScrapRepository.findAllByUserAndDifficultyOrderByScrapedDate(user, difficulty, newsPagenationRequestDTO.getPageable());
+
+		// 2. 관련된 모든 UserNewsRead를 한 번에 조회
+		// 유저가 스크랩한 뉴스들의 Id 리스트
+		List<Long> newsIds = newsList.getContent().stream()
+				.map(scrap -> scrap.getNews().getNewsId())
+				.collect(Collectors.toList());
+
+		Map<Long, UserNewsRead> readStatusMap = userNewsReadRepository.findAllByUserAndNewsNewsIdIn(user, newsIds).stream()
+				.collect(Collectors.toMap(read -> read.getNews().getNewsId(), Function.identity()));
+
+		// 3. UserScrapedNewsResponseDTO로 변환 및 새로운 Page 객체 생성
+		return newsList.map(scrap -> makeScrapedNewsResponseDTO(scrap, readStatusMap.get(scrap.getNews().getNewsId()), "en", difficulty));
+
+	}
+
 
 }

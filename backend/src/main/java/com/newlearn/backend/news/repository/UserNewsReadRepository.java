@@ -12,5 +12,6 @@ public interface UserNewsReadRepository extends JpaRepository<UserNewsRead, Long
     Optional<UserNewsRead> findByUserAndNews(Users user, News news);
     List<UserNewsRead> findAllByUserUserId(Long userId); //사용자의 뉴스 읽음 상태 전부 가져오기
     List<UserNewsRead> findAllByUserUserIdAndNewsCategoryCategoryId(Long userId, Long categoryId); //사용자의 특정 카테고리에 속한 뉴스의 읽음 상태만 가져오기
+    List<UserNewsRead> findAllByUserAndNewsNewsIdIn(Users user, List<Long> newsIds);
 
 }

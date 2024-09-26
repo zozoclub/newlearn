@@ -43,15 +43,20 @@ const PrivateRoute = () => {
       }
       // 세션에 accessToken 정보가 없고 소셜 로그인 후가 아니라면 쿠키에 refreshToken으로 accessToken 재발급
       else {
-        console.log("PrivateRoute에서 getRefreshToken 호출");
-        await getRefreshToken();
+        try {
+          await getRefreshToken();
+        } catch {
+          setLoginState(false);
+          setIsLoading(false);
+        }
       }
 
       setIsLoading(false);
     };
 
     checkAuthentication();
-  }, [query, setLoginState]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (isLoading) {
     // You can replace this with a loading spinner or component

@@ -62,7 +62,7 @@ class Command(BaseCommand):
 
         s3 = s3_connection()
 
-        current_date = datetime.now().strftime("%d%m%y")
+        current_date = datetime.now().strftime("%y%m%d")
         base_folder = os.path.join("crawl_data", current_date)
         os.makedirs(base_folder, exist_ok=True)
         csv_file_path = os.path.join(base_folder, 'final.csv')

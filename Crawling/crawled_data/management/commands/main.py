@@ -3,14 +3,13 @@ from datetime import datetime
 import os
 from django.core.management import call_command
 from django.core.management.base import BaseCommand
-import shutilTest
 
 class Command(BaseCommand):
     help = "카테고리 별로 뉴스 크롤링 후 번역 및 mongodb 저장을 처리하는 과정"
 
     def handle(self, *args, **kwargs):
 
-        current_date = datetime.now().strftime("%d%m%y")
+        current_date = datetime.now().strftime("%y%m%d")
         base_folder = os.path.join("crawl_data", current_date)
 
         if not os.path.exists(base_folder):
@@ -53,4 +52,4 @@ class Command(BaseCommand):
         #이제 나온 몽고디비 데이터를 mysql로 마이그레이션
         #마이그레이션 할땐, 몽고디비내용을 csv로 저장한다음
         #mysql에 import 한 다음 csv 파일 s3서버에 저장하고 삭제
-        call_command('migration_to_mysql')
+        call_command('migration_to_csv')

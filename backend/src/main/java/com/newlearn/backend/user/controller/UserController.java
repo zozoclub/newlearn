@@ -77,17 +77,20 @@ public class UserController {
 	//로그아웃
 	@PostMapping("/logout")
 	public ApiResponse<?> logout(HttpServletRequest request, HttpServletResponse response) {
+		System.out.println("들어온다 이십부레");
 		try {
 			String refreshToken = extractRefreshToken(request);
-
+			System.out.println(refreshToken);
 			if (refreshToken != null && jwtTokenProvider.validateToken(refreshToken)) {
 				tokenService.blacklistRefreshToken(refreshToken);
-
+				System.out.println("hell 들어오냐?ㅅ비");
 				Cookie cookie = new Cookie("refreshToken", null);
 				cookie.setMaxAge(0);
 				cookie.setPath("/");
 				response.addCookie(cookie);
+
 			}
+
 			return ApiResponse.createSuccess(null, "로그아웃이 완료되었습니다.");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -111,7 +114,8 @@ public class UserController {
 	public ApiResponse<?> refreshToken(@CookieValue(name = "refreshToken", required = false) String refreshToken,
 									   HttpServletResponse response) throws Exception {
 		try {
-			if(refreshToken != null || refreshToken.isEmpty()) {
+			System.out.println(refreshToken);
+			if(refreshToken == null || refreshToken.isEmpty()) {
 				return ApiResponse.createError(ErrorCode.REFRESH_TOKEN_NOT_FOUND);
 			}
 

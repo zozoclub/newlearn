@@ -212,8 +212,8 @@ public class StudyServiceImpl implements StudyService{
     }
 
     @Override
-    public CompletableFuture<String> savePronounceTestResultAsync(Long userId, PronounceRequestDTO pronounceRequestDTO,
-                                                                  MultipartFile file, List<Long> sentenceIds) {
+    public CompletableFuture<Long> savePronounceTestResultAsync(Long userId, PronounceRequestDTO pronounceRequestDTO,
+                                                                MultipartFile file, List<Long> sentenceIds) {
         // 파일이 비어 있는지 확인
         if (file == null || file.isEmpty()) {
             throw new IllegalArgumentException("발음 테스트를 위한 파일이 제공되지 않았습니다.");
@@ -224,7 +224,7 @@ public class StudyServiceImpl implements StudyService{
                 .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + userId));
 
         // S3에 파일 업로드
-        String fileUrl = s3ObjectStorage.uploadFile(file).join();  // join()을 통해 CompletableFuture 결과 대기
+        String fileUrl = s3ObjectStorage.uploadFile(file).join(); // join()을 통해 CompletableFuture 결과 대기
         log.info("File uploaded to S3 with URL: {}", fileUrl);
 
         // DB에 파일 정보 저장
@@ -238,7 +238,7 @@ public class StudyServiceImpl implements StudyService{
                 .totalScore(pronounceRequestDTO.getTotalScore())
                 .createdAt(LocalDateTime.now(ZoneId.of("Asia/Seoul")))
                 .build();
-        userAudioFileRepository.save(userAudioFile);
+        userAudioFile = userAudioFileRepository.save(userAudioFile); // 저장하고 엔티티를 다시 가져옴
 
         // 발음 테스트 문장 저장
         for (Long sentenceId : sentenceIds) {
@@ -262,7 +262,7 @@ public class StudyServiceImpl implements StudyService{
 
         log.info("발음 테스트 결과가 성공적으로 저장되었습니다. 사용자 ID: {}, 점수: {}", userId, pronounceRequestDTO.getTotalScore());
 
-        return CompletableFuture.completedFuture(fileUrl);
+        return CompletableFuture.completedFuture(userAudioFile.getAudioFileId()); // audioFileId 반환
     }
 
     @Override

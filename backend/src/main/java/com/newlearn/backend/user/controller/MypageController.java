@@ -7,6 +7,7 @@ import com.newlearn.backend.news.dto.response.NewsResponseDTO;
 import com.newlearn.backend.news.model.News;
 import com.newlearn.backend.news.service.NewsService;
 import com.newlearn.backend.user.dto.request.NewsPagenationRequestDTO;
+import com.newlearn.backend.user.dto.response.UserCategoryChartResponseDTO;
 import com.newlearn.backend.user.dto.response.UserScrapedNewsResponseDTO;
 import com.newlearn.backend.user.model.Users;
 import com.newlearn.backend.user.service.UserService;
@@ -75,4 +76,27 @@ public class MypageController {
             return ApiResponse.createError(ErrorCode.NEWS_LIST_NOT_FOUND);
         }
     }
+
+    // 유저 잔디 조회 : 6개월치 날짜, 그 날 읽은 기사 횟수
+
+
+
+    // 카테고리 차트 조회 : 카테고리 별 읽은 기사 횟수
+    @GetMapping("/chart")
+    public ApiResponse<?> getCategoryChart(Authentication authentication) throws Exception {
+        try {
+            Users user = userService.findByEmail(authentication.getName());
+            if (user == null) {
+                return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
+            }
+            UserCategoryChartResponseDTO chart = userService.getCategoryChart(user.getUserId());
+
+            return ApiResponse.createSuccess(chart, "사용자의 카테고리별 읽은 횟수 차트 조회 성공");
+        } catch (Exception e) {
+            log.error("사용자의 카테고리별 읽은 횟수 차트 조회 중 실패", e);
+            return ApiResponse.createError(ErrorCode.USER_NEWS_CHART_FAILED);
+        }
+    }
+
+
 }

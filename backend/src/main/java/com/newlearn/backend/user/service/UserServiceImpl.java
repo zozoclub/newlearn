@@ -13,6 +13,7 @@ import com.newlearn.backend.news.repository.NewsRepository;
 import com.newlearn.backend.news.repository.UserNewsReadRepository;
 import com.newlearn.backend.news.repository.UserNewsScrapRepository;
 import com.newlearn.backend.user.dto.request.NewsPagenationRequestDTO;
+import com.newlearn.backend.user.dto.response.UserCategoryChartResponseDTO;
 import com.newlearn.backend.user.dto.response.UserScrapedNewsResponseDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -177,6 +178,25 @@ public class UserServiceImpl implements UserService{
 		// 3. UserScrapedNewsResponseDTO로 변환 및 새로운 Page 객체 생성
 		return newsList.map(scrap -> makeScrapedNewsResponseDTO(scrap, readStatusMap.get(scrap.getNews().getNewsId()), "en", difficulty));
 
+	}
+
+	@Override
+	public UserCategoryChartResponseDTO getCategoryChart(long userId) {
+		Users user = userRepository.findById(userId)
+				.orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
+		Long[] counts = new Long[6];
+		for (int i = 0; i < 6; i++) {
+			counts[i] = userNewsReadRepository.countByUserAndCategoryId(user, i + 1L);
+		}
+
+		return UserCategoryChartResponseDTO.builder()
+				.politicsCount(counts[0])
+				.economyCount(counts[1])
+				.societyCount(counts[2])
+				.cultureCount(counts[3])
+				.scienceCount(counts[4])
+				.worldCount(counts[5])
+				.build();
 	}
 
 

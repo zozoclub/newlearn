@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import styled, { useTheme } from "styled-components";
 import { Line } from "react-chartjs-2";
 
-import WordTestHistoryCardList from "@components/testPage/WordTestHistoryCardList";
+import WordTestHistoryCardList from "@components/testpage/WordTestHistoryCardList";
 
 import {
   Chart as ChartJS,

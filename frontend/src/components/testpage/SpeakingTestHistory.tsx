@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styled, { useTheme } from "styled-components";
 import { Line } from "react-chartjs-2";
-import SpeakingTestHistoryCardList from "@components/testPage/SpeakingTestHistoryCardList";
+import SpeakingTestHistoryCardList from "@components/testpage/SpeakingTestHistoryCardList";
 
 import {
   Chart as ChartJS,

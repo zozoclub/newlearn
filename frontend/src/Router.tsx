@@ -15,7 +15,6 @@ import LoginPage from "@pages/LoginPage";
 import SignUpPage from "@pages/SignUpPage";
 import PrivateRoute from "@hooks/PrivateRoute";
 import LandingPage from "@pages/LandingPage";
-import TestPage from "@pages/TestPage";
 
 export const router = createBrowserRouter([
   {
@@ -82,10 +81,6 @@ export const router = createBrowserRouter([
       {
         path: "*",
         element: <NotFoundPage />,
-      },
-      {
-        path: "test",
-        element: <TestPage />,
       },
     ],
   },

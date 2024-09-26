@@ -96,8 +96,11 @@ const SpeakingTestPage: React.FC = () => {
   const mutation = useMutation({
     mutationFn: (testResult: pronounceTestRequestDto) =>
       postPronounceTestResult(testResult),
-    onSuccess: () => {
-      navigate("/speakresult");
+    onSuccess: (data) => {
+      const { audioFileId } = data; // 응답에서 audioFileId 추출
+      console.log("audioFileId:", audioFileId);
+      // audioFileId를 결과 페이지로 전달
+      navigate(`/speakresult/${audioFileId}`);
     },
     onError: (mutationError) => {
       console.error("저장 에러", mutationError);
@@ -259,7 +262,9 @@ const SpeakingTestPage: React.FC = () => {
 
       const completeness = (similarity * 100).toFixed(1);
       console.log("Completeness Score:", completeness);
-      // TODO : 이후 최종 결과를 Back에 저장 api 보내고 Result 페이지로 이동하는 로직 필요
+      console.log("파일 명 확인", audioFile);
+      console.log("파일 타입 확인", typeof audioFile);
+
       const results = {
         sentenceIds: [1, 2, 3],
         accuracyScore: Number(avgAccuracy),

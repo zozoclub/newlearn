@@ -114,17 +114,19 @@ export type pronounceTestRequestDto = {
 // 발음 테스트 결과 저장
 export const postPronounceTestResult = async (
   pronounceTestResultDataSet: pronounceTestRequestDto
-): Promise<void> => {
+): Promise<{ audioFileId: number }> => {
   console.log(pronounceTestResultDataSet);
 
   try {
-    const response = await axiosInstance.post(`study/pronounce/test`, {
-      pronounceTestResultDataSet,
-    });
+    const response = await axiosInstance.post(
+      `study/pronounce/test`,
+      pronounceTestResultDataSet
+    );
     console.log(response);
+    console.log(response.data.data);
     console.log(response.data.message);
 
-    return response.data.message;
+    return response.data.data;
   } catch (error) {
     console.error("발음 테스트 결과 저장 오류", error);
 

@@ -21,7 +21,7 @@ public class NewsResponseDTO {
     public static NewsResponseDTO makeNewsResponseDTO(News news, String lang, int difficulty, UserNewsRead userNewsRead) {
         return NewsResponseDTO.builder()
                 .newsId(news.getNewsId())
-                .title(news.getTitle())
+                .title(news.getTitleByLang(lang))
                 .content(news.getContentByLangAndDifficulty(lang, difficulty))
                 .thumbnailImageUrl(news.getThumbnailImageUrl())
                 .category(news.getCategory().getCategoryName())

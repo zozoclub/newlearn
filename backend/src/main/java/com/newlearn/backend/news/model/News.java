@@ -25,6 +25,9 @@ public class News {
     @Column(name = "title")
     private String title;
 
+    @Column(name = "title_eng")
+    private String titleEng;
+
     @Column(name = "content")
     private String content;
 
@@ -95,6 +98,10 @@ public class News {
     public String getContentByLangAndDifficulty(String lang, int difficulty) {
         String columnName = determineContentColumnName(lang, difficulty);
         return getNewsContent(columnName);
+    }
+
+    public String getTitleByLang(String lang) {
+        return lang.equals("kr") ? this.title : this.titleEng;
     }
 
     // 조회수 +1

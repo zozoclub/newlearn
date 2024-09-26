@@ -30,10 +30,10 @@ public class NewsDetailResponseDTO {
 //        private List<String> sentences;
 //    }
 
-    public static NewsDetailResponseDTO of(News news, String content, boolean isScrapped) {
+    public static NewsDetailResponseDTO of(News news, String title, String content, boolean isScrapped) {
         return NewsDetailResponseDTO.builder()
                 .newsId(news.getNewsId())
-                .title(news.getTitle())
+                .title(title)
                 .content(content)
                 .thumbnailImageUrl(news.getThumbnailImageUrl())
                 .category(news.getCategory().getCategoryName())

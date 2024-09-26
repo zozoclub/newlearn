@@ -92,6 +92,7 @@ public class NewsServiceImpl implements NewsService{
         News news = newsRepository.findById(newsId)
                 .orElseThrow(() -> new EntityNotFoundException("뉴스를 찾을 수 없습니다."));
 
+        String title = news.getTitleByLang(newsDetailRequestDTO.getLang());
         String content = news.getContentByLangAndDifficulty(newsDetailRequestDTO.getLang(), newsDetailRequestDTO.getDifficulty());
         boolean isScrapped = userNewsScrapRepository.existsByUserAndNewsAndDifficulty(user, news, newsDetailRequestDTO.getDifficulty());
 
@@ -101,7 +102,7 @@ public class NewsServiceImpl implements NewsService{
         news.incrementHit();
         newsRepository.save(news);
 
-        return NewsDetailResponseDTO.of(news, content, isScrapped);
+        return NewsDetailResponseDTO.of(news, title, content, isScrapped);
 
     }
 

@@ -1,52 +1,72 @@
 import styled from "styled-components";
 
-import PuzzleIcon from "@assets/icons/puzzleIcon.png";
+import { useRecoilValue } from "recoil";
+import userInfoState from "@store/userInfoState";
+import Avatar, { AvatarType } from "./Avatar";
 
 const Profile = () => {
+  const userInfo = useRecoilValue(userInfoState);
+  const avatar: AvatarType = {
+    skin: userInfo.skin,
+    eyes: userInfo.eyes,
+    mask: userInfo.mask,
+  };
+  const isInitialized = userInfo.isInitialized;
+
+  if (!isInitialized) return <div>로딩중이셈;</div>;
+
   return (
     <>
-      <ProfileImage $persentage={25}>
-        <img src={PuzzleIcon} />
-      </ProfileImage>
-      <div>Lv.32 Coding Larva</div>
+      <AvatarContainer $persentage={25}>
+        <div className="center-circle">
+          <Avatar avatar={avatar} size={6} />
+        </div>
+      </AvatarContainer>
+      <NameDiv>
+        Lv{userInfo.experience} {userInfo.nickname}
+      </NameDiv>
       <ReadStatus>
         <div>
           <ReadStatusTag>Read</ReadStatusTag>
-          <ReadStatusNum>20</ReadStatusNum>
+          <ReadStatusNum>{userInfo.totalNewsReadCount}</ReadStatusNum>
         </div>
         <div>
           <ReadStatusTag>Speak</ReadStatusTag>
-          <ReadStatusNum>32</ReadStatusNum>
+          <ReadStatusNum>0</ReadStatusNum>
         </div>
         <div>
           <ReadStatusTag>Scrap</ReadStatusTag>
-          <ReadStatusNum>17</ReadStatusNum>
+          <ReadStatusNum>0</ReadStatusNum>
         </div>
       </ReadStatus>
     </>
   );
 };
 
-const ProfileImage = styled.div<{ $persentage: number }>`
+const AvatarContainer = styled.div<{ $persentage: number }>`
   position: relative;
-  border-radius: 100%;
-  width: 50%;
-  height: 50%;
-  margin: 1rem 0 0.5rem 0;
+  border-radius: 9rem;
+  width: 9rem;
+  height: 9rem;
   background: conic-gradient(
     ${(props) => props.theme.colors.primary} 0% ${(props) => props.$persentage}%,
-    transparent 25% 100%
+    transparent 75% 100%
   );
-  img {
+  .center-circle {
     position: absolute;
     top: 50%;
     left: 50%;
-    width: 80%;
-    height: 80%;
     transform: translate(-50%, -50%);
-    border-radius: 100%;
-    background-color: #ffffff;
+    width: 7rem;
+    height: 7rem;
+    background-color: white;
+    border-radius: 7rem;
+    overflow: hidden;
   }
+`;
+
+const NameDiv = styled.div`
+  margin-top: 1rem;
 `;
 
 const ReadStatus = styled.div`

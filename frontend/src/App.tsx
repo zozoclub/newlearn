@@ -1,6 +1,6 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import styled, { ThemeProvider } from "styled-components";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { Outlet } from "react-router-dom";
 
 import Header from "@components/common/Header";
@@ -15,9 +15,10 @@ import { useEffect } from "react";
 import loginState from "@store/loginState";
 
 import { getToken, messaging } from "./firebase";
+import userInfoState, { userInfoType } from "@store/userInfoState";
+import { getUserInfo } from "@services/userService";
 
 const App: React.FC = () => {
-  const queryClient = new QueryClient();
   const theme = useRecoilValue(themeState) === "dark" ? darkTheme : lightTheme;
   const isLogin = useRecoilValue(loginState);
   useEffect(() => {
@@ -58,20 +59,32 @@ Welcome To NewsLearn!"
     requestPermission();
   }, []);
 
+  // 로그인이 되면 회원 정보를 저장
+  const setUserInfo = useSetRecoilState(userInfoState);
+  const { data } = useQuery<userInfoType>({
+    queryKey: ["getUserInfo"],
+    queryFn: getUserInfo,
+    enabled: isLogin, // isLogin이 true일 때만 쿼리 실행
+  });
+
+  useEffect(() => {
+    if (data) {
+      setUserInfo({ ...data, isInitialized: true }); // 데이터가 로드되면 Recoil state 업데이트
+    }
+  }, [data, setUserInfo]);
+
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider theme={theme}>
-        <GlobalStyle />
-        <Background />
-        <AppContainer>
-          <Header />
-          <TransitionContent>
-            <Outlet />
-          </TransitionContent>
-          {isLogin && <Navbar />}
-        </AppContainer>
-      </ThemeProvider>
-    </QueryClientProvider>
+    <ThemeProvider theme={theme}>
+      <GlobalStyle />
+      <Background />
+      <AppContainer>
+        <Header />
+        <TransitionContent>
+          <Outlet />
+        </TransitionContent>
+        {isLogin && <Navbar />}
+      </AppContainer>
+    </ThemeProvider>
   );
 };
 

@@ -1,10 +1,8 @@
 import styled from "styled-components";
 import { useRecoilState } from "recoil";
 
-import skinTest from "@assets/images/skinTest.gif";
-import eyesTest from "@assets/images/eyesTest.gif";
-import maskTest from "@assets/images/maskTest.gif";
 import signupState from "@store/signupState";
+import Avatar, { AvatarType } from "@components/common/Avatar";
 
 type AvatarPartType = "skin" | "eyes" | "mask";
 type DirectionType = "prev" | "next";
@@ -14,7 +12,11 @@ const AvatarSetting = () => {
   const eyesCount = 9;
   const maskCount = 14;
   const [signupData, setSignupData] = useRecoilState(signupState);
-  const { skin, eyes, mask } = signupData;
+  const avatar: AvatarType = {
+    skin: signupData.skin,
+    eyes: signupData.eyes,
+    mask: signupData.mask,
+  };
 
   const updateAvatarPart = (part: AvatarPartType, value: number) => {
     setSignupData((prev) => ({
@@ -53,11 +55,7 @@ const AvatarSetting = () => {
           <div onClick={() => handleChange("skin", "next")}>▶</div>
         </SkinSetting>
       </SettingContainer>
-      <AvatarContainer>
-        <Skin $url={skinTest} $index={skin} />
-        <Eyes $url={eyesTest} $index={eyes} />
-        <Mask $url={maskTest} $index={mask} />
-      </AvatarContainer>
+      <Avatar avatar={avatar} size={9} />
     </Container>
   );
 };
@@ -96,43 +94,6 @@ const MaskSetting = styled(SettingDiv)`
 
 const SkinSetting = styled(SettingDiv)`
   top: 75%;
-`;
-
-const AvatarContainer = styled.div`
-  position: relative;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 9rem;
-  height: 9rem;
-  margin: auto;
-`;
-
-const Skin = styled.div<{ $url: string; $index: number }>`
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background-image: url(${(props) => props.$url});
-  background-size: 1000% 100%;
-  background-position: -${(props) => props.$index * 100}% 0%;
-`;
-
-const Eyes = styled.div<{ $url: string; $index: number }>`
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background-image: url(${(props) => props.$url});
-  background-size: 900% 100%;
-  background-position: -${(props) => props.$index * 100}% 0%;
-`;
-
-const Mask = styled.div<{ $url: string; $index: number }>`
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background-image: url(${(props) => props.$url});
-  background-size: 1000% 200%;
-  background-position: -${(props) => (props.$index % 10) * 100}% -${(props) =>
-      Math.floor(props.$index / 10) * 100}%;
 `;
 
 export default AvatarSetting;

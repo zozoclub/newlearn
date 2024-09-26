@@ -3,13 +3,22 @@ import styled from "styled-components";
 import ProfileWidget from "@components/common/Profile";
 import { logout } from "@services/userService";
 import { usePageTransition } from "@hooks/usePageTransition";
-import { useSetRecoilState } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import locationState from "@store/locationState";
+import userInfoState from "@store/userInfoState";
+import Avatar, { AvatarType } from "./Avatar";
 
 const UserProfile = () => {
   const [isOpened, setIsOpened] = useState(false);
   const setCurrentLocation = useSetRecoilState(locationState);
   const translateTo = usePageTransition();
+  const userInfoData = useRecoilValue(userInfoState);
+  const isInitialized = userInfoData.isInitialized;
+  const avatar: AvatarType = {
+    skin: userInfoData.skin,
+    eyes: userInfoData.eyes,
+    mask: userInfoData.mask,
+  };
 
   async function handleLogoutButton() {
     try {
@@ -29,8 +38,11 @@ const UserProfile = () => {
 
   return (
     <Container>
-      <ProfileAvatar onClick={() => setIsOpened(!isOpened)}>
-        하이 ㅎ
+      <ProfileAvatar
+        $isInitialized={isInitialized}
+        onClick={() => setIsOpened(!isOpened)}
+      >
+        {isInitialized && <Avatar avatar={avatar} size={3} />}
       </ProfileAvatar>
       <UserProfileModal $isOpened={isOpened}>
         <div className="tail"></div>
@@ -48,18 +60,21 @@ const Container = styled.div`
   text-align: center;
   align-items: center;
   position: relative;
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 3rem;
+  height: 3rem;
   border: solid 0.125rem ${(props) => props.theme.colors.placeholder};
   border-radius: 100%;
 `;
 
-const ProfileAvatar = styled.div`
-  width: 2.5rem;
-  height: 2.5rem;
+const ProfileAvatar = styled.div<{ $isInitialized: boolean }>`
+  width: 3rem;
+  height: 3rem;
   border-radius: 100%;
-  background-color: blue;
+  background-color: ${(props) => props.theme.colors.text};
   cursor: pointer;
+  overflow: hidden;
+  opacity: ${(props) => (props.$isInitialized ? 1 : 0)};
+  transition: opacity 0.5s;
 `;
 
 const UserProfileModal = styled.div<{ $isOpened: boolean }>`

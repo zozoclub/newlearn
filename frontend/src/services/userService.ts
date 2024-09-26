@@ -1,6 +1,7 @@
 import { SignUpType } from "@pages/SignUpPage";
 import axios from "axios";
 import axiosInstance from "./axiosInstance";
+import { userInfoType } from "@store/userInfoState";
 
 type UserInfo = {
   email: string;
@@ -113,6 +114,16 @@ export const logout = async () => {
   try {
     const response = await axiosInstance.post(`user/logout`, "");
     console.log(response);
+  } catch (error) {
+    console.error("logout failed: ", error);
+    throw error;
+  }
+};
+
+export const getUserInfo = async (): Promise<userInfoType> => {
+  try {
+    const response = await axiosInstance.get(`user/profile`);
+    return response.data.data;
   } catch (error) {
     console.error("logout failed: ", error);
     throw error;

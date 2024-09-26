@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 public class PronounceTestResultResponseDTO {
 
     private long audioFileId;
-    private long pronunciationScore;
+    private long totalScore;
     private LocalDateTime createdAt;
 
 }

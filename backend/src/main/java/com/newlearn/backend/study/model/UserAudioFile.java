@@ -21,14 +21,23 @@ public class UserAudioFile {
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
-    @Column(name = "example_sentence")
-    private String exampleSentence;
-
-    @Column(name = "pronunciation_score")
-    private Long pronunciationScore;
-
     @Column(name = "audio_file_url")
     private String audioFileUrl;
+
+    @Column(name = "accuracy_score")
+    private Long accuracyScore;
+
+    @Column(name = "fluency_score")
+    private Long fluencyScore;
+
+    @Column(name = "completeness_score")
+    private Long completenessScore;
+
+    @Column(name = "prosody_score")
+    private Long prosodyScore;
+
+    @Column(name = "total_score")
+    private Long totalScore;
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;

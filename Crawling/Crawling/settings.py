@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-wbljksz6!1k_3xxe!&c#*@f@x69@%686f#o(qb=re$)hc$1y)x
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 
 # Application definition
@@ -108,7 +108,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Seoul'
 
 USE_I18N = True
 
@@ -125,6 +125,11 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# default
+APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"
+
+# 자동으로 스케쥴러 실행
+SCHEDULER_DEFAULT = True
 
 #######################################################
 

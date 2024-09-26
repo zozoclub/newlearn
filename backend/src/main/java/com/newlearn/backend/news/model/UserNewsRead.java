@@ -63,4 +63,17 @@ public class UserNewsRead {
                 throw new IllegalArgumentException("Invalid difficulty level: " + difficulty);
         }
     }
+
+
+    public boolean[] getReadStatus() {
+        return new boolean[]{
+                this.readHighTranslation,
+                this.readMediumTranslation,
+                this.readLowTranslation
+        };
+    }
+
+    public static boolean[] getDefaultReadStatus() {
+        return new boolean[]{false, false, false};
+    }
 }

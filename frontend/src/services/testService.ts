@@ -86,8 +86,15 @@ export const getWordTestResultDetail = async (
   }
 };
 
+// 발음 테스트 리스트 Dto
+export type PronounceTestListDto = {
+  sentence: string
+  sentenceId: number
+  sentenceMeaning: string
+}
+
 // 발음 테스트 예문 가져오기
-export const getPronounceTestList = async (): Promise<void> => {
+export const getPronounceTestList = async (): Promise<PronounceTestListDto[]> => {
   try {
     const response = await axiosInstance.get(`study/pronounce/test`);
     console.log(response);
@@ -100,8 +107,8 @@ export const getPronounceTestList = async (): Promise<void> => {
   }
 };
 
-// Dto
-export type pronounceTestRequestDto = {
+// 발음 테스트 저장 Dto
+export type PronounceTestRequestDto = {
   sentenceIds: number[]; // 문장
   accuracyScore: number;
   fluencyScore: number;
@@ -113,7 +120,7 @@ export type pronounceTestRequestDto = {
 
 // 발음 테스트 결과 저장
 export const postPronounceTestResult = async (
-  pronounceTestResultDataSet: pronounceTestRequestDto
+  pronounceTestResultDataSet: PronounceTestRequestDto
 ): Promise<{ audioFileId: number }> => {
   console.log(pronounceTestResultDataSet);
 
@@ -134,8 +141,14 @@ export const postPronounceTestResult = async (
   }
 };
 
+export type PronounceTestResultListDto = {
+  audioFileId : number
+  totalScore : number
+  createdAt : string
+}
+
 // 발음 테스트 결과 리스트 조회
-export const getPronounceTestResultList = async (): Promise<void> => {
+export const getPronounceTestResultList = async (): Promise<PronounceTestResultListDto[]> => {
   try {
     const response = await axiosInstance.get(`study/pronounce/list`);
     console.log(response);
@@ -148,10 +161,26 @@ export const getPronounceTestResultList = async (): Promise<void> => {
   }
 };
 
+// 발음 테스트 결과 상세 Dto
+export type PronounceTestResultDetailDto = {
+  audioFileId: number;
+  audioFileUrl: string;
+  accuracyScore: number;
+  fluencyScore: number;
+  completenessScore: number;
+  prosodyScore: number;
+  totalScore: number;
+  createAt: string;
+  tests: Array<{
+    sentence: string;
+    sentenceMeaning: string;
+  }>;
+};
+
 // 발음 테스트 결과 상세 조회
 export const getPronounceTestResultDetail = async (
   audioFileId: number
-): Promise<void> => {
+): Promise<PronounceTestResultDetailDto> => {
   console.log(audioFileId);
 
   try {

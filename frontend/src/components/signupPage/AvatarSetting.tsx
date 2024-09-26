@@ -1,191 +1,138 @@
-import { useEffect, useState } from "react";
 import styled from "styled-components";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useRecoilState } from "recoil";
+
+import skinTest from "@assets/images/skinTest.gif";
+import eyesTest from "@assets/images/eyesTest.gif";
+import maskTest from "@assets/images/maskTest.gif";
 import signupState from "@store/signupState";
-import kakaoLogin from "@assets/images/kakaoButton.png";
-import naverLogin from "@assets/images/naverButton.png";
+
+type AvatarPartType = "skin" | "eyes" | "mask";
+type DirectionType = "prev" | "next";
 
 const AvatarSetting = () => {
+  const skinCount = 10;
+  const eyesCount = 9;
+  const maskCount = 14;
   const [signupData, setSignupData] = useRecoilState(signupState);
-  const skinIndex = signupData.skin;
-  const eyesIndex = signupData.eyes;
-  const maskIndex = signupData.mask;
-  const [skins, setSkins] = useState([
-    { id: 0, url: kakaoLogin },
-    { id: 1, url: naverLogin },
-  ]);
-  const [eyes, setEyes] = useState([
-    { id: 0, url: kakaoLogin },
-    { id: 1, url: naverLogin },
-  ]);
-  const [masks, setMasks] = useState([
-    { id: 0, url: kakaoLogin },
-    { id: 1, url: naverLogin },
-  ]);
+  const { skin, eyes, mask } = signupData;
 
-  // 추후에 DB에서 아이템 가져오는 것으로 수정
-  async function fetchItems() {
-    console.log(setSkins);
-    console.log(setEyes);
-    console.log(setMasks);
-  }
-
-  useEffect(() => {
-    fetchItems();
-  }, []);
-
-  const cycleSkinIndex = (direction: number) => {
-    setSignupData({
-      ...signupData,
-      skin:
-        signupData.skin + direction < 0
-          ? skins.length - 1
-          : (signupData.skin + direction) % skins.length,
-    });
+  const updateAvatarPart = (part: AvatarPartType, value: number) => {
+    setSignupData((prev) => ({
+      ...prev,
+      [part]: value,
+    }));
   };
 
-  const cycleEyesIndex = (direction: number) => {
-    setSignupData({
-      ...signupData,
-      eyes:
-        signupData.eyes + direction < 0
-          ? eyes.length - 1
-          : (signupData.eyes + direction) % eyes.length,
-    });
-  };
+  const handleChange = (part: AvatarPartType, direction: DirectionType) => {
+    const counts = { skin: skinCount, eyes: eyesCount, mask: maskCount };
+    const currentValue = signupData[part];
+    let newValue;
 
-  const cycleMaskIndex = (direction: number) => {
-    setSignupData({
-      ...signupData,
-      mask:
-        signupData.mask + direction < 0
-          ? masks.length - 1
-          : (signupData.mask + direction) % masks.length,
-    });
+    if (direction === "prev") {
+      newValue = currentValue > 0 ? currentValue - 1 : counts[part] - 1;
+    } else {
+      newValue = currentValue < counts[part] - 1 ? currentValue + 1 : 0;
+    }
+
+    updateAvatarPart(part, newValue);
   };
 
   return (
     <Container>
-      <div className="desc">아바타 설정</div>
-      <AvatarDiv>
-        <Avatar>
-          <Eyes $imageUrl={eyes[eyesIndex].url}></Eyes>
-          <Mask $imageUrl={masks[maskIndex].url}></Mask>
-          <Skin $imageUrl={skins[skinIndex].url}></Skin>
-        </Avatar>
-        {/* 피부 */}
-        <LeftButton $top={90} onClick={() => cycleSkinIndex(-1)}>
-          <ChevronLeft />
-        </LeftButton>
-        <RightButton $top={90} onClick={() => cycleSkinIndex(1)}>
-          <ChevronRight />
-        </RightButton>
-        {/* 마스크 */}
-        <LeftButton $top={50} onClick={() => cycleMaskIndex(-1)}>
-          <ChevronLeft />
-        </LeftButton>
-        <RightButton $top={50} onClick={() => cycleMaskIndex(1)}>
-          <ChevronRight />
-        </RightButton>
-        {/* 눈 */}
-        <LeftButton $top={20} onClick={() => cycleEyesIndex(-1)}>
-          <ChevronLeft />
-        </LeftButton>
-        <RightButton $top={20} onClick={() => cycleEyesIndex(1)}>
-          <ChevronRight />
-        </RightButton>
-      </AvatarDiv>
+      <SettingContainer>
+        <EyesSetting>
+          <div onClick={() => handleChange("eyes", "prev")}>◀</div>
+          <div onClick={() => handleChange("eyes", "next")}>▶</div>
+        </EyesSetting>
+        <MaskSetting>
+          <div onClick={() => handleChange("mask", "prev")}>◀</div>
+          <div onClick={() => handleChange("mask", "next")}>▶</div>
+        </MaskSetting>
+        <SkinSetting>
+          <div onClick={() => handleChange("skin", "prev")}>◀</div>
+          <div onClick={() => handleChange("skin", "next")}>▶</div>
+        </SkinSetting>
+      </SettingContainer>
+      <AvatarContainer>
+        <Skin $url={skinTest} $index={skin} />
+        <Eyes $url={eyesTest} $index={eyes} />
+        <Mask $url={maskTest} $index={mask} />
+      </AvatarContainer>
     </Container>
   );
 };
 
 const Container = styled.div`
   position: relative;
-  height: 20rem;
-`;
-
-const AvatarDiv = styled.div`
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, calc(-50% + 1rem));
-  width: 15rem;
+  width: 100%;
   height: 15rem;
 `;
 
-const Avatar = styled.div`
+const SettingContainer = styled.div`
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 75%;
+  height: 100%;
+`;
+
+const SettingDiv = styled.div`
+  display: flex;
+  justify-content: space-between;
+  position: absolute;
+  width: 100%;
+  * {
+    cursor: pointer;
+  }
+`;
+
+const EyesSetting = styled(SettingDiv)`
+  top: 25%;
+`;
+
+const MaskSetting = styled(SettingDiv)`
+  top: 50%;
+`;
+
+const SkinSetting = styled(SettingDiv)`
+  top: 75%;
+`;
+
+const AvatarContainer = styled.div`
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 9rem;
+  height: 9rem;
+  margin: auto;
+`;
+
+const Skin = styled.div<{ $url: string; $index: number }>`
+  position: absolute;
   width: 100%;
   height: 100%;
-  /* clip-path 말고 image-mask 사용하는 것이 좋아보임 */
-  clip-path: polygon(
-    15% 60%,
-    15% 20%,
-    30% 0,
-    70% 0,
-    85% 20%,
-    85% 60%,
-    70% 75%,
-    85% 80%,
-    100% 100%,
-    0 100%,
-    15% 80%,
-    30% 75%
-  );
+  background-image: url(${(props) => props.$url});
+  background-size: 1000% 100%;
+  background-position: -${(props) => props.$index * 100}% 0%;
 `;
 
-const Skin = styled.div<{ $imageUrl: string }>`
+const Eyes = styled.div<{ $url: string; $index: number }>`
   position: absolute;
-  z-index: 1;
   width: 100%;
   height: 100%;
-  background-image: url(${(props) => props.$imageUrl});
-  background-size: cover;
-  background-position: center;
-  transition: background-image 0.3s ease-in-out;
+  background-image: url(${(props) => props.$url});
+  background-size: 900% 100%;
+  background-position: -${(props) => props.$index * 100}% 0%;
 `;
 
-const Eyes = styled.div<{ $imageUrl: string }>`
+const Mask = styled.div<{ $url: string; $index: number }>`
   position: absolute;
-  z-index: 2;
   width: 100%;
-  height: 40%;
-  background-image: url(${(props) => props.$imageUrl});
-  background-size: cover;
-  background-position: center;
-  transition: background-image 0.3s ease-in-out;
-`;
-
-const Mask = styled.div<{ $imageUrl: string }>`
-  position: absolute;
-  z-index: 3;
-  width: 100%;
-  height: 40%;
-  top: 40%;
-  background-image: url(${(props) => props.$imageUrl});
-  background-size: cover;
-  background-position: center;
-  transition: background-image 0.3s ease-in-out;
-`;
-
-const LeftButton = styled.button<{ $top: number }>`
-  position: absolute;
-  top: ${(props) => props.$top}%;
-  left: -5rem;
-  transform: translateY(-50%);
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
-`;
-
-const RightButton = styled.button<{ $top: number }>`
-  position: absolute;
-  top: ${(props) => props.$top}%;
-  right: -5rem;
-  transform: translateY(-50%);
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
+  height: 100%;
+  background-image: url(${(props) => props.$url});
+  background-size: 1000% 200%;
+  background-position: -${(props) => (props.$index % 10) * 100}% -${(props) =>
+      Math.floor(props.$index / 10) * 100}%;
 `;
 
 export default AvatarSetting;

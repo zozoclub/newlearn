@@ -150,6 +150,7 @@ const SignUpPage = () => {
       <form onSubmit={(event) => event.preventDefault()}>
         <FirstPage $pageNum={pageNum}>
           {/* 아바타 */}
+          <div className="desc">아바타</div>
           <AvatarSetting />
           {/* 닉네임 */}
           <NicknameInput
@@ -209,7 +210,7 @@ const Container = styled.div<{ $pageNum: number }>`
   left: 50%;
   transform: translate(-50%, 0);
   width: 27.25rem;
-  height: ${(props) => (props.$pageNum === 1 ? "40rem" : "33rem")};
+  height: ${(props) => (props.$pageNum === 2 ? "33rem" : "38rem")};
   padding: 2rem 2rem 2rem 2rem;
   border-radius: 0.5rem;
   background-color: ${(props) => props.theme.colors.cardBackground + "7F"};

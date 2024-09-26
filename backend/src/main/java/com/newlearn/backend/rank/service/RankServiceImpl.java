@@ -1,5 +1,7 @@
 package com.newlearn.backend.rank.service;
 
+import com.newlearn.backend.rank.dto.PointsRankDTO;
+import com.newlearn.backend.rank.dto.ReadingRankDTO;
 import com.newlearn.backend.rank.model.UserRank;
 import com.newlearn.backend.rank.repository.RankRepository;
 import com.newlearn.backend.user.dto.response.UserRankDTO;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -51,12 +54,32 @@ public class RankServiceImpl implements RankService {
     }
 
     @Override
-    public List<UserRank> getTopPointUsers() {
-        return rankRepository.findTop10ByRankingTypeOrderByRanking("points");
+    public List<PointsRankDTO> getTopPointUsers() {
+        LocalDate currentMonth = LocalDate.now().withDayOfMonth(1);
+        List<UserRank> userRanks = rankRepository.findTop10ByRankingTypeAndMonth("points", currentMonth);
+
+        return userRanks.stream()
+                .map(userRank -> PointsRankDTO.builder()
+                        .userId(userRank.getUser().getUserId())
+                        .nickname(userRank.getUser().getNickname())
+                        .experience(userRank.getUser().getExperience())
+                        .ranking(userRank.getRanking())
+                        .build())
+                .collect(Collectors.toList());
     }
 
     @Override
-    public List<UserRank> getTopReaderUsers() {
-        return rankRepository.findTop10ByRankingTypeOrderByRanking("reading");
+    public List<ReadingRankDTO> getTopReaderUsers() {
+        LocalDate currentMonth = LocalDate.now().withDayOfMonth(1);
+        List<UserRank> userRanks = rankRepository.findTop10ByRankingTypeAndMonth("reading", currentMonth);
+
+        return userRanks.stream()
+                .map(userRank -> ReadingRankDTO.builder()
+                        .userId(userRank.getUser().getUserId())
+                        .nickname(userRank.getUser().getNickname())
+                        .totalNewsReadCount(userRank.getUser().getTotalNewsReadCount())
+                        .ranking(userRank.getRanking())
+                        .build())
+                .collect(Collectors.toList());
     }
 }

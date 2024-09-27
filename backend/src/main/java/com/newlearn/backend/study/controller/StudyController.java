@@ -130,7 +130,7 @@ public class StudyController {
     // 단어 문장 빈칸 테스트 결과 상세 조회
     @GetMapping("/word/test/result/{quizId}")
     public ApiResponse<?> getStudyWordTestResult(Authentication authentication,
-                                           @RequestParam("quizId") Long quizId) throws Exception {
+                                           @PathVariable Long quizId) throws Exception {
         try {
             Users user = userService.findByEmail(authentication.getName());
             if (user == null) {

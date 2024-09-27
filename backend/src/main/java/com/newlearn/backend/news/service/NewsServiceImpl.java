@@ -1,9 +1,10 @@
 package com.newlearn.backend.news.service;
 
-import com.newlearn.backend.news.dto.request.AllNewsRequestDTO;
+import com.newlearn.backend.news.dto.request.NewsListRequestDTO;
 import com.newlearn.backend.news.dto.request.NewsDetailRequestDTO;
 import com.newlearn.backend.news.dto.request.NewsReadRequestDTO;
 import com.newlearn.backend.news.dto.response.NewsDetailResponseDTO;
+import com.newlearn.backend.news.dto.response.NewsDetailResponseDTO.WordInfo;
 import com.newlearn.backend.news.dto.response.NewsResponseDTO;
 import com.newlearn.backend.news.model.News;
 import com.newlearn.backend.news.model.UserDailyNewsRead;
@@ -16,18 +17,18 @@ import com.newlearn.backend.news.repository.UserNewsScrapRepository;
 import com.newlearn.backend.user.model.Users;
 import com.newlearn.backend.user.repository.CategoryRepository;
 import com.newlearn.backend.user.repository.UserRepository;
+import com.newlearn.backend.word.model.Word;
+import com.newlearn.backend.word.model.WordSentence;
+import com.newlearn.backend.word.repository.WordRepository;
+import com.newlearn.backend.word.repository.WordSentenceRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.time.LocalDate;
@@ -44,9 +45,11 @@ public class NewsServiceImpl implements NewsService{
     private final UserNewsReadRepository userNewsReadRepository;
     private final UserDailyNewsReadRepository userDailyNewsReadRepository;
     private final UserNewsScrapRepository userNewsScrapRepository;
+    private final WordRepository wordRepository;
+    private final WordSentenceRepository wordSentenceRepository;
 
     @Override
-    public Page<NewsResponseDTO> getAllNews(Long userId, AllNewsRequestDTO newsRequestDTO) {
+    public Page<NewsResponseDTO> getAllNews(Long userId, NewsListRequestDTO newsRequestDTO) {
         // 1. NewsRepository에서 전체 뉴스 가져오기
         Page<News> allNewsList = newsRepository.findAllByOrderByNewsIdDesc(newsRequestDTO.getPageable());
 
@@ -63,7 +66,7 @@ public class NewsServiceImpl implements NewsService{
     }
 
     @Override
-    public Page<NewsResponseDTO> getNewsByCategory(Long userId, AllNewsRequestDTO newsRequestDTO, long categoryId) {
+    public Page<NewsResponseDTO> getNewsByCategory(Long userId, NewsListRequestDTO newsRequestDTO, long categoryId) {
         // 카테고리 존재 여부 확인
         categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new EntityNotFoundException("Category not found with id: " + categoryId));
@@ -83,6 +86,40 @@ public class NewsServiceImpl implements NewsService{
                 userNewsReadMap.get(news.getNewsId())));
     }
 
+    @Override
+    public List<NewsResponseDTO> getTodayTopNewsList(Long userId, int difficulty, String lang) {
+        Users user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
+
+        // 오늘 날짜 포맷팅
+        LocalDate today = LocalDate.now().minusDays(1);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy. MM. dd.");
+        String todayString = today.format(formatter);
+
+        // 오늘 Top 10 뉴스
+        List<News> todayTopNews = newsRepository.findTop10ByPublishedDateStartingWithOrderByHitDesc(todayString);
+
+        // 응답 DTO 배열 생성
+        // 유저의 뉴스 난이도 별 읽음 여부 확인
+        Map<Long, UserNewsRead> userNewsReadMap = userNewsReadRepository
+                .findAllByUserAndNewsIn(user, todayTopNews)
+                .stream()
+                .collect(Collectors.toMap(
+                        userNewsRead -> userNewsRead.getNews().getNewsId(),
+                        Function.identity(),
+                        (existing, replacement) -> existing
+                ));
+
+        return todayTopNews.stream()
+                .map(news -> NewsResponseDTO.makeNewsResponseDTO(
+                        news,
+                        lang,
+                        difficulty,
+                        userNewsReadMap.getOrDefault(news.getNewsId(), null)
+                ))
+                .collect(Collectors.toList());
+    }
+
 
     @Override
     public NewsDetailResponseDTO getNewsDetail(Long userId, Long newsId, NewsDetailRequestDTO newsDetailRequestDTO) {
@@ -92,16 +129,29 @@ public class NewsServiceImpl implements NewsService{
         News news = newsRepository.findById(newsId)
                 .orElseThrow(() -> new EntityNotFoundException("뉴스를 찾을 수 없습니다."));
 
+        String title = news.getTitleByLang(newsDetailRequestDTO.getLang());
         String content = news.getContentByLangAndDifficulty(newsDetailRequestDTO.getLang(), newsDetailRequestDTO.getDifficulty());
         boolean isScrapped = userNewsScrapRepository.existsByUserAndNewsAndDifficulty(user, news, newsDetailRequestDTO.getDifficulty());
 
-//        List<NewsDetailResponseDTO.WordInfo> words = getHighlightedWords(news, lang, difficulty);
+        // 해당 뉴스(newsId)에 사용자가 하이라이팅한 단어 & 문장 가져오기
+        System.out.println("11111111111111");
+        Set<Word> wordList = user.getWords();
+        System.out.println("aaa" + wordList);
+        List<Long> wordIds = wordList.stream().map(Word::getWordId).collect(Collectors.toList());
+        System.out.println("bbbb" + wordIds);
+        List<WordSentence> wordSentences = wordSentenceRepository
+                .findByNewsIdAndWordIdsAndDifficulty(
+                        newsId, wordIds, newsDetailRequestDTO.getDifficulty());
+        System.out.println("ccc"+wordSentences);
+        List<WordInfo> words = wordSentences.stream()
+                .map(wordSentence -> new WordInfo(wordSentence.getWord().getWord(), wordSentence.getSentence()))
+                .collect(Collectors.toList());
 
         // 뉴스 조회수 +1
         news.incrementHit();
         newsRepository.save(news);
 
-        return NewsDetailResponseDTO.of(news, content, isScrapped);
+        return NewsDetailResponseDTO.of(news, title, content, isScrapped, words);
 
     }
 

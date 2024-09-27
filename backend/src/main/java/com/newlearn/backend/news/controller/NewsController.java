@@ -2,7 +2,7 @@ package com.newlearn.backend.news.controller;
 
 import com.newlearn.backend.common.ApiResponse;
 import com.newlearn.backend.common.ErrorCode;
-import com.newlearn.backend.news.dto.request.AllNewsRequestDTO;
+import com.newlearn.backend.news.dto.request.NewsListRequestDTO;
 import com.newlearn.backend.news.dto.request.NewsDetailRequestDTO;
 import com.newlearn.backend.news.dto.request.NewsReadRequestDTO;
 import com.newlearn.backend.news.dto.response.NewsDetailResponseDTO;
@@ -39,7 +39,7 @@ public class NewsController {
                 return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
             }
 
-            AllNewsRequestDTO newsRequestDTO = AllNewsRequestDTO.builder()
+            NewsListRequestDTO newsRequestDTO = NewsListRequestDTO.builder()
                     .difficulty(difficulty)
                     .lang(lang)
                     .page(page)
@@ -69,7 +69,7 @@ public class NewsController {
                 return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
             }
 
-            AllNewsRequestDTO newsRequestDTO = AllNewsRequestDTO.builder()
+            NewsListRequestDTO newsRequestDTO = NewsListRequestDTO.builder()
                     .difficulty(difficulty)
                     .lang(lang)
                     .page(page)
@@ -86,6 +86,24 @@ public class NewsController {
     }
 
     // 매일 TOP10 뉴스 조회
+    @GetMapping("/top")
+    public ApiResponse<?> getTodayTopNews(Authentication authentication,
+                                     @RequestParam("difficulty") int difficulty,
+                                     @RequestParam("lang") String lang) throws Exception {
+        try {
+            Users user = userService.findByEmail(authentication.getName());
+            if (user == null) {
+                return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
+            }
+
+            List<NewsResponseDTO> newsList = newsService.getTodayTopNewsList(user.getUserId(), difficulty, lang);
+
+            return ApiResponse.createSuccess(newsList, "오늘의 TOP10뉴스 조회 성공");
+        } catch (Exception e) {
+            log.error("뉴스 TOP10 불러오기 중 실패", e);
+            return ApiResponse.createError(ErrorCode.NEWS_LIST_NOT_FOUND);
+        }
+    }
 
     // 뉴스 상세 조회
     @GetMapping("/detail/{newsId}")

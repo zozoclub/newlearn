@@ -162,10 +162,9 @@ public class StudyServiceImpl implements StudyService{
 
             return WordTestResultResponseDTO.builder()
                     .quizId(quiz.getQuizId())
-                    .answer(answer)
-                    .totalCnt(String.valueOf(quiz.getTotalCount()))
-                    .correctCnt(isCorrect)
-                    .createAt(quiz.getCreatedAt())
+                    .totalCnt(quiz.getTotalCount())
+                    .correctCnt(quiz.getCorrectCount())
+                    .createdAt(quiz.getCreatedAt())
                     .build();
         }).collect(Collectors.toList());
     }

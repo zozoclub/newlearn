@@ -9,6 +9,7 @@ public class ReadingRankDTO {
 
     private long userId;
     private String nickname;
+    private long experience;
     private long totalNewsReadCount;
     private long ranking;
 

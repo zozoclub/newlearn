@@ -25,6 +25,14 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 @Data
 @Entity
@@ -33,7 +41,7 @@ import jakarta.persistence.TemporalType;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @EqualsAndHashCode(of = "userId")
-@ToString(exclude = {"avartar", "words"})
+@ToString(exclude = {"avatar", "words"})
 public class Users {
 
 	@Id

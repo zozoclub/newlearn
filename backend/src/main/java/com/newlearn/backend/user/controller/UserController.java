@@ -153,9 +153,11 @@ public class UserController {
 	public ApiResponse<?> getProfile(Authentication authentication) {
 		try {
 			Users user = userService.findByEmail(authentication.getName());
+			System.out.println(user);
 			if(user == null) {
 				return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
 			}
+
 			UserProfileResponseDTO dto = userService.getProfile(user.getUserId());
 			return ApiResponse.createSuccess(dto, "조회 성공 ");
 

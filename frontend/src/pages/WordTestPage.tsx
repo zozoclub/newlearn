@@ -4,7 +4,7 @@ import locationState from "@store/locationState";
 import styled from "styled-components";
 
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   getWordTestList,
   postWordTestResult,
@@ -16,7 +16,9 @@ import Spinner from "@components/Spinner";
 import Modal from "@components/Modal";
 
 const WordTestPage: React.FC = () => {
-  const { totalCount } = useParams<{ totalCount: string }>();
+  const [searchParams] = useSearchParams();
+  const totalCount = searchParams.get("totalCount");
+  console.log(totalCount);
 
   const navigate = useNavigate();
 
@@ -35,7 +37,7 @@ const WordTestPage: React.FC = () => {
   }, [setCurrentLocation]);
 
   const { isLoading, error, data } = useQuery<WordTestListResponseDto>({
-    queryKey: ["wordTestData", totalCount],
+    queryKey: ["wordTestData", Number(totalCount)],
     queryFn: () => getWordTestList(Number(totalCount)),
   });
 

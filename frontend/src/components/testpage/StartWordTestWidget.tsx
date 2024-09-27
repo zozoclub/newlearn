@@ -22,7 +22,7 @@ const StartWordTestWidget: React.FC = () => {
   };
 
   const handleStartTest = () => {
-    navigate(`/wordtest/${wordTestCount}`);
+    navigate(`/wordtest?totalCount=${wordTestCount}`);
   };
 
   return (
@@ -32,7 +32,12 @@ const StartWordTestWidget: React.FC = () => {
 
       <CounterContainer>
         <TextButton onClick={handleDecrease}>-</TextButton>
-        <Input type="number" value={wordTestCount} onChange={handleChange} min="1" />
+        <Input
+          type="number"
+          value={wordTestCount}
+          onChange={handleChange}
+          min="1"
+        />
         <TextButton onClick={handleIncrease}>+</TextButton>
       </CounterContainer>
 

@@ -22,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -78,6 +79,40 @@ public class NewsServiceImpl implements NewsService{
                 newsRequestDTO.getLang(),
                 newsRequestDTO.getDifficulty(),
                 userNewsReadMap.get(news.getNewsId())));
+    }
+
+    @Override
+    public List<NewsResponseDTO> getTodayTopNewsList(Long userId, int difficulty, String lang) {
+        Users user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
+
+        // 오늘 날짜 포맷팅
+        LocalDate today = LocalDate.now().minusDays(1);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy. MM. dd.");
+        String todayString = today.format(formatter);
+
+        // 오늘 Top 10 뉴스
+        List<News> todayTopNews = newsRepository.findTop10ByPublishedDateStartingWithOrderByHitDesc(todayString);
+
+        // 응답 DTO 배열 생성
+        // 유저의 뉴스 난이도 별 읽음 여부 확인
+        Map<Long, UserNewsRead> userNewsReadMap = userNewsReadRepository
+                .findAllByUserAndNewsIn(user, todayTopNews)
+                .stream()
+                .collect(Collectors.toMap(
+                        userNewsRead -> userNewsRead.getNews().getNewsId(),
+                        Function.identity(),
+                        (existing, replacement) -> existing
+                ));
+
+        return todayTopNews.stream()
+                .map(news -> NewsResponseDTO.makeNewsResponseDTO(
+                        news,
+                        lang,
+                        difficulty,
+                        userNewsReadMap.getOrDefault(news.getNewsId(), null)
+                ))
+                .collect(Collectors.toList());
     }
 
 

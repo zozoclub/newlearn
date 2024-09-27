@@ -8,6 +8,8 @@ import com.newlearn.backend.news.dto.response.NewsDetailResponseDTO;
 import com.newlearn.backend.news.dto.response.NewsResponseDTO;
 import org.springframework.data.domain.Page;
 
+import java.util.List;
+
 public interface NewsService {
 
     // 전체 뉴스 조회
@@ -17,7 +19,7 @@ public interface NewsService {
     Page<NewsResponseDTO> getNewsByCategory(Long userId, NewsListRequestDTO newsRequestDTO, long categoryId);
 
     // 매일 TOP 10 뉴스 조회
-
+    List<NewsResponseDTO> getTodayTopNewsList(Long userId, int difficulty, String lang);
 
     // 뉴스 상세 조회
     NewsDetailResponseDTO getNewsDetail(Long userId, Long newsId, NewsDetailRequestDTO newsDetailRequestDTO);

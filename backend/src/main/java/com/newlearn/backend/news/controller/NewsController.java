@@ -16,6 +16,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Slf4j
 @RequiredArgsConstructor
 @RestController
@@ -84,6 +86,24 @@ public class NewsController {
     }
 
     // 매일 TOP10 뉴스 조회
+    @GetMapping("/top")
+    public ApiResponse<?> getTodayTopNews(Authentication authentication,
+                                     @RequestParam("difficulty") int difficulty,
+                                     @RequestParam("lang") String lang) throws Exception {
+        try {
+            Users user = userService.findByEmail(authentication.getName());
+            if (user == null) {
+                return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
+            }
+
+            List<NewsResponseDTO> newsList = newsService.getTodayTopNewsList(user.getUserId(), difficulty, lang);
+
+            return ApiResponse.createSuccess(newsList, "오늘의 TOP10뉴스 조회 성공");
+        } catch (Exception e) {
+            log.error("뉴스 TOP10 불러오기 중 실패", e);
+            return ApiResponse.createError(ErrorCode.NEWS_LIST_NOT_FOUND);
+        }
+    }
 
     // 뉴스 상세 조회
     @GetMapping("/detail/{newsId}")

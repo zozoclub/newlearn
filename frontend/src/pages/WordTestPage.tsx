@@ -3,69 +3,52 @@ import { useSetRecoilState } from "recoil";
 import locationState from "@store/locationState";
 import styled from "styled-components";
 
+import { useQuery } from "@tanstack/react-query";
+import { useParams } from "react-router-dom";
+import {
+  getWordTestList,
+  WordTestListResponseDto,
+} from "@services/wordTestService";
+
+import Spinner from "@components/Spinner";
+
 const WordTestPage: React.FC = () => {
+  const { totalCount } = useParams<{ totalCount: string }>();
+
   const setCurrentLocation = useSetRecoilState(locationState);
   useEffect(() => {
     setCurrentLocation("Word Test Page");
   }, [setCurrentLocation]);
 
-  // 퀴즈는 back에서 받는 형태로 변경 예정
-  const quiz = [
-    {
-      question:
-        "Every morning, Sarah ______ (walk) to the park and enjoys the fresh air.",
-      translation:
-        "매일 아침, 사라는 공원까지 걸어서 가며 신선한 공기를 즐긴다.",
-      answer: "walks",
-    },
-    {
-      question:
-        "The cat is hiding ______ the table because it’s afraid of the thunder.",
-      translation: "고양이는 천둥을 무서워해서 테이블 밑에 숨고 있다.",
-      answer: "under",
-    },
-    {
-      question:
-        "He wanted to go to the party, ______ he was too tired after work.",
-      translation: "그는 파티에 가고 싶었지만, 일 후에 너무 피곤했다.",
-      answer: "but",
-    },
-    {
-      question: "She has been living in this city ______ five years.",
-      translation: "그녀는 이 도시에 5년째 살고 있다.",
-      answer: "for",
-    },
-    {
-      question: "It ______ (rain) when I left the house this morning.",
-      translation: "오늘 아침 내가 집을 나설 때 비가 오고 있었다.",
-      answer: "was raining",
-    },
-    {
-      question: "We need to leave early ______ we miss the train.",
-      translation: "우리는 기차를 놓치지 않기 위해 일찍 떠나야 한다.",
-      answer: "so that",
-    },
-    {
-      question: "John ______ (not/finish) his homework yet.",
-      translation: "John은 아직 숙제를 끝내지 못했다.",
-      answer: "has not finished",
-    },
-    {
-      question: "The movie was really boring, ______ we left early.",
-      translation: "그 영화는 정말 지루해서 우리는 일찍 나갔다.",
-      answer: "so",
-    },
-    {
-      question: "If I ______ (be) you, I would take that job offer.",
-      translation: "내가 너라면, 그 일자리를 수락하겠어.",
-      answer: "were",
-    },
-  ];
+  const { isLoading, error, data } = useQuery<WordTestListResponseDto>({
+    queryKey: ["wordTestData", totalCount],
+    queryFn: () => getWordTestList(Number(totalCount)),
+  });
 
-  const [userAnswers, setUserAnswers] = useState<string[]>(
-    Array(quiz.length).fill("")
-  );
+  // 퀴즈 형식으로 변환
+  const generateQuizFromData = (data: WordTestListResponseDto) => {
+    return data.tests.map((item) => ({
+      // 단어의 길이만큼 빈칸을 생성
+      question: item.sentence.replace(item.word, "_".repeat(item.word.length)),
+      translation: item.sentenceMeaning,
+      answer: item.word,
+    }));
+  };
+
+  const [userAnswers, setUserAnswers] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1); // 현재 페이지
+  const [quiz, setQuiz] = useState<
+    { question: string; translation: string; answer: string }[]
+  >([]);
+
+  // 데이터가 있을 때 퀴즈 생성
+  useEffect(() => {
+    if (data) {
+      const processedQuiz = generateQuizFromData(data);
+      setQuiz(processedQuiz);
+      setUserAnswers(Array(processedQuiz.length).fill(""));
+    }
+  }, [data]);
 
   // 각 input 요소에 대한 ref 배열 생성
   const inputRefs = useRef<(HTMLInputElement | null)[][]>([]);
@@ -140,6 +123,13 @@ const WordTestPage: React.FC = () => {
     const score = (correctAnswers / quiz.length) * 100;
     console.log(`점수: ${score}점 (${correctAnswers}/${quiz.length} 정답)`);
   };
+
+  // 로딩 상태 처리
+  if (isLoading) return <Spinner />;
+
+  // 에러 상태 처리
+  if (error)
+    return <ErrorText>에러가 발생했습니다. 다시 시도해 주세요.</ErrorText>;
 
   return (
     <MainContainer>
@@ -243,7 +233,7 @@ const Translation = styled.div`
 `;
 
 const BlankInput = styled.input`
-  width: 0.875rem; // 빈칸의 크기 설정 (한 글자씩)
+  width: 0.875rem;
   padding: 0.25rem;
   margin: 0 0.125rem;
   border: 1px solid ${(props) => props.theme.colors.primary};
@@ -251,11 +241,11 @@ const BlankInput = styled.input`
   text-align: center;
   font-size: 1.125rem;
   background-color: ${(props) => props.theme.colors.primary};
-  color: white; // 텍스트 색상
+  color: white;
 
   &:focus {
     outline: none;
-    box-shadow: 0 0 0.25rem ${(props) => props.theme.colors.primaryHover};
+    box-shadow: 0 0 0.25rem ${(props) => props.theme.colors.primaryPress};
   }
 
   &:hover {
@@ -265,7 +255,7 @@ const BlankInput = styled.input`
 
 const ButtonContainer = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: space-evenly;
   width: 100%;
   margin-top: 2rem;
 `;
@@ -279,7 +269,7 @@ const PageButton = styled.button`
   border-radius: 0.5rem;
   cursor: pointer;
   &:hover {
-    background-color: ${(props) => props.theme.colors.primaryHover};
+    background-color: ${(props) => props.theme.colors.primaryPress};
   }
 
   &:disabled {
@@ -298,6 +288,12 @@ const SubmitButtonContainer = styled.div`
 const SubmitButton = styled(PageButton)`
   background-color: ${(props) => props.theme.colors.primary};
   &:hover {
-    background-color: ${(props) => props.theme.colors.primaryHover};
+    background-color: ${(props) => props.theme.colors.primaryPress};
   }
+`;
+
+const ErrorText = styled.div`
+  color: ${(props) => props.theme.colors.danger};
+  font-size: 1.25rem;
+  text-align: center;
 `;

@@ -1,12 +1,12 @@
 import axiosInstance from "./axiosInstance";
 
-export type GoalSettingProps = {
+export type GoalSettingType = {
   goalReadNewsCount: number;
   goalPronounceTestScore: number;
   goalCompleteWord: number;
 };
 
-export type StudyProgressProps = {
+export type StudyProgressType = {
   goalReadNewsCount: number;
   goalPronounceTestScore: number;
   goalCompleteWord: number;
@@ -15,7 +15,7 @@ export type StudyProgressProps = {
   currentCompleteWord: number;
 };
 
-export const goalSetting = async (data: GoalSettingProps) => {
+export const goalSetting = async (data: GoalSettingType) => {
   try {
     const response = await axiosInstance.post("study/goal", data);
     console.log(data);

@@ -18,6 +18,9 @@ import { getToken, messaging } from "./firebase";
 import userInfoState, { userInfoType } from "@store/userInfoState";
 import { getUserInfo } from "@services/userService";
 
+import goalState, { StudyProgressType } from "@store/goalState";
+import { getStudyProgress } from "@services/goalService";
+
 const App: React.FC = () => {
   const theme = useRecoilValue(themeState) === "dark" ? darkTheme : lightTheme;
   const isLogin = useRecoilValue(loginState);
@@ -61,17 +64,31 @@ Welcome To NewsLearn!"
 
   // 로그인이 되면 회원 정보를 저장
   const setUserInfo = useSetRecoilState(userInfoState);
-  const { data } = useQuery<userInfoType>({
+  const { data: userInfoData } = useQuery<userInfoType>({
     queryKey: ["getUserInfo"],
     queryFn: getUserInfo,
     enabled: isLogin, // isLogin이 true일 때만 쿼리 실행
   });
 
   useEffect(() => {
-    if (data) {
-      setUserInfo({ ...data, isInitialized: true }); // 데이터가 로드되면 Recoil state 업데이트
+    if (userInfoData) {
+      setUserInfo({ ...userInfoData, isInitialized: true }); // 데이터가 로드되면 Recoil state 업데이트
     }
-  }, [data, setUserInfo]);
+  }, [userInfoData, setUserInfo]);
+
+  // 로그인 완료 시 회원 목표 및 현황 저장
+  const setUserProgress = useSetRecoilState(goalState);
+  const { data: studyProgressData } = useQuery<StudyProgressType>({
+    queryKey: ["getStudyProgress"],
+    queryFn: getStudyProgress,
+    enabled: isLogin, // isLogin이 true일 때만 쿼리 실행
+  });
+
+  useEffect(() => {
+    if (studyProgressData) {
+      setUserProgress({ ...studyProgressData, isInitialized: true }); // 데이터가 로드되면 Recoil state 업데이트
+    }
+  }, [studyProgressData, setUserProgress]);
 
   return (
     <ThemeProvider theme={theme}>

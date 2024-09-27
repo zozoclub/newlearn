@@ -45,9 +45,11 @@ const MyPageCategory: React.FC = () => {
                 <DataLabel>{getLabelFromKey(key)}</DataLabel>
                 <DataValueContainer>
                   <DataValue>{value}</DataValue>
-                  <DataPercentage>{`${((value / countSum) * 100).toFixed(
-                    2
-                  )}%`}</DataPercentage>
+                  <DataPercentage>
+                    {countSum > 0
+                      ? `${((value / countSum) * 100).toFixed(2)}%`
+                      : "0%"}
+                  </DataPercentage>
                 </DataValueContainer>
               </DataRow>
               {index < array.length - 1 && <Divider />}

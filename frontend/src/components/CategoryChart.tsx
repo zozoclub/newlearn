@@ -85,7 +85,7 @@ const CategoryChart: React.FC = () => {
         grid: {
           color: theme.colors.text04,
         },
-        suggestedMin: 0,
+        suggestedMin: -1,
         suggestedMax: maxValue,
         ticks: {
           stepSize: 5,

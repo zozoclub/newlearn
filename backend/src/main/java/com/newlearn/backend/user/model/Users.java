@@ -40,7 +40,7 @@ import lombok.ToString;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @EqualsAndHashCode(of = "userId")
-@ToString(exclude = "avatar")
+@ToString(exclude = {"avatar", "words"})
 public class Users {
 
 	@Id

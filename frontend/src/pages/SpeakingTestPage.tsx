@@ -42,11 +42,15 @@ const SpeakingTestPage: React.FC = () => {
     if (data) {
       // 예문을 합치는 과정 (문장 평가)
       const text = data
-        .map((item: PronounceTestListDto) => item.sentence.trim())
-        .join(" ");
+        .map((item: PronounceTestListDto) =>
+          item.sentence.trim().replace(/\.$/, "")
+        )
+        .join(". ");
       const translatedText = data
-        .map((item: PronounceTestListDto) => item.sentenceMeaning)
-        .join(" ");
+        .map((item: PronounceTestListDto) =>
+          item.sentenceMeaning.trim().replace(/\.$/, "")
+        )
+        .join(". ");
       setReferenceText(text);
       setReferenceTextTranslate(translatedText);
     }

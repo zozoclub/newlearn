@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styled from "styled-components";
 import EditIcon from "@assets/icons/EditIcon";
 import Modal from "@components/Modal";
@@ -14,23 +14,30 @@ const getDifficultyText = (difficulty: number): string => {
     case 3:
       return "고급";
     default:
-      return "알 수 없음";
+      return "난이도 안뜸";
   }
 };
 
 const MyPageInfo: React.FC = () => {
   const userInfo = useRecoilValue(userInfoState);
 
-  const [difficulty, setDifficulty] = useState<number>(userInfo.difficulty);
-  const [tempDifficulty, setTempDifficulty] = useState<number>(
-    userInfo.difficulty
-  );
+  const [difficulty, setDifficulty] = useState<number>(1);
+  const [tempDifficulty, setTempDifficulty] = useState<number>(1);
 
   const categoryList = ["경제", "정치", "사회", "생활/문화", "IT/과학", "세계"];
-  const [interests, setInterests] = useState<string[]>(userInfo.categories);
-  const [tempInterests, setTempInterests] = useState<string[]>(
-    userInfo.categories
-  );
+  const [interests, setInterests] = useState<string[]>([]);
+  const [tempInterests, setTempInterests] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (userInfo.difficulty !== undefined) {
+      setDifficulty(userInfo.difficulty);
+      setTempDifficulty(userInfo.difficulty);
+    }
+    if (userInfo.categories) {
+      setInterests(userInfo.categories);
+      setTempInterests(userInfo.categories);
+    }
+  }, [userInfo]);
 
   // 영어 난이도 모달 설정
   const [isDifficultyModalOpen, setIsDifficultyModalOpen] = useState(false);

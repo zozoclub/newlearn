@@ -9,6 +9,6 @@ import java.time.LocalDate;
 @Getter
 @AllArgsConstructor
 public class UserGrassResponseDTO {
-    private LocalDate date;
-    private Long count;
+	private LocalDate date;
+	private Long count;
 }

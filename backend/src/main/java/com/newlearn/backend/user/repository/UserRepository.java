@@ -1,6 +1,7 @@
 package com.newlearn.backend.user.repository;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -34,10 +35,11 @@ public interface UserRepository extends JpaRepository<Users, Long> {
 			"LIMIT 10")
 	List<UserRankDTO> findTop10ByNewsRead();
 
+
 	@Query(value = "SELECT COUNT(*) + 1 AS user_rank " +
 		"FROM users u " +
 		"WHERE u.experience > (SELECT experience FROM users WHERE user_id = :userId)",
 		nativeQuery = true)
-	int findUserRankById(Long userId);
+	int findUserRankById(@Param("userId") Long userId);
 
 }

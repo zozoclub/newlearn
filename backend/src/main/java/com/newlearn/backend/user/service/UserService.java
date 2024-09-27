@@ -33,7 +33,7 @@ public interface UserService {
 
 	void deleteUser(Long userId);
 
-	UserProfileResponseDTO getProfile(Long userId) throws Exception;
+	UserProfileResponseDTO getProfile(Long userId);
 
 	// 마이페이지
 	Page<UserScrapedNewsResponseDTO> getScrapedNewsList(Long userId, NewsPagenationRequestDTO newsPagenationRequestDTO, int difficulty);

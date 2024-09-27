@@ -27,7 +27,7 @@ public class UserScrapedNewsResponseDTO {
 
         return UserScrapedNewsResponseDTO.builder()
                 .newsId(news.getNewsId())
-                .title(news.getTitle())
+                .title(news.getTitleByLang(lang))
                 .content(news.getContentByLangAndDifficulty(lang, difficulty))
                 .thumbnailImageUrl(news.getThumbnailImageUrl())
                 .category(news.getCategory().getCategoryName())

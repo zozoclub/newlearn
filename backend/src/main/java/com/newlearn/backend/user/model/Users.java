@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import com.newlearn.backend.word.model.Word;

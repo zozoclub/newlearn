@@ -134,15 +134,11 @@ public class NewsServiceImpl implements NewsService{
         boolean isScrapped = userNewsScrapRepository.existsByUserAndNewsAndDifficulty(user, news, newsDetailRequestDTO.getDifficulty());
 
         // 해당 뉴스(newsId)에 사용자가 하이라이팅한 단어 & 문장 가져오기
-        System.out.println("11111111111111");
         Set<Word> wordList = user.getWords();
-        System.out.println("aaa" + wordList);
         List<Long> wordIds = wordList.stream().map(Word::getWordId).collect(Collectors.toList());
-        System.out.println("bbbb" + wordIds);
         List<WordSentence> wordSentences = wordSentenceRepository
                 .findByNewsIdAndWordIdsAndDifficulty(
                         newsId, wordIds, newsDetailRequestDTO.getDifficulty());
-        System.out.println("ccc"+wordSentences);
         List<WordInfo> words = wordSentences.stream()
                 .map(wordSentence -> new WordInfo(wordSentence.getWord().getWord(), wordSentence.getSentence()))
                 .collect(Collectors.toList());
@@ -152,7 +148,6 @@ public class NewsServiceImpl implements NewsService{
         newsRepository.save(news);
 
         return NewsDetailResponseDTO.of(news, title, content, isScrapped, words);
-
     }
 
     @Override

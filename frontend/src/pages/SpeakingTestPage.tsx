@@ -23,7 +23,7 @@ import {
   postPronounceTestResult,
   PronounceTestRequestDto,
   PronounceTestListDto,
-} from "@services/testService";
+} from "@services/speakingTestService";
 
 const SpeakingTestPage: React.FC = () => {
   const navigate = useNavigate();

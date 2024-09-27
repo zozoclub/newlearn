@@ -7,7 +7,7 @@ import SpeakingTestResultReference from "@components/testpage/SpeakingTestResult
 import SpeakingTestResultCharts from "@components/testpage/SpeakingTestResultCharts";
 import SpeakingTestResultInfoWidget from "@components/testpage/SpeakingTestResultInfoWidget";
 import { getAccuracyFeedback, getFluencyFeedback, getProsodyFeedback, getCompletenessFeedback } from "@utils/speakingFeedback";
-import { getPronounceTestResultDetail, PronounceTestResultDetailDto } from "@services/testService";
+import { getPronounceTestResultDetail, PronounceTestResultDetailDto } from "@services/speakingTestService";
 import { useQuery } from "@tanstack/react-query";
 import Spinner from "@components/Spinner";
 import styled from "styled-components";

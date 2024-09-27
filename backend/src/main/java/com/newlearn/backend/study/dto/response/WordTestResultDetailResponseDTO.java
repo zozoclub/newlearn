@@ -14,5 +14,5 @@ public class WordTestResultDetailResponseDTO {
     private String correctAnswer;
     private boolean isCorrect;
     private String sentence;
-    private LocalDateTime createAt;
+    private LocalDateTime createdAt;
 }

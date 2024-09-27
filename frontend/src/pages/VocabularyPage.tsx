@@ -11,6 +11,7 @@ import locationState from "@store/locationState";
 
 import Collapsible from "@components/Collapsible";
 import { useSetRecoilState } from "recoil";
+import WordHunt from "@components/WordHunt";
 
 type Word = {
   id: string;
@@ -187,6 +188,7 @@ const VocabularyPage: React.FC = () => {
             </MainContainer>
           )}
         </Droppable>
+        <WordHunt />
       </MainLayout>
     </DragDropContext>
   );

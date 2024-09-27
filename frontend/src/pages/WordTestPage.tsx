@@ -144,7 +144,7 @@ const WordTestPage: React.FC = () => {
           <QuizContainer key={index}>
             <Question>
               {indexOfFirstQuestion + index + 1}.{" "}
-              {q.question.split("______")[0]}
+              {q.question.split("_".repeat(q.answer.length))[0]}
               {q.answer.split("").map((_, i) => (
                 <BlankInput
                   key={i}
@@ -156,7 +156,7 @@ const WordTestPage: React.FC = () => {
                   maxLength={1} // 한 글자씩만 입력
                 />
               ))}
-              {q.question.split("______")[1]}
+              {q.question.split("_".repeat(q.answer.length))[1]}
             </Question>
             <Translation>{q.translation}</Translation>
           </QuizContainer>

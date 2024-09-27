@@ -37,7 +37,7 @@ export const router = createBrowserRouter([
             element: <SpeakingTestResultPage />,
           },
           {
-            path: "wordtest",
+            path: "wordtest/:totalCount",
             element: <WordTestPage />,
           },
           {

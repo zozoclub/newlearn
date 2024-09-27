@@ -93,7 +93,7 @@ const AvatarContainer = styled.div`
     transform: translate(-50%, -50%);
     width: 7rem;
     height: 7rem;
-    background-color: white;
+    background-color: ${(props) => props.theme.colors.text};
     border-radius: 50%;
     overflow: hidden;
   }

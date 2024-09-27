@@ -35,7 +35,14 @@ public class WordServiceImpl implements WordService {
 
 	@Transactional
 	@Override
-	public void addWord(WordRequestDto wordRequestDto, Users user) {
+	public void addWord(WordRequestDto wordRequestDto, Users user) throws Exception {
+
+		List<Word> words = wordRepository.findAllByWordAndUser(wordRequestDto.getWord(), user);
+		for(Word word : words) {
+			if(word.getSentence().getSentence().equals(wordRequestDto.getSentence())) {
+				throw new Exception("중복 단어입니다");
+			}
+		}
 
 		Word addWord = wordRequestDto.toWordEntity(user);
 		Word savedWord = wordRepository.save(addWord);

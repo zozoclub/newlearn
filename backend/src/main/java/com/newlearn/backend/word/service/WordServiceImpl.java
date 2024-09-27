@@ -183,6 +183,11 @@ public class WordServiceImpl implements WordService {
 		Word word = wordRepository.findById(wordId)
 			.orElseThrow(() -> new EntityNotFoundException("Word not found"));
 
+		//만약 아직 외운 단어가 아니라면
+		if(!word.isComplete()) {
+			throw new RuntimeException("외운 단어가 아닙니다");
+		}
+
 		word.setFinalComplete(true);
 		wordRepository.save(word);
 	}

@@ -55,9 +55,18 @@ public class Word {
 	}
 
 	public void completeWord() {
-		this.isComplete = true;
-		this.nextRestudyDate = LocalDateTime.now().plusDays(1);
-		this.restudyLevel = 1L;
+
+		if(this.isComplete) {
+			this.isComplete = false;
+			this.nextRestudyDate = null;
+			this.restudyLevel = 0L;
+		}
+		else {
+			this.isComplete = true;
+			this.nextRestudyDate = LocalDateTime.now().plusDays(1);
+			this.restudyLevel = 1L;
+
+		}
 	}
 
 	// 복습 관련 로직

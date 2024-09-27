@@ -198,7 +198,7 @@ public class StudyServiceImpl implements StudyService{
                 .correctAnswer(question.getCorrectAnswer())
                 .isCorrect(isCorrect)
                 .sentence(question.getSentence())
-                .createAt(quiz.getCreatedAt())
+                .createdAt(quiz.getCreatedAt())
                 .build();
 
         return resultDetail;

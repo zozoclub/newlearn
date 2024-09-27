@@ -16,16 +16,29 @@ export type GrassType = {
   count: number;
 };
 
+export type CategoryCountKey =
+  | "economyCount"
+  | "politicsCount"
+  | "societyCount"
+  | "cultureCount"
+  | "scienceCount"
+  | "worldCount";
+
 export type CategoryCountType = {
-  politicsCount: number;
-  economyCount: number;
-  societyCount: number;
-  cultureCount: number;
-  scienceCount: number;
-  worldCount: number;
+  [K in CategoryCountKey]: number;
 };
 
-// type Category = "경제" | "정치" | "사회" | "생활/문화" | "IT/과학" | "세계";
+export const getLabelFromKey = (key: CategoryCountKey): string => {
+  const labelMap: Record<typeof key, string> = {
+    economyCount: "경제",
+    politicsCount: "정치",
+    societyCount: "사회",
+    cultureCount: "생활/문화",
+    scienceCount: "IT/과학",
+    worldCount: "세계",
+  };
+  return labelMap[key] || key;
+};
 
 export const getScrapNews = async (
   difficulty: number,

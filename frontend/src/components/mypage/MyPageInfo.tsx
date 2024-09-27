@@ -2,6 +2,8 @@ import { useState } from "react";
 import styled from "styled-components";
 import EditIcon from "@assets/icons/EditIcon";
 import Modal from "@components/Modal";
+import { useRecoilValue } from "recoil";
+import userInfoState from "@store/userInfoState";
 
 const getDifficultyText = (difficulty: number): string => {
   switch (difficulty) {
@@ -16,35 +18,19 @@ const getDifficultyText = (difficulty: number): string => {
   }
 };
 
-const getCategoryText = (category: number): string => {
-  switch (category) {
-    case 1:
-      return "경제";
-    case 2:
-      return "정치";
-    case 3:
-      return "생활/문화";
-    case 4:
-      return "사회";
-    case 5:
-      return "IT/과학";
-    case 6:
-      return "세계";
-    default:
-      return "알 수 없음";
-  }
-};
-const data = {
-  difficulty: 2,
-  interests: [1, 3, 5],
-};
-
 const MyPageInfo: React.FC = () => {
-  const [difficulty, setDifficulty] = useState<number>(data.difficulty);
-  const [tempDifficulty, setTempDifficulty] = useState<number>(data.difficulty);
+  const userInfo = useRecoilValue(userInfoState);
 
-  const [interests, setInterests] = useState<number[]>(data.interests);
-  const [tempInterests, setTempInterests] = useState<number[]>(data.interests);
+  const [difficulty, setDifficulty] = useState<number>(userInfo.difficulty);
+  const [tempDifficulty, setTempDifficulty] = useState<number>(
+    userInfo.difficulty
+  );
+
+  const categoryList = ["경제", "정치", "사회", "생활/문화", "IT/과학", "세계"];
+  const [interests, setInterests] = useState<string[]>(userInfo.categories);
+  const [tempInterests, setTempInterests] = useState<string[]>(
+    userInfo.categories
+  );
 
   // 영어 난이도 모달 설정
   const [isDifficultyModalOpen, setIsDifficultyModalOpen] = useState(false);
@@ -75,12 +61,12 @@ const MyPageInfo: React.FC = () => {
     setIsInterestsModalOpen(false);
   };
 
-  const handleInterestsChange = (interest: number) => {
+  const handleInterestsChange = (interest: string) => {
     setTempInterests((prev) => {
       if (prev.includes(interest)) {
         return prev.filter((i) => i !== interest);
       } else if (prev.length < 3) {
-        return [...prev, interest].sort((a, b) => a - b);
+        return [...prev, interest].sort();
       }
       return prev;
     });
@@ -104,7 +90,7 @@ const MyPageInfo: React.FC = () => {
         <TitleContainer>카테고리</TitleContainer>
         <ContentContainer>
           {interests.map((interest) => (
-            <div key={interest}>{getCategoryText(interest)}</div>
+            <div key={interest}>{interest}</div>
           ))}
         </ContentContainer>
         <IconContainer>
@@ -148,13 +134,13 @@ const MyPageInfo: React.FC = () => {
           <StrongText>(최대 3개)</StrongText>
         </ModalDescription>
         <ModalItemContainer>
-          {[1, 2, 3, 4, 5, 6].map((interest) => (
+          {categoryList.map((interest) => (
             <ModalButtonItem
               key={interest}
               isSelected={tempInterests.includes(interest)}
               onClick={() => handleInterestsChange(interest)}
             >
-              {getCategoryText(interest)}
+              {interest}
             </ModalButtonItem>
           ))}
         </ModalItemContainer>

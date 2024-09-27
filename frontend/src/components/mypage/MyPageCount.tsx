@@ -1,31 +1,13 @@
 import styled from "styled-components";
-const Container = styled.div`
-  display: flex;
-  align-items: center;
-  height: 100%;
-  margin: 0 3rem;
-`;
-const TitleContainer = styled.div`
-  display: flex;
-  flex: 3;
-  flex-direction: column;
-  gap: 2rem;
-  font-size: 1.25rem;
-  font-weight: bold;
-`;
-const ContentContainer = styled.div`
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  align-items: center;
-  gap: 2rem;
-  font-size: 1.25rem;
-  /* font-weight: bold; */
-`;
+import { useRecoilValue } from "recoil";
+import userInfoState from "@store/userInfoState";
+
 const MyPageCount = () => {
-  const readCount = 20;
-  const vocaCount = 30;
-  const scrapCount = 23;
+  const userInfo = useRecoilValue(userInfoState);
+
+  const readCount = userInfo.totalNewsReadCount;
+  const vocaCount = userInfo.unCompleteWordCount + userInfo.completeWordCount;
+  const scrapCount = userInfo.scrapCount;
 
   const items = [
     { title: "내가 읽은 기사", count: readCount },
@@ -49,3 +31,27 @@ const MyPageCount = () => {
 };
 
 export default MyPageCount;
+
+const Container = styled.div`
+  display: flex;
+  align-items: center;
+  height: 100%;
+  margin: 0 3rem;
+`;
+const TitleContainer = styled.div`
+  display: flex;
+  flex: 3;
+  flex-direction: column;
+  gap: 2rem;
+  font-size: 1.25rem;
+  font-weight: bold;
+`;
+const ContentContainer = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  font-size: 1.25rem;
+  /* font-weight: bold; */
+`;

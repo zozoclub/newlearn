@@ -3,28 +3,7 @@ import styled from "styled-components";
 import CategoryChart from "@components/CategoryChart";
 import RankingWidget from "./RankingWidget";
 
-type CountDataKey =
-  | "economyCount"
-  | "politicsCount"
-  | "societyCount"
-  | "cultureCount"
-  | "scienceCount"
-  | "globalCount";
-
-type CountData = {
-  [K in CountDataKey]: number;
-};
-
 const Widget: React.FC<{ variety: string }> = ({ variety }) => {
-  const countData: CountData = {
-    economyCount: 7,
-    politicsCount: 12,
-    societyCount: 4,
-    cultureCount: 16,
-    scienceCount: 3,
-    globalCount: 7,
-  };
-
   switch (variety) {
     // 다른 걸로 대체 예정
     case "profile":
@@ -37,7 +16,7 @@ const Widget: React.FC<{ variety: string }> = ({ variety }) => {
       return (
         <WidgetContainer>
           <Descripsion>Learn Category</Descripsion>
-          <CategoryChart countData={countData} />
+          <CategoryChart />
         </WidgetContainer>
       );
     case "ranking":

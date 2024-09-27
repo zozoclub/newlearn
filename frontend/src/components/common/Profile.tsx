@@ -1,8 +1,8 @@
-import styled from "styled-components";
-
+import styled, { keyframes } from "styled-components";
 import { useRecoilValue } from "recoil";
 import userInfoState from "@store/userInfoState";
 import Avatar, { AvatarType } from "./Avatar";
+import { calculateExperience } from "@utils/calculateExperience";
 
 const Profile = () => {
   const userInfo = useRecoilValue(userInfoState);
@@ -12,18 +12,29 @@ const Profile = () => {
     mask: userInfo.mask,
   };
   const isInitialized = userInfo.isInitialized;
+  const calculatedExperience = calculateExperience(userInfo.experience);
 
   if (!isInitialized) return <div>로딩중이셈;</div>;
 
   return (
     <>
-      <AvatarContainer $persentage={25}>
+      <AvatarContainer>
+        <svg viewBox="0 0 36 36" className="circular-chart">
+          <path
+            className="circle"
+            strokeDasharray={`${calculatedExperience.percentage}, 100`}
+            d="M18 2.0845
+              a 15.9155 15.9155 0 0 1 0 31.831
+              a 15.9155 15.9155 0 0 1 0 -31.831"
+          />
+        </svg>
         <div className="center-circle">
           <Avatar avatar={avatar} size={6} />
         </div>
       </AvatarContainer>
       <NameDiv>
-        Lv{userInfo.experience} {userInfo.nickname}
+        Lv
+        {calculatedExperience.level} {userInfo.nickname}
       </NameDiv>
       <ReadStatus>
         <div>
@@ -43,15 +54,38 @@ const Profile = () => {
   );
 };
 
-const AvatarContainer = styled.div<{ $persentage: number }>`
+const progressAnimation = keyframes`
+  0% {
+    stroke-dasharray: 0 100;
+  }
+`;
+
+const AvatarContainer = styled.div`
   position: relative;
-  border-radius: 9rem;
   width: 9rem;
   height: 9rem;
-  background: conic-gradient(
-    ${(props) => props.theme.colors.primary} 0% ${(props) => props.$persentage}%,
-    transparent 75% 100%
-  );
+
+  .circular-chart {
+    display: block;
+    margin: 0 auto;
+    max-width: 100%;
+    max-height: 100%;
+  }
+
+  .circle-bg {
+    fill: none;
+    stroke: #eee;
+    stroke-width: 3.8;
+  }
+
+  .circle {
+    fill: none;
+    stroke-width: 2.8;
+    stroke-linecap: round;
+    stroke: ${(props) => props.theme.colors.primary};
+    animation: ${progressAnimation} 1s ease-out forwards;
+  }
+
   .center-circle {
     position: absolute;
     top: 50%;
@@ -60,7 +94,7 @@ const AvatarContainer = styled.div<{ $persentage: number }>`
     width: 7rem;
     height: 7rem;
     background-color: white;
-    border-radius: 7rem;
+    border-radius: 50%;
     overflow: hidden;
   }
 `;

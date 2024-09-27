@@ -4,6 +4,7 @@ import {
   getReadRankingList,
 } from "@services/rankingService";
 import { useQuery } from "@tanstack/react-query";
+import { calculateExperience } from "@utils/calculateExperience";
 import { useState } from "react";
 import styled from "styled-components";
 
@@ -80,7 +81,9 @@ const RankingWidget = () => {
                   {pointRankingList?.map((pointRanking) => (
                     <tr key={pointRanking.ranking} className="rank">
                       <td>{pointRanking.ranking}</td>
-                      <td>{pointRanking.experience}</td>
+                      <td>
+                        {calculateExperience(pointRanking.experience).level}
+                      </td>
                       <td style={{ textAlign: "start" }}>
                         {pointRanking.nickname}
                       </td>
@@ -100,7 +103,7 @@ const RankingWidget = () => {
                 {readRankingList?.map((readRanking) => (
                   <tr key={readRanking.ranking} className="rank">
                     <td>{readRanking.ranking}</td>
-                    <td>{readRanking.experience}</td>
+                    <td>{calculateExperience(readRanking.experience).level}</td>
                     <td style={{ textAlign: "start" }}>
                       {readRanking.nickname}
                     </td>

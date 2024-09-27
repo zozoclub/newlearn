@@ -5,9 +5,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import com.newlearn.backend.news.dto.request.AllNewsRequestDTO;
-import com.newlearn.backend.news.dto.response.NewsResponseDTO;
-import com.newlearn.backend.news.model.News;
+
 import com.newlearn.backend.news.model.UserDailyNewsRead;
 import com.newlearn.backend.news.model.UserNewsRead;
 import com.newlearn.backend.news.model.UserNewsScrap;

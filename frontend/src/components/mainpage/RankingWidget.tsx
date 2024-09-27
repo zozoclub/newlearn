@@ -18,6 +18,7 @@ export type PointRankingType = RankingType & {
 };
 
 export type ReadRankingType = RankingType & {
+  experience: number;
   totalNewsReadCount: number;
 };
 
@@ -80,7 +81,9 @@ const RankingWidget = () => {
                     <tr key={pointRanking.ranking} className="rank">
                       <td>{pointRanking.ranking}</td>
                       <td>{pointRanking.experience}</td>
-                      <td>{pointRanking.nickname}</td>
+                      <td style={{ textAlign: "start" }}>
+                        {pointRanking.nickname}
+                      </td>
                       <td>{pointRanking.experience}</td>
                     </tr>
                   ))}
@@ -97,9 +100,10 @@ const RankingWidget = () => {
                 {readRankingList?.map((readRanking) => (
                   <tr key={readRanking.ranking} className="rank">
                     <td>{readRanking.ranking}</td>
-                    {/* <td>{readRanking.experience}</td> */}
-                    <td>1</td> {/* 임시 레벨 */}
-                    <td>{readRanking.nickname}</td>
+                    <td>{readRanking.experience}</td>
+                    <td style={{ textAlign: "start" }}>
+                      {readRanking.nickname}
+                    </td>
                     <td>{readRanking.totalNewsReadCount}</td>
                   </tr>
                 ))}

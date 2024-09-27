@@ -6,9 +6,19 @@ import "swiper/css/parallax";
 import "swiper/css/effect-coverflow";
 import "swiper/css/pagination";
 import NewsSlide from "./NewsSlide";
-import image from "@assets/images/defaultProfile.webp";
+import { useQuery } from "@tanstack/react-query";
+import { getTopNewsList } from "@services/newsService";
+import { useRecoilValue } from "recoil";
+import userInfoState from "@store/userInfoState";
 
 const DailyNews: React.FC = () => {
+  const userInfoData = useRecoilValue(userInfoState);
+  const difficulty = userInfoData.difficulty;
+  const { data: dailyNewsList } = useQuery({
+    queryKey: ["dailyNewsList", difficulty],
+    queryFn: () => getTopNewsList(difficulty, "en"),
+  });
+
   return (
     <Container>
       <Swiper
@@ -22,7 +32,7 @@ const DailyNews: React.FC = () => {
         coverflowEffect={{
           rotate: 50,
           stretch: 0,
-          depth: 50,
+          depth: 100,
           modifier: 1,
           slideShadows: true,
         }}
@@ -30,12 +40,12 @@ const DailyNews: React.FC = () => {
         modules={[EffectCoverflow, Pagination, Mousewheel]}
         className="mySwiper"
       >
-        {[...Array(10)].map((_, index) => (
+        {dailyNewsList?.map((news, index) => (
           <SwiperSlide key={index}>
             <NewsSlide
-              image={image}
-              title={"뉴스제목"}
-              content={"뉴스내용용용ㅇㅇㅇ용"}
+              image={news.thumbnailImageUrl}
+              title={news.title}
+              content={news.content}
             />
           </SwiperSlide>
         ))}

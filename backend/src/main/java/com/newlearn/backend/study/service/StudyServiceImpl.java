@@ -207,10 +207,10 @@ public class StudyServiceImpl implements StudyService{
 
     @Override
     public void exitQuiz(Long quizId) {
-//        WordQuiz quiz = wordQuizRepository.findById(quizId)
-//                .orElseThrow(() -> new IllegalArgumentException("퀴즈를 찾을 수 없습니다."));
-//
-//        wordQuizRepository.deleteByQuizId(quizId);
+        WordQuiz quiz = wordQuizRepository.findById(quizId)
+                .orElseThrow(() -> new IllegalArgumentException("퀴즈를 찾을 수 없습니다."));
+
+        wordQuizRepository.deleteById(quizId);
     }
 
     @Override

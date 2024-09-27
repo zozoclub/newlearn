@@ -29,11 +29,11 @@ public class UserProfileResponseDTO {
 	private Long eyes;
 	private Long mask;
 
-	public UserProfileResponseDTO(Users user, Long unCompleteWordCount, Long completeWordCount) {
+	public UserProfileResponseDTO(Users user, Long unCompleteWordCount, Long completeWordCount, Long userRank) {
 		this.userId = user.getUserId();
 		this.email = user.getEmail();
 		this.nickname = user.getNickname();
-		this.rank = 1L;
+		this.rank = userRank;
 		this.difficulty = user.getDifficulty();
 		this.experience = user.getExperience();
 		this.totalNewsReadCount = user.getTotalNewsReadCount();

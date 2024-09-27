@@ -4,18 +4,13 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import com.newlearn.backend.news.dto.request.AllNewsRequestDTO;
-import com.newlearn.backend.news.dto.response.NewsResponseDTO;
-import com.newlearn.backend.news.model.News;
 import com.newlearn.backend.news.model.UserNewsRead;
 import com.newlearn.backend.news.model.UserNewsScrap;
-import com.newlearn.backend.news.repository.NewsRepository;
 import com.newlearn.backend.news.repository.UserNewsReadRepository;
 import com.newlearn.backend.news.repository.UserNewsScrapRepository;
 import com.newlearn.backend.user.dto.request.NewsPagenationRequestDTO;
 import com.newlearn.backend.user.dto.response.UserScrapedNewsResponseDTO;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -141,14 +136,15 @@ public class UserServiceImpl implements UserService{
 	}
 
 	@Override
-	public UserProfileResponseDTO getProfile(Long userId) {
+	public UserProfileResponseDTO getProfile(Long userId) throws Exception {
 
 		Users user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다"));
 
 		Long unCount = wordRepository.countCompleteWordsByUser(user);
 		Long Count = wordRepository.countIncompleteWordsByUser(user);
+		Long userRank = getUserRank(userId);
 
-		return new UserProfileResponseDTO(user, unCount, Count);
+		return new UserProfileResponseDTO(user, unCount, Count, userRank);
 
 	}
 
@@ -179,5 +175,9 @@ public class UserServiceImpl implements UserService{
 
 	}
 
-
+	@Override
+	public Long getUserRank(Long userId) throws Exception {
+		int rank = userRepository.findUserRankById(userId);
+		return Long.valueOf(rank);
+	}
 }

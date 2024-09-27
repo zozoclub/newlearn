@@ -35,13 +35,18 @@ const SpeakingTestPage: React.FC = () => {
 
   // 예문
   const [referenceText, setReferenceText] = useState<string>("");
-  const [referenceTextTranslate, setReferenceTextTranslate] = useState<string>("");
+  const [referenceTextTranslate, setReferenceTextTranslate] =
+    useState<string>("");
 
   useEffect(() => {
     if (data) {
       // 예문을 합치는 과정 (문장 평가)
-      const text = data.map((item: PronounceTestListDto) => item.sentence).join(" ");
-      const translatedText = data.map((item: PronounceTestListDto) => item.sentenceMeaning).join(" ");
+      const text = data
+        .map((item: PronounceTestListDto) => item.sentence.trim())
+        .join(" ");
+      const translatedText = data
+        .map((item: PronounceTestListDto) => item.sentenceMeaning)
+        .join(" ");
       setReferenceText(text);
       setReferenceTextTranslate(translatedText);
     }
@@ -425,7 +430,7 @@ const SubmitButton = styled.button<{ disabled: boolean }>`
 
   &:hover {
     background-color: ${(props) =>
-    props.disabled ? "#ccc" : props.theme.colors.primaryHover};
+      props.disabled ? "#ccc" : props.theme.colors.primaryHover};
   }
 `;
 

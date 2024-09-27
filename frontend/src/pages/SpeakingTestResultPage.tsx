@@ -67,7 +67,7 @@ const SpeakingTestResultPage: React.FC = () => {
   if (isLoading) return <Spinner />;
 
   // 에러 상태 처리
-  if (error) return <ErrorText>Error fetching test results. Please try again later.</ErrorText>;
+  if (error) return <ErrorText>에러가 발생했습니다. 다시 시도해 주세요.</ErrorText>;
 
   // testDetail이 null일 때
   if (!testDetail) return <ErrorText>No data available.</ErrorText>;

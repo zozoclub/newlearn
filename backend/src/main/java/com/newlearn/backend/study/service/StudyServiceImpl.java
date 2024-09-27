@@ -113,27 +113,36 @@ public class StudyServiceImpl implements StudyService{
 
     @Override
     public void saveWordTestResult(Long userId, WordTestResultRequestDTO wordTestResultRequestDTO) {
-        for (WordTestResultRequestDTO.WordTestDetail result : wordTestResultRequestDTO.getResults()) {
-            // 퀴즈 가져오기
-            WordQuiz quiz = wordQuizRepository.findById(wordTestResultRequestDTO.getQuizId())
-                    .orElseThrow(() -> new IllegalArgumentException("퀴즈를 찾을 수 없습니다."));
+        // 퀴즈 가져오기
+        WordQuiz quiz = wordQuizRepository.findById(wordTestResultRequestDTO.getQuizId())
+                .orElseThrow(() -> new IllegalArgumentException("퀴즈를 찾을 수 없습니다."));
 
-            // 질문 저장
-            WordQuizQuestion question = WordQuizQuestion.builder()
-                    .wordQuiz(quiz) // 퀴즈
-                    .sentence(result.getSentence())
-                    .correctAnswer(result.getCorrectAnswer())
-                    .build();
-            wordQuizQuestionRepository.save(question);
+        // 정답 개수 초기화
+        Long correctCount = quiz.getCorrectCount();
+
+        for (WordTestResultRequestDTO.WordTestDetail result : wordTestResultRequestDTO.getResults()) {
+            // 질문 찾기
+            System.out.println("ㅎㅎ" + quiz + " " + result.getSentence());
+            WordQuizQuestion question = wordQuizQuestionRepository.findByWordQuizAndSentence(quiz, result.getSentence())
+                    .orElseThrow(() -> new IllegalArgumentException("해당 질문을 찾을 수 없습니다."));
 
             // 답안 저장
             WordQuizAnswer answer = WordQuizAnswer.builder()
-                    .wordQuizQuestion(question) // 질문
+                    .wordQuizQuestion(question)
                     .answer(result.getAnswer())
                     .isCorrect(result.isCorrect())
                     .build();
-            wordQuizAnswerRepository.save(answer);
+
+            wordQuizAnswerRepository.save(answer); // 답안 저장
+
+            // 답안이 맞으면 correctCount 증가
+            if (result.isCorrect()) {
+                correctCount++;
+            }
         }
+        // correctCount 갱신
+        quiz.setCorrectCount(correctCount);
+        wordQuizRepository.save(quiz); // 퀴즈 저장 (정답 수 갱신)
     }
 
     @Override

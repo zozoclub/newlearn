@@ -10,7 +10,6 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class WordQuizAnswer {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long wordQuizAnswerId;
@@ -18,9 +17,6 @@ public class WordQuizAnswer {
     @ManyToOne
     @JoinColumn(name = "word_quiz_question_id")
     private WordQuizQuestion wordQuizQuestion;
-
-//    @Column(name = "word_quiz_question_id", nullable = false)
-//    private Long wordQuizQuestionId;
 
     @Column(name = "answer", nullable = false)
     private String answer;

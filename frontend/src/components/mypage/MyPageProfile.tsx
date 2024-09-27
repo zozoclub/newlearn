@@ -49,7 +49,7 @@ const MyPageProfile: React.FC = () => {
         <ProfileInfoContainer>
           <NicknameContainer>
             <div>
-              Lv.{level} {nickname}
+              Lv {level} {nickname}
             </div>
             <EditIcon onClick={openModal} />
             <Modal

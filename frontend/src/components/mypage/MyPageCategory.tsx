@@ -1,50 +1,36 @@
 import React from "react";
 import styled from "styled-components";
 import CategoryChart from "@components/CategoryChart";
-
-type CountDataKey =
-  | "economyCount"
-  | "politicsCount"
-  | "societyCount"
-  | "cultureCount"
-  | "scienceCount"
-  | "globalCount";
-
-type CountData = {
-  [K in CountDataKey]: number;
-};
-
-const getLabelFromKey = (key: CountDataKey): string => {
-  const labelMap: Record<typeof key, string> = {
-    economyCount: "경제",
-    politicsCount: "정치",
-    societyCount: "사회",
-    cultureCount: "생활/문화",
-    scienceCount: "IT/과학",
-    globalCount: "세계",
-  };
-  return labelMap[key] || key;
-};
+import { getLabelFromKey, getUserChart } from "@services/mypageService";
+import { CategoryCountKey, CategoryCountType } from "@services/mypageService";
+import { useQuery } from "@tanstack/react-query";
+import Spinner from "@components/Spinner";
 
 const MyPageCategory: React.FC = () => {
-  // 임시 데이터
-  const countData: CountData = {
-    economyCount: 7,
-    politicsCount: 12,
-    societyCount: 4,
-    cultureCount: 16,
-    scienceCount: 3,
-    globalCount: 7,
-  };
+  // 카테고리 별 읽은 수 가져오기
+  const { data: countData } = useQuery<CategoryCountType | null>({
+    queryKey: ["categoryCountData"],
+    queryFn: getUserChart,
+  });
 
+  if (!countData) {
+    return (
+      <div>
+        <Spinner />
+      </div>
+    );
+  }
+
+  // 퍼센트 계산을 위한 합계 계산
   const countSum = Object.values(countData).reduce(
     (sum, count) => sum + count,
     0
   );
+
   return (
     <Container>
       <ChartContainer>
-        <CategoryChart countData={countData} />
+        <CategoryChart />
       </ChartContainer>
       <DataContainer>
         <DataHeader>
@@ -52,7 +38,7 @@ const MyPageCategory: React.FC = () => {
           <HeaderItem>읽은 수</HeaderItem>
           <HeaderItem>퍼센트</HeaderItem>
         </DataHeader>
-        {(Object.entries(countData) as [CountDataKey, number][]).map(
+        {(Object.entries(countData) as [CategoryCountKey, number][]).map(
           ([key, value], index, array) => (
             <>
               <DataRow>

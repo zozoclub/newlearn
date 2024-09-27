@@ -4,7 +4,6 @@ import com.newlearn.backend.common.ApiResponse;
 import com.newlearn.backend.common.ErrorCode;
 import com.newlearn.backend.study.dto.request.GoalRequestDTO;
 import com.newlearn.backend.study.dto.request.PronounceRequestDTO;
-import com.newlearn.backend.study.dto.request.WordTestRequestDTO;
 import com.newlearn.backend.study.dto.request.WordTestResultRequestDTO;
 import com.newlearn.backend.study.dto.response.*;
 import com.newlearn.backend.study.service.StudyService;
@@ -12,9 +11,7 @@ import com.newlearn.backend.user.model.Users;
 import com.newlearn.backend.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -76,16 +73,15 @@ public class StudyController {
     }
 
     // 단어 테스트 문제 가져오기
-    @GetMapping("/word/test")
-    public ApiResponse<?> getStudyWordTest(Authentication authentication,
-        @RequestBody WordTestRequestDTO wordTestRequestDTO) throws Exception {
+    @GetMapping("/word/test/{totalCount}")
+    public ApiResponse<?> getStudyWordTest(Authentication authentication, @PathVariable Long totalCount) throws Exception {
         try {
             Users user = userService.findByEmail(authentication.getName());
             if (user == null) {
                 return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
             }
 
-            List<WordTestResponseDTO> tests = studyService.getWordTestProblems(user.getUserId(), wordTestRequestDTO.getTotalCount());
+            List<WordTestResponseDTO> tests = studyService.getWordTestProblems(user.getUserId(), totalCount);
 
             return ApiResponse.createSuccess(tests, "단어 상세 조회 성공");
         } catch (Exception e) {
@@ -114,8 +110,8 @@ public class StudyController {
     }
     
     // 단어 테스트 결과 리스트 조회
-    @GetMapping("/word/test/list")
-    public ApiResponse<?> getStudyWordTestList(Authentication authentication) throws Exception {
+    @GetMapping("/word/test/result/list")
+    public ApiResponse<?> getStudyWordTestResultList(Authentication authentication) throws Exception {
         try {
             Users user = userService.findByEmail(authentication.getName());
             if (user == null) {
@@ -132,8 +128,8 @@ public class StudyController {
     }
 
     // 단어 문장 빈칸 테스트 결과 상세 조회
-    @GetMapping("/word/test/{quizId}")
-    public ApiResponse<?> getStudyWordTest(Authentication authentication,
+    @GetMapping("/word/test/result/{quizId}")
+    public ApiResponse<?> getStudyWordTestResult(Authentication authentication,
                                            @RequestParam("quizId") Long quizId) throws Exception {
         try {
             Users user = userService.findByEmail(authentication.getName());

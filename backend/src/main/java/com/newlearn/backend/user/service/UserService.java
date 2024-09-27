@@ -40,4 +40,6 @@ public interface UserService {
 	List<UserGrassResponseDTO> getGrass(Long userId);
 	UserCategoryChartResponseDTO getCategoryChart(long userId);
 
+	Long getUserRank(Long userId) throws Exception;
+
 }

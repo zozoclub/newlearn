@@ -80,14 +80,13 @@ public class StudyServiceImpl implements StudyService{
     }
 
     @Override
-    public List<WordTestResponseDTO> getWordTestProblems(Long userId, Long totalCount) {
+    public WordTestResponseWithQuizIdDTO getWordTestProblems(Long userId, Long totalCount) {
         WordQuiz newQuiz = new WordQuiz();
         newQuiz.setUserId(userId);
         newQuiz.setTotalCount(totalCount);
         newQuiz.setCorrectCount(0L);
         wordQuizRepository.save(newQuiz);
 
-        // 랜덤 단어 ${totalCount}개 가져오기
         List<Word> words = wordQuizQuestionRepository.findRandomWords(userId, totalCount);
         List<WordTestResponseDTO> tests = new ArrayList<>();
 
@@ -102,13 +101,17 @@ public class StudyServiceImpl implements StudyService{
             wordQuizQuestionRepository.save(question);
 
             tests.add(WordTestResponseDTO.builder()
-                .word(word.getWord())
-                .wordMeaning(word.getWordMeaning())
-                .sentence(sentence.getSentence())
-                .sentenceMeaning(sentence.getSentenceMeaning())
-                .build());
+                    .word(word.getWord())
+                    .wordMeaning(word.getWordMeaning())
+                    .sentence(sentence.getSentence())
+                    .sentenceMeaning(sentence.getSentenceMeaning())
+                    .build());
         }
-        return tests;
+
+        return WordTestResponseWithQuizIdDTO.builder()
+                .quizId(newQuiz.getQuizId())
+                .tests(tests)
+                .build();
     }
 
     @Override
@@ -200,6 +203,14 @@ public class StudyServiceImpl implements StudyService{
                 .build();
 
         return resultDetail;
+    }
+
+    @Override
+    public void exitQuiz(Long quizId) {
+//        WordQuiz quiz = wordQuizRepository.findById(quizId)
+//                .orElseThrow(() -> new IllegalArgumentException("퀴즈를 찾을 수 없습니다."));
+//
+//        wordQuizRepository.deleteByQuizId(quizId);
     }
 
     @Override

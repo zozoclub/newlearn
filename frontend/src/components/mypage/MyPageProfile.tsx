@@ -43,7 +43,9 @@ const MyPageProfile: React.FC = () => {
   return (
     <div>
       <Container>
-        <Avatar avatar={avatar} size={12} />
+        <AvatarContainer>
+          <Avatar avatar={avatar} size={8} />
+        </AvatarContainer>
         <ProfileInfoContainer>
           <NicknameContainer>
             <div>
@@ -86,9 +88,9 @@ const Container = styled.div`
   gap: 2rem;
 `;
 
-// const ProfileImgContainer = styled.img`
-//   width: 11rem;
-// `;
+const AvatarContainer = styled.img`
+  width: 11rem;
+`;
 
 const ProfileInfoContainer = styled.div`
   margin: 1rem 0;

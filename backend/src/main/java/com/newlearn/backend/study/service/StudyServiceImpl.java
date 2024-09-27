@@ -80,14 +80,13 @@ public class StudyServiceImpl implements StudyService{
     }
 
     @Override
-    public List<WordTestResponseDTO> getWordTestProblems(Long userId, Long totalCount) {
+    public WordTestResponseWithQuizIdDTO getWordTestProblems(Long userId, Long totalCount) {
         WordQuiz newQuiz = new WordQuiz();
         newQuiz.setUserId(userId);
         newQuiz.setTotalCount(totalCount);
         newQuiz.setCorrectCount(0L);
         wordQuizRepository.save(newQuiz);
 
-        // 랜덤 단어 ${totalCount}개 가져오기
         List<Word> words = wordQuizQuestionRepository.findRandomWords(userId, totalCount);
         List<WordTestResponseDTO> tests = new ArrayList<>();
 
@@ -102,38 +101,51 @@ public class StudyServiceImpl implements StudyService{
             wordQuizQuestionRepository.save(question);
 
             tests.add(WordTestResponseDTO.builder()
-                .word(word.getWord())
-                .wordMeaning(word.getWordMeaning())
-                .sentence(sentence.getSentence())
-                .sentenceMeaning(sentence.getSentenceMeaning())
-                .build());
+                    .word(word.getWord())
+                    .wordMeaning(word.getWordMeaning())
+                    .sentence(sentence.getSentence())
+                    .sentenceMeaning(sentence.getSentenceMeaning())
+                    .build());
         }
-        return tests;
+
+        return WordTestResponseWithQuizIdDTO.builder()
+                .quizId(newQuiz.getQuizId())
+                .tests(tests)
+                .build();
     }
 
     @Override
     public void saveWordTestResult(Long userId, WordTestResultRequestDTO wordTestResultRequestDTO) {
-        for (WordTestResultRequestDTO.WordTestDetail result : wordTestResultRequestDTO.getResults()) {
-            // 퀴즈 가져오기
-            WordQuiz quiz = wordQuizRepository.findById(wordTestResultRequestDTO.getQuizId())
-                    .orElseThrow(() -> new IllegalArgumentException("퀴즈를 찾을 수 없습니다."));
+        // 퀴즈 가져오기
+        WordQuiz quiz = wordQuizRepository.findById(wordTestResultRequestDTO.getQuizId())
+                .orElseThrow(() -> new IllegalArgumentException("퀴즈를 찾을 수 없습니다."));
 
-            // 질문 저장
-            WordQuizQuestion question = WordQuizQuestion.builder()
-                    .wordQuiz(quiz) // 퀴즈
-                    .sentence(result.getSentence())
-                    .correctAnswer(result.getCorrectAnswer())
-                    .build();
-            wordQuizQuestionRepository.save(question);
+        // 정답 개수 초기화
+        Long correctCount = quiz.getCorrectCount();
+
+        for (WordTestResultRequestDTO.WordTestDetail result : wordTestResultRequestDTO.getResults()) {
+            // 질문 찾기
+            System.out.println("ㅎㅎ" + quiz + " " + result.getSentence());
+            WordQuizQuestion question = wordQuizQuestionRepository.findByWordQuizAndSentence(quiz, result.getSentence())
+                    .orElseThrow(() -> new IllegalArgumentException("해당 질문을 찾을 수 없습니다."));
 
             // 답안 저장
             WordQuizAnswer answer = WordQuizAnswer.builder()
-                    .wordQuizQuestion(question) // 질문
+                    .wordQuizQuestion(question)
                     .answer(result.getAnswer())
                     .isCorrect(result.isCorrect())
                     .build();
-            wordQuizAnswerRepository.save(answer);
+
+            wordQuizAnswerRepository.save(answer); // 답안 저장
+
+            // 답안이 맞으면 correctCount 증가
+            if (result.isCorrect()) {
+                correctCount++;
+            }
         }
+        // correctCount 갱신
+        quiz.setCorrectCount(correctCount);
+        wordQuizRepository.save(quiz); // 퀴즈 저장 (정답 수 갱신)
     }
 
     @Override
@@ -191,6 +203,14 @@ public class StudyServiceImpl implements StudyService{
                 .build();
 
         return resultDetail;
+    }
+
+    @Override
+    public void exitQuiz(Long quizId) {
+//        WordQuiz quiz = wordQuizRepository.findById(quizId)
+//                .orElseThrow(() -> new IllegalArgumentException("퀴즈를 찾을 수 없습니다."));
+//
+//        wordQuizRepository.deleteByQuizId(quizId);
     }
 
     @Override

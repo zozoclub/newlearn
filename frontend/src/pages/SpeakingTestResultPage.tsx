@@ -7,7 +7,7 @@ import SpeakingTestResultReference from "@components/testpage/SpeakingTestResult
 import SpeakingTestResultCharts from "@components/testpage/SpeakingTestResultCharts";
 import SpeakingTestResultInfoWidget from "@components/testpage/SpeakingTestResultInfoWidget";
 import { getAccuracyFeedback, getFluencyFeedback, getProsodyFeedback, getCompletenessFeedback } from "@utils/speakingFeedback";
-import { getPronounceTestResultDetail, PronounceTestResultDetailDto } from "@services/testService";
+import { getPronounceTestResultDetail, PronounceTestResultDetailDto } from "@services/speakingTestService";
 import { useQuery } from "@tanstack/react-query";
 import Spinner from "@components/Spinner";
 import styled from "styled-components";
@@ -67,7 +67,7 @@ const SpeakingTestResultPage: React.FC = () => {
   if (isLoading) return <Spinner />;
 
   // 에러 상태 처리
-  if (error) return <ErrorText>Error fetching test results. Please try again later.</ErrorText>;
+  if (error) return <ErrorText>에러가 발생했습니다. 다시 시도해 주세요.</ErrorText>;
 
   // testDetail이 null일 때
   if (!testDetail) return <ErrorText>No data available.</ErrorText>;

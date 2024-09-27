@@ -3,7 +3,7 @@ import styled, { useTheme } from "styled-components";
 import { Line } from "react-chartjs-2";
 import SpeakingTestHistoryCardList from "@components/testpage/SpeakingTestHistoryCardList";
 import Spinner from "@components/Spinner";
-import { getPronounceTestResultList, PronounceTestResultListDto } from "@services/testService";
+import { getPronounceTestResultList, PronounceTestResultListDto } from "@services/speakingTestService";
 import { useQuery } from "@tanstack/react-query";
 import {
   Chart as ChartJS,

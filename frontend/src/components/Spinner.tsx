@@ -48,7 +48,7 @@ const SpinnerWrapper = styled.div`
 const SpinnerIcon = styled.svg`
       width: 2rem;
       height: 2rem;
-      fill: ${(props) => props.theme.colors.danger};
+      fill: ${(props) => props.theme.colors.primary};
       color: #DDDDDD; 
       animation: ${spin} 1s linear infinite;
     `;

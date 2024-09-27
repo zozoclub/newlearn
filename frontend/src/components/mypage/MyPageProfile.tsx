@@ -88,7 +88,7 @@ const Container = styled.div`
   gap: 2rem;
 `;
 
-const AvatarContainer = styled.img`
+const AvatarContainer = styled.div`
   width: 11rem;
 `;
 

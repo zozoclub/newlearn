@@ -32,8 +32,8 @@ public class MypageController {
     // 스크랩한 뉴스 전체 리스트 조회
     @GetMapping("/news")
     public ApiResponse<?> getAllScrapedNewsList(Authentication authentication,
-                                             @RequestParam(defaultValue = "0") int page,
-                                             @RequestParam(defaultValue = "10") int size) throws Exception {
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int size) throws Exception {
         try {
             Users user = userService.findByEmail(authentication.getName());
             if (user == null) {
@@ -41,9 +41,9 @@ public class MypageController {
             }
 
             NewsPagenationRequestDTO newsPagenationRequestDTO = NewsPagenationRequestDTO.builder()
-                    .page(page)
-                    .size(size)
-                    .build();
+                .page(page)
+                .size(size)
+                .build();
 
             Page<UserScrapedNewsResponseDTO> newsList = userService.getScrapedNewsList(user.getUserId(), newsPagenationRequestDTO, 0);
 
@@ -57,9 +57,9 @@ public class MypageController {
     // 스크랩한 뉴스 난이도별 리스트 조회
     @GetMapping("/news/{difficulty}")
     public ApiResponse<?> getScrapedNewsList(Authentication authentication,
-                                     @PathVariable("difficulty") int difficulty,
-                                     @RequestParam(defaultValue = "0") int page,
-                                     @RequestParam(defaultValue = "10") int size) throws Exception {
+        @PathVariable("difficulty") int difficulty,
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int size) throws Exception {
         try {
             Users user = userService.findByEmail(authentication.getName());
             if (user == null) {
@@ -67,9 +67,9 @@ public class MypageController {
             }
 
             NewsPagenationRequestDTO newsPagenationRequestDTO = NewsPagenationRequestDTO.builder()
-                    .page(page)
-                    .size(size)
-                    .build();
+                .page(page)
+                .size(size)
+                .build();
 
             Page<UserScrapedNewsResponseDTO> newsList = userService.getScrapedNewsList(user.getUserId(), newsPagenationRequestDTO, difficulty);
 

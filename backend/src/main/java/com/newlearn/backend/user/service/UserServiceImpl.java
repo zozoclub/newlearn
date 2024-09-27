@@ -147,16 +147,23 @@ public class UserServiceImpl implements UserService{
 	}
 
 	@Override
-	public UserProfileResponseDTO getProfile(Long userId) {
+	public UserProfileResponseDTO getProfile(Long userId) throws Exception {
 
 		Users user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다"));
 
 		Long unCount = wordRepository.countCompleteWordsByUser(user);
 		Long Count = wordRepository.countIncompleteWordsByUser(user);
-
-		return new UserProfileResponseDTO(user, unCount, Count);
+		Long userRank = getUserRank(userId);
+		return new UserProfileResponseDTO(user, unCount, Count, userRank);
 
 	}
+
+	@Override
+	public Long getUserRank(Long userId) throws Exception {
+		int rank = userRepository.findUserRankById(userId);
+		return Long.valueOf(rank);
+	}
+
 
 	/* 마이페이지 */
 
@@ -221,6 +228,5 @@ public class UserServiceImpl implements UserService{
 				.worldCount(counts[5])
 				.build();
 	}
-
 
 }

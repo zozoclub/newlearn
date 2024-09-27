@@ -33,11 +33,13 @@ public interface UserService {
 
 	void deleteUser(Long userId);
 
-	UserProfileResponseDTO getProfile(Long userId);
+	UserProfileResponseDTO getProfile(Long userId) throws Exception;
 
 	// 마이페이지
 	Page<UserScrapedNewsResponseDTO> getScrapedNewsList(Long userId, NewsPagenationRequestDTO newsPagenationRequestDTO, int difficulty);
 	List<UserGrassResponseDTO> getGrass(Long userId);
 	UserCategoryChartResponseDTO getCategoryChart(long userId);
+
+	Long getUserRank(Long userId) throws Exception;
 
 }

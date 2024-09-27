@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.newlearn.backend.user.dto.response.UserRankDTO;
@@ -32,4 +33,11 @@ public interface UserRepository extends JpaRepository<Users, Long> {
 			"ORDER BY u.totalNewsReadCount DESC " +
 			"LIMIT 10")
 	List<UserRankDTO> findTop10ByNewsRead();
+
+	@Query(value = "SELECT COUNT(*) + 1 AS user_rank " +
+		"FROM users u " +
+		"WHERE u.experience > (SELECT experience FROM users WHERE user_id = :userId)",
+		nativeQuery = true)
+	int findUserRankById(Long userId);
+
 }

@@ -4,7 +4,6 @@ import com.newlearn.backend.study.dto.request.GoalRequestDTO;
 import com.newlearn.backend.study.dto.request.PronounceRequestDTO;
 import com.newlearn.backend.study.dto.request.WordTestResultRequestDTO;
 import com.newlearn.backend.study.dto.response.*;
-import com.newlearn.backend.user.model.Users;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -18,13 +17,15 @@ public interface StudyService {
 
     StudyProgressDTO getStudyProgress(Long userId);
 
-    List<WordTestResponseDTO> getWordTestProblems(Long userId, Long totalCount);
+    WordTestResponseWithQuizIdDTO getWordTestProblems(Long userId, Long totalCount);
 
     void saveWordTestResult(Long userId, WordTestResultRequestDTO wordTestResultRequestDTO);
 
     List<WordTestResultResponseDTO> getWordTestResults(Long userId);
 
     WordTestResultDetailResponseDTO getWordTestResult(Long userId, Long quizId);
+
+    void exitQuiz(Long quizId);
 
     List<PronounceTestResponseDTO> getPronounceTestProblems(Long userId);
 

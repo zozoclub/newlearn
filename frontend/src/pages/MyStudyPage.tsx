@@ -3,21 +3,18 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import locationState from "@store/locationState";
-import { useSetRecoilState } from "recoil";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import goalState from "@store/goalState";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useMutation } from "@tanstack/react-query";
 
 import GoalChart from "@components/GoalChart";
 import GoalSetting from "@components/GoalSetting";
 import testMenuBg from "@assets/images/background-testmenu.png";
 import vocaMenuBg from "@assets/images/background-vocamenu.png";
 import Modal from "@components/Modal";
+import Spinner from "@components/Spinner";
 
-import {
-  GoalSettingProps,
-  StudyProgressProps,
-  goalSetting,
-  getStudyProgress,
-} from "@services/goalService.ts";
+import { GoalSettingType, goalSetting } from "@services/goalService.ts";
 
 const MyStudyPage = () => {
   const navigate = useNavigate();
@@ -49,37 +46,33 @@ const MyStudyPage = () => {
   };
 
   // 학습 목표 설정
-  const goalMutation = useMutation<GoalSettingProps, Error, GoalSettingProps>({
-    mutationFn: (data: GoalSettingProps) => goalSetting(data),
-    onSuccess: () => {
+  const goalMutation = useMutation<GoalSettingType, Error, GoalSettingType>({
+    mutationFn: (data: GoalSettingType) => goalSetting(data),
+    onSuccess: (result) => {
+      setStudyProgress((prevState) => ({
+        ...prevState,
+        ...result,
+        isInitialized: true,
+      }));
       closeModal();
-      refetch();
     },
     onError: (error) => {
       console.error("Goal setting Failed", error);
     },
   });
 
-  const { refetch } = useQuery<StudyProgressProps | null>({
-    queryKey: ["studyProgress"],
-    queryFn: getStudyProgress,
-  });
   // 목표 현황 가져오기
-  const {
-    data: studyProgress,
-    isLoading,
-    isError,
-  } = useQuery<StudyProgressProps | null>({
-    queryKey: ["studyProgress"],
-    queryFn: getStudyProgress,
-  });
-  if (isLoading) return <div>Loading</div>;
-  if (isError) return <div>학습 목표 및 현황 가져오기 Error</div>;
-  console.log(studyProgress);
+
+  const studyProgress = useRecoilValue(goalState);
+  const setStudyProgress = useSetRecoilState(goalState);
+  if (!studyProgress.isInitialized) return <Spinner />;
+
   return (
     <Container>
       <GoalContainer>
-        {studyProgress === null ? (
+        {studyProgress.goalReadNewsCount === 0 &&
+        studyProgress.goalPronounceTestScore === 0 &&
+        studyProgress.goalCompleteWord === 0 ? (
           <GoalSettingContainer>
             <GoalSettingDescription>
               설정된 목표가 없습니다.
@@ -92,7 +85,7 @@ const MyStudyPage = () => {
             </Modal>
           </GoalSettingContainer>
         ) : (
-          studyProgress && <GoalChart studyProgress={studyProgress} />
+          <GoalChart studyProgress={studyProgress} />
         )}
       </GoalContainer>
       <MenuContainer>

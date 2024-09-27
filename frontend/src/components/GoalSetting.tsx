@@ -1,15 +1,10 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { UseMutationResult } from "@tanstack/react-query";
-
-type GoalSettingProps = {
-  goalReadNewsCount: number;
-  goalPronounceTestScore: number;
-  goalCompleteWord: number;
-};
+import { GoalSettingType } from "@services/goalService";
 
 type GoalSettingComponentProps = {
-  goalMutation: UseMutationResult<GoalSettingProps, Error, GoalSettingProps>;
+  goalMutation: UseMutationResult<GoalSettingType, Error, GoalSettingType>;
 };
 
 const GoalSetting: React.FC<GoalSettingComponentProps> = ({ goalMutation }) => {
@@ -18,7 +13,7 @@ const GoalSetting: React.FC<GoalSettingComponentProps> = ({ goalMutation }) => {
   const [goalPronounceTestScore, setGoalPronounceTestScore] = useState("");
 
   const handleSave = () => {
-    const goalData: GoalSettingProps = {
+    const goalData: GoalSettingType = {
       goalReadNewsCount: parseInt(goalReadNewsCount, 10),
       goalCompleteWord: parseInt(goalCompleteWord, 10),
       goalPronounceTestScore: parseInt(goalPronounceTestScore, 10),

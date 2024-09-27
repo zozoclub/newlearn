@@ -1,43 +1,112 @@
+import Spinner from "@components/Spinner";
+import {
+  getPointRankingList,
+  getReadRankingList,
+} from "@services/rankingService";
+import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import styled from "styled-components";
 
+type RankingType = {
+  userId: number;
+  nickname: string;
+  ranking: number;
+};
+
+export type PointRankingType = RankingType & {
+  experience: number;
+};
+
+export type ReadRankingType = RankingType & {
+  totalNewsReadCount: number;
+};
+
 const RankingWidget = () => {
   const [selectedType, setSelectedType] = useState<"point" | "read">("point");
+  const { isLoading: pointIsLoading, data: pointRankingList } = useQuery<
+    PointRankingType[]
+  >({
+    queryKey: ["pointRankingData"],
+    queryFn: getPointRankingList,
+  });
+  const { isLoading: readIsLoading, data: readRankingList } = useQuery<
+    ReadRankingType[]
+  >({
+    queryKey: ["readRankingList"],
+    queryFn: getReadRankingList,
+  });
+
   return (
     <Container>
-      <RankingTypeContainer $type={selectedType}>
-        <RankingType
+      <RankingKindContainer $type={selectedType}>
+        <RankingKind
           $isSelected={selectedType === "point"}
           $type={"point"}
           onClick={() => setSelectedType("point")}
         >
           포인트왕
-        </RankingType>
-        <RankingType
+        </RankingKind>
+        <RankingKind
           $isSelected={selectedType === "read"}
           $type={"read"}
           onClick={() => setSelectedType("read")}
         >
           다독왕
-        </RankingType>
-      </RankingTypeContainer>
-      <MyRanking>
-        <div>My Rank</div>
-        <div>몇등이지</div>
-      </MyRanking>
+        </RankingKind>
+      </RankingKindContainer>
       <TopRanking>
-        <table width="100%">
-          <tr>
-            <th style={{ textAlign: "start" }}>등수</th>
-            <th>닉네임</th>
-            <th>읽은 수</th>
-          </tr>
-          <tr style={{ textAlign: "center" }}>
-            <td style={{ textAlign: "start" }}>1</td>
-            <td>닉네임</td>
-            <td>300</td>
-          </tr>
-        </table>
+        <RankingTable>
+          <thead>
+            <tr>
+              <th className="rank">순위</th>
+              <th className="level">레벨</th>
+              <th className="nickname">닉네임</th>
+              <th className="count">
+                {selectedType === "point" ? "포인트" : "읽은 수"}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {selectedType === "point" ? (
+              pointIsLoading ? (
+                <tr>
+                  <LoadingDiv>
+                    <Spinner />
+                  </LoadingDiv>
+                </tr>
+              ) : (
+                <>
+                  {pointRankingList?.map((pointRanking) => (
+                    <tr key={pointRanking.ranking} className="rank">
+                      <td>{pointRanking.ranking}</td>
+                      <td>{pointRanking.experience}</td>
+                      <td>{pointRanking.nickname}</td>
+                      <td>{pointRanking.experience}</td>
+                    </tr>
+                  ))}
+                </>
+              )
+            ) : readIsLoading ? (
+              <tr>
+                <LoadingDiv>
+                  <Spinner />
+                </LoadingDiv>
+              </tr>
+            ) : (
+              <>
+                {readRankingList?.map((readRanking) => (
+                  <tr key={readRanking.ranking} className="rank">
+                    <td>{readRanking.ranking}</td>
+                    {/* <td>{readRanking.experience}</td> */}
+                    <td>1</td> {/* 임시 레벨 */}
+                    <td>{readRanking.nickname}</td>
+                    <td>{readRanking.totalNewsReadCount}</td>
+                  </tr>
+                ))}
+              </>
+            )}
+          </tbody>
+        </RankingTable>
       </TopRanking>
     </Container>
   );
@@ -49,7 +118,7 @@ const Container = styled.div`
   padding: 5%;
 `;
 
-const RankingTypeContainer = styled.div<{ $type: "point" | "read" }>`
+const RankingKindContainer = styled.div<{ $type: "point" | "read" }>`
   position: relative;
   width: 10rem;
   height: 1rem;
@@ -76,7 +145,7 @@ const RankingTypeContainer = styled.div<{ $type: "point" | "read" }>`
   }
 `;
 
-const RankingType = styled.div<{
+const RankingKind = styled.div<{
   $isSelected: boolean;
   $type: "point" | "read";
 }>`
@@ -93,13 +162,40 @@ const RankingType = styled.div<{
   left: ${(props) => (props.$type === "point" ? 0 : "6.5rem")};
 `;
 
-const MyRanking = styled.div`
-  display: flex;
-  justify-content: space-between;
-  width: 8rem;
-  margin: 1rem auto;
+const RankingTable = styled.table`
+  width: 100%;
+  font-size: 0.875rem;
+  text-align: center;
+  table-layout: fixed;
+  margin-top: 1rem;
+  th {
+    padding-bottom: 0.4rem;
+  }
+  td {
+    padding: 0.2rem 0;
+    font-weight: 100;
+  }
+  .rank {
+    width: 10%;
+  }
+  .level {
+    width: 20%;
+  }
+  .nickname {
+    width: 40%;
+  }
+  .count {
+    width: 30%;
+  }
 `;
 
 const TopRanking = styled.div``;
+
+const LoadingDiv = styled.td`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%);
+`;
 
 export default RankingWidget;

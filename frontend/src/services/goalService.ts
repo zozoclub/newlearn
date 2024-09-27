@@ -1,18 +1,10 @@
 import axiosInstance from "./axiosInstance";
+import { StudyProgressType } from "@store/goalState";
 
 export type GoalSettingType = {
   goalReadNewsCount: number;
   goalPronounceTestScore: number;
   goalCompleteWord: number;
-};
-
-export type StudyProgressType = {
-  goalReadNewsCount: number;
-  goalPronounceTestScore: number;
-  goalCompleteWord: number;
-  currentReadNewsCount: number;
-  currentPronounceTestScore: number;
-  currentCompleteWord: number;
 };
 
 export const goalSetting = async (data: GoalSettingType) => {
@@ -26,11 +18,12 @@ export const goalSetting = async (data: GoalSettingType) => {
   }
 };
 
-export const getStudyProgress = async () => {
+export const getStudyProgress = async (): Promise<StudyProgressType> => {
   try {
     const response = await axiosInstance.get("study/progress");
     return response.data.data;
   } catch (error) {
     console.log("get study progree Failed", error);
+    throw error;
   }
 };

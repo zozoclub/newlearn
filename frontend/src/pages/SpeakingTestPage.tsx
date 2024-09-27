@@ -434,7 +434,7 @@ const SubmitButton = styled.button<{ disabled: boolean }>`
 
   &:hover {
     background-color: ${(props) =>
-      props.disabled ? "#ccc" : props.theme.colors.primaryHover};
+      props.disabled ? "#ccc" : props.theme.colors.primaryPress};
   }
 `;
 

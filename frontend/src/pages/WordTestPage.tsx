@@ -3,17 +3,31 @@ import { useSetRecoilState } from "recoil";
 import locationState from "@store/locationState";
 import styled from "styled-components";
 
-import { useQuery } from "@tanstack/react-query";
-import { useParams } from "react-router-dom";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   getWordTestList,
+  postWordTestResult,
   WordTestListResponseDto,
+  WordTestRequestDto,
 } from "@services/wordTestService";
 
 import Spinner from "@components/Spinner";
+import Modal from "@components/Modal";
 
 const WordTestPage: React.FC = () => {
   const { totalCount } = useParams<{ totalCount: string }>();
+
+  const navigate = useNavigate();
+
+  const mutation = useMutation({
+    mutationFn: (wordTestResultDataSet: WordTestRequestDto) =>
+      postWordTestResult(wordTestResultDataSet),
+    onSuccess: () => {
+      console.log("결과 전달 완료");
+      navigate(`/wordtestresult/${data!.quizId}`);
+    },
+  });
 
   const setCurrentLocation = useSetRecoilState(locationState);
   useEffect(() => {
@@ -107,21 +121,35 @@ const WordTestPage: React.FC = () => {
     setCurrentPage((prevPage) => prevPage - 1);
   };
 
+  const [isSubmitModal, setIsSubmitModal] = useState<boolean>(false);
+  const submitModal = () => setIsSubmitModal(true);
+  const closeSubmitModal = () => setIsSubmitModal(false);
+  const handleWordDataSubmit = () => {
+    submitModal();
+  };
+
   const handleSubmit = () => {
-    let correctAnswers = 0;
+    closeSubmitModal();
+    const results: WordTestRequestDto["results"] = [];
 
-    quiz.forEach((q, index) => {
-      const userAnswer = userAnswers[index]?.toLowerCase().replace(/\s+/g, "");
-      const correctAnswer = q.answer.toLowerCase().replace(/\s+/g, "");
-
-      if (userAnswer === correctAnswer) {
-        correctAnswers += 1;
-      }
+    quiz.forEach((_, index) => {
+      const correctAnswer = data?.tests[index].word;
+      const answer = userAnswers[index]?.toLowerCase().replace(/\s+/g, "");
+      const wordTestData = {
+        sentence: data!.tests[index].sentence,
+        correctAnswer: correctAnswer!,
+        answer: answer,
+        isCorrect: correctAnswer === answer,
+      };
+      results.push(wordTestData);
     });
+    const wordTestResultDataSet: WordTestRequestDto = {
+      quizId: data!.quizId,
+      results: results,
+    };
+    console.log(wordTestResultDataSet);
 
-    // 점수환산
-    const score = (correctAnswers / quiz.length) * 100;
-    console.log(`점수: ${score}점 (${correctAnswers}/${quiz.length} 정답)`);
+    mutation.mutate(wordTestResultDataSet);
   };
 
   // 로딩 상태 처리
@@ -179,9 +207,20 @@ const WordTestPage: React.FC = () => {
       {/* 제출 버튼 */}
       {currentPage === Math.ceil(quiz.length / questionsPerPage) && (
         <SubmitButtonContainer>
-          <SubmitButton onClick={handleSubmit}>제출</SubmitButton>
+          <SubmitButton onClick={handleWordDataSubmit}>제출</SubmitButton>
         </SubmitButtonContainer>
       )}
+      <Modal
+        isOpen={isSubmitModal}
+        onClose={closeSubmitModal}
+        title="Speaking Test"
+      >
+        <p>정말로 제출하시겠습니까?</p>
+        <ModalButtonContainer>
+          <ModalCancelButton onClick={closeSubmitModal}>취소</ModalCancelButton>
+          <ModalConfirmButton onClick={handleSubmit}>확인</ModalConfirmButton>
+        </ModalButtonContainer>
+      </Modal>
     </MainContainer>
   );
 };
@@ -287,6 +326,37 @@ const SubmitButtonContainer = styled.div`
 
 const SubmitButton = styled(PageButton)`
   background-color: ${(props) => props.theme.colors.primary};
+  &:hover {
+    background-color: ${(props) => props.theme.colors.primaryPress};
+  }
+`;
+
+const ModalButtonContainer = styled.div`
+  display: flex;
+  justify-content: space-around;
+  margin-top: 2rem;
+`;
+
+const ModalCancelButton = styled.button`
+  padding: 0.5rem 1.5rem;
+  background-color: ${(props) => props.theme.colors.placeholder};
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+
+  &:hover {
+    background-color: ${(props) => props.theme.colors.danger};
+  }
+`;
+const ModalConfirmButton = styled.button`
+  padding: 0.5rem 1.5rem;
+  background-color: ${(props) => props.theme.colors.primary};
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+
   &:hover {
     background-color: ${(props) => props.theme.colors.primaryPress};
   }

@@ -35,7 +35,7 @@ export type WordTestRequestDto = {
     sentence: string;
     correctAnswer: string;
     answer: string;
-    isCorrect: string;
+    isCorrect: boolean;
   }>;
 };
 
@@ -44,6 +44,8 @@ export const postWordTestResult = async (
   wordTestwordTestResultDataSet: WordTestRequestDto
 ): Promise<void> => {
   try {
+    console.log("테스트 셋",wordTestwordTestResultDataSet);
+
     const response = await axiosInstance.post(`study/word/test`, {
       wordTestwordTestResultDataSet,
     });

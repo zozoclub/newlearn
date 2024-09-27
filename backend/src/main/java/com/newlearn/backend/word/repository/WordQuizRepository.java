@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface WordQuizRepository extends JpaRepository<WordQuiz, Long> {
     List<WordQuiz> findByUserId(Long userId);
+    void deleteById(Long quizId);
 }

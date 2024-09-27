@@ -77,6 +77,7 @@ public class RankServiceImpl implements RankService {
                 .map(userRank -> ReadingRankDTO.builder()
                         .userId(userRank.getUser().getUserId())
                         .nickname(userRank.getUser().getNickname())
+                        .experience(userRank.getUser().getExperience())
                         .totalNewsReadCount(userRank.getUser().getTotalNewsReadCount())
                         .ranking(userRank.getRanking())
                         .build())

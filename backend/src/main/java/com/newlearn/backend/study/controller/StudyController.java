@@ -146,22 +146,23 @@ public class StudyController {
         }
     }
 
-//    @DeleteMapping("/word/test/exit/{quizId}")
-//    public ApiResponse<?> exitStudyWordTest(Authentication authentication, @PathVariable Long quizId) throws Exception {
-//        try {
-//            Users user = userService.findByEmail(authentication.getName());
-//            if (user == null) {
-//                return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
-//            }
-//
-//            studyService.exitQuiz(quizId);
-//
-//            return ApiResponse.createSuccess(null, "단어 테스트 중도 퇴장 성공");
-//        } catch (Exception e) {
-//            log.error("단어 문장 빈칸 테스트 중도 퇴장 성공");
-//            return ApiResponse.createError(ErrorCode.WORD_TEST_EXIT_ERROR);
-//        }
-//    }
+    @DeleteMapping("/word/test/exit/{quizId}")
+    public ApiResponse<?> exitStudyWordTest(Authentication authentication, @PathVariable Long quizId) throws Exception {
+        try {
+            Users user = userService.findByEmail(authentication.getName());
+            if (user == null) {
+                return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
+            }
+
+            System.out.println(quizId);
+            studyService.exitQuiz(quizId);
+
+            return ApiResponse.createSuccess(null, "단어 테스트 중도 퇴장 성공");
+        } catch (Exception e) {
+            log.error("단어 문장 빈칸 테스트 중도 퇴장 실패");
+            return ApiResponse.createError(ErrorCode.WORD_TEST_EXIT_ERROR);
+        }
+    }
     
     // 발음 테스트 예문 가져오기
     @GetMapping("/pronounce/test")

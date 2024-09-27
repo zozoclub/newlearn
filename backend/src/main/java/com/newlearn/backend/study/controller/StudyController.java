@@ -73,8 +73,8 @@ public class StudyController {
     }
 
     // 단어 테스트 문제 가져오기
-    @GetMapping("/word/test/{totalCount}")
-    public ApiResponse<?> getStudyWordTest(Authentication authentication, @PathVariable Long totalCount) throws Exception {
+    @GetMapping("/word/test")
+    public ApiResponse<?> getStudyWordTest(Authentication authentication, @RequestParam Long totalCount) throws Exception {
         try {
             Users user = userService.findByEmail(authentication.getName());
             if (user == null) {

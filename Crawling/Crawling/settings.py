@@ -102,7 +102,32 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'level': 'DEBUG',  # crawled_data 로거의 로그를 출력하기 위해 DEBUG로 유지
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'ERROR',  # 루트 로거의 레벨을 ERROR로 설정
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'ERROR',  # django 로거의 레벨을 ERROR로 설정
+            'propagate': False,
+        },
+        'crawled_data': {
+            'handlers': ['console'],
+            'level': 'DEBUG',  # 당신의 로거는 DEBUG 레벨로 유지
+            'propagate': False,
+        },
+    },
+}
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 

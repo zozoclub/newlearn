@@ -162,10 +162,9 @@ public class StudyServiceImpl implements StudyService{
 
             return WordTestResultResponseDTO.builder()
                     .quizId(quiz.getQuizId())
-                    .answer(answer)
-                    .totalCnt(String.valueOf(quiz.getTotalCount()))
-                    .correctCnt(isCorrect)
-                    .createAt(quiz.getCreatedAt())
+                    .totalCnt(quiz.getTotalCount())
+                    .correctCnt(quiz.getCorrectCount())
+                    .createdAt(quiz.getCreatedAt())
                     .build();
         }).collect(Collectors.toList());
     }
@@ -199,7 +198,7 @@ public class StudyServiceImpl implements StudyService{
                 .correctAnswer(question.getCorrectAnswer())
                 .isCorrect(isCorrect)
                 .sentence(question.getSentence())
-                .createAt(quiz.getCreatedAt())
+                .createdAt(quiz.getCreatedAt())
                 .build();
 
         return resultDetail;

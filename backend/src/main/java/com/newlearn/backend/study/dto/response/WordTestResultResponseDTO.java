@@ -10,9 +10,8 @@ import java.time.LocalDateTime;
 public class WordTestResultResponseDTO {
 
     private long quizId;
-    private String answer;
-    private String totalCnt;
-    private boolean correctCnt;
-    private LocalDateTime createAt;
+    private long totalCnt;
+    private long correctCnt;
+    private LocalDateTime createdAt;
 
 }

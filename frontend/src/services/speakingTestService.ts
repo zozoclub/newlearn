@@ -50,8 +50,6 @@ export const postPronounceTestResult = async (
       `study/pronounce/test`,
       pronounceTestResultDataSet
     );
-    console.log(response);
-    console.log(response.data.data);
     console.log(response.data.message);
 
     return response.data.data;

@@ -1,30 +1,33 @@
 import { useState } from "react";
-import defaultProfile from "@assets/images/defaultProfile.webp";
 import styled from "styled-components";
 import EditIcon from "@assets/icons/EditIcon";
 import SocialNaver from "@assets/icons/SocialNaver";
 import SocialKakao from "@assets/icons/SocialKakao";
 import Modal from "@components/Modal";
-
-// type Profile = {
-//   profileImg?: string;
-//   level: number;
-//   nickname: string;
-//   experience: number;
-//   name: string;
-//   social: string;
-//   email: string;
-// }
+import { useRecoilValue } from "recoil";
+import userInfoState from "@store/userInfoState";
+import { calculateExperience } from "@utils/calculateExperience";
+import Avatar, { AvatarType } from "@components/common/Avatar";
 
 const MyPageProfile: React.FC = () => {
-  const profileImg = defaultProfile;
-  const level = 10;
-  const nickname = "뉴런영어";
-  const experience = 300;
+  const userInfo = useRecoilValue(userInfoState);
+  const calculatedExperience = calculateExperience(userInfo.experience);
+
+  const avatar: AvatarType = {
+    skin: userInfo.skin,
+    eyes: userInfo.eyes,
+    mask: userInfo.mask,
+  };
+
+  const level = calculatedExperience.level;
+  const nickname = userInfo.nickname;
+  const expInCurrentLevel = calculatedExperience.expInCurrentLevel;
+  const requiredExpInCurrentLevel =
+    calculatedExperience.requiredExpInCurrentLevel;
+  const expPercentage = calculatedExperience.percentage;
   const name = "허세령";
   const social = "네이버";
-  const email = "asdf@gmail.com";
-  const percentage = (300 / 500) * 100;
+  const email = userInfo.email;
 
   // 모달 설정
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -40,7 +43,7 @@ const MyPageProfile: React.FC = () => {
   return (
     <div>
       <Container>
-        <ProfileImgContainer src={profileImg} alt="프로필사진" />
+        <Avatar avatar={avatar} size={12} />
         <ProfileInfoContainer>
           <NicknameContainer>
             <div>
@@ -60,9 +63,9 @@ const MyPageProfile: React.FC = () => {
           </NicknameContainer>
           <ExperienceContainer>
             <ExperienceBarContainer>
-              <ExperienceBarFill width={percentage} />
+              <ExperienceBarFill width={expPercentage} />
             </ExperienceBarContainer>
-            <ExperienceText>{`${experience} / ${experience}`}</ExperienceText>
+            <ExperienceText>{`${expInCurrentLevel} / ${requiredExpInCurrentLevel}`}</ExperienceText>
           </ExperienceContainer>
           <SocialInfoContainer>
             {name}
@@ -83,9 +86,9 @@ const Container = styled.div`
   gap: 2rem;
 `;
 
-const ProfileImgContainer = styled.img`
-  width: 11rem;
-`;
+// const ProfileImgContainer = styled.img`
+//   width: 11rem;
+// `;
 
 const ProfileInfoContainer = styled.div`
   margin: 1rem 0;

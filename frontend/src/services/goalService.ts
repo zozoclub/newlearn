@@ -1,18 +1,10 @@
 import axiosInstance from "./axiosInstance";
+import { StudyProgressType } from "@store/goalState";
 
 export type GoalSettingType = {
   goalReadNewsCount: number;
   goalPronounceTestScore: number;
   goalCompleteWord: number;
-};
-
-export type StudyProgressType = {
-  goalReadNewsCount: number;
-  goalPronounceTestScore: number;
-  goalCompleteWord: number;
-  currentReadNewsCount: number;
-  currentPronounceTestScore: number;
-  currentCompleteWord: number;
 };
 
 export const goalSetting = async (data: GoalSettingType) => {

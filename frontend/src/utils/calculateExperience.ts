@@ -1,7 +1,8 @@
 type ExperienceType = {
   level: number;
   percentage: number;
-  experience: number;
+  expInCurrentLevel: number;
+  requiredExpInCurrentLevel: number;
 };
 
 const levelTable: { level: number; required: number }[] = [];
@@ -25,7 +26,8 @@ export const calculateExperience = (experience: number): ExperienceType => {
       return {
         level: levelTable[i].level,
         percentage: Math.floor(percentage),
-        experience: expInCurrentLevel,
+        expInCurrentLevel: expInCurrentLevel,
+        requiredExpInCurrentLevel: currentLevelExp,
       };
     }
 
@@ -37,6 +39,7 @@ export const calculateExperience = (experience: number): ExperienceType => {
   return {
     level: lastLevel.level,
     percentage: 100,
-    experience: experience - totalExpForCurrentLevel,
+    expInCurrentLevel: experience - totalExpForCurrentLevel,
+    requiredExpInCurrentLevel: lastLevel.required,
   };
 };

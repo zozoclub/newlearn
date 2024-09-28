@@ -18,17 +18,29 @@ const NewsContent = styled.div`
   left: 0rem;
   width: calc(100% - 4rem);
   margin: 1rem;
-  padding: 2rem 1rem;
+  padding: 1rem 1rem;
   border-radius: 0.5rem;
-  background-color: ${(props) => props.theme.colors.cardBackground + "33"};
+  background-color: #000000aa;
   color: #ffffff;
   h1 {
-    font-size: 2rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
+    font-size: 1.25rem;
+    font-weight: 800;
+    line-height: 1.5rem;
+    height: 1.5rem;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
   }
   div {
     font-size: 1rem;
+    line-height: 1.25rem;
+    height: 2.5rem;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
   }
 `;
 

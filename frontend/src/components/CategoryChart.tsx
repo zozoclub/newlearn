@@ -11,6 +11,14 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import {
+  CategoryCountKey,
+  CategoryCountType,
+  getLabelFromKey,
+  getUserChart,
+} from "@services/mypageService";
+import { useQuery } from "@tanstack/react-query";
+import Spinner from "@components/Spinner";
 
 ChartJS.register(
   RadialLinearScale,
@@ -21,41 +29,30 @@ ChartJS.register(
   Legend
 );
 
-type CountDataKey =
-  | "economyCount"
-  | "politicsCount"
-  | "societyCount"
-  | "cultureCount"
-  | "scienceCount"
-  | "globalCount";
-
-type CountData = {
-  [K in CountDataKey]: number;
-};
-
-const getLabelFromKey = (key: CountDataKey): string => {
-  const labelMap: Record<typeof key, string> = {
-    economyCount: "경제",
-    politicsCount: "정치",
-    societyCount: "사회",
-    cultureCount: "생활/문화",
-    scienceCount: "IT/과학",
-    globalCount: "세계",
-  };
-  return labelMap[key] || key;
-};
-
-interface CategoryChartProps {
-  countData: CountData;
-}
-
-const CategoryChart: React.FC<CategoryChartProps> = ({ countData }) => {
+const CategoryChart: React.FC = () => {
   const theme = useTheme();
 
+  // 카테고리 별 읽은 수 가져오기
+  const { data: countData } = useQuery<CategoryCountType | null>({
+    queryKey: ["categoryCountData"],
+    queryFn: getUserChart,
+  });
+
+  if (!countData) {
+    return (
+      <div>
+        <Spinner />
+      </div>
+    );
+  }
+
+  // 차트의 최대 개수를 카테고리 읽은 수 중 최댓값으로 설정하기 위함
   const maxValue = Math.max(...Object.values(countData));
+
+  // 차트
   const chartData = {
     labels: Object.keys(countData).map((key) =>
-      getLabelFromKey(key as CountDataKey)
+      getLabelFromKey(key as CategoryCountKey)
     ),
     datasets: [
       {
@@ -72,6 +69,7 @@ const CategoryChart: React.FC<CategoryChartProps> = ({ countData }) => {
     ],
   };
 
+  // 차트 옵션
   const options = {
     plugins: {
       legend: {
@@ -88,7 +86,7 @@ const CategoryChart: React.FC<CategoryChartProps> = ({ countData }) => {
           color: theme.colors.text04,
         },
         suggestedMin: 0,
-        suggestedMax: maxValue,
+        suggestedMax: maxValue > 0 ? maxValue : 1,
         ticks: {
           stepSize: 5,
           font: {

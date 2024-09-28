@@ -1,9 +1,9 @@
 import styled, { useTheme } from "styled-components";
 import { Doughnut } from "react-chartjs-2";
 import { ChartOptions } from "chart.js";
-import { StudyProgressProps } from "@services/goalService";
+import { StudyProgressType } from "@store/goalState";
 
-const GoalChart: React.FC<{ studyProgress: StudyProgressProps }> = ({
+const GoalChart: React.FC<{ studyProgress: StudyProgressType }> = ({
   studyProgress,
 }) => {
   const perReadNewsCount =

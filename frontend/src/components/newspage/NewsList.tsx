@@ -1,17 +1,28 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import styled from "styled-components";
 
 import NewsListItem from "@components/newspage/NewsListItem";
+import { useQuery } from "@tanstack/react-query";
+import {
+  getCategoryNewsList,
+  getTotalNewsList,
+  NewsType,
+} from "@services/newsService";
 
 const NewsList: React.FC<{ selectedCategory: number }> = ({
   selectedCategory,
 }) => {
-  const [newsList, setNewsList] = useState([
-    { title: "누스 타이틀 완" },
-    { title: "누스 타이틀 투" },
-    { title: "누스 타이틀 쓰리" },
-  ]);
-  console.log(setNewsList);
+  const { data: totalNewsList } = useQuery<NewsType[]>({
+    queryKey: ["totalNewsList"],
+    queryFn: () => getTotalNewsList(1, "en", 1, 20),
+    enabled: selectedCategory === 0,
+  });
+
+  const { data: categoryNewsList } = useQuery<NewsType[]>({
+    queryKey: ["categoryNewsList", selectedCategory],
+    queryFn: () => getCategoryNewsList(1, "en", 1, 20, selectedCategory),
+    enabled: selectedCategory !== 0,
+  });
 
   useEffect(() => {
     switch (selectedCategory) {
@@ -38,18 +49,20 @@ const NewsList: React.FC<{ selectedCategory: number }> = ({
 
   return (
     <Container>
-      <div>뉴스 리스트</div>
       <NewsListContainer>
-        {newsList.map((news) => (
-          <NewsListItem title={news.title} />
-        ))}
+        {selectedCategory === 0
+          ? totalNewsList?.map((news) => (
+              <NewsListItem key={news.newsId} news={news} />
+            ))
+          : categoryNewsList?.map((news) => (
+              <NewsListItem key={news.newsId} news={news} />
+            ))}
       </NewsListContainer>
     </Container>
   );
 };
 
 const Container = styled.div`
-  background-color: green;
   border-radius: 0.75rem;
 `;
 

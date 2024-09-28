@@ -15,6 +15,7 @@ import LoginPage from "@pages/LoginPage";
 import SignUpPage from "@pages/SignUpPage";
 import PrivateRoute from "@hooks/PrivateRoute";
 import LandingPage from "@pages/LandingPage";
+import NewsDetailPage from "@pages/NewsDetailPage";
 
 export const router = createBrowserRouter([
   {
@@ -47,6 +48,7 @@ export const router = createBrowserRouter([
           {
             path: "news",
             element: <NewsPage />,
+            children: [{ path: "detail/:newsId", element: <NewsDetailPage /> }],
           },
           {
             path: "mypage",

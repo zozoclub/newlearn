@@ -3,7 +3,9 @@ import styled, { useTheme } from "styled-components";
 import { Line } from "react-chartjs-2";
 
 import WordTestHistoryCardList from "@components/testpage/WordTestHistoryCardList";
-
+import { getWordTestResultList } from "@services/wordTestService";
+import { useQuery } from "@tanstack/react-query";
+import Spinner from "@components/Spinner";
 import {
   Chart as ChartJS,
   LineElement,
@@ -28,9 +30,34 @@ ChartJS.register(
 const WordTestHistory: React.FC = () => {
   const [wordNum] = useState<number>(89);
   const average = 90;
-  const theme = useTheme(); // styled-components의 테마에 접근
+  const theme = useTheme();
 
-  const data = {
+  const { isLoading, data, error } = useQuery({
+    queryKey: ['wordTestHistory'],
+    queryFn: () => getWordTestResultList(),
+  });
+
+  // 시간 포맷
+  const formatDate = (createdAt: string) => {
+    const date = new Date(createdAt);
+    const year = date.getFullYear();
+    const month = ("0" + (date.getMonth() + 1)).slice(-2);
+    const day = ("0" + date.getDate()).slice(-2);
+    const hours = ("0" + date.getHours()).slice(-2);
+    const minutes = ("0" + date.getMinutes()).slice(-2);
+
+    return `${year}.${month}.${day} ${hours}:${minutes}`;
+  };
+
+  // 데이터를 carddata 형식으로 변환
+  const cardData =
+    data?.map((quiz) => ({
+      quizId: quiz.quizId,
+      date: formatDate(quiz.createdAt),
+      score: Math.floor((quiz.correctCnt / quiz.totalCnt) * 100), // 정답 비율을 점수로 변환
+    })) || [];
+
+  const dateData = {
     labels: ["3월", "4월", "5월", "6월", "7월", "8월", "9월"], // X축
     datasets: [
       {
@@ -40,7 +67,7 @@ const WordTestHistory: React.FC = () => {
         pointBackgroundColor: theme.colors.primaryPress, // 꼭지점 하이라이트 색상
         pointBorderColor: "#fff", // 꼭지점 테두리 색상
         pointHoverRadius: 7, // 꼭지점 하이라이트 크기
-        pointHoverBackgroundColor: theme.colors.secondaryPress, // 하이라이트된 꼭지점의 색상
+        pointHoverBackgroundColor: theme.colors.primaryPress, // 하이라이트된 꼭지점의 색상
         tension: 0.3, // 선 (기울기)
       },
     ],
@@ -73,40 +100,10 @@ const WordTestHistory: React.FC = () => {
     },
   };
 
-  const carddata = [
-    {
-      date: "2024.09.09",
-      score: 85,
-    },
-    {
-      date: "2024.09.09",
-      score: 72,
-    },
-    {
-      date: "2024.09.09",
-      score: 53,
-    },
-    {
-      date: "2024.09.09",
-      score: 68,
-    },
-    {
-      date: "2024.09.09",
-      score: 97,
-    },
-    {
-      date: "2024.09.09",
-      score: 77,
-    },
-    {
-      date: "2024.09.09",
-      score: 85,
-    },
-    {
-      date: "2024.09.09",
-      score: 96,
-    },
-  ];
+  // 로딩 중일 때 Spinner 표시
+  if (isLoading) return <Spinner />;
+  // 에러 메시지 표시
+  if (error) return <ErrorText>에러가 발생했습니다. 다시 시도해 주세요.</ErrorText>;
 
   return (
     <MainContainer>
@@ -131,21 +128,20 @@ const WordTestHistory: React.FC = () => {
         </InfoContainer>
 
         <ChartContainer>
-          <Line data={data} options={options} />
+          <Line data={dateData} options={options} />
         </ChartContainer>
       </Layout>
 
       {/* 고정된 높이 및 스크롤 가능한 영역 */}
       <ScrollableTestHistoryList>
-        {carddata.map((data, index) => {
-          return (
-            <WordTestHistoryCardList
-              score={data.score}
-              date={data.date}
-              key={index}
-            />
-          );
-        })}
+        {cardData.map((data, index) => (
+          <WordTestHistoryCardList
+            score={data.score}
+            date={data.date}
+            key={index}
+            quizId={data.quizId}
+          />
+        ))}
       </ScrollableTestHistoryList>
     </MainContainer>
   );
@@ -224,4 +220,10 @@ const ScrollableTestHistoryList = styled.div`
   overflow-x: hidden; /* 좌우 스크롤 제거 */
   padding-top: 1rem;
   padding-right: 1rem;
+`;
+
+const ErrorText = styled.div`
+  color: ${(props) => props.theme.colors.danger};
+  font-size: 1.25rem;
+  text-align: center;
 `;

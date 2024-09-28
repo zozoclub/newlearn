@@ -8,10 +8,13 @@ import {
   DraggableLocation,
 } from "@hello-pangea/dnd";
 import locationState from "@store/locationState";
-
 import Collapsible from "@components/Collapsible";
 import { useSetRecoilState } from "recoil";
 import WordHunt from "@components/WordHunt";
+
+import { MemorizeWordListResponseDto, getMemorizeWordList, postMemorizeWord, deleteMemorizeWord } from "@services/wordMemorize";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import Spinner from "@components/Spinner";
 
 type Word = {
   id: string;
@@ -22,39 +25,58 @@ type Word = {
 
 const VocabularyPage: React.FC = () => {
   const setCurrentLocation = useSetRecoilState(locationState);
+  const queryClient = useQueryClient();
+
   useEffect(() => {
     setCurrentLocation("Word Test Page");
   }, [setCurrentLocation]);
 
-  const [toStudyWords, setToStudyWords] = useState<Word[]>([
-    {
-      id: "1",
-      title: "Overview",
-      content: "This is the overview content.",
-      isExpanded: false,
-    },
-    {
-      id: "2",
-      title: "Features",
-      content: "These are the features.",
-      isExpanded: false,
-    },
-    {
-      id: "3",
-      title: "Review",
-      content: "Here is a detailed review.",
-      isExpanded: false,
-    },
-  ]);
+  // 단어 리스트 조회
+  const { data: wordList, isLoading, error } = useQuery<MemorizeWordListResponseDto[]>({
+    queryKey: ["memorizeWordList"],
+    queryFn: () => getMemorizeWordList(),
+  });
 
-  const [learnedWords, setLearnedWords] = useState<Word[]>([
-    {
-      id: "4",
-      title: "Firebase",
-      content: "Firebase is a platform.",
-      isExpanded: false,
+  const [toStudyWords, setToStudyWords] = useState<Word[]>([]);
+  const [learnedWords, setLearnedWords] = useState<Word[]>([]);
+
+  const { mutate: deleteMutation } = useMutation<void, Error, number>({
+    mutationFn: (wordId: number) => deleteMemorizeWord(wordId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["memorizeWordList"] });
     },
-  ]);
+  });
+
+  const { mutate: toggleMemorizeMutation } = useMutation<void, Error, number>({
+    mutationFn: (wordId: number) => postMemorizeWord(wordId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["memorizeWordList"] });
+    },
+  });
+
+  // 단어 리스트 데이터를 받아와서 분류
+  useEffect(() => {
+    if (wordList) {
+      const toStudy = wordList
+        .filter((word) => !word.isComplete)
+        .map((word) => ({
+          id: word.wordId.toString(),
+          title: word.word,
+          content: word.wordMeaning,
+          isExpanded: false,
+        }));
+      const learned = wordList
+        .filter((word) => word.isComplete)
+        .map((word) => ({
+          id: word.wordId.toString(),
+          title: word.word,
+          content: word.wordMeaning,
+          isExpanded: false,
+        }));
+      setToStudyWords(toStudy);
+      setLearnedWords(learned);
+    }
+  }, [wordList]);
 
   const onDragEnd = (result: DropResult) => {
     const { source, destination } = result;
@@ -62,34 +84,26 @@ const VocabularyPage: React.FC = () => {
     if (!destination) return;
 
     if (source.droppableId === destination.droppableId) {
-      console.log("목적지가 같은 리스트인 경우");
-      return;
-      const list =
-        source.droppableId === "toStudy" ? toStudyWords : learnedWords;
-      const setList =
-        source.droppableId === "toStudy" ? setToStudyWords : setLearnedWords;
-      const reorderedItems = reorder(list, source.index, destination!.index);
+      // 리스트 내에서 위치만 변경
+      const list = source.droppableId === "toStudy" ? toStudyWords : learnedWords;
+      const setList = source.droppableId === "toStudy" ? setToStudyWords : setLearnedWords;
+      const reorderedItems = reorder(list, source.index, destination.index);
       setList(reorderedItems);
     } else {
+      // 외움 상태 변경 API 호출
+      const wordId = source.droppableId === "toStudy" ? toStudyWords[source.index].id : learnedWords[source.index].id;
+      toggleMemorizeMutation(Number(wordId));
+
+      // 리스트 간 이동
       if (source.droppableId === "toStudy") {
-        console.log(
-          "출발지가 공부해야 할 단어 리스트이므로 공부 -> 외운 api 호출"
-        );
         moveItemBetweenLists(toStudyWords, learnedWords, source, destination);
       } else {
-        console.log(
-          "출발지가 내가 외운 단어 리스트이므로 외운 -> 공부 api 호출"
-        );
         moveItemBetweenLists(learnedWords, toStudyWords, source, destination);
       }
     }
   };
 
-  const reorder = (
-    list: Word[],
-    startIndex: number,
-    endIndex: number
-  ): Word[] => {
+  const reorder = (list: Word[], startIndex: number, endIndex: number): Word[] => {
     const result = Array.from(list);
     const [removed] = result.splice(startIndex, 1);
     result.splice(endIndex, 0, removed);
@@ -116,6 +130,11 @@ const VocabularyPage: React.FC = () => {
     }
   };
 
+  // 단어 삭제 함수
+  const handleDeleteWord = (wordId: string) => {
+    deleteMutation(Number(wordId));
+  };
+
   // Collapsible 토글 함수
   const toggleExpand = (id: string, isToStudyList: boolean) => {
     const setList = isToStudyList ? setToStudyWords : setLearnedWords;
@@ -125,6 +144,9 @@ const VocabularyPage: React.FC = () => {
     );
     setList(updatedList);
   };
+
+  if (isLoading) return <Spinner />;
+  if (error) return <ErrorText>에러가 발생했습니다. 다시 시도해 주세요.</ErrorText>;
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
@@ -149,6 +171,7 @@ const VocabularyPage: React.FC = () => {
                         onToggle={() => toggleExpand(data.id, true)}
                       >
                         <p>{data.content}</p>
+                        <DeleteButton onClick={() => handleDeleteWord(data.id)}>X</DeleteButton>
                       </Collapsible>
                     </Item>
                   )}
@@ -179,6 +202,7 @@ const VocabularyPage: React.FC = () => {
                         onToggle={() => toggleExpand(data.id, false)}
                       >
                         <p>{data.content}</p>
+                        <DeleteButton onClick={() => handleDeleteWord(data.id)}>×</DeleteButton>
                       </Collapsible>
                     </Item>
                   )}
@@ -221,4 +245,19 @@ const Title = styled.h2`
 
 const Item = styled.div<{ $isDragging: boolean }>`
   cursor: grab;
+`;
+
+const DeleteButton = styled.button`
+  background-color: transparent;
+  color: red;
+  border: none;
+  font-size: 1.25rem;
+  cursor: pointer;
+  margin-top: 1rem;
+`;
+
+const ErrorText = styled.div`
+  color: ${(props) => props.theme.colors.danger};
+  font-size: 1.25rem;
+  text-align: center;
 `;

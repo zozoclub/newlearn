@@ -26,28 +26,22 @@ export const getMemorizeWordList = async (): Promise<
 // 단어 외움 처리 토글
 export const postMemorizeWord = async (wordId:number): Promise<void> => {
     try {
-        const response = await axiosInstance.post(`word/${wordId}/complete`)
-        console.log(response);
-
-        return response.data.data
-    } catch (error) {
+        await axiosInstance.post(`word/${wordId}/complete`);
+        console.log("단어 외움 처리 성공");
+      } catch (error) {
         console.error("외움 처리 오류", error);
-        
-        throw error
+        throw error;
     }
 }
 
 // 단어 삭제
 export const deleteMemorizeWord = async (wordId: number): Promise<void> => {
     try {
-        const response = await axiosInstance.delete(`word/${wordId}`)
-        console.log(response);
-
-        return response.data.data
-    } catch (error) {
+        await axiosInstance.delete(`word/${wordId}`);
+        console.log("단어 삭제 성공");
+      } catch (error) {
         console.error("단어 삭제 오류", error);
-        
-        throw error
+        throw error;
     }
 }
 

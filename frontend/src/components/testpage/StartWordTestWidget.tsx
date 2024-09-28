@@ -4,25 +4,25 @@ import styled from "styled-components";
 
 const StartWordTestWidget: React.FC = () => {
   const navigate = useNavigate();
-  const [count, setCount] = useState(1);
+  const [wordTestCount, setwordTestCount] = useState(1);
 
   const handleDecrease = () => {
-    if (count > 1) setCount(count - 1);
+    if (wordTestCount > 1) setwordTestCount(wordTestCount - 1);
   };
 
   const handleIncrease = () => {
-    setCount(count + 1);
+    setwordTestCount(wordTestCount + 1);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = Number(e.target.value);
     if (value >= 1) {
-      setCount(value);
+      setwordTestCount(value);
     }
   };
 
   const handleStartTest = () => {
-    navigate("/wordtest");
+    navigate(`/wordtest?totalCount=${wordTestCount}`);
   };
 
   return (
@@ -32,7 +32,12 @@ const StartWordTestWidget: React.FC = () => {
 
       <CounterContainer>
         <TextButton onClick={handleDecrease}>-</TextButton>
-        <Input type="number" value={count} onChange={handleChange} min="1" />
+        <Input
+          type="number"
+          value={wordTestCount}
+          onChange={handleChange}
+          min="1"
+        />
         <TextButton onClick={handleIncrease}>+</TextButton>
       </CounterContainer>
 

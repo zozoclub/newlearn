@@ -18,8 +18,11 @@ export const getWordTestList = async (
   try {
     console.log(totalCount);
 
-    const response = await axiosInstance.get(`study/word/test/${totalCount}`);
-    console.log(response.data.data);
+    const response = await axiosInstance.get(`study/word/test`, {
+      params: {
+        totalCount,
+      },
+    });
 
     return response.data.data;
   } catch (error) {
@@ -36,7 +39,7 @@ export type WordTestRequestDto = {
     sentence: string;
     correctAnswer: string;
     answer: string;
-    isCorrect: string;
+    isCorrect: boolean;
   }>;
 };
 
@@ -45,6 +48,8 @@ export const postWordTestResult = async (
   wordTestwordTestResultDataSet: WordTestRequestDto
 ): Promise<void> => {
   try {
+    console.log("테스트 셋", wordTestwordTestResultDataSet);
+
     const response = await axiosInstance.post(`study/word/test`, {
       wordTestwordTestResultDataSet,
     });
@@ -60,10 +65,9 @@ export const postWordTestResult = async (
 // 단어 결과 리스트 Dto
 export type WordTestResultListResponse = {
   quizId: number;
-  answer: string;
-  totalCount: string;
-  correctCount: boolean;
-  createAt: string;
+  totalCnt: number;
+  correctCnt: number;
+  createdAt: string;
 };
 
 // 단어 결과 리스트 출력하기
@@ -83,19 +87,19 @@ export const getWordTestResultList = async (): Promise<
 
 // 단어 문장 빈칸 테스트 결과 상세 조회 Dto
 export type WordTestResultDetailResponseDto = {
-  quizId: number;
-  results: Array<{
-    sentence: string;
-    correctAnswer: string;
-    answer: string;
-    isCorrect: boolean;
-  }>;
+  wordId: number;
+  answer: string;
+  correctAnswer: string;
+  isCorrect: boolean;
+  sentence: string;
+  createdAt: string;
+  originURL: string;
 };
 
 // 단어 문장 빈칸 테스트 결과 상세 조회
 export const getWordTestResultDetail = async (
   quizId: number
-): Promise<WordTestResultDetailResponseDto> => {
+): Promise<WordTestResultDetailResponseDto[]> => {
   try {
     console.log(quizId);
 

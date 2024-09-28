@@ -11,15 +11,28 @@ import PerfectStamp from "@assets/icons/PerfectStamp";
 import GreatStamp from "@assets/icons/GreatStamp";
 import GoodStamp from "@assets/icons/GoodStamp";
 import BadStamp from "@assets/icons/BadStamp";
+import { useQuery } from "@tanstack/react-query";
+import { useParams } from "react-router-dom";
+import { getWordTestResultDetail, WordTestResultDetailResponseDto } from "@services/wordTestService";
+import Spinner from "@components/Spinner";
 
 const WordTestResultPage: React.FC = () => {
+  const { wordId } = useParams<{ wordId: string }>();
   const setCurrentLocation = useSetRecoilState(locationState);
   useEffect(() => {
     setCurrentLocation("Word Test Page");
   }, [setCurrentLocation]);
 
+  const { data: testDetail, isLoading, error } = useQuery<WordTestResultDetailResponseDto>(
+    {
+      queryKey: ["wordTestDetail", wordId],
+      queryFn: () => getWordTestResultDetail(Number(wordId)),
+    }
+  );
+
   const [currentWordIndex, setCurrentWordIndex] = useState<number>(0);
   const [currentWord, setCurrentWord] = useState<string>("");
+
 
   const wordExplainDetailHandler = (index: number) => {
     setCurrentWordIndex(index);
@@ -115,6 +128,16 @@ const WordTestResultPage: React.FC = () => {
     if (dataScore > 70) return <GoodStamp />;
     return <BadStamp />;
   };
+
+
+  // 로딩 상태 처리
+  if (isLoading) return <Spinner />;
+
+  // 에러 상태 처리
+  if (error) return <ErrorText>에러가 발생했습니다. 다시 시도해 주세요.</ErrorText>;
+
+  // testDetail이 null일 때
+  if (!testDetail) return <ErrorText>No data available.</ErrorText>;
 
   return (
     <MainLayout>
@@ -217,5 +240,11 @@ const WordExplainContainer = styled.div`
   padding: 1rem;
   border-radius: 0.75rem;
   width: 100%;
+  text-align: center;
+`;
+
+const ErrorText = styled.div`
+  color: ${(props) => props.theme.colors.danger};
+  font-size: 1.25rem;
   text-align: center;
 `;

@@ -99,7 +99,7 @@ export type WordTestResultDetailResponseDto = {
 // 단어 문장 빈칸 테스트 결과 상세 조회
 export const getWordTestResultDetail = async (
   quizId: number
-): Promise<WordTestResultDetailResponseDto[]> => {
+): Promise<WordTestResultDetailResponseDto> => {
   try {
     console.log(quizId);
 

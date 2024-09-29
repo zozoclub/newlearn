@@ -231,7 +231,6 @@ const ContentContainer = styled.div`
   display: flex;
   flex: 3;
   gap: 0.875rem;
-  flex-direction: column;
   font-size: 1.25rem;
 `;
 

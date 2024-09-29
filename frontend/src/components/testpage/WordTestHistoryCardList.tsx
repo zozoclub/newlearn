@@ -22,7 +22,7 @@ const WordTestHistoryCardList: React.FC<Props> = ({
   const navigate = useNavigate();
 
   const intoDetailHandler = () => {
-    navigate(`/wordtestresult/${quizId}`);
+    navigate(`/word/result/${quizId}`);
   };
   // 이후 prop 받아서 클릭될 Id 값
   const renderStamp = () => {

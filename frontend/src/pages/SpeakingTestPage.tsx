@@ -122,7 +122,7 @@ const SpeakingTestPage: React.FC = () => {
       const { audioFileId } = data; // 응답에서 audioFileId 추출
       console.log("audioFileId:", audioFileId);
       // audioFileId를 결과 페이지로 전달
-      navigate(`/speakresult/${audioFileId}`);
+      navigate(`/speaking/result/${audioFileId}`);
     },
     onError: (mutationError) => {
       console.error("저장 에러", mutationError);

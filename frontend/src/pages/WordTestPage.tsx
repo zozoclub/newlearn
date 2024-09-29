@@ -27,7 +27,7 @@ const WordTestPage: React.FC = () => {
       postWordTestResult(wordTestResultDataSet),
     onSuccess: () => {
       console.log("결과 전달 완료");
-      navigate(`/wordtestresult/${data!.quizId}`);
+      navigate(`/word/result/${data!.quizId}`);
     },
   });
 

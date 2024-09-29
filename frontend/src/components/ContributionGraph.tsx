@@ -2,17 +2,13 @@ import { lightTheme } from "@styles/theme/lightTheme";
 import React from "react";
 import styled from "styled-components";
 import { useTheme } from "styled-components";
+import { GrassType } from "@services/mypageService";
 
-interface ContributionData {
-  date: Date;
-  count: number;
-}
+type grassProps = {
+  data: GrassType[];
+};
 
-interface ContributionGraphProps {
-  data: ContributionData[];
-}
-
-const ContributionGraph: React.FC<ContributionGraphProps> = ({ data }) => {
+const ContributionGraph: React.FC<grassProps> = ({ data }) => {
   const getStartDate = () => {
     const today = new Date();
     const daysSinceLastMonday = (today.getDay() + 6) % 7;
@@ -62,7 +58,7 @@ const ContributionGraph: React.FC<ContributionGraphProps> = ({ data }) => {
   };
 
   const getContributionCount = (date: Date) => {
-    const contribution = data.find((d) => isSameDay(d.date, date));
+    const contribution = data.find((d) => isSameDay(new Date(d.date), date));
     return contribution ? contribution.count : 0;
   };
 

@@ -2,8 +2,11 @@ import { useState, useEffect } from "react";
 import styled from "styled-components";
 import EditIcon from "@assets/icons/EditIcon";
 import Modal from "@components/Modal";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+
 import userInfoState from "@store/userInfoState";
+import { changeDifficulty, changeInterests } from "@services/mypageService";
 
 const getDifficultyText = (difficulty: number): string => {
   switch (difficulty) {
@@ -19,7 +22,9 @@ const getDifficultyText = (difficulty: number): string => {
 };
 
 const MyPageInfo: React.FC = () => {
+  const queryClient = useQueryClient();
   const userInfo = useRecoilValue(userInfoState);
+  const setUserInfo = useSetRecoilState(userInfoState);
 
   const [difficulty, setDifficulty] = useState<number>(1);
   const [tempDifficulty, setTempDifficulty] = useState<number>(1);
@@ -49,15 +54,33 @@ const MyPageInfo: React.FC = () => {
     setIsDifficultyModalOpen(false);
   };
 
+  const difficultyMutation = useMutation({
+    mutationFn: changeDifficulty,
+    onSuccess: () => {
+      setDifficulty(tempDifficulty);
+      setUserInfo((userInfo) => ({
+        ...userInfo,
+        difficulty: tempDifficulty,
+      }));
+      queryClient.invalidateQueries({ queryKey: ["userInfo"] });
+      closeDifficultyModal();
+    },
+    onError: (error) => {
+      console.error("난이도 변경 실패:", error);
+    },
+  });
+
+  // 모달 내에서 버튼 클릭했을 때 바뀌게 하는 로직
   const handleDifficultyChange = (newDifficulty: number) => {
     setTempDifficulty(newDifficulty);
   };
 
+  // 난이도 수정을 저장하는 로직
   const handleDifficultyEdit = () => {
-    setDifficulty(tempDifficulty);
-    closeDifficultyModal();
+    difficultyMutation.mutate(tempDifficulty);
   };
 
+  //
   // 관심 카테고리 모달 설정
   const [isInterestsModalOpen, setIsInterestsModalOpen] = useState(false);
   const openInterestsModal = () => {
@@ -66,6 +89,26 @@ const MyPageInfo: React.FC = () => {
   };
   const closeInterestsModal = () => {
     setIsInterestsModalOpen(false);
+  };
+
+  const interestsMutation = useMutation({
+    mutationFn: changeInterests,
+    onSuccess: () => {
+      setInterests(tempInterests);
+      setUserInfo((userInfo) => ({
+        ...userInfo,
+        categories: tempInterests,
+      }));
+      queryClient.invalidateQueries({ queryKey: ["userInfo"] });
+      closeInterestsModal();
+    },
+    onError: (error) => {
+      console.error("관심 카테고리 변경 실패:", error);
+    },
+  });
+
+  const handleInterestsEdit = () => {
+    interestsMutation.mutate(tempInterests);
   };
 
   const handleInterestsChange = (interest: string) => {
@@ -79,10 +122,6 @@ const MyPageInfo: React.FC = () => {
     });
   };
 
-  const handleInterestsEdit = () => {
-    setInterests(tempInterests);
-    closeInterestsModal();
-  };
   return (
     <div>
       <Container>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styled from "styled-components";
 import EditIcon from "@assets/icons/EditIcon";
 import SocialNaver from "@assets/icons/SocialNaver";
@@ -37,6 +37,10 @@ const MyPageProfile: React.FC = () => {
     eyes: userInfo.eyes,
     mask: userInfo.mask,
   };
+
+  useEffect(() => {
+    setNickname(userInfo.nickname);
+  }, [userInfo]);
 
   // 모달 설정
   const [isModalOpen, setIsModalOpen] = useState(false);

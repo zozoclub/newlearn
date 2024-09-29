@@ -23,17 +23,17 @@ const MyPage = () => {
     <div>
       <MyPageContainer>
         <FlexContainer>
-          <FlexItem $flex={3}>
+          <FlexItem $flex={5}>
             <WidgetContainer>
               <MyPageProfile />
             </WidgetContainer>
           </FlexItem>
-          <FlexItem $flex={2}>
+          <FlexItem $flex={4}>
             <WidgetContainer>
               <MyPageInfo />
             </WidgetContainer>
           </FlexItem>
-          <FlexItem $flex={2}>
+          <FlexItem $flex={3}>
             <WidgetContainer>
               <MyPageCount />
             </WidgetContainer>

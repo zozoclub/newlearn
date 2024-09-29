@@ -123,27 +123,29 @@ const MyPageInfo: React.FC = () => {
   };
 
   return (
-    <div>
-      <Container>
-        <TitleContainer>영어 난이도</TitleContainer>
-        <ContentContainer>{getDifficultyText(difficulty)}</ContentContainer>
-        <IconContainer>
-          <EditIcon onClick={openDifficultyModal} />
-        </IconContainer>
-      </Container>
-      <StyledHr />
-      <Container>
-        <TitleContainer>카테고리</TitleContainer>
-        <ContentContainer>
-          {interests.map((interest) => (
-            <div key={interest}>{interest}</div>
-          ))}
-        </ContentContainer>
-        <IconContainer>
-          <EditIcon onClick={openInterestsModal} />
-        </IconContainer>
-      </Container>
-
+    <>
+      <AllContainer>
+        <Container>
+          <TitleContainer>영어 난이도</TitleContainer>
+          <ContentContainer>{getDifficultyText(difficulty)}</ContentContainer>
+          <IconContainer>
+            <EditIcon onClick={openDifficultyModal} />
+          </IconContainer>
+        </Container>
+        <StyledHr />
+        <Container>
+          <TitleContainer>카테고리</TitleContainer>
+          <ContentContainer>
+            {interests.map((interest) => (
+              <div key={interest}>{interest}</div>
+            ))}
+            생활/문화, IT/과학, 세계
+          </ContentContainer>
+          <IconContainer>
+            <EditIcon onClick={openInterestsModal} />
+          </IconContainer>
+        </Container>
+      </AllContainer>
       {/* 영어 난이도 모달 */}
       <Modal
         isOpen={isDifficultyModalOpen}
@@ -199,26 +201,33 @@ const MyPageInfo: React.FC = () => {
           </SaveButton>
         </ButtonContainer>
       </Modal>
-    </div>
+    </>
   );
 };
 
 export default MyPageInfo;
 
+const AllContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  height: 100%;
+`;
+
 const Container = styled.div`
   display: flex;
-  padding: 0.75rem 1rem;
+  padding: 0.75em 1rem;
 `;
 
 const TitleContainer = styled.div`
-  flex: 4;
+  flex: 2;
   font-size: 1.25rem;
   font-weight: bold;
 `;
 
 const ContentContainer = styled.div`
   display: flex;
-  flex: 4;
+  flex: 3;
   gap: 0.875rem;
   flex-direction: column;
   font-size: 1.25rem;
@@ -231,7 +240,7 @@ const IconContainer = styled.div`
 `;
 
 const StyledHr = styled.hr`
-  height: 1px;
+  height: 0.5px;
   margin: 0.5rem;
   background-color: ${(props) => props.theme.colors.text04};
   border: none;

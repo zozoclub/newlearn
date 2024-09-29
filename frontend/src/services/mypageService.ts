@@ -40,7 +40,7 @@ export const getLabelFromKey = (key: CategoryCountKey): string => {
   return labelMap[key] || key;
 };
 
-export const getScrapNews = async (
+export const getScrapNewsList = async (
   difficulty: number,
   size: number,
   page: number
@@ -53,7 +53,7 @@ export const getScrapNews = async (
         size: size,
       },
     });
-    return response.data;
+    return response.data.data;
   } catch (error) {
     console.error("get scrap news Failed", error);
     throw error;

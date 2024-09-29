@@ -1,26 +1,30 @@
+import React from "react";
 import ContributionGraph from "@components/ContributionGraph";
 import styled from "styled-components";
-
-const generateContributionData = () => {
-  const startDate = new Date(2024, 2, 25);
-  const endDate = new Date(2024, 8, 16);
-  const data = [];
-
-  for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
-    data.push({
-      date: new Date(d),
-      count: Math.floor(Math.random() * 21),
-    });
-  }
-
-  return data;
-};
+import { GrassType, getUserGrass } from "@services/mypageService";
+import { useQuery } from "@tanstack/react-query";
 
 const MyPageGrass = () => {
-  // 임시 데이터 생성
-  const data = generateContributionData();
-  const totalNews = data.reduce((sum, item) => sum + item.count, 0);
+  const currentYear = new Date().getFullYear();
 
+  const { data: grassData = [] } = useQuery<GrassType[]>({
+    queryKey: ["userGrass"],
+    queryFn: getUserGrass,
+  });
+
+  const totalNews = React.useMemo(() => {
+    return grassData.reduce((sum, item) => {
+      const itemYear = new Date(item.date).getFullYear();
+      return itemYear === currentYear ? sum + item.count : sum;
+    }, 0);
+  }, [grassData, currentYear]);
+
+  // Filter data for the current year
+  const currentYearData = React.useMemo(() => {
+    return grassData.filter(
+      (item) => new Date(item.date).getFullYear() === currentYear
+    );
+  }, [grassData, currentYear]);
   return (
     <div>
       <TitleContainer>
@@ -30,7 +34,7 @@ const MyPageGrass = () => {
           <ContentContainer>NEWS!</ContentContainer>
         </NewsContainer>
       </TitleContainer>
-      <ContributionGraph data={data} />
+      <ContributionGraph data={currentYearData} />
     </div>
   );
 };

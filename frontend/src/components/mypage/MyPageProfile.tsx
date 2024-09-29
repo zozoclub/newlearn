@@ -138,7 +138,8 @@ const Container = styled.div`
 `;
 
 const AvatarContainer = styled.div`
-  width: 11rem;
+  width: 100%;
+  height: 8rem;
 `;
 
 const ProfileInfoContainer = styled.div`

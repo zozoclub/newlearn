@@ -23,7 +23,7 @@ const MyPageCount = () => {
       </TitleContainer>
       <ContentContainer>
         {items.map((item) => (
-          <div key={item.title}>{item.count}</div>
+          <div key={item.count}>{item.count}</div>
         ))}
       </ContentContainer>
     </Container>
@@ -35,9 +35,9 @@ export default MyPageCount;
 const Container = styled.div`
   display: flex;
   align-items: center;
-  height: 100%;
-  margin: 0 3rem;
+  padding: 1rem 2rem;
 `;
+
 const TitleContainer = styled.div`
   display: flex;
   flex: 3;
@@ -46,6 +46,7 @@ const TitleContainer = styled.div`
   font-size: 1.25rem;
   font-weight: bold;
 `;
+
 const ContentContainer = styled.div`
   display: flex;
   flex: 1;

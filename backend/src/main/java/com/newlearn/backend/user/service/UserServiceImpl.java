@@ -197,7 +197,7 @@ public class UserServiceImpl implements UserService{
 		LocalDate endDate = LocalDate.now();
 		LocalDate startDate = endDate.minusMonths(6);
 
-		List<UserDailyNewsRead> dailyReadList = userDailyNewsReadRepository.findByUserAndTodayDateBetween(user, startDate, endDate);
+		List<UserDailyNewsRead> dailyReadList = userDailyNewsReadRepository.findByUserAndTodayDateBetweenOrderByTodayDate(user, startDate, endDate);
 
 		return dailyReadList.stream()
 			.map(dailyRead -> new UserGrassResponseDTO(

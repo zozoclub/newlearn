@@ -11,5 +11,5 @@ import java.time.LocalDate;
 public interface UserDailyNewsReadRepository extends JpaRepository<UserDailyNewsRead, Long> {
     Optional<UserDailyNewsRead> findByUserAndTodayDate(Users user, LocalDate date);
     List<UserDailyNewsRead> findByUser(Users user);
-    List<UserDailyNewsRead> findByUserAndTodayDateBetween(Users user, LocalDate startDate, LocalDate endDate);
+    List<UserDailyNewsRead> findByUserAndTodayDateBetweenOrderByTodayDate(Users user, LocalDate startDate, LocalDate endDate);
 }

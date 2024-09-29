@@ -29,7 +29,7 @@ public class UserDailyNewsRead {
 
     @Column(name = "news_read_count", nullable = false)
     @ColumnDefault("0")
-    private Integer newsReadCount;
+    private Long newsReadCount;
 
     // 읽은 뉴스횟수 +1
     public void incrementNewsReadCount() {
@@ -41,7 +41,7 @@ public class UserDailyNewsRead {
         return UserDailyNewsRead.builder()
                 .user(user)
                 .todayDate(LocalDate.now())
-                .newsReadCount(0)
+                .newsReadCount(0L)
                 .build();
     }
 }

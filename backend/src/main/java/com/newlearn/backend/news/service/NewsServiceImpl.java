@@ -170,7 +170,9 @@ public class NewsServiceImpl implements NewsService{
         userNewsReadRepository.save(userNewsRead);
 
         // 사용자 뉴스 읽음 +1
+        // 사용자 경험치  +10
         user.incrementNewsReadCnt();
+        user.incrementExperience(10L);
         userRepository.save(user);
 
         // 사용자 뉴스 읽음 오늘 테이블 업데이트

@@ -94,7 +94,7 @@ def process_translated_csv(filename, output_filename, chunksize=5):
                 continue
             else:
                 redis_client.set(url, 1)
-                redis_client.expire(url, 604800)
+                redis_client.expire(url, 432000)
                 row_dict = row.to_dict()
 
                 # numpy 타입 변환

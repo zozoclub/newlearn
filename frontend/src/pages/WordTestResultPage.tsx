@@ -17,16 +17,16 @@ import { getWordTestResultDetail, WordTestResultDetailResponseDto } from "@servi
 import Spinner from "@components/Spinner";
 
 const WordTestResultPage: React.FC = () => {
-  const { wordId } = useParams<{ wordId: string }>();
+  const { quizId } = useParams<{ quizId: string }>();
   const setCurrentLocation = useSetRecoilState(locationState);
   useEffect(() => {
     setCurrentLocation("Word Test Page");
   }, [setCurrentLocation]);
 
-  const { data: testDetail, isLoading, error } = useQuery<WordTestResultDetailResponseDto>(
+  const { data: testDetail, isLoading, error } = useQuery<WordTestResultDetailResponseDto[]>(
     {
-      queryKey: ["wordTestDetail", wordId],
-      queryFn: () => getWordTestResultDetail(Number(wordId)),
+      queryKey: ["wordTestDetail", quizId],
+      queryFn: () => getWordTestResultDetail(Number(quizId)),
     }
   );
 

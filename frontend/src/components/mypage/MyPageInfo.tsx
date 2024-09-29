@@ -136,10 +136,12 @@ const MyPageInfo: React.FC = () => {
         <Container>
           <TitleContainer>카테고리</TitleContainer>
           <ContentContainer>
-            {interests.map((interest) => (
-              <div key={interest}>{interest}</div>
+            {interests.map((interest, index) => (
+              <span key={interest}>
+                {interest}
+                {index < interests.length - 1 ? ", " : ""}
+              </span>
             ))}
-            생활/문화, IT/과학, 세계
           </ContentContainer>
           <IconContainer>
             <EditIcon onClick={openInterestsModal} />

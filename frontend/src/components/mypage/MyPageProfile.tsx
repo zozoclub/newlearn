@@ -166,6 +166,7 @@ const NicknameEditInput = styled.input`
   margin: 0 auto 2rem;
   padding: 0.25rem;
 
+  color: ${(props) => props.theme.colors.text};
   background-color: ${(props) => props.theme.colors.cardBackground};
   box-sizing: border-box;
   outline: none;

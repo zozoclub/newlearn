@@ -1,17 +1,24 @@
 import styled from "styled-components";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 import { getScrapNewsList, ScrapNewsType } from "@services/mypageService";
 import MyPageScrapNewsItem from "@components/mypage/MyPageScrapNewsItem";
 
 const MyPageScrapNews = () => {
-  const [selectedDifficulty, setSelectedDifficulty] = useState(0);
+  const navigate = useNavigate();
+
+  const [selectedDifficulty, setSelectedDifficulty] = useState(1);
   const difficultyList = [{ name: "초급" }, { name: "중급" }, { name: "고급" }];
 
   const { data: scrapNewsData } = useQuery<ScrapNewsType[]>({
     queryKey: ["scrapNewsData", selectedDifficulty],
     queryFn: () => getScrapNewsList(selectedDifficulty, 20, 1),
   });
+
+  const handleGoToNews = () => {
+    navigate("/news");
+  };
 
   return (
     <div>
@@ -22,13 +29,13 @@ const MyPageScrapNews = () => {
             <DifficultyItem
               key={difficulty.name}
               onClick={() => {
-                setSelectedDifficulty(index);
+                setSelectedDifficulty(index + 1);
               }}
             >
               {difficulty.name}
             </DifficultyItem>
           ))}
-          <FocusEffect $difficultyId={selectedDifficulty} />
+          <FocusEffect $difficultyId={selectedDifficulty - 1} />
         </DifficultyContainer>
       </HeaderContainer>
       <NewsListContainer>
@@ -37,7 +44,10 @@ const MyPageScrapNews = () => {
             <MyPageScrapNewsItem key={news.newsId} news={news} />
           ))
         ) : (
-          <NoNewsContent>스크랩한 뉴스가 없습니다.</NoNewsContent>
+          <NoNewsContainer>
+            <NoNewsContent>스크랩한 뉴스가 없습니다.</NoNewsContent>
+            <GoNewsButton onClick={handleGoToNews}>뉴스 보러가기</GoNewsButton>
+          </NoNewsContainer>
         )}
       </NewsListContainer>
     </div>
@@ -71,14 +81,6 @@ const DifficultyItem = styled.div`
   text-overflow: clip;
 `;
 
-const NoNewsContent = styled.div`
-  text-align: center;
-  margin: 2rem 0;
-  color: gray;
-  font-weight: bold;
-  font-size: 2rem;
-`;
-
 const FocusEffect = styled.div<{ $difficultyId: number }>`
   position: absolute;
   left: ${(props) => (100 / 3) * props.$difficultyId}%;
@@ -93,4 +95,24 @@ const FocusEffect = styled.div<{ $difficultyId: number }>`
 
 const NewsListContainer = styled.div`
   column-gap: 0.5rem;
+`;
+
+const NoNewsContainer = styled.div`
+  text-align: center;
+`;
+const NoNewsContent = styled.div`
+  margin: 3rem 0;
+  color: gray;
+  font-weight: bold;
+  font-size: 2rem;
+`;
+
+const GoNewsButton = styled.button`
+  padding: 1rem;
+  color: white;
+  background-color: ${(props) => props.theme.colors.primary};
+  border: none;
+  border-radius: 1rem;
+  font-size: 1.25rem;
+  font-weight: bold;
 `;

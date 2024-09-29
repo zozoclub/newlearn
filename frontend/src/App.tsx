@@ -99,7 +99,7 @@ Welcome To NewsLearn!"
         <TransitionContent>
           <Outlet />
         </TransitionContent>
-        {isLogin && <Navbar />}
+        {!isLogin && <Navbar />}
       </AppContainer>
     </ThemeProvider>
   );

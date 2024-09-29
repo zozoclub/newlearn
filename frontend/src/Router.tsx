@@ -52,13 +52,11 @@ export const AppRouter = () => {
           children: [
             { index: true, element: <MainPage /> },
             { path: "speaking", element: <SpeakingTestIntroMobilePage /> },
-            { path: "speakingintro", element: <SpeakingTestIntroMobilePage /> },
             { path: "speakingtest", element: <SpeakingTestMobilePage /> },
             { path: "speakingtest/start", element: <SpeakingTestStartMobilePage /> },
             { path: "speakingtest/result/:audioFileId", element: <SpeakingTestResultDetailMobilePage /> },
             { path: "speakingtest/result/list", element: <SpeakingTestResultListMobilePage /> },
             { path: "word", element: <WordTestIntroMobilePage /> },
-            { path: "wordintro", element: <WordTestIntroMobilePage /> },
             { path: "wordtest", element: <WordTestMobilePage /> },
             { path: "wordtest/start", element: <WordTestStartMobilePage /> },
             { path: "wordtest/result/:quizId", element: <WordTestResultDetailMobilePage /> },

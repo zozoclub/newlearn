@@ -23,7 +23,7 @@ const MyPageCount = () => {
       </TitleContainer>
       <ContentContainer>
         {items.map((item) => (
-          <div key={item.count}>{item.count}</div>
+          <div key={item.title}>{item.count}</div>
         ))}
       </ContentContainer>
     </Container>

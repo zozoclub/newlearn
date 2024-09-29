@@ -211,7 +211,10 @@ public class NewsServiceImpl implements NewsService{
 
             // 사용자 스크랩수 +1
             user.incrementScrapCount();
+//            Long userScrapedCnt = userNewsScrapRepository.countByUser(user);
+//            user.setScrapCount(++userScrapedCnt);
             userRepository.save(user);
+
         }
 
     }
@@ -231,6 +234,8 @@ public class NewsServiceImpl implements NewsService{
 
         // 사용자 스크랩수 -1
         user.decrementScrapCount();
+//        Long userScrapedCnt = userNewsScrapRepository.countByUser(user);
+//        user.setScrapCount(--userScrapedCnt);
         userRepository.save(user);
     }
 }

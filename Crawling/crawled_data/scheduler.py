@@ -24,7 +24,7 @@ logger.info("Initializing the scheduler...")
 scheduler = BackgroundScheduler(timezone=pytz.timezone('Asia/Seoul'))
 scheduler.add_jobstore(DjangoJobStore(), "default")
 
-scheduler.add_job(my_scheduled_job, 'cron', hour=16, minute=26, second=10, replace_existing=True)
-scheduler.add_job(my_scheduled_job, 'cron', hour=21, minute=15, second=30, replace_existing=True)
+scheduler.add_job(my_scheduled_job, 'cron', hour=17, minute=30, second=10, replace_existing=True)
+scheduler.add_job(my_scheduled_job, 'cron', hour=23, minute=15, second=30, replace_existing=True)
 
 logger.info("Scheduler initialized successfully.")

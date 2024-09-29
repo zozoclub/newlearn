@@ -148,8 +148,8 @@ public class UserServiceImpl implements UserService{
 
 		Users user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다"));
 
-		Long unCount = wordRepository.countCompleteWordsByUser(user);
-		Long Count = wordRepository.countIncompleteWordsByUser(user);
+		Long unCount = wordRepository.countIncompleteWordsByUser(user);
+		Long Count = wordRepository.countCompleteWordsByUser(user);
 		Long userRank = getUserRank(userId);
 		return new UserProfileResponseDTO(user, unCount, Count, userRank);
 

@@ -32,6 +32,9 @@ def translate_news(title, content, domain="general", style="formal"):
 
     response = model.generate_content(prompt)
 
+    if not response.candidates:
+        logging.error("API 응답이 없습니다. 요청이 차단되었을 수 있습니다.")
+        return None
     try:
         response_text = response.text
 
@@ -55,9 +58,7 @@ def translate_news(title, content, domain="general", style="formal"):
         medium_translation = response_text[medium_start:medium_end].strip().replace('\\', '')
         low_translation = response_text[low_start:low_end].strip().replace('\\', '')
 
-        print(high_translation)
-        print(medium_translation)
-        print(low_translation)
+
         return {
             "title_eng": title_eng,
             "high": high_translation,
@@ -110,7 +111,6 @@ def translate_to_korean(sentences):
             sentence = sentence.replace('"', '')
             sentence = sentence.replace('\\', '')
             sentence = sentence.replace('..', '.')
-            print(sentence)
             processed_sentences.append(sentence)
 
         final_result = ' '.join(processed_sentences).strip()
@@ -137,7 +137,6 @@ def translate_csv(filename, output_filename, chunksize=5):
 
     for chunk in reader:
         for index, row in chunk.iterrows():
-            print(f"Processing row: {index}")
 
             # 영어 번역
             result = translate_news(row['title'], row['content'])

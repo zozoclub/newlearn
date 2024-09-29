@@ -45,7 +45,7 @@ public class Word {
 	private LocalDateTime createdAt;
 
 	// Word와 WordSentence 간의 1대1 연관 관계 설정
-	@OneToOne(mappedBy = "word", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToOne(mappedBy = "word", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	private WordSentence sentence;
 
 	// 문장 추가

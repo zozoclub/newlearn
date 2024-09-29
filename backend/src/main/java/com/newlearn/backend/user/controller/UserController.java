@@ -186,7 +186,7 @@ public class UserController {
 			}
 			String nickname = updateNicknameRequestDto.getNickname();
 
-			if(!userService.checkNickname(nickname)) {
+			if(userService.checkNickname(nickname)) {
 				return ApiResponse.createError(ErrorCode.NICKNAME_ALREADY_USED);
 			}
 			userService.updateNickname(user.getUserId(), nickname);

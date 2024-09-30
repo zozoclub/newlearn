@@ -54,7 +54,7 @@ public class NewsServiceImpl implements NewsService{
         Page<News> allNewsList = newsRepository.findAllByOrderByNewsIdDesc(newsRequestDTO.getPageable());
 
         // 2. 현재 사용자의 모든 UserNewsRead 정보 가져오기
-        List<UserNewsRead> userNewsReads = userNewsReadRepository.findAllByUserUserId(userId);
+        List<UserNewsRead> userNewsReads = userNewsReadRepository.findAllByUser(user);
         Map<Long, UserNewsRead> userNewsReadMap = userNewsReads.stream()
                 .collect(Collectors.toMap(unr -> unr.getNews().getNewsId(), Function.identity()));
 
@@ -75,7 +75,7 @@ public class NewsServiceImpl implements NewsService{
         Page<News> newsByCategory = newsRepository.findAllByCategoryCategoryIdOrderByNewsIdDesc(categoryId, newsRequestDTO.getPageable());
 
         // 2. 현재 사용자의 해당 카테고리 뉴스에 대한 UserNewsRead 정보 가져오기
-        List<UserNewsRead> userNewsReads = userNewsReadRepository.findAllByUserUserIdAndNewsCategoryCategoryId(userId, categoryId);
+        List<UserNewsRead> userNewsReads = userNewsReadRepository.findAllByUserAndNewsCategoryCategoryId(user, categoryId);
         Map<Long, UserNewsRead> userNewsReadMap = userNewsReads.stream()
                 .collect(Collectors.toMap(unr -> unr.getNews().getNewsId(), Function.identity(), (existing, replacement) -> existing));
 

@@ -10,8 +10,8 @@ import java.util.Optional;
 
 public interface UserNewsReadRepository extends JpaRepository<UserNewsRead, Long> {
     Optional<UserNewsRead> findByUserAndNews(Users user, News news);
-    List<UserNewsRead> findAllByUserUserId(Long userId); //사용자의 뉴스 읽음 상태 전부 가져오기
-    List<UserNewsRead> findAllByUserUserIdAndNewsCategoryCategoryId(Long userId, Long categoryId); //사용자의 특정 카테고리에 속한 뉴스의 읽음 상태만 가져오기
+    List<UserNewsRead> findAllByUser(Users user); //사용자의 뉴스 읽음 상태 전부 가져오기
+    List<UserNewsRead> findAllByUserAndNewsCategoryCategoryId(Users user, Long categoryId); //사용자의 특정 카테고리에 속한 뉴스의 읽음 상태만 가져오기
     List<UserNewsRead> findAllByUserAndNewsNewsIdIn(Users user, List<Long> newsIds);
     List<UserNewsRead> findAllByUserAndNewsIn(Users user, List<News> news);
     long countByUserAndCategoryId(Users user, Long categoryId);

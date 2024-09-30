@@ -25,14 +25,18 @@ const NewsDetailPage = () => {
     false,
   ]);
   const [isFirstView, setIsFirstView] = useState<boolean>(true);
-
   const { newsId } = useParams();
   const { isLoading, data } = useQuery<DetailNewsType>({
     queryKey: ["getNewsDetail", languageData, difficulty, newsId],
     queryFn: () =>
       getNewsDetail(Number(newsId), difficulty, languageData, isFirstView),
-    staleTime: 10 * 60 * 1000,
+    staleTime: 0, // staleTime을 0으로 설정하여 항상 최신 데이터를 가져옴
   });
+
+  const isLoadingRef = useRef(isLoading);
+  useEffect(() => {
+    isLoadingRef.current = isLoading;
+  }, [isLoading]);
 
   useEffect(() => {
     setCurrentLocation("news Page");
@@ -47,17 +51,18 @@ const NewsDetailPage = () => {
   }, [userInfoData.difficulty]);
 
   const calculateProgress = () => {
-    if (newsContainerRef.current && !isLoading) {
+    // 데이터 fetching이 됐을 때만 calculate
+    if (newsContainerRef.current && !isLoadingRef.current) {
+      // 조회수가 여러 번 올라가는 것을 막음
       if (isFirstView) {
         setIsFirstView(false);
       }
-      setIsRead(data?.isRead);
       const containerRect = newsContainerRef.current.getBoundingClientRect();
       const containerTop = containerRect.top;
       const containerHeight = containerRect.height;
       const windowHeight = window.innerHeight;
 
-      // Calculate how much of the container is initially visible
+      // 시작할 때 보여지는 newsContainer 높이
       const initialVisibleHeight = Math.min(
         windowHeight - containerTop,
         containerHeight
@@ -65,7 +70,7 @@ const NewsDetailPage = () => {
       // Calculate how much of the container has been scrolled past
       const scrolledPastContainer = Math.max(0, -containerTop);
 
-      // Calculate total scrollable distance
+      // 총 이동할 수 있는 스크롤 길이
       const totalScrollableDistance = containerHeight - windowHeight;
 
       // Calculate overall progress
@@ -85,50 +90,55 @@ const NewsDetailPage = () => {
     }
   };
 
-  const handleScroll = () => {
-    calculateProgress();
-  };
-
+  // 스크롤 이벤트 추가
   useEffect(() => {
+    const handleScroll = () => {
+      calculateProgress();
+    };
     window.addEventListener("scroll", handleScroll);
-    // Calculate initial progress
-    calculateProgress();
+
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoading, difficulty]);
+  }, [newsId]);
 
+  // 데이터 fetching이 끝나면 progress 계산
   useEffect(() => {
-    if (!isLoading && isRead![3 - difficulty]) {
+    if (!isLoading) {
       setIsRead(data?.isRead);
-    }
-    if (isRead![3 - difficulty]) {
-      setIsReadFinished(true);
-      window.removeEventListener("scroll", handleScroll);
-    } else if (scrollProgress < 100) {
-      // console.log(scrollProgress);
-      // console.log(isRead);
-      setIsReadFinished(false);
-      window.addEventListener("scroll", handleScroll);
-    } else if (scrollProgress === 100) {
-      setIsReadFinished(true);
-      // console.log(difficulty);
-      setIsRead((prevState) => {
-        if (prevState) {
-          const newState = [...prevState];
-          newState[3 - difficulty] = true;
-          console.log("newState is", newState);
-          return newState;
-        }
-        return prevState;
-      });
-      console.log(isRead);
-      readNews(Number(newsId), difficulty);
-      window.removeEventListener("scroll", handleScroll);
+      if (!isRead![difficulty - 1]) {
+        calculateProgress();
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [scrollProgress, data?.isRead, difficulty]);
+  }, [isLoading]);
+
+  // 난이도가 바뀌면
+  useEffect(() => {
+    calculateProgress();
+    if (!isRead![3 - difficulty]) {
+      setIsReadFinished(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [difficulty]);
+
+  useEffect(() => {
+    if (isRead && isRead[3 - difficulty] && !isLoading) {
+      setIsReadFinished(true);
+    } else if (scrollProgress === 100) {
+      setIsReadFinished(true);
+      setIsRead((prevData) => {
+        const newState = prevData;
+        newState![3 - difficulty] = true;
+        return newState;
+      });
+      readNews(Number(newsId), difficulty);
+    } else {
+      setIsReadFinished(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [scrollProgress]);
 
   return (
     <>

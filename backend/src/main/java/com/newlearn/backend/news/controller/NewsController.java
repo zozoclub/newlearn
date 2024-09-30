@@ -46,7 +46,7 @@ public class NewsController {
                     .size(size)
                     .build();
 
-            Page<NewsResponseDTO> newsList = newsService.getAllNews(user.getUserId(), newsRequestDTO);
+            Page<NewsResponseDTO> newsList = newsService.getAllNews(user, newsRequestDTO);
 
             return ApiResponse.createSuccess(newsList, "전체 뉴스 조회 성공");
         } catch (Exception e) {
@@ -76,7 +76,7 @@ public class NewsController {
                     .size(size)
                     .build();
 
-            Page<NewsResponseDTO> newsList = newsService.getNewsByCategory(user.getUserId(), newsRequestDTO, categoryId);
+            Page<NewsResponseDTO> newsList = newsService.getNewsByCategory(user, newsRequestDTO, categoryId);
 
             return ApiResponse.createSuccess(newsList, categoryId + " 카테고리 뉴스 조회 성공");
         } catch (Exception e) {
@@ -96,7 +96,7 @@ public class NewsController {
                 return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
             }
 
-            List<NewsResponseDTO> newsList = newsService.getTodayTopNewsList(user.getUserId(), difficulty, lang);
+            List<NewsResponseDTO> newsList = newsService.getTodayTopNewsList(user, difficulty, lang);
 
             return ApiResponse.createSuccess(newsList, "오늘의 TOP10뉴스 조회 성공");
         } catch (Exception e) {
@@ -150,7 +150,7 @@ public class NewsController {
                     .difficulty(difficulty)
                     .build();
 
-            newsService.readNews(user.getUserId(), newsReadRequestDTO); //뉴스 읽음 처리
+            newsService.readNews(user, newsReadRequestDTO); //뉴스 읽음 처리
 
             return ApiResponse.createSuccessWithNoContent("뉴스 읽음 처리 성공");
         } catch (Exception e) {
@@ -176,7 +176,7 @@ public class NewsController {
                     .difficulty(difficulty)
                     .build();
 
-            newsService.scrapNews(user.getUserId(), newsReadRequestDTO); //뉴스 읽음 처리
+            newsService.scrapNews(user, newsReadRequestDTO); //뉴스 읽음 처리
 
             return ApiResponse.createSuccessWithNoContent("뉴스 스크랩 처리 성공");
         } catch (Exception e) {
@@ -202,7 +202,7 @@ public class NewsController {
                     .difficulty(difficulty)
                     .build();
 
-            newsService.cancelScrapedNews(user.getUserId(), newsReadRequestDTO);
+            newsService.cancelScrapedNews(user, newsReadRequestDTO);
 
             return ApiResponse.createSuccessWithNoContent("뉴스 스크랩 취소 처리 성공");
         } catch (Exception e) {

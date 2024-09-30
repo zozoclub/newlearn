@@ -49,7 +49,7 @@ public class NewsServiceImpl implements NewsService{
     private final WordSentenceRepository wordSentenceRepository;
 
     @Override
-    public Page<NewsResponseDTO> getAllNews(Long userId, NewsListRequestDTO newsRequestDTO) {
+    public Page<NewsResponseDTO> getAllNews(Users user, NewsListRequestDTO newsRequestDTO) {
         // 1. NewsRepository에서 전체 뉴스 가져오기
         Page<News> allNewsList = newsRepository.findAllByOrderByNewsIdDesc(newsRequestDTO.getPageable());
 
@@ -66,7 +66,7 @@ public class NewsServiceImpl implements NewsService{
     }
 
     @Override
-    public Page<NewsResponseDTO> getNewsByCategory(Long userId, NewsListRequestDTO newsRequestDTO, long categoryId) {
+    public Page<NewsResponseDTO> getNewsByCategory(Users user, NewsListRequestDTO newsRequestDTO, long categoryId) {
         // 카테고리 존재 여부 확인
         categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new EntityNotFoundException("Category not found with id: " + categoryId));
@@ -87,10 +87,7 @@ public class NewsServiceImpl implements NewsService{
     }
 
     @Override
-    public List<NewsResponseDTO> getTodayTopNewsList(Long userId, int difficulty, String lang) {
-        Users user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
-
+    public List<NewsResponseDTO> getTodayTopNewsList(Users user, int difficulty, String lang) {
         // 오늘 날짜 포맷팅
         LocalDate today = LocalDate.now().minusDays(1);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy. MM. dd.");
@@ -157,10 +154,7 @@ public class NewsServiceImpl implements NewsService{
     }
 
     @Override
-    public void readNews(Long userId, NewsReadRequestDTO newsReadRequestDTO) {
-        Users user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
-
+    public void readNews(Users user, NewsReadRequestDTO newsReadRequestDTO) {
         News news = newsRepository.findById(newsReadRequestDTO.getNewsId())
                 .orElseThrow(() -> new EntityNotFoundException("뉴스를 찾을 수 없습니다."));
 
@@ -191,10 +185,7 @@ public class NewsServiceImpl implements NewsService{
     }
 
     @Override
-    public void scrapNews(Long userId, NewsReadRequestDTO newsReadRequestDTO) {
-        Users user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
-
+    public void scrapNews(Users user, NewsReadRequestDTO newsReadRequestDTO) {
         News news = newsRepository.findById(newsReadRequestDTO.getNewsId())
                 .orElseThrow(() -> new EntityNotFoundException("뉴스를 찾을 수 없습니다."));
 
@@ -228,10 +219,7 @@ public class NewsServiceImpl implements NewsService{
     }
 
     @Override
-    public void cancelScrapedNews(Long userId, NewsReadRequestDTO newsReadRequestDTO) {
-        Users user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
-
+    public void cancelScrapedNews(Users user, NewsReadRequestDTO newsReadRequestDTO) {
         News news = newsRepository.findById(newsReadRequestDTO.getNewsId())
                 .orElseThrow(() -> new EntityNotFoundException("뉴스를 찾을 수 없습니다."));
 

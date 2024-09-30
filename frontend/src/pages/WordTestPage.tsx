@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { useSetRecoilState } from "recoil";
 import locationState from "@store/locationState";
 import styled from "styled-components";
+import { useMediaQuery } from "react-responsive"; // 모바일 여부 감지
 
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -15,7 +16,11 @@ import {
 import Spinner from "@components/Spinner";
 import Modal from "@components/Modal";
 
+// 모바일
+import WordTestMobilePage from "./mobile/WordTestMobilePage";
+
 const WordTestPage: React.FC = () => {
+  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const [searchParams] = useSearchParams();
   const totalCount = searchParams.get("totalCount");
   console.log(totalCount);
@@ -39,6 +44,8 @@ const WordTestPage: React.FC = () => {
   const { isLoading, error, data } = useQuery<WordTestListResponseDto>({
     queryKey: ["wordTestData", Number(totalCount)],
     queryFn: () => getWordTestList(Number(totalCount)),
+    refetchOnWindowFocus: false,
+    staleTime: 1000 * 60 * 5,
   });
 
   // 퀴즈 형식으로 변환
@@ -161,6 +168,7 @@ const WordTestPage: React.FC = () => {
   if (error)
     return <ErrorText>에러가 발생했습니다. 다시 시도해 주세요.</ErrorText>;
 
+  if (isMobile) return <WordTestMobilePage />;
   return (
     <MainContainer>
       {/* 페이지 표시 */}

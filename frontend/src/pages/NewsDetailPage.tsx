@@ -95,7 +95,6 @@ const NewsDetailPage = () => {
     const handleScroll = () => {
       calculateProgress();
     };
-    window.removeEventListener("scroll", handleScroll);
     window.addEventListener("scroll", handleScroll);
 
     return () => {
@@ -108,18 +107,21 @@ const NewsDetailPage = () => {
   useEffect(() => {
     if (!isLoading) {
       setIsRead(data?.isRead);
-      calculateProgress();
+      if (!isRead![difficulty - 1]) {
+        calculateProgress();
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading]);
 
+  // 난이도가 바뀌면
   useEffect(() => {
     calculateProgress();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [difficulty]);
 
   useEffect(() => {
-    if (isRead && isRead[3 - difficulty]) {
+    if (isRead && isRead[3 - difficulty] && !isLoading) {
       setIsReadFinished(true);
     } else if (scrollProgress === 100) {
       setIsReadFinished(true);

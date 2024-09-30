@@ -117,6 +117,9 @@ const NewsDetailPage = () => {
   // 난이도가 바뀌면
   useEffect(() => {
     calculateProgress();
+    if (!isRead![3 - difficulty]) {
+      setIsReadFinished(false);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [difficulty]);
 

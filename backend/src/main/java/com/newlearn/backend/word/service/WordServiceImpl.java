@@ -10,6 +10,8 @@ import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.newlearn.backend.news.model.News;
+import com.newlearn.backend.news.repository.NewsRepository;
 import com.newlearn.backend.user.model.Users;
 import com.newlearn.backend.word.dto.request.RestudyResultRequestDTO;
 import com.newlearn.backend.word.dto.request.WordRequestDto;
@@ -32,6 +34,7 @@ public class WordServiceImpl implements WordService {
 
 	private final WordRepository wordRepository;
 	private final WordSentenceRepository wordSentenceRepository;
+	private final NewsRepository newsRepository;
 
 	@Transactional
 	@Override
@@ -109,17 +112,27 @@ public class WordServiceImpl implements WordService {
 		}
 
 		String wordMeaning = words.get(0).getWordMeaning();
-
 		List<WordDetailResponseDTO.SentenceResponseDTO> sentenceDTO = words.stream()
-			.map(w -> new WordDetailResponseDTO.SentenceResponseDTO(
-				w.getSentence().getNewsId(),
-				w.getSentence().getDifficulty(),
-				w.getSentence().getSentence(),
-				w.getSentence().getSentenceMeaning()
-			)).toList();
-
+			.map(w -> {
+				try {
+					return new WordDetailResponseDTO.SentenceResponseDTO(
+						w.getSentence().getNewsId(),
+						w.getSentence().getDifficulty(),
+						w.getSentence().getSentence(),
+						w.getSentence().getSentenceMeaning(),
+						getUrl(w.getSentence().getNewsId())
+					);
+				} catch (Exception e) {
+					throw new RuntimeException(e);
+				}
+			}).toList();
 		return new WordDetailResponseDTO(word, wordMeaning, sentenceDTO);
 
+	}
+
+	private String getUrl(Long newsId) throws Exception {
+		News news = newsRepository.findById(newsId).orElseThrow(() -> new Exception("뉴스 없음요"));
+		return news.getUrl();
 	}
 
 	@Transactional

@@ -17,7 +17,7 @@ import Spinner from "@components/Spinner";
 import Modal from "@components/Modal";
 
 // 모바일
-import WordTestMobilePage from "./mobile/WordTestMobilePage";
+import WordTestIntroMobilePage from "./mobile/SpeakingTestIntroMobilePage";
 
 const WordTestPage: React.FC = () => {
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
@@ -168,7 +168,7 @@ const WordTestPage: React.FC = () => {
   if (error)
     return <ErrorText>에러가 발생했습니다. 다시 시도해 주세요.</ErrorText>;
 
-  if (isMobile) return <WordTestMobilePage />;
+  if (isMobile) return <WordTestIntroMobilePage />;
   return (
     <MainContainer>
       {/* 페이지 표시 */}

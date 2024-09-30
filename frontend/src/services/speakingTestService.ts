@@ -34,31 +34,47 @@ export type PronounceTestRequestDto = {
   files: File;
 };
 
-// 발음 테스트 저장 Response
 export type PronounceTestResponseDto = {
-  audioFileId: number;
-};
+  audioFileId : number
+}
 
-// 발음 테스트 결과 저장
+// FormData로 파일과 데이터를 함께 전송
 export const postPronounceTestResult = async (
   pronounceTestResultDataSet: PronounceTestRequestDto
 ): Promise<PronounceTestResponseDto> => {
   console.log(pronounceTestResultDataSet);
 
+  // FormData 객체 생성
+  const formData = new FormData();
+  
+  // FormData에 파일과 다른 데이터를 추가
+  formData.append('files', pronounceTestResultDataSet.files);
+  formData.append('sentenceIds', JSON.stringify(pronounceTestResultDataSet.sentenceIds));
+  formData.append('accuracyScore', pronounceTestResultDataSet.accuracyScore.toString());
+  formData.append('fluencyScore', pronounceTestResultDataSet.fluencyScore.toString());
+  formData.append('completenessScore', pronounceTestResultDataSet.completenessScore.toString());
+  formData.append('prosodyScore', pronounceTestResultDataSet.prosodyScore.toString());
+  formData.append('totalScore', pronounceTestResultDataSet.totalScore.toString());
+
   try {
     const response = await axiosInstance.post(
       `study/pronounce/test`,
-      pronounceTestResultDataSet
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      }
     );
-    console.log(response.data.message);
 
+    console.log(response.data.message);
     return response.data.data;
   } catch (error) {
     console.error("발음 테스트 결과 저장 오류", error);
-
     throw error;
   }
 };
+
 
 export type PronounceTestResultListDto = {
   audioFileId: number;

@@ -170,7 +170,9 @@ public class NewsServiceImpl implements NewsService{
         userNewsReadRepository.save(userNewsRead);
 
         // 사용자 뉴스 읽음 +1
+        // 사용자 경험치  +10
         user.incrementNewsReadCnt();
+        user.incrementExperience(10L);
         userRepository.save(user);
 
         // 사용자 뉴스 읽음 오늘 테이블 업데이트
@@ -211,7 +213,10 @@ public class NewsServiceImpl implements NewsService{
 
             // 사용자 스크랩수 +1
             user.incrementScrapCount();
+//            Long userScrapedCnt = userNewsScrapRepository.countByUser(user);
+//            user.setScrapCount(++userScrapedCnt);
             userRepository.save(user);
+
         }
 
     }
@@ -231,6 +236,8 @@ public class NewsServiceImpl implements NewsService{
 
         // 사용자 스크랩수 -1
         user.decrementScrapCount();
+//        Long userScrapedCnt = userNewsScrapRepository.countByUser(user);
+//        user.setScrapCount(--userScrapedCnt);
         userRepository.save(user);
     }
 }

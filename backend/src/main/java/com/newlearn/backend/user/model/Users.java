@@ -139,4 +139,8 @@ public class Users {
 	public void decrementScrapCount() {
 		this.scrapCount--;
 	}
+	// 경험치
+	public void incrementExperience(Long experience) {
+		this.experience += experience;
+	}
 }

@@ -16,4 +16,6 @@ public interface UserNewsScrapRepository extends JpaRepository<UserNewsScrap, Lo
     // 사용자의 스크랩 뉴스에 따라(scrapedDate로 정렬) + 페이지네이션
     Page<UserNewsScrap> findAllByUserOrderByScrapedDate(Users user, Pageable pageable);
     Page<UserNewsScrap> findAllByUserAndDifficultyOrderByScrapedDate(Users user, Integer difficulty, Pageable pageable);
+    // 사용자 id에 따라 개수 세기
+    Long countByUser(Users user);
 }

@@ -96,6 +96,7 @@ public class StudyServiceImpl implements StudyService{
 
             WordQuizQuestion question = new WordQuizQuestion();
             question.setWordQuiz(newQuiz);
+            question.setWord(word);
             question.setSentence(sentence.getSentence());
             question.setSentenceMeaning(sentence.getSentenceMeaning());
             question.setCorrectAnswer(word.getWord());

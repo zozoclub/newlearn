@@ -22,6 +22,10 @@ public class WordQuizQuestion {
     @JoinColumn(name = "quiz_id")
     private WordQuiz wordQuiz;
 
+    @ManyToOne
+    @JoinColumn(name = "word_id")
+    private Word word;
+
     @Column(name = "sentence", nullable = false)
     private String sentence;
 

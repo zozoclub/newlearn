@@ -93,13 +93,15 @@ export const getTopNewsList = async (
 export const getNewsDetail = async (
   newsId: number,
   difficulty: number,
-  lang: "kr" | "en"
+  lang: "kr" | "en",
+  isFirstView: boolean
 ): Promise<DetailNewsType> => {
   try {
     const response = await axiosInstance.get(`news/detail/${newsId}`, {
       params: {
         difficulty: difficulty,
         lang: lang,
+        isFirstView: isFirstView,
       },
     });
     console.log(response);

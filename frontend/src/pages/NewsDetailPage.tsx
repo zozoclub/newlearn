@@ -24,11 +24,13 @@ const NewsDetailPage = () => {
     false,
     false,
   ]);
+  const [isFirstView, setIsFirstView] = useState<boolean>(true);
 
   const { newsId } = useParams();
   const { isLoading, data } = useQuery<DetailNewsType>({
-    queryKey: ["getNewsDetail", languageData, difficulty],
-    queryFn: () => getNewsDetail(Number(newsId), difficulty, languageData),
+    queryKey: ["getNewsDetail", languageData, difficulty, newsId],
+    queryFn: () =>
+      getNewsDetail(Number(newsId), difficulty, languageData, isFirstView),
     staleTime: 10 * 60 * 1000,
   });
 
@@ -46,6 +48,9 @@ const NewsDetailPage = () => {
 
   const calculateProgress = () => {
     if (newsContainerRef.current && !isLoading) {
+      if (isFirstView) {
+        setIsFirstView(false);
+      }
       setIsRead(data?.isRead);
       const containerRect = newsContainerRef.current.getBoundingClientRect();
       const containerTop = containerRect.top;
@@ -95,24 +100,30 @@ const NewsDetailPage = () => {
   }, [isLoading, difficulty]);
 
   useEffect(() => {
+    if (!isLoading && isRead![3 - difficulty]) {
+      setIsRead(data?.isRead);
+    }
     if (isRead![3 - difficulty]) {
       setIsReadFinished(true);
       window.removeEventListener("scroll", handleScroll);
     } else if (scrollProgress < 100) {
-      console.log(scrollProgress);
-      console.log(isRead);
+      // console.log(scrollProgress);
+      // console.log(isRead);
       setIsReadFinished(false);
+      window.addEventListener("scroll", handleScroll);
     } else if (scrollProgress === 100) {
       setIsReadFinished(true);
-      console.log(difficulty);
+      // console.log(difficulty);
       setIsRead((prevState) => {
         if (prevState) {
           const newState = [...prevState];
           newState[3 - difficulty] = true;
+          console.log("newState is", newState);
           return newState;
         }
         return prevState;
       });
+      console.log(isRead);
       readNews(Number(newsId), difficulty);
       window.removeEventListener("scroll", handleScroll);
     }

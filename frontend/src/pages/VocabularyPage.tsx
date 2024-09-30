@@ -209,27 +209,31 @@ const VocabularyPage: React.FC = () => {
         <Droppable droppableId="toStudy">
           {(provided) => (
             <MainContainer ref={provided.innerRef} {...provided.droppableProps}>
-              <Title>내가 공부해야 될 단어 리스트</Title>
-              {toStudyWords.map((data, index) => (
-                <Draggable key={data.id} draggableId={data.id} index={index}>
-                  {(provided, snapshot) => (
-                    <Item
-                      ref={provided.innerRef}
-                      {...provided.draggableProps}
-                      {...provided.dragHandleProps}
-                      $isDragging={snapshot.isDragging}
-                    >
-                      <Collapsible
-                        title={data.title}
-                        meaning={data.content}
-                        isExpanded={data.isExpanded}
-                        onToggle={() =>
-                          toggleExpand(data.id, false, data.title)
-                        }
-                        onDelete={() => handleDeleteWord(data.id)}
+              <Title>공부해야 될 단어 리스트</Title>
+              {toStudyWords.length === 0 ? (
+                <EmptyMessage>
+                  공부할 단어가 없습니다. 새로운 단어를 추가해주세요.
+                </EmptyMessage>
+              ) : (
+                toStudyWords.map((data, index) => (
+                  <Draggable key={data.id} draggableId={data.id} index={index}>
+                    {(provided, snapshot) => (
+                      <Item
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                        $isDragging={snapshot.isDragging}
                       >
-                        {data.isExpanded && expandedWordDetails[data.id] ? (
-                          <>
+                        <Collapsible
+                          title={data.title}
+                          meaning={data.content}
+                          isExpanded={data.isExpanded}
+                          onToggle={() =>
+                            toggleExpand(data.id, true, data.title)
+                          }
+                          onDelete={() => handleDeleteWord(data.id)}
+                        >
+                          {data.isExpanded && expandedWordDetails[data.id] ? (
                             <ul>
                               {expandedWordDetails[data.id]?.sentences.map(
                                 (sentence, index) => (
@@ -240,15 +244,15 @@ const VocabularyPage: React.FC = () => {
                                 )
                               )}
                             </ul>
-                          </>
-                        ) : (
-                          <p>Loading...</p>
-                        )}
-                      </Collapsible>
-                    </Item>
-                  )}
-                </Draggable>
-              ))}
+                          ) : (
+                            <p>Loading...</p>
+                          )}
+                        </Collapsible>
+                      </Item>
+                    )}
+                  </Draggable>
+                ))
+              )}
               {provided.placeholder}
             </MainContainer>
           )}
@@ -258,27 +262,31 @@ const VocabularyPage: React.FC = () => {
         <Droppable droppableId="learned">
           {(provided) => (
             <MainContainer ref={provided.innerRef} {...provided.droppableProps}>
-              <Title>내가 외운 단어 리스트</Title>
-              {learnedWords.map((data, index) => (
-                <Draggable key={data.id} draggableId={data.id} index={index}>
-                  {(provided, snapshot) => (
-                    <Item
-                      ref={provided.innerRef}
-                      {...provided.draggableProps}
-                      {...provided.dragHandleProps}
-                      $isDragging={snapshot.isDragging}
-                    >
-                      <Collapsible
-                        title={data.title}
-                        meaning={data.content}
-                        isExpanded={data.isExpanded}
-                        onToggle={() =>
-                          toggleExpand(data.id, false, data.title)
-                        }
-                        onDelete={() => handleDeleteWord(data.id)}
+              <Title>외운 단어 리스트</Title>
+              {learnedWords.length === 0 ? (
+                <EmptyMessage>
+                  외운 단어가 없습니다. 공부할 단어에서 Drag 해보세요.
+                </EmptyMessage>
+              ) : (
+                learnedWords.map((data, index) => (
+                  <Draggable key={data.id} draggableId={data.id} index={index}>
+                    {(provided, snapshot) => (
+                      <Item
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                        $isDragging={snapshot.isDragging}
                       >
-                        {data.isExpanded && expandedWordDetails[data.id] ? (
-                          <>
+                        <Collapsible
+                          title={data.title}
+                          meaning={data.content}
+                          isExpanded={data.isExpanded}
+                          onToggle={() =>
+                            toggleExpand(data.id, false, data.title)
+                          }
+                          onDelete={() => handleDeleteWord(data.id)}
+                        >
+                          {data.isExpanded && expandedWordDetails[data.id] ? (
                             <ul>
                               {expandedWordDetails[data.id]?.sentences.map(
                                 (sentence, index) => (
@@ -289,18 +297,15 @@ const VocabularyPage: React.FC = () => {
                                 )
                               )}
                             </ul>
-                          </>
-                        ) : (
-                          <p>Loading...</p>
-                        )}
-                        {data.isExpanded && expandedWordDetails[data.id] && (
-                          <>배고프다</>
-                        )}
-                      </Collapsible>
-                    </Item>
-                  )}
-                </Draggable>
-              ))}
+                          ) : (
+                            <p>Loading...</p>
+                          )}
+                        </Collapsible>
+                      </Item>
+                    )}
+                  </Draggable>
+                ))
+              )}
               {provided.placeholder}
             </MainContainer>
           )}
@@ -331,12 +336,21 @@ const MainContainer = styled.div`
 
 const Title = styled.h2`
   text-align: center;
-  font-size: 1.5rem;
+  font-size: 2rem;
+  font-weight: 700;
+  margin-top: 1rem;
   margin-bottom: 1rem;
 `;
 
 const Item = styled.div<{ $isDragging: boolean }>`
   cursor: grab;
+`;
+
+const EmptyMessage = styled.p`
+  margin-top: 16rem;
+  text-align: center;
+  font-size: 1.25rem;
+  color: ${(props) => props.theme.colors.text04};
 `;
 
 const ErrorText = styled.div`

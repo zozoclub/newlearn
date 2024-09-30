@@ -5,10 +5,13 @@ import styled from "styled-components";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import Collapsible from "@components/Collapsible";
-import { getWordTestResultDetail, WordTestResultDetailResponseDto } from "@services/wordTestService";
+import {
+  getWordTestResultDetail,
+  WordTestResultDetailResponseDto,
+} from "@services/wordTestService";
 import Spinner from "@components/Spinner";
 
-const WordTestResultMobilePage: React.FC = () => {
+const WordTestResultDetailMobilePage: React.FC = () => {
   const { quizId } = useParams<{ quizId: string }>();
   const setCurrentLocation = useSetRecoilState(locationState);
 
@@ -16,51 +19,59 @@ const WordTestResultMobilePage: React.FC = () => {
     setCurrentLocation("Word Test Result Page");
   }, [setCurrentLocation]);
 
-  const { data: testDetail, isLoading, error } = useQuery<WordTestResultDetailResponseDto[]>({
+  const {
+    data: testDetail,
+    isLoading,
+    error,
+  } = useQuery<WordTestResultDetailResponseDto[]>({
     queryKey: ["wordTestDetail", quizId],
     queryFn: () => getWordTestResultDetail(Number(quizId)),
   });
 
-  const [expandedWordIndex, setExpandedWordIndex] = useState<number | null>(null);
+  const [expandedWordIndex, setExpandedWordIndex] = useState<number | null>(
+    null
+  );
 
   const handleToggle = (index: number) => {
     setExpandedWordIndex((prevIndex) => (prevIndex === index ? null : index));
   };
 
   if (isLoading) return <Spinner />;
-  if (error) return <ErrorText>에러가 발생했습니다. 다시 시도해 주세요.</ErrorText>;
+  if (error)
+    return <ErrorText>에러가 발생했습니다. 다시 시도해 주세요.</ErrorText>;
 
   return (
-    <MainContainer>
+    <MobileMainContainer>
       {testDetail?.map((test, index) => (
         <Collapsible
           key={index}
           title={test.correctAnswer}
+          meaning=""
           isExpanded={expandedWordIndex === index}
           onToggle={() => handleToggle(index)}
+          onDelete={() => null}
         >
-          <SentenceDetail>
+          <MobileSentenceDetail>
             <strong>정답:</strong> {test.correctAnswer}
-          </SentenceDetail>
-          <SentenceDetail>
+          </MobileSentenceDetail>
+          <MobileSentenceDetail>
             <strong>사용자 답변:</strong> {test.answer}
-          </SentenceDetail>
-          <SentenceDetail>
+          </MobileSentenceDetail>
+          <MobileSentenceDetail>
             <strong>문장:</strong> {test.sentence}
-          </SentenceDetail>
-          <SentenceDetail>
+          </MobileSentenceDetail>
+          <MobileSentenceDetail>
             <strong>문장 해석:</strong> {test.sentence}
-          </SentenceDetail>
+          </MobileSentenceDetail>
         </Collapsible>
       ))}
-    </MainContainer>
+    </MobileMainContainer>
   );
 };
 
-export default WordTestResultMobilePage;
+export default WordTestResultDetailMobilePage;
 
-// 스타일 정의
-const MainContainer = styled.div`
+const MobileMainContainer = styled.div`
   width: 100%;
   padding: 1rem;
   background-color: ${(props) => props.theme.colors.cardBackground};
@@ -69,7 +80,7 @@ const MainContainer = styled.div`
   align-items: center;
 `;
 
-const SentenceDetail = styled.div`
+const MobileSentenceDetail = styled.div`
   font-size: 1rem;
   margin: 0.5rem 0;
 `;

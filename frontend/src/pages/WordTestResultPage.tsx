@@ -13,26 +13,34 @@ import GoodStamp from "@assets/icons/GoodStamp";
 import BadStamp from "@assets/icons/BadStamp";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
-import { getWordTestResultDetail, WordTestResultDetailResponseDto } from "@services/wordTestService";
+import {
+  getWordTestResultDetail,
+  WordTestResultDetailResponseDto,
+} from "@services/wordTestService";
 import Spinner from "@components/Spinner";
+import { useMediaQuery } from "react-responsive"; // 모바일 여부 감지
+
+import WordTestResultDetailMobilePage from "./mobile/WordTestResultDetailMobilePage";
 
 const WordTestResultPage: React.FC = () => {
+  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const { quizId } = useParams<{ quizId: string }>();
   const setCurrentLocation = useSetRecoilState(locationState);
   useEffect(() => {
     setCurrentLocation("Word Test Page");
   }, [setCurrentLocation]);
 
-  const { data: testDetail, isLoading, error } = useQuery<WordTestResultDetailResponseDto[]>(
-    {
-      queryKey: ["wordTestDetail", quizId],
-      queryFn: () => getWordTestResultDetail(Number(quizId)),
-    }
-  );
+  const {
+    data: testDetail,
+    isLoading,
+    error,
+  } = useQuery<WordTestResultDetailResponseDto[]>({
+    queryKey: ["wordTestDetail", quizId],
+    queryFn: () => getWordTestResultDetail(Number(quizId)),
+  });
 
   const [currentWordIndex, setCurrentWordIndex] = useState<number>(0);
   const [currentWord, setCurrentWord] = useState<string>("");
-
 
   const wordExplainDetailHandler = (index: number) => {
     setCurrentWordIndex(index);
@@ -129,16 +137,18 @@ const WordTestResultPage: React.FC = () => {
     return <BadStamp />;
   };
 
-
   // 로딩 상태 처리
   if (isLoading) return <Spinner />;
 
   // 에러 상태 처리
-  if (error) return <ErrorText>에러가 발생했습니다. 다시 시도해 주세요.</ErrorText>;
+  if (error)
+    return <ErrorText>에러가 발생했습니다. 다시 시도해 주세요.</ErrorText>;
 
   // testDetail이 null일 때
   if (!testDetail) return <ErrorText>No data available.</ErrorText>;
 
+  // 모바일
+  if (isMobile) return <WordTestResultDetailMobilePage />;
   return (
     <MainLayout>
       <MainContainer>

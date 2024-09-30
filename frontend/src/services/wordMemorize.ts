@@ -5,7 +5,7 @@ export type MemorizeWordListResponseDto = {
     wordId : number
     word : string
     wordMeaning : string
-    isComplete : boolean
+    complete : boolean
 } 
 
 export const getMemorizeWordList = async (): Promise<
@@ -27,9 +27,9 @@ export const getMemorizeWordList = async (): Promise<
 export const postMemorizeWord = async (wordId:number): Promise<void> => {
     try {
         await axiosInstance.post(`word/${wordId}/complete`);
-        console.log("단어 외움 처리 성공");
+        console.log("단어 상태 토글 성공");
       } catch (error) {
-        console.error("외움 처리 오류", error);
+        console.error("토글 오류", error);
         throw error;
     }
 }
@@ -54,6 +54,7 @@ export type WordDetailResponseDto = {
         difficulty : number
         sentence : string
         sentenceMeaning : string
+        url : string
     }>
 }
 
@@ -61,7 +62,7 @@ export type WordDetailResponseDto = {
 export const getWordDetail = async (word:string): Promise<WordDetailResponseDto> => {
     try {
         const response = await axiosInstance.get(`word/${word}`)
-        console.log(response);
+        console.log(response.data.data);
         
         return response.data.data
     } catch (error) {

@@ -20,7 +20,7 @@ import {
 import Spinner from "@components/Spinner";
 import { useMediaQuery } from "react-responsive"; // 모바일 여부 감지
 
-import WordTestResultDetailMobilePage from "./mobile/WordTestResultDetailMobilePage";
+import WordTestResultListMobilePage from "./mobile/WordTestResultListMobilePage";
 
 const WordTestResultPage: React.FC = () => {
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
@@ -148,7 +148,7 @@ const WordTestResultPage: React.FC = () => {
   if (!testDetail) return <ErrorText>No data available.</ErrorText>;
 
   // 모바일
-  if (isMobile) return <WordTestResultDetailMobilePage />;
+  if (isMobile) return <WordTestResultListMobilePage />;
   return (
     <MainLayout>
       <MainContainer>

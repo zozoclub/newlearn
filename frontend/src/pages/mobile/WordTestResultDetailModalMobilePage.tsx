@@ -11,7 +11,7 @@ import {
 } from "@services/wordTestService";
 import Spinner from "@components/Spinner";
 
-const WordTestResultDetailMobilePage: React.FC = () => {
+const WordTestResultDetailModalMobilePage: React.FC = () => {
   const { quizId } = useParams<{ quizId: string }>();
   const setCurrentLocation = useSetRecoilState(locationState);
 
@@ -69,7 +69,7 @@ const WordTestResultDetailMobilePage: React.FC = () => {
   );
 };
 
-export default WordTestResultDetailMobilePage;
+export default WordTestResultDetailModalMobilePage;
 
 const MobileMainContainer = styled.div`
   width: 100%;

@@ -16,6 +16,8 @@ public class UserProfileResponseDTO {
 	private Long userId;
 	private String email;
 	private String nickname;
+	private String name;
+	private String provider;
 	private Long rank;
 	private Long difficulty;
 	private List<String> categories;
@@ -34,6 +36,8 @@ public class UserProfileResponseDTO {
 		this.email = user.getEmail();
 		this.nickname = user.getNickname();
 		this.rank = userRank;
+		this.name = user.getName();
+		this.provider = user.getProvider();
 		this.difficulty = user.getDifficulty();
 		this.experience = user.getExperience();
 		this.totalNewsReadCount = user.getTotalNewsReadCount();

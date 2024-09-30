@@ -22,5 +22,6 @@ public class WordDetailResponseDTO {
 		private Long difficulty;
 		private String sentence;
 		private String sentenceMeaning;
+		private String url;
 	}
 }

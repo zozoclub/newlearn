@@ -14,23 +14,23 @@ import java.util.List;
 public interface NewsService {
 
     // 전체 뉴스 조회
-    Page<NewsResponseDTO> getAllNews(Long userId, NewsListRequestDTO newsRequestDTO);
+    Page<NewsResponseDTO> getAllNews(Users user, NewsListRequestDTO newsRequestDTO);
 
     // 카테고리 별 전체 뉴스 조회
-    Page<NewsResponseDTO> getNewsByCategory(Long userId, NewsListRequestDTO newsRequestDTO, long categoryId);
+    Page<NewsResponseDTO> getNewsByCategory(Users user, NewsListRequestDTO newsRequestDTO, long categoryId);
 
     // 매일 TOP 10 뉴스 조회
-    List<NewsResponseDTO> getTodayTopNewsList(Long userId, int difficulty, String lang);
+    List<NewsResponseDTO> getTodayTopNewsList(Users user, int difficulty, String lang);
 
     // 뉴스 상세 조회
     NewsDetailResponseDTO getNewsDetail(Users user, Long newsId, NewsDetailRequestDTO newsDetailRequestDTO);
 
     // 뉴스 읽음 처리
-    void readNews(Long userId, NewsReadRequestDTO newsReadRequestDTO);
+    void readNews(Users user, NewsReadRequestDTO newsReadRequestDTO);
 
     // 뉴스 스크랩
-    void scrapNews(Long userId, NewsReadRequestDTO newsReadRequestDTO);
+    void scrapNews(Users user, NewsReadRequestDTO newsReadRequestDTO);
 
     // 뉴스 스크랩 취소
-    void cancelScrapedNews(Long userId, NewsReadRequestDTO newsReadRequestDTO);
+    void cancelScrapedNews(Users user, NewsReadRequestDTO newsReadRequestDTO);
 }

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import ProfileWidget from "@components/common/Profile";
 import { logout } from "@services/userService";
@@ -19,6 +19,23 @@ const UserProfile = () => {
     eyes: userInfoData.eyes,
     mask: userInfoData.mask,
   };
+
+  const modalRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        modalRef.current &&
+        !modalRef.current.contains(event.target as Node)
+      ) {
+        setIsOpened(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   async function handleLogoutButton() {
     try {
@@ -44,7 +61,7 @@ const UserProfile = () => {
       >
         {isInitialized && <Avatar avatar={avatar} size={3} />}
       </ProfileAvatar>
-      <UserProfileModal $isOpened={isOpened}>
+      <UserProfileModal $isOpened={isOpened} ref={modalRef}>
         <div className="tail"></div>
         <ProfileWidget />
         <div className="logout" onClick={handleLogoutButton}>

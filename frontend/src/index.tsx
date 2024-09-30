@@ -1,23 +1,24 @@
 // import { StrictMode } from 'react'
 import { createRoot } from "react-dom/client";
+import { RouterProvider } from "react-router-dom";
 import { RecoilRoot } from "recoil";
 import axios from "axios";
+
+import { router } from "./Router.tsx";
 import "./index.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { AppRouter } from "./Router"; // AppRouter로 변경
 
 axios.defaults.baseURL = import.meta.env.VITE_BACKEND_URL;
 axios.defaults.withCredentials = true;
 
-// 새로운 AppRouter를 사용하여 모바일과 웹을 분기
 createRoot(document.getElementById("root")!).render(
   // <StrictMode>
   <RecoilRoot>
     <QueryClientProvider client={new QueryClient()}>
-      <AppRouter /> {/* RouterProvider가 AppRouter 안에 들어있음 */}
+      <RouterProvider router={router} />
     </QueryClientProvider>
   </RecoilRoot>
-  // </StrictMode>
+  // </StrictMode>,
 );
 
 // 서비스 워커 등록

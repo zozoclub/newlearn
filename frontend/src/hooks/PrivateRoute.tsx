@@ -66,7 +66,7 @@ const PrivateRoute = () => {
   }
 
   // 모바일 여부에 따라 다른 로그인 페이지로 리다이렉트
-  return !isLogin ? <Outlet /> : <Navigate to={isMobile ? "/m/login" : "/login"} />;
+  return isLogin ? <Outlet /> : <Navigate to={isMobile ? "/m/login" : "/login"} />;
 };
 
 export default PrivateRoute;

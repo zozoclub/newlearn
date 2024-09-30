@@ -101,7 +101,7 @@ Welcome To NewsLearn!"
         <TransitionContent>
           <Outlet />
         </TransitionContent>
-        {!isLogin && (isMobile ? <MobileNavbar /> : <Navbar />)}
+        {isLogin && (isMobile ? <MobileNavbar /> : <Navbar />)}
       </AppContainer>
     </ThemeProvider>
   );

@@ -2,6 +2,7 @@ package com.newlearn.backend.word.repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -24,5 +25,4 @@ public interface WordRepository extends JpaRepository<Word, Long> {
 
 	@Query("select count(w) from Word w where w.user = :user and w.isComplete = true")
 	Long countCompleteWordsByUser(Users user);
-
 }

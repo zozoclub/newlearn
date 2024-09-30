@@ -1,6 +1,8 @@
 package com.newlearn.backend.study.service;
 
 import com.newlearn.backend.config.S3ObjectStorage;
+import com.newlearn.backend.news.model.News;
+import com.newlearn.backend.news.repository.NewsRepository;
 import com.newlearn.backend.study.dto.request.GoalRequestDTO;
 import com.newlearn.backend.study.dto.request.PronounceRequestDTO;
 import com.newlearn.backend.study.dto.request.WordTestResultRequestDTO;
@@ -14,10 +16,7 @@ import com.newlearn.backend.user.repository.UserRepository;
 import com.newlearn.backend.word.model.*;
 import com.newlearn.backend.study.repository.StudyRepository;
 import com.newlearn.backend.user.model.Users;
-import com.newlearn.backend.word.repository.WordQuizAnswerRepository;
-import com.newlearn.backend.word.repository.WordQuizQuestionRepository;
-import com.newlearn.backend.word.repository.WordQuizRepository;
-import com.newlearn.backend.word.repository.WordSentenceRepository;
+import com.newlearn.backend.word.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -27,6 +26,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -38,6 +38,8 @@ public class StudyServiceImpl implements StudyService{
 
     private final UserRepository userRepository;
     private final StudyRepository studyRepository;
+    private final NewsRepository newsRepository;
+    private final WordRepository wordRepository;
     private final WordQuizRepository wordQuizRepository;
     private final WordQuizAnswerRepository wordQuizAnswerRepository;
     private final WordQuizQuestionRepository wordQuizQuestionRepository;
@@ -192,25 +194,48 @@ public class StudyServiceImpl implements StudyService{
         for (WordQuizQuestion question : questions) {
             // 해당 질문에 대한 하나의 답변 가져오기
             Optional<WordQuizAnswer> answerObj = wordQuizAnswerRepository.findByWordQuizQuestion_WordQuizQuestionId(question.getWordQuizQuestionId());
-            System.out.println(answerObj);
 
             // 답변이 없는 경우 빈 문자열과 false 설정
             String answer = answerObj.map(WordQuizAnswer::getAnswer).orElse("");
             boolean isCorrect = answerObj.map(WordQuizAnswer::getIsCorrect).orElse(false);
+
+            // word_id로 word 테이블에서 단어 가져오기
+            Optional<Word> wordOpt = wordRepository.findById(question.getWord().getWordId());
+            if (!wordOpt.isPresent()) {
+                System.out.println("단어를 찾을 수 없습니다. ID: " + question.getWord().getWordId());
+                continue; // 단어가 없으면 다음 질문으로 넘어감
+            }
+            Word word = wordOpt.get();
+            System.out.println("wordOpt : " + word);
+
+            // word_id로 word_sentence 테이블에서 문장 가져오기
+            Optional<WordSentence> wordSentenceOpt = wordSentenceRepository.findById(word.getWordId());
+            if (!wordSentenceOpt.isPresent()) {
+                System.out.println("문장을 찾을 수 없습니다. Word ID: " + word.getWordId());
+                continue; // 문장이 없으면 다음 질문으로 넘어감
+            }
+            WordSentence wordSentence = wordSentenceOpt.get();
+            System.out.println("wordSentenceOpt - newsId : " + wordSentence.getNewsId());
+
+            // news_id로 news 테이블에서 URL 가져오기
+            Optional<News> newsOpt = newsRepository.findById(Objects.requireNonNull(wordSentenceOpt.map(WordSentence::getNewsId).orElse(null)));
+            System.out.println("wordSentenceOpt : " + wordSentenceOpt);
+            String originURL = newsOpt.map(News::getUrl).orElse(null);
+            System.out.println("originURL : " + originURL);
 
             // DTO 빌드 및 리스트에 추가
             WordTestResultDetailResponseDTO result = WordTestResultDetailResponseDTO.builder()
                     .quizId(question.getWordQuizQuestionId())
                     .answer(answer)
                     .correctAnswer(question.getCorrectAnswer())
-                    .isCorrect(isCorrect)
+                    .correct(isCorrect)
                     .sentence(question.getSentence())
                     .createdAt(quiz.getCreatedAt())
+                    .originURL(originURL)
                     .build();
 
             resultList.add(result);
         }
-
         return resultList;
     }
 

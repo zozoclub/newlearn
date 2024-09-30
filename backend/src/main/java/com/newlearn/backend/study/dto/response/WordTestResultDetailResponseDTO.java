@@ -12,7 +12,7 @@ public class WordTestResultDetailResponseDTO {
     private long quizId;
     private String answer;
     private String correctAnswer;
-    private boolean isCorrect;
+    private boolean correct;
     private String sentence;
     private LocalDateTime createdAt;
     private String originURL;

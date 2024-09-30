@@ -30,7 +30,7 @@ const NewsDetailPage = () => {
     queryKey: ["getNewsDetail", languageData, difficulty, newsId],
     queryFn: () =>
       getNewsDetail(Number(newsId), difficulty, languageData, isFirstView),
-    staleTime: 10 * 60 * 1000,
+    staleTime: 0, // staleTime을 0으로 설정하여 항상 최신 데이터를 가져옴
   });
 
   const isLoadingRef = useRef(isLoading);

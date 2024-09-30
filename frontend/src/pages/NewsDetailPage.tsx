@@ -1,4 +1,4 @@
-import DifficultyToggleBtn from "@components/newspage/difficultyToggleBtn";
+import DifficultyToggleBtn from "@components/newspage/DifficultyToggleBtn";
 import LanguageToggleBtn from "@components/newspage/LanguageToggleBtn";
 import Spinner from "@components/Spinner";
 import { DetailNewsType, getNewsDetail, readNews } from "@services/newsService";

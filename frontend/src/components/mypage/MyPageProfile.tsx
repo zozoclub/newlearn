@@ -8,8 +8,9 @@ import { useRecoilValue, useSetRecoilState } from "recoil";
 import userInfoState from "@store/userInfoState";
 import { calculateExperience } from "@utils/calculateExperience";
 import Avatar, { AvatarType } from "@components/common/Avatar";
-import { changeNickname } from "@services/mypageService";
+import { changeNickname, changeAvatar } from "@services/mypageService";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+
 const MyPageProfile: React.FC = () => {
   const queryClient = useQueryClient();
   const userInfo = useRecoilValue(userInfoState);
@@ -17,6 +18,12 @@ const MyPageProfile: React.FC = () => {
 
   const [nickname, setNickname] = useState(userInfo.nickname);
   const [tempNickname, setTempNickname] = useState(userInfo.nickname);
+  const [skin, setSkin] = useState(userInfo.skin);
+  const [tempSkin, setTempSkin] = useState(userInfo.skin);
+  const [eyes, setEyes] = useState(userInfo.eyes);
+  const [tempEyes, setTempEyes] = useState(userInfo.eyes);
+  const [mask, setMask] = useState(userInfo.mask);
+  const [tempMask, setTempMask] = useState(userInfo.mask);
 
   // 경험치
   const calculatedExperience = calculateExperience(userInfo.experience);
@@ -38,19 +45,29 @@ const MyPageProfile: React.FC = () => {
     mask: userInfo.mask,
   };
 
+  // 저장된 유저 정보로 set
   useEffect(() => {
     setNickname(userInfo.nickname);
+    setSkin(userInfo.skin);
+    setEyes(userInfo.eyes);
+    setMask(userInfo.mask);
   }, [userInfo]);
 
   // 모달 설정
   const [isModalOpen, setIsModalOpen] = useState(false);
   const openModal = () => {
     setTempNickname(nickname);
+    setTempSkin(skin);
+    setTempEyes(eyes);
+    setTempMask(mask);
     setIsModalOpen(true);
   };
   const closeModal = () => {
     setIsModalOpen(false);
     setTempNickname(tempNickname);
+    setTempSkin(tempSkin);
+    setTempEyes(tempEyes);
+    setTempMask(tempMask);
   };
 
   // 닉네임 설정
@@ -75,9 +92,56 @@ const MyPageProfile: React.FC = () => {
     setTempNickname(e.target.value);
   };
 
-  // 닉네임 저장 핸들러
-  const handleSaveNickname = () => {
-    nicknameMutation.mutate(tempNickname);
+  // 아바타 설정
+  const avatarMutation = useMutation({
+    mutationFn: changeAvatar,
+    onSuccess: () => {
+      setSkin(tempSkin);
+      setEyes(tempEyes);
+      setMask(tempMask);
+      setUserInfo((userInfo) => ({
+        ...userInfo,
+        skin: tempSkin,
+        eyes: tempEyes,
+        mask: tempMask,
+      }));
+      queryClient.invalidateQueries({ queryKey: ["userInfo"] });
+      closeModal();
+    },
+    onError: (error) => {
+      console.error("아바타 변경 실패:", error);
+    },
+  });
+
+  // 아바타 변경 핸들러
+  const handleAvatarChange = (
+    part: "skin" | "eyes" | "mask",
+    direction: "prev" | "next"
+  ) => {
+    const counts = { skin: 10, eyes: 9, mask: 14 };
+    const currentValue =
+      part === "skin" ? tempSkin : part === "eyes" ? tempEyes : tempMask;
+    let newValue;
+
+    if (direction === "prev") {
+      newValue = currentValue > 0 ? currentValue - 1 : counts[part] - 1;
+    } else {
+      newValue = currentValue < counts[part] - 1 ? currentValue + 1 : 0;
+    }
+
+    if (part === "skin") setTempSkin(newValue);
+    else if (part === "eyes") setTempEyes(newValue);
+    else setTempMask(newValue);
+  };
+
+  // 닉네임 및 아바타 수정 저장 핸들러
+  const handleSave = () => {
+    if (tempNickname !== nickname) {
+      nicknameMutation.mutate(tempNickname);
+    }
+    if (tempSkin !== skin || tempEyes !== eyes || tempMask !== mask) {
+      avatarMutation.mutate({ skin: tempSkin, eyes: tempEyes, mask: tempMask });
+    }
   };
 
   return (
@@ -95,8 +159,41 @@ const MyPageProfile: React.FC = () => {
             <Modal
               isOpen={isModalOpen}
               onClose={closeModal}
-              title="닉네임 수정"
+              title="아바타 및 닉네임 수정"
             >
+              <AvatarSettingContainer>
+                <SettingContainer>
+                  <EyesSetting>
+                    <div onClick={() => handleAvatarChange("eyes", "prev")}>
+                      ◀
+                    </div>
+                    <div onClick={() => handleAvatarChange("eyes", "next")}>
+                      ▶
+                    </div>
+                  </EyesSetting>
+                  <MaskSetting>
+                    <div onClick={() => handleAvatarChange("mask", "prev")}>
+                      ◀
+                    </div>
+                    <div onClick={() => handleAvatarChange("mask", "next")}>
+                      ▶
+                    </div>
+                  </MaskSetting>
+                  <SkinSetting>
+                    <div onClick={() => handleAvatarChange("skin", "prev")}>
+                      ◀
+                    </div>
+                    <div onClick={() => handleAvatarChange("skin", "next")}>
+                      ▶
+                    </div>
+                  </SkinSetting>
+                </SettingContainer>
+                <Avatar
+                  avatar={{ skin: tempSkin, eyes: tempEyes, mask: tempMask }}
+                  size={9}
+                />
+              </AvatarSettingContainer>
+
               <NicknameEditInput
                 type="text"
                 value={tempNickname}
@@ -104,8 +201,13 @@ const MyPageProfile: React.FC = () => {
               />
               <ButtonContainer>
                 <SaveButton
-                  onClick={handleSaveNickname}
-                  disabled={tempNickname === nickname}
+                  onClick={handleSave}
+                  disabled={
+                    tempNickname === nickname &&
+                    tempSkin === skin &&
+                    tempEyes === eyes &&
+                    tempMask === mask
+                  }
                 >
                   저장
                 </SaveButton>
@@ -198,9 +300,14 @@ const CustomButton = styled.button`
 
 const SaveButton = styled(CustomButton)`
   color: white;
-  background-color: ${(props) => props.theme.colors.primary};
+  background-color: ${(props) =>
+    props.disabled ? props.theme.colors.text03 : props.theme.colors.primary};
+  cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};
   &:hover {
-    background-color: ${(props) => props.theme.colors.primaryPress};
+    background-color: ${(props) =>
+      props.disabled
+        ? props.theme.colors.text03
+        : props.theme.colors.primaryPress};
   }
 `;
 
@@ -238,4 +345,41 @@ const SocialInfoContainer = styled.div`
   font-size: 1.25rem;
   align-items: center;
   gap: 0.5rem;
+`;
+
+// 아바타
+const AvatarSettingContainer = styled.div`
+  position: relative;
+  width: 100%;
+  height: 15rem;
+`;
+
+const SettingContainer = styled.div`
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 75%;
+  height: 100%;
+`;
+
+const SettingDiv = styled.div`
+  display: flex;
+  justify-content: space-between;
+  position: absolute;
+  width: 100%;
+  * {
+    cursor: pointer;
+  }
+`;
+
+const EyesSetting = styled(SettingDiv)`
+  top: 25%;
+`;
+
+const MaskSetting = styled(SettingDiv)`
+  top: 50%;
+`;
+
+const SkinSetting = styled(SettingDiv)`
+  top: 75%;
 `;

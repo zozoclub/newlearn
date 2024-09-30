@@ -33,6 +33,12 @@ export type CategoryCountType = {
   [K in CategoryCountKey]: number;
 };
 
+export type Avatar = {
+  skin: number;
+  eyes: number;
+  mask: number;
+};
+
 export const getLabelFromKey = (key: CategoryCountKey): string => {
   const labelMap: Record<typeof key, string> = {
     economyCount: "경제",
@@ -121,16 +127,12 @@ export const changeInterests = async (categories: string[]) => {
   }
 };
 
-export const changeAvatar = async (
-  skin: number,
-  eyes: number,
-  mask: number
-) => {
+export const changeAvatar = async (avatar: Avatar) => {
   try {
     const response = await axiosInstance.put("user/update-avatar", {
-      skin: skin,
-      eyes: eyes,
-      mask: mask,
+      skin: avatar.skin,
+      eyes: avatar.eyes,
+      mask: avatar.mask,
     });
     return response.data;
   } catch (error) {

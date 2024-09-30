@@ -40,7 +40,7 @@ const MyPageCategory: React.FC = () => {
         </DataHeader>
         {(Object.entries(countData) as [CategoryCountKey, number][]).map(
           ([key, value], index, array) => (
-            <>
+            <div key={key}>
               <DataRow>
                 <DataLabel>{getLabelFromKey(key)}</DataLabel>
                 <DataValueContainer>
@@ -53,7 +53,7 @@ const MyPageCategory: React.FC = () => {
                 </DataValueContainer>
               </DataRow>
               {index < array.length - 1 && <Divider />}
-            </>
+            </div>
           )
         )}
       </DataContainer>

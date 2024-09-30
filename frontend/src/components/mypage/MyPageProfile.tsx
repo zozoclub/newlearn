@@ -10,6 +10,7 @@ import { calculateExperience } from "@utils/calculateExperience";
 import Avatar, { AvatarType } from "@components/common/Avatar";
 import { changeNickname, changeAvatar } from "@services/mypageService";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import LevelIcon from "@components/common/LevelIcon";
 
 const MyPageProfile: React.FC = () => {
   const queryClient = useQueryClient();
@@ -152,9 +153,10 @@ const MyPageProfile: React.FC = () => {
         </AvatarContainer>
         <ProfileInfoContainer>
           <NicknameContainer>
-            <div>
-              Lv {level} {nickname}
-            </div>
+            <LevelContainer>
+              <LevelIcon level={level} />
+              {nickname}
+            </LevelContainer>
             <EditIcon onClick={openModal} />
             <Modal
               isOpen={isModalOpen}
@@ -253,6 +255,11 @@ const ProfileInfoContainer = styled.div`
 `;
 
 // 닉네임
+const LevelContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+`;
 const NicknameContainer = styled.div`
   display: flex;
   font-size: 1.5rem;

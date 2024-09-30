@@ -19,7 +19,7 @@ const MyPageGrass = () => {
     }, 0);
   }, [grassData, currentYear]);
 
-  // Filter data for the current year
+  // 현재 년도 필터
   const currentYearData = React.useMemo(() => {
     return grassData.filter(
       (item) => new Date(item.date).getFullYear() === currentYear

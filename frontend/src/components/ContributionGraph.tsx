@@ -125,7 +125,7 @@ const ContributionGraph: React.FC<grassProps> = ({ data }) => {
                 <Day
                   key={week}
                   color={getColor(count)}
-                  title={`${formatDate(date)}: ${count}`}
+                  title={`${formatDate(date)} : ${count}건`}
                 />
               );
             })}

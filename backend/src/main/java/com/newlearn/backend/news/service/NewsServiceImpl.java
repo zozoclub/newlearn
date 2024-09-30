@@ -122,10 +122,7 @@ public class NewsServiceImpl implements NewsService{
 
 
     @Override
-    public NewsDetailResponseDTO getNewsDetail(Long userId, Long newsId, NewsDetailRequestDTO newsDetailRequestDTO) {
-        Users user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
-
+    public NewsDetailResponseDTO getNewsDetail(Users user, Long newsId, NewsDetailRequestDTO newsDetailRequestDTO) {
         News news = newsRepository.findById(newsId)
                 .orElseThrow(() -> new EntityNotFoundException("뉴스를 찾을 수 없습니다."));
 
@@ -153,7 +150,7 @@ public class NewsServiceImpl implements NewsService{
 
 
         // 뉴스 조회수 +1
-        news.incrementHit();
+        news.incrementHitIfFirstView(newsDetailRequestDTO.getIsFirstView());
         newsRepository.save(news);
 
         return NewsDetailResponseDTO.of(news, title, content, isScrapped, userNewsRead, words);

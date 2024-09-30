@@ -110,7 +110,8 @@ public class NewsController {
     public ApiResponse<?> getNewsDetail(Authentication authentication,
                                         @PathVariable("newsId") long newsId,
                                         @RequestParam("difficulty") int difficulty,
-                                        @RequestParam("lang") String lang) throws Exception {
+                                        @RequestParam("lang") String lang,
+                                        @RequestParam("isFirstView") boolean isViewed) throws Exception {
         try {
             Users user = userService.findByEmail(authentication.getName());
             if (user == null) {
@@ -120,9 +121,10 @@ public class NewsController {
             NewsDetailRequestDTO newsDetailRequestDTO = NewsDetailRequestDTO.builder()
                     .difficulty(difficulty)
                     .lang(lang)
+                    .isFirstView(isViewed)
                     .build();
 
-            NewsDetailResponseDTO newsDetailResponseDTO = newsService.getNewsDetail(user.getUserId(), newsId, newsDetailRequestDTO);
+            NewsDetailResponseDTO newsDetailResponseDTO = newsService.getNewsDetail(user, newsId, newsDetailRequestDTO);
 
             return ApiResponse.createSuccess(newsDetailResponseDTO, "뉴스 상세 조회 성공");
         } catch (Exception e) {

@@ -6,6 +6,7 @@ import com.newlearn.backend.news.dto.request.NewsDetailRequestDTO;
 import com.newlearn.backend.news.dto.request.NewsReadRequestDTO;
 import com.newlearn.backend.news.dto.response.NewsDetailResponseDTO;
 import com.newlearn.backend.news.dto.response.NewsResponseDTO;
+import com.newlearn.backend.user.model.Users;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -22,7 +23,7 @@ public interface NewsService {
     List<NewsResponseDTO> getTodayTopNewsList(Long userId, int difficulty, String lang);
 
     // 뉴스 상세 조회
-    NewsDetailResponseDTO getNewsDetail(Long userId, Long newsId, NewsDetailRequestDTO newsDetailRequestDTO);
+    NewsDetailResponseDTO getNewsDetail(Users user, Long newsId, NewsDetailRequestDTO newsDetailRequestDTO);
 
     // 뉴스 읽음 처리
     void readNews(Long userId, NewsReadRequestDTO newsReadRequestDTO);

@@ -105,8 +105,10 @@ public class News {
     }
 
     // 조회수 +1
-    public void incrementHit() {
-        this.hit++;
+    public void incrementHitIfFirstView(boolean isFirstView) {
+        if (isFirstView) {
+            this.hit++;
+        }
     }
 
 }

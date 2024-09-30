@@ -8,4 +8,5 @@ import lombok.Getter;
 public class NewsDetailRequestDTO {
     private Integer difficulty;
     private String lang;
+    private Boolean isFirstView;
 }

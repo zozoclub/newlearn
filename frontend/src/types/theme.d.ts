@@ -7,6 +7,7 @@ export type Theme = {
   colors: {
     background: string;
     cardBackground: string;
+    cardBackground01: string;
     primary: string;
     primaryPress: string;
     danger: string;

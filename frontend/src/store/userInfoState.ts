@@ -33,7 +33,7 @@ const userInfoState = atom<userInfoType>({
     name: "",
     provider: "",
     rank: 0,
-    difficulty: 0,
+    difficulty: 2,
     categories: [],
     experience: 0,
     totalNewsReadCount: 0,

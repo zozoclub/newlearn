@@ -10,13 +10,15 @@ import { useQuery } from "@tanstack/react-query";
 import { getTopNewsList } from "@services/newsService";
 import { useRecoilValue } from "recoil";
 import userInfoState from "@store/userInfoState";
+import languageState from "@store/languageState";
 
 const DailyNews: React.FC = () => {
   const userInfoData = useRecoilValue(userInfoState);
   const difficulty = userInfoData.difficulty;
+  const languageData = useRecoilValue(languageState);
   const { data: dailyNewsList } = useQuery({
     queryKey: ["dailyNewsList", difficulty],
-    queryFn: () => getTopNewsList(difficulty, "en"),
+    queryFn: () => getTopNewsList(difficulty, languageData),
   });
 
   return (

@@ -8,19 +8,23 @@ import {
   getTotalNewsList,
   NewsType,
 } from "@services/newsService";
+import { useRecoilValue } from "recoil";
+import languageState from "@store/languageState";
 
 const NewsList: React.FC<{ selectedCategory: number }> = ({
   selectedCategory,
 }) => {
+  const languageData = useRecoilValue(languageState);
   const { data: totalNewsList } = useQuery<NewsType[]>({
     queryKey: ["totalNewsList"],
-    queryFn: () => getTotalNewsList(1, "en", 1, 20),
+    queryFn: () => getTotalNewsList(2, languageData, 0, 20),
     enabled: selectedCategory === 0,
   });
 
   const { data: categoryNewsList } = useQuery<NewsType[]>({
     queryKey: ["categoryNewsList", selectedCategory],
-    queryFn: () => getCategoryNewsList(1, "en", 1, 20, selectedCategory),
+    queryFn: () =>
+      getCategoryNewsList(1, languageData, 1, 20, selectedCategory),
     enabled: selectedCategory !== 0,
   });
 

@@ -48,7 +48,10 @@ export const router = createBrowserRouter([
           {
             path: "news",
             element: <NewsPage />,
-            children: [{ path: "detail/:newsId", element: <NewsDetailPage /> }],
+          },
+          {
+            path: "news/detail/:newsId",
+            element: <NewsDetailPage />,
           },
           {
             path: "mypage",

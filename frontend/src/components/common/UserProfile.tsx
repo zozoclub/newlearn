@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import ProfileWidget from "@components/common/Profile";
 import { logout } from "@services/userService";
@@ -19,6 +19,27 @@ const UserProfile = () => {
     eyes: userInfoData.eyes,
     mask: userInfoData.mask,
   };
+
+  // 모달 외의 영역 클릭했을 때 모달 창 닫기
+  const modalRef = useRef<HTMLDivElement>(null);
+  const avatarRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        modalRef.current &&
+        !modalRef.current.contains(event.target as Node) &&
+        avatarRef.current &&
+        !avatarRef.current.contains(event.target as Node)
+      ) {
+        setIsOpened(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   async function handleLogoutButton() {
     try {
@@ -41,10 +62,11 @@ const UserProfile = () => {
       <ProfileAvatar
         $isInitialized={isInitialized}
         onClick={() => setIsOpened(!isOpened)}
+        ref={avatarRef}
       >
         {isInitialized && <Avatar avatar={avatar} size={3} />}
       </ProfileAvatar>
-      <UserProfileModal $isOpened={isOpened}>
+      <UserProfileModal $isOpened={isOpened} ref={modalRef}>
         <div className="tail"></div>
         <ProfileWidget />
         <div className="logout" onClick={handleLogoutButton}>

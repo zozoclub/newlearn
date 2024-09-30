@@ -8,6 +8,8 @@ export type userInfoType = {
   mask: number;
   email: string;
   nickname: string;
+  name: string;
+  provider: string;
   rank: number;
   difficulty: number;
   categories: string[];
@@ -28,8 +30,10 @@ const userInfoState = atom<userInfoType>({
     mask: 0,
     email: "",
     nickname: "",
+    name: "",
+    provider: "",
     rank: 0,
-    difficulty: 0,
+    difficulty: 2,
     categories: [],
     experience: 0,
     totalNewsReadCount: 0,

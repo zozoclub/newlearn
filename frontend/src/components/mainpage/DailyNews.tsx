@@ -1,3 +1,4 @@
+import React, { useMemo, Suspense } from "react";
 import styled from "styled-components";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Mousewheel, EffectCoverflow, Pagination } from "swiper/modules";
@@ -5,22 +6,29 @@ import "swiper/css";
 import "swiper/css/parallax";
 import "swiper/css/effect-coverflow";
 import "swiper/css/pagination";
-import NewsSlide from "./NewsSlide";
 import { useQuery } from "@tanstack/react-query";
 import { getTopNewsList } from "@services/newsService";
 import { useRecoilValue } from "recoil";
 import userInfoState from "@store/userInfoState";
+import languageState from "@store/languageState";
+
+const NewsSlide = React.lazy(() => import("./NewsSlide"));
 
 const DailyNews: React.FC = () => {
   const userInfoData = useRecoilValue(userInfoState);
   const difficulty = userInfoData.difficulty;
-  const { data: dailyNewsList } = useQuery({
-    queryKey: ["dailyNewsList", difficulty],
-    queryFn: () => getTopNewsList(difficulty, "en"),
+  const languageData = useRecoilValue(languageState);
+
+  const { data: dailyNewsList, isLoading } = useQuery({
+    queryKey: ["dailyNewsList", difficulty, languageData],
+    queryFn: () => getTopNewsList(difficulty, languageData),
+    staleTime: 5 * 60 * 1000, // 5분 동안 데이터를 신선한 상태로 유지
   });
 
-  return (
-    <Container>
+  const memoizedSwiper = useMemo(() => {
+    if (isLoading || !dailyNewsList) return null;
+
+    return (
       <Swiper
         loop={true}
         effect={"coverflow"}
@@ -40,18 +48,24 @@ const DailyNews: React.FC = () => {
         modules={[EffectCoverflow, Pagination, Mousewheel]}
         className="mySwiper"
       >
-        {dailyNewsList?.map((news, index) => (
-          <SwiperSlide key={index}>
-            <NewsSlide
-              image={news.thumbnailImageUrl}
-              title={news.title}
-              content={news.content}
-            />
+        {dailyNewsList.map((news) => (
+          <SwiperSlide key={news.newsId}>
+            <Suspense fallback={<div>Loading...</div>}>
+              <NewsSlide
+                image={news.thumbnailImageUrl}
+                title={news.title}
+                content={news.content}
+              />
+            </Suspense>
           </SwiperSlide>
         ))}
       </Swiper>
-    </Container>
-  );
+    );
+  }, [dailyNewsList, isLoading]);
+
+  if (isLoading) return <div>Loading news...</div>;
+
+  return <Container>{memoizedSwiper}</Container>;
 };
 
 const Container = styled.div`
@@ -77,6 +91,7 @@ const Container = styled.div`
     border-radius: 0.5rem;
     backdrop-filter: blur(4px);
     box-shadow: 0.5rem 0.5rem 0.25rem ${(props) => props.theme.colors.shadow};
+    transition: all 0.3s ease;
   }
 
   .swiper .swiper-slide::after {
@@ -106,14 +121,7 @@ const Container = styled.div`
   .swiper .swiper-slide:hover::after {
     width: 170px;
     height: 170px;
-    transition: width 0.3s ease, height 0.3s ease;
-  }
-  img {
-    width: 580px;
-    height: 380px;
-    border-radius: 0.5rem;
-    opacity: 0.9;
   }
 `;
 
-export default DailyNews;
+export default React.memo(DailyNews);

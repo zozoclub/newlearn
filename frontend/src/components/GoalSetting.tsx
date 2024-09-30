@@ -98,6 +98,8 @@ const GoalInput = styled.input`
   width: 60px;
   padding: 5px 0;
   margin: 0 0.25rem;
+
+  color: ${(props) => props.theme.colors.text};
   background-color: ${(props) => props.theme.colors.cardBackground};
   outline: none;
   border: none;

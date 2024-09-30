@@ -43,6 +43,7 @@ const Skin = styled.div<{ $url: string; $index: number }>`
   background-image: url(${(props) => props.$url});
   background-size: 1000% 100%;
   background-position: -${(props) => props.$index * 100}% 0%;
+  image-rendering: pixelated;
 `;
 
 const Eyes = styled.div<{ $url: string; $index: number }>`
@@ -52,6 +53,7 @@ const Eyes = styled.div<{ $url: string; $index: number }>`
   background-image: url(${(props) => props.$url});
   background-size: 900% 100%;
   background-position: -${(props) => props.$index * 100}% 0%;
+  image-rendering: pixelated;
 `;
 
 const Mask = styled.div<{ $url: string; $index: number }>`
@@ -62,6 +64,7 @@ const Mask = styled.div<{ $url: string; $index: number }>`
   background-size: 1000% 200%;
   background-position: -${(props) => (props.$index % 10) * 100}% -${(props) =>
       Math.floor(props.$index / 10) * 100}%;
+  image-rendering: pixelated;
 `;
 
 export default Avatar;

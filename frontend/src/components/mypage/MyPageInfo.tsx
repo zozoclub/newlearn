@@ -132,7 +132,6 @@ const MyPageInfo: React.FC = () => {
             <EditIcon onClick={openDifficultyModal} />
           </IconContainer>
         </Container>
-        <StyledHr />
         <Container>
           <TitleContainer>카테고리</TitleContainer>
           <ContentContainer>
@@ -212,13 +211,13 @@ export default MyPageInfo;
 const AllContainer = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
+  justify-content: space-evenly;
   height: 100%;
 `;
 
 const Container = styled.div`
   display: flex;
-  padding: 0.75em 1rem;
+  padding: 1rem;
 `;
 
 const TitleContainer = styled.div`
@@ -240,12 +239,12 @@ const IconContainer = styled.div`
   justify-content: flex-end;
 `;
 
-const StyledHr = styled.hr`
-  height: 0.5px;
-  margin: 0.5rem;
-  background-color: ${(props) => props.theme.colors.text04};
-  border: none;
-`;
+// const StyledHr = styled.hr`
+//   height: 0.5px;
+//   margin: 0.125rem;
+//   background-color: ${(props) => props.theme.colors.text04};
+//   border: none;
+// `;
 
 // 모달 버튼
 const ButtonContainer = styled.div`

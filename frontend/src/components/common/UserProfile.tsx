@@ -20,12 +20,16 @@ const UserProfile = () => {
     mask: userInfoData.mask,
   };
 
+  // 모달 외의 영역 클릭했을 때 모달 창 닫기
   const modalRef = useRef<HTMLDivElement>(null);
+  const avatarRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
         modalRef.current &&
-        !modalRef.current.contains(event.target as Node)
+        !modalRef.current.contains(event.target as Node) &&
+        avatarRef.current &&
+        !avatarRef.current.contains(event.target as Node)
       ) {
         setIsOpened(false);
       }
@@ -58,6 +62,7 @@ const UserProfile = () => {
       <ProfileAvatar
         $isInitialized={isInitialized}
         onClick={() => setIsOpened(!isOpened)}
+        ref={avatarRef}
       >
         {isInitialized && <Avatar avatar={avatar} size={3} />}
       </ProfileAvatar>

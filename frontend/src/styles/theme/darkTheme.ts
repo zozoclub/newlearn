@@ -9,6 +9,7 @@ export const darkTheme: Theme = {
   colors: {
     background: "#000000",
     cardBackground: "#333344",
+    cardBackground01: "#1a1925bd",
     primary: "#0099ff",
     primaryPress: "#62b7ff",
     danger: "#e9404f",

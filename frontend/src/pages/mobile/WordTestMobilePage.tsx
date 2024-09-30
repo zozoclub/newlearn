@@ -27,7 +27,7 @@ const WordTestMobilePage: React.FC = () => {
       postWordTestResult(wordTestResultDataSet),
     onSuccess: () => {
       console.log("결과 전달 완료");
-      navigate(`/wordtestresult/${data!.quizId}`);
+      navigate(`/word/result/${data!.quizId}`);
     },
   });
 
@@ -150,19 +150,19 @@ const WordTestMobilePage: React.FC = () => {
     return <ErrorText>에러가 발생했습니다. 다시 시도해 주세요.</ErrorText>;
 
   return (
-    <MainContainer>
-      <PageInfo>
+    <MobileMainContainer>
+      <MobilePageInfo>
         {currentPage} / {Math.ceil(quiz.length / questionsPerPage)}
-      </PageInfo>
+      </MobilePageInfo>
       {currentQuestions.map((q, index) => {
         inputRefs.current[index] = [];
         return (
-          <QuizContainer key={index}>
-            <Question>
+          <MobileQuizContainer key={index}>
+            <MobileQuestion>
               {indexOfFirstQuestion + index + 1}.{" "}
               {q.question.split("_".repeat(q.answer.length))[0]}
               {q.answer.split("").map((_, i) => (
-                <BlankInput
+                <MobileBlankInput
                   key={i}
                   type="text"
                   ref={(el) => (inputRefs.current[index][i] = el)}
@@ -173,28 +173,28 @@ const WordTestMobilePage: React.FC = () => {
                 />
               ))}
               {q.question.split("_".repeat(q.answer.length))[1]}
-            </Question>
-            <Translation>{q.translation}</Translation>
-          </QuizContainer>
+            </MobileQuestion>
+            <MobileTranslation>{q.translation}</MobileTranslation>
+          </MobileQuizContainer>
         );
       })}
 
-      <ButtonContainer>
-        <PageButton onClick={handlePrevPage} disabled={currentPage === 1}>
+      <MobileButtonContainer>
+        <MobilePageButton onClick={handlePrevPage} disabled={currentPage === 1}>
           이전
-        </PageButton>
-        <PageButton
+        </MobilePageButton>
+        <MobilePageButton
           onClick={handleNextPage}
           disabled={currentPage === Math.ceil(quiz.length / questionsPerPage)}
         >
           다음
-        </PageButton>
-      </ButtonContainer>
+        </MobilePageButton>
+      </MobileButtonContainer>
 
       {currentPage === Math.ceil(quiz.length / questionsPerPage) && (
-        <SubmitButtonContainer>
-          <SubmitButton onClick={handleWordDataSubmit}>제출</SubmitButton>
-        </SubmitButtonContainer>
+        <MobileSubmitButtonContainer>
+          <MobileSubmitButton onClick={handleWordDataSubmit}>제출</MobileSubmitButton>
+        </MobileSubmitButtonContainer>
       )}
       <Modal
         isOpen={isSubmitModal}
@@ -202,18 +202,18 @@ const WordTestMobilePage: React.FC = () => {
         title="Speaking Test"
       >
         <p>정말로 제출하시겠습니까?</p>
-        <ModalButtonContainer>
-          <ModalCancelButton onClick={closeSubmitModal}>취소</ModalCancelButton>
-          <ModalConfirmButton onClick={handleSubmit}>확인</ModalConfirmButton>
-        </ModalButtonContainer>
+        <MobileModalButtonContainer>
+          <MobileModalCancelButton onClick={closeSubmitModal}>취소</MobileModalCancelButton>
+          <MobileModalConfirmButton onClick={handleSubmit}>확인</MobileModalConfirmButton>
+        </MobileModalButtonContainer>
       </Modal>
-    </MainContainer>
+    </MobileMainContainer>
   );
 };
 
 export default WordTestMobilePage;
 
-const MainContainer = styled.div`
+const MobileMainContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -227,31 +227,31 @@ const MainContainer = styled.div`
   box-shadow: 0 4px 10px ${(props) => props.theme.colors.shadow};
 `;
 
-const PageInfo = styled.div`
+const MobilePageInfo = styled.div`
   font-size: 1rem;
   font-weight: bold;
   margin-bottom: 1rem;
 `;
 
-const QuizContainer = styled.div`
+const MobileQuizContainer = styled.div`
   width: 100%;
   margin-bottom: 1rem;
   text-align: left;
 `;
 
-const Question = styled.div`
+const MobileQuestion = styled.div`
   font-size: 1rem;
   font-weight: bold;
   display: flex;
   align-items: center;
 `;
 
-const Translation = styled.div`
+const MobileTranslation = styled.div`
   font-size: 0.875rem;
   margin-bottom: 0.5rem;
 `;
 
-const BlankInput = styled.input`
+const MobileBlankInput = styled.input`
   width: 1.5rem;
   padding: 0.25rem;
   margin: 0 0.125rem;
@@ -268,14 +268,14 @@ const BlankInput = styled.input`
   }
 `;
 
-const ButtonContainer = styled.div`
+const MobileButtonContainer = styled.div`
   display: flex;
   justify-content: space-between;
   width: 100%;
   margin-top: 1.5rem;
 `;
 
-const PageButton = styled.button`
+const MobilePageButton = styled.button`
   padding: 0.75rem 1.5rem;
   font-size: 0.875rem;
   background-color: ${(props) => props.theme.colors.primary};
@@ -294,27 +294,27 @@ const PageButton = styled.button`
   }
 `;
 
-const SubmitButtonContainer = styled.div`
+const MobileSubmitButtonContainer = styled.div`
   display: flex;
   justify-content: center;
   width: 100%;
   margin-top: 1.5rem;
 `;
 
-const SubmitButton = styled(PageButton)`
+const MobileSubmitButton = styled(MobilePageButton)`
   background-color: ${(props) => props.theme.colors.primary};
   &:hover {
     background-color: ${(props) => props.theme.colors.primaryPress};
   }
 `;
 
-const ModalButtonContainer = styled.div`
+const MobileModalButtonContainer = styled.div`
   display: flex;
   justify-content: space-between;
   margin-top: 2rem;
 `;
 
-const ModalCancelButton = styled.button`
+const MobileModalCancelButton = styled.button`
   padding: 0.5rem 1.5rem;
   background-color: ${(props) => props.theme.colors.placeholder};
   color: white;
@@ -326,7 +326,7 @@ const ModalCancelButton = styled.button`
     background-color: ${(props) => props.theme.colors.danger};
   }
 `;
-const ModalConfirmButton = styled.button`
+const MobileModalConfirmButton = styled.button`
   padding: 0.5rem 1.5rem;
   background-color: ${(props) => props.theme.colors.primary};
   color: white;

@@ -31,11 +31,11 @@ export const router = createBrowserRouter([
             element: <MainPage />,
           },
           {
-            path: "speak",
+            path: "speakingtest",
             element: <SpeakingTestPage />,
           },
           {
-            path: "speakresult/:audioFileId",
+            path: "speaking/result/:audioFileId",
             element: <SpeakingTestResultPage />,
           },
           {
@@ -43,7 +43,7 @@ export const router = createBrowserRouter([
             element: <WordTestPage />,
           },
           {
-            path: "wordtestresult/:quizId",
+            path: "word/result/:quizId",
             element: <WordTestResultPage />,
           },
           {

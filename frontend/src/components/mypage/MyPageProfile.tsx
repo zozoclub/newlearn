@@ -27,8 +27,8 @@ const MyPageProfile: React.FC = () => {
   const expPercentage = calculatedExperience.percentage;
 
   // 유저 OAuth 정보
-  const name = "허세령";
-  const social = "네이버";
+  const name = userInfo.name;
+  const social = userInfo.provider;
   const email = userInfo.email;
 
   // 아바타
@@ -50,7 +50,7 @@ const MyPageProfile: React.FC = () => {
   };
   const closeModal = () => {
     setIsModalOpen(false);
-    setTempNickname(nickname);
+    setTempNickname(tempNickname);
   };
 
   // 닉네임 설정
@@ -84,7 +84,7 @@ const MyPageProfile: React.FC = () => {
     <div>
       <Container>
         <AvatarContainer>
-          <Avatar avatar={avatar} size={8} />
+          <Avatar avatar={avatar} size={9} />
         </AvatarContainer>
         <ProfileInfoContainer>
           <NicknameContainer>
@@ -120,9 +120,9 @@ const MyPageProfile: React.FC = () => {
           </ExperienceContainer>
           <SocialInfoContainer>
             {name}
-            {social === "네이버" ? <SocialNaver /> : <SocialKakao />}
+            {social === "naver" ? <SocialNaver /> : <SocialKakao />}
+            {email}
           </SocialInfoContainer>
-          <SocialInfoContainer>{email}</SocialInfoContainer>
         </ProfileInfoContainer>
       </Container>
     </div>
@@ -139,14 +139,15 @@ const Container = styled.div`
 
 const AvatarContainer = styled.div`
   width: 100%;
-  height: 8rem;
+  height: 100%;
 `;
 
 const ProfileInfoContainer = styled.div`
-  margin: 1rem 0;
+  margin: 1rem 0 0.5rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  gap: 1rem;
 `;
 
 // 닉네임
@@ -164,7 +165,7 @@ const NicknameEditInput = styled.input`
   max-width: 200px;
 
   margin: 0 auto 2rem;
-  padding: 0.25rem;
+  padding: 0.5rem;
 
   color: ${(props) => props.theme.colors.text};
   background-color: ${(props) => props.theme.colors.cardBackground};

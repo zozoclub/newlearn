@@ -2,8 +2,12 @@ import styled from "styled-components";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import { getScrapNewsList, ScrapNewsType } from "@services/mypageService";
+import {
+  getScrapNewsList,
+  ScrapNewsResponseType,
+} from "@services/mypageService";
 import MyPageScrapNewsItem from "@components/mypage/MyPageScrapNewsItem";
+import Spinner from "@components/Spinner";
 
 const MyPageScrapNews = () => {
   const navigate = useNavigate();
@@ -11,11 +15,17 @@ const MyPageScrapNews = () => {
   const [selectedDifficulty, setSelectedDifficulty] = useState(1);
   const difficultyList = [{ name: "초급" }, { name: "중급" }, { name: "고급" }];
 
-  const { data: scrapNewsData } = useQuery<ScrapNewsType[]>({
+  const { data: scrapNewsData, isLoading } = useQuery<ScrapNewsResponseType>({
     queryKey: ["scrapNewsData", selectedDifficulty],
-    queryFn: () => getScrapNewsList(selectedDifficulty, 20, 1),
+    queryFn: () => getScrapNewsList(selectedDifficulty, 20, 0),
   });
 
+  if (isLoading)
+    <div>
+      <Spinner />
+    </div>;
+  const scrapNewsContent = scrapNewsData ? scrapNewsData.content : [];
+  const scrapNewsCount = scrapNewsData ? scrapNewsData.totalElements : 0;
   const handleGoToNews = () => {
     navigate("/news");
   };
@@ -23,7 +33,10 @@ const MyPageScrapNews = () => {
   return (
     <div>
       <HeaderContainer>
-        내가 스크랩한 뉴스
+        <ScrapNewsTitle>
+          내가 스크랩한 뉴스
+          <ScrapNewsCount>{scrapNewsCount}</ScrapNewsCount>
+        </ScrapNewsTitle>
         <DifficultyContainer>
           {difficultyList.map((difficulty, index) => (
             <DifficultyItem
@@ -39,8 +52,10 @@ const MyPageScrapNews = () => {
         </DifficultyContainer>
       </HeaderContainer>
       <NewsListContainer>
-        {scrapNewsData && scrapNewsData.length > 0 ? (
-          scrapNewsData.map((news) => (
+        {isLoading ? (
+          <Spinner />
+        ) : scrapNewsContent.length > 0 ? (
+          scrapNewsContent.map((news) => (
             <MyPageScrapNewsItem key={news.newsId} news={news} />
           ))
         ) : (
@@ -59,8 +74,20 @@ export default MyPageScrapNews;
 const HeaderContainer = styled.div`
   display: flex;
   justify-content: space-between;
+  margin: 0 0 1.5rem;
   font-weight: bold;
   font-size: 1.5rem;
+`;
+
+const ScrapNewsTitle = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+`;
+
+const ScrapNewsCount = styled.div`
+  color: ${(props) => props.theme.colors.text + "AA"};
+  font-size: 1.25rem;
 `;
 
 const DifficultyContainer = styled.div`
@@ -95,6 +122,7 @@ const FocusEffect = styled.div<{ $difficultyId: number }>`
 
 const NewsListContainer = styled.div`
   column-gap: 0.5rem;
+  margin: 1rem 0;
 `;
 
 const NoNewsContainer = styled.div`
@@ -115,4 +143,5 @@ const GoNewsButton = styled.button`
   border-radius: 1rem;
   font-size: 1.25rem;
   font-weight: bold;
+  cursor: pointer;
 `;

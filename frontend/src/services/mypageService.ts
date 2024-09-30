@@ -1,5 +1,10 @@
 import axiosInstance from "./axiosInstance";
 
+export type ScrapNewsResponseType = {
+  content: ScrapNewsType[];
+  totalElements: number;
+};
+
 export type ScrapNewsType = {
   newsId: number;
   title: string;
@@ -44,7 +49,7 @@ export const getScrapNewsList = async (
   difficulty: number,
   size: number,
   page: number
-): Promise<ScrapNewsType[]> => {
+): Promise<ScrapNewsResponseType> => {
   try {
     const response = await axiosInstance.get(`mypage/news/${difficulty}`, {
       params: {

@@ -143,11 +143,20 @@ public class NewsServiceImpl implements NewsService{
                 .map(wordSentence -> new WordInfo(wordSentence.getWord().getWord(), wordSentence.getSentence()))
                 .collect(Collectors.toList());
 
+        // 뉴스 읽음 여부
+        UserNewsRead userNewsRead = userNewsReadRepository.findByUserAndNews(user, news)
+                .orElseGet(() -> UserNewsRead.builder()
+                        .user(user)
+                        .news(news)
+                        .categoryId(news.getCategory().getCategoryId())
+                        .build());
+
+
         // 뉴스 조회수 +1
         news.incrementHit();
         newsRepository.save(news);
 
-        return NewsDetailResponseDTO.of(news, title, content, isScrapped, words);
+        return NewsDetailResponseDTO.of(news, title, content, isScrapped, userNewsRead, words);
     }
 
     @Override

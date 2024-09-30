@@ -4,7 +4,7 @@ import styled from "styled-components";
 
 import speakingTestIcon from "@assets/icons/mobile/speakingTestIcon.png";
 
-const WordTestIntroMobilePage: React.FC = () => {
+const SpeakingTestIntroModalMobilePage: React.FC = () => {
   const navigate = useNavigate();
   
   const handleStartSpeakingTest = () => {
@@ -32,7 +32,7 @@ const WordTestIntroMobilePage: React.FC = () => {
   );
 };
 
-export default WordTestIntroMobilePage;
+export default SpeakingTestIntroModalMobilePage;
 
 const MainContainer = styled.div`
   display: flex;

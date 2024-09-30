@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import levelIconsImage from "@assets/images/levelIcon.png";
+import levelIconsImage from "@assets/images/levelIcon.svg";
 
 interface LevelIconProps {
   level: number;

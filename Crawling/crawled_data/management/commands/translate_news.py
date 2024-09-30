@@ -18,11 +18,13 @@ def translate_news(title, content, domain="general", style="formal"):
     # 번역 로직은 기존과 동일합니다.
     prompt = (f"Title: {title}. Content: {content}. "
               f"Please translate this information accurately into English according to the following guidelines. You can skip translating any information unrelated to the article content (e.g., names of journalists or newspapers).\n"
+              f"1. Translate the title i English"
               f"1. Translate the content into three levels of difficulty (hard, medium, easy) in English.\n"
               f"2. Periods should only be used at the end of a sentence.\n"
               f"3. Do not use any special characters except for periods at the end of sentences. For example, avoid using quotation marks (' or \").\n"
               f"4. Provide the translated content in the following JSON format:\n"
               f"{{ "
+              f"   \"title_eng\": \"...\", "
               f"   \"high\": \"...\", "
               f"   \"medium\": \"...\", "
               f"   \"low\": \"...\""
@@ -30,29 +32,35 @@ def translate_news(title, content, domain="general", style="formal"):
 
     response = model.generate_content(prompt)
 
+    if not response.candidates:
+        logging.error("API 응답이 없습니다. 요청이 차단되었을 수 있습니다.")
+        return None
     try:
         response_text = response.text
 
+        title_eng_start = response_text.find('"title_eng": "') + 14
         high_start = response_text.find('"high": "') + 9
         medium_start = response_text.find('"medium": "') + 11
         low_start = response_text.find('"low": "') + 8
 
+        title_eng_end = response_text.find('",', title_eng_start)
         high_end = response_text.find('",', high_start)
         medium_end = response_text.find('",', medium_start)
         low_end = response_text.find('"', low_start)
 
         if high_start == 8 or medium_start == 10 or low_start == 7 or \
-                high_end == -1 or medium_end == -1 or low_end == -1:
+                high_end == -1 or medium_end == -1 or low_end == -1 or title_eng_start == 13 or title_eng_end == -1:
             logging.warning("번역 결과 누락")
             return None
 
+        title_eng = response_text[title_eng_start:title_eng_end].strip().replace('\\', '')
         high_translation = response_text[high_start:high_end].strip().replace('\\', '')
         medium_translation = response_text[medium_start:medium_end].strip().replace('\\', '')
         low_translation = response_text[low_start:low_end].strip().replace('\\', '')
-        print(high_translation)
-        print(medium_translation)
-        print(low_translation)
+
+
         return {
+            "title_eng": title_eng,
             "high": high_translation,
             "medium": medium_translation,
             "low": low_translation,
@@ -103,7 +111,6 @@ def translate_to_korean(sentences):
             sentence = sentence.replace('"', '')
             sentence = sentence.replace('\\', '')
             sentence = sentence.replace('..', '.')
-            print(sentence)
             processed_sentences.append(sentence)
 
         final_result = ' '.join(processed_sentences).strip()
@@ -130,17 +137,16 @@ def translate_csv(filename, output_filename, chunksize=5):
 
     for chunk in reader:
         for index, row in chunk.iterrows():
-            print(f"Processing row: {index}")
 
             # 영어 번역
             result = translate_news(row['title'], row['content'])
 
             if result:
+                chunk.loc[index, 'title_eng'] = result.get('title_eng', '')
                 chunk.loc[index, 'translated_high'] = result.get('high', '')
                 chunk.loc[index, 'translated_medium'] = result.get('medium', '')
                 chunk.loc[index, 'translated_low'] = result.get('low', '')
 
-                # 번역된 영어 문장을 한국어로 변환
                 high_sentences = result.get('high', '').split('.')
                 medium_sentences = result.get('medium', '').split('.')
                 low_sentences = result.get('low', '').split('.')
@@ -169,6 +175,7 @@ def translate_csv(filename, output_filename, chunksize=5):
                     chunk.loc[index, 'translated_low_kor'] = ''
 
             else:
+                chunk.loc[index, 'title_eng'] = ''
                 chunk.loc[index, 'translated_high'] = ''
                 chunk.loc[index, 'translated_medium'] = ''
                 chunk.loc[index, 'translated_low'] = ''

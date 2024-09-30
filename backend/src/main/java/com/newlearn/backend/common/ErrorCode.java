@@ -27,6 +27,8 @@ public enum ErrorCode {
 	EMAIL_ALREADY_EXIST("U011", HttpStatus.BAD_REQUEST, "이미 존재하는 이메일입니다."),
 	NICKNAME_ALREADY_USED("U012", HttpStatus.BAD_REQUEST, "닉네임 중복 조회에 실패했습니다."),
 	NICKNAME_NOT_FOUND("U013", HttpStatus.BAD_REQUEST, "닉네임 조회에 실패했습니다."),
+	USER_GRASS_FAILED("U014", HttpStatus.BAD_REQUEST, "유저 잔디 조회에 실패했습니다."),
+	USER_NEWS_CHART_FAILED("U015", HttpStatus.BAD_REQUEST, "유저 카테고리 차트 조회에 실패했습니다."),
 
 	// Unauthorized
 	AUTHENTICATION_FAILED("A001", HttpStatus.UNAUTHORIZED, "인증에 실패했습니다."),
@@ -36,6 +38,9 @@ public enum ErrorCode {
 	REFRESH_TOKEN_EXPIRED("A005", HttpStatus.UNAUTHORIZED, "Refresh Token이 만료되었습니다."),
 	REFRESH_TOKEN_BLACKLISTED("A006", HttpStatus.UNAUTHORIZED, "블랙리스트에 등록된 Refresh Token입니다."),
 	REFRESH_TOKEN_NOT_FOUND("A007", HttpStatus.UNAUTHORIZED, "Refresh Token을 찾을 수 없습니다."),
+
+	// AWS S3
+	AWS_SERVER_ERROR("A008", HttpStatus.BAD_REQUEST, "AWS S3 서버 에러가 발생했습니다."),
 
 	// File Error
 	FILE_UPLOAD_FAILED("F001", HttpStatus.INTERNAL_SERVER_ERROR, "파일 업로드에 실패했습니다."),
@@ -48,8 +53,32 @@ public enum ErrorCode {
 	GOAL_ALREADY_EXISTS("S002", HttpStatus.BAD_REQUEST, "목표가 이미 존재합니다."),
 	STUDY_PROGRESS_NOT_FOUND("S003", HttpStatus.NOT_FOUND, "학습 진도율 정보를 찾을 수 없습니다."),
 	WORD_TEST_NOT_FOUND("S004", HttpStatus.NOT_FOUND, "단어 테스트 문제를 찾을 수 없습니다."),
-	WORD_TEST_RESULT_CREATE_FAILED("S005", HttpStatus.BAD_REQUEST, "단어 테스트 결과 저장에 실패했습니다."),
-	PRONOUNCE_TEST_NOT_FOUND("S006", HttpStatus.NOT_FOUND, "발음 테스트 문제를 찾을 수 없습니다."),
+	PRONOUNCE_TEST_TOO_SMALL("S011", HttpStatus.BAD_REQUEST, "단어장의 단어 개수가 적습니다."),
+	WORD_TEST_RESULT_CREATE_FAILED("S006", HttpStatus.BAD_REQUEST, "단어 테스트 결과 저장에 실패했습니다."),
+	WORD_TEST_RESULT_NOT_FOUND("S007", HttpStatus.NOT_FOUND, "단어 테스트 결과 리스트를 찾을 수 없습니다."),
+	WORD_TEST_EXIT_ERROR("S011", HttpStatus.BAD_REQUEST, "단어 테스트 퇴장에 실패했습니다."),
+	PRONOUNCE_TEST_NOT_FOUND("S008", HttpStatus.NOT_FOUND, "발음 테스트 문제를 찾을 수 없습니다."),
+	PRONOUNCE_TEST_RESULT_UPDATE_FAILED("S009", HttpStatus.BAD_REQUEST, "발음 테스트 결과 저장에 실패했습니다."),
+	PRONOUNCE_TEST_RESULT_NOT_FOUND("S010", HttpStatus.NOT_FOUND, "발음 테스트 결과 리스트를 찾을 수 없습니다."),
+
+
+	// Word Error
+	WORD_CREATE_FAILED("W001", HttpStatus.BAD_REQUEST, "단어를 추가할 수 없습니다"),
+	WORD_FIND_FAILED("W002", HttpStatus.BAD_REQUEST, "단어 목록을 찾을 수 없습니다"),
+	WORD_DELETE_FAILED("W003", HttpStatus.BAD_REQUEST, "단어를 삭제할 수 없습니다"),
+	WORD_UPDATE_FAILED("W004", HttpStatus.BAD_REQUEST, "단어 외움 변경을 할 수 없습니다."),
+
+	// Rank Error
+	POINT_RANK_NOT_FOUND("R001", HttpStatus.NOT_FOUND, "포인트 랭킹 조회 성공"),
+	NEWS_READ_RANK_NOT_FOUND("R002", HttpStatus.NOT_FOUND, "뉴스 읽음 랭킹 조회 성공"),
+
+
+	// News Error
+	NEWS_LIST_NOT_FOUND("N001", HttpStatus.NOT_FOUND, "뉴스 목록 불러오기에 실패하였습니다."),
+	NEWS_NOT_FOUND("N002", HttpStatus.NOT_FOUND, "뉴스 상세 조회에 실패하였습니다."),
+	NEWS_READ_FAILED("N003", HttpStatus.BAD_REQUEST, "뉴스 읽음 처리에 실패하였습니다."),
+	NEWS_SCRAP_FAILED("N004", HttpStatus.BAD_REQUEST, "뉴스 스크랩 처리에 실패하였습니다."),
+	NEWS_SCRAP_CANCEL_FAILED("N005", HttpStatus.BAD_REQUEST, "뉴스 스크랩 삭제에 실패하였습니다."),
 	;
 
 	private final String code;

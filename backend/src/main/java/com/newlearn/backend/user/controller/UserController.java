@@ -23,6 +23,7 @@ import com.newlearn.backend.user.dto.request.UpdateDifficultyRequestDTO;
 import com.newlearn.backend.user.dto.request.UpdateNicknameRequestDto;
 import com.newlearn.backend.user.dto.response.LoginResponseDTO;
 import com.newlearn.backend.user.dto.response.RefreshTokenResponseDTO;
+import com.newlearn.backend.user.dto.response.UserProfileResponseDTO;
 import com.newlearn.backend.user.model.Users;
 import com.newlearn.backend.user.service.TokenService;
 import com.newlearn.backend.user.service.UserService;
@@ -59,7 +60,7 @@ public class UserController {
 	//아바타 수정
 	@PutMapping("/update-avatar")
 	public ApiResponse<?> updateAvatar(Authentication authentication, @RequestBody UpdateAvatarDTO updateAvatarDTO) throws
-		Exception {
+			Exception {
 		try {
 			Users user = userService.findByEmail(authentication.getName());
 			if(user == null) {
@@ -76,17 +77,20 @@ public class UserController {
 	//로그아웃
 	@PostMapping("/logout")
 	public ApiResponse<?> logout(HttpServletRequest request, HttpServletResponse response) {
+		System.out.println("들어온다 이십부레");
 		try {
 			String refreshToken = extractRefreshToken(request);
-
+			System.out.println(refreshToken);
 			if (refreshToken != null && jwtTokenProvider.validateToken(refreshToken)) {
 				tokenService.blacklistRefreshToken(refreshToken);
-
+				System.out.println("hell 들어오냐?ㅅ비");
 				Cookie cookie = new Cookie("refreshToken", null);
 				cookie.setMaxAge(0);
 				cookie.setPath("/");
 				response.addCookie(cookie);
+
 			}
+
 			return ApiResponse.createSuccess(null, "로그아웃이 완료되었습니다.");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -108,9 +112,10 @@ public class UserController {
 
 	@PostMapping("/refresh-token")
 	public ApiResponse<?> refreshToken(@CookieValue(name = "refreshToken", required = false) String refreshToken,
-		HttpServletResponse response) throws Exception {
+									   HttpServletResponse response) throws Exception {
 		try {
-			if(refreshToken != null || refreshToken.isEmpty()) {
+			System.out.println(refreshToken);
+			if(refreshToken == null || refreshToken.isEmpty()) {
 				return ApiResponse.createError(ErrorCode.REFRESH_TOKEN_NOT_FOUND);
 			}
 
@@ -123,13 +128,13 @@ public class UserController {
 			String newRefreshToken = responseDTO.getRefreshToken();
 
 			ResponseCookie responseCookie = ResponseCookie.from("refreshToken", newRefreshToken)
-				.httpOnly(true)
-				.secure(true)
-				.maxAge(60*60*24*14)
-				.path("/")
-				.sameSite("None")
-				.domain("j11d105.p.ssafy.io")
-				.build();
+					.httpOnly(true)
+					.secure(true)
+					.maxAge(60*60*24*14)
+					.path("/")
+					.sameSite("None")
+					.domain("j11d105.p.ssafy.io")
+					.build();
 
 			response.setHeader(HttpHeaders.SET_COOKIE, responseCookie.toString());
 
@@ -146,11 +151,23 @@ public class UserController {
 
 	@GetMapping("/profile")
 	public ApiResponse<?> getProfile(Authentication authentication) {
-		return null;
+		try {
+			Users user = userService.findByEmail(authentication.getName());
+			System.out.println(user);
+			if(user == null) {
+				return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
+			}
+
+			UserProfileResponseDTO dto = userService.getProfile(user.getUserId());
+			return ApiResponse.createSuccess(dto, "조회 성공 ");
+
+		} catch (Exception e) {
+			return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
+		}
 	}
 
 	@GetMapping("/check/{nickname}")
-	public ApiResponse<?> getNickname(@PathVariable(value = "nickname") String nickname) {
+	public ApiResponse<?> getNickname( @PathVariable(value = "nickname") String nickname) {
 		try {
 			boolean isDuplicate = userService.checkNickname(nickname);
 
@@ -167,10 +184,9 @@ public class UserController {
 			if (user == null) {
 				return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
 			}
-
 			String nickname = updateNicknameRequestDto.getNickname();
 
-			if(!userService.checkNickname(nickname)) {
+			if(userService.checkNickname(nickname)) {
 				return ApiResponse.createError(ErrorCode.NICKNAME_ALREADY_USED);
 			}
 			userService.updateNickname(user.getUserId(), nickname);

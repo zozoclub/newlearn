@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-wbljksz6!1k_3xxe!&c#*@f@x69@%686f#o(qb=re$)hc$1y)x
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 
 # Application definition
@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'crawled_data.apps.CrawledDataConfig',
+    'django_apscheduler',
 ]
 
 MIDDLEWARE = [
@@ -101,13 +102,38 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'level': 'DEBUG',  # crawled_data 로거의 로그를 출력하기 위해 DEBUG로 유지
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'ERROR',  # 루트 로거의 레벨을 ERROR로 설정
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'ERROR',  # django 로거의 레벨을 ERROR로 설정
+            'propagate': False,
+        },
+        'crawled_data': {
+            'handlers': ['console'],
+            'level': 'DEBUG',  # 당신의 로거는 DEBUG 레벨로 유지
+            'propagate': False,
+        },
+    },
+}
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Seoul'
 
 USE_I18N = True
 
@@ -124,6 +150,11 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# default
+APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"
+
+# 자동으로 스케쥴러 실행
+SCHEDULER_DEFAULT = True
 
 #######################################################
 
@@ -151,3 +182,13 @@ MONGO_USERNAME = env('MONGO_USERNAME')
 MONGO_PASSWORD = env('MONGO_PASSWORD')
 MONGO_DB_NAME = 'newlearn'
 MONGO_COLLECTION_NAME = 'news'
+
+S3_REGION = env('S3_REGION')
+S3_ACCESS_KEY = env('S3_ACCESS_KEY')
+S3_SECRET_KEY = env('S3_SECRET_KEY')
+
+MYSQL_HOST = env('MYSQL_HOST')
+MYSQL_USER = env('MYSQL_USER')
+MYSQL_PWD = env('MYSQL_PWD')
+MYSQL_DB_NAME = env('MYSQL_DB_NAME')
+MYSQL_PORT = 3306

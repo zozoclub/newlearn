@@ -41,3 +41,4 @@ public class Goal {
     @ColumnDefault("0")
     private Long currentCompleteWord = 0L;
 }
+

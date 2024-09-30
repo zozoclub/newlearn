@@ -7,6 +7,9 @@ import logging
 from django.core.management.base import BaseCommand
 from Crawling import settings
 
+# 로깅 설정
+logger = logging.getLogger(__name__)
+
 # Redis 및 MongoDB 연결 설정
 try:
     redis_client = redis.StrictRedis(
@@ -19,17 +22,17 @@ try:
 
     # Redis ping 테스트
     response = redis_client.ping()
-    print(f"Redis 연결 성공: {response}")
+    logger.info(f"Redis 연결 성공: {response}")
 except redis.ConnectionError as e:
-    print(f"Redis 연결 실패: {e}")
+    logger.error(f"Redis 연결 실패: {e}")
 
 uri = f"mongodb://{settings.MONGO_USERNAME}:{settings.MONGO_PASSWORD}@{settings.MONGO_HOST}:{settings.MONGO_PORT}/newlearn?authSource=admin"
 client = MongoClient(uri)
 try:
     client.admin.command('ping')
-    print("MongoDB 연결 성공!")
+    logger.info("MongoDB 연결 성공!")
 except Exception as e:
-    print(f"MongoDB 연결 실패: {e}")
+    logger.error(f"MongoDB 연결 실패: {e}")
 
 db = client['newlearn']
 collection = db['news']
@@ -46,9 +49,10 @@ def process_translated_csv(filename, output_filename, chunksize=5):
         rows_to_add = []
 
         for index, row in chunk.iterrows():
-            print(f"Processing row: {index}")
+            logger.info(f"Processing row: {index}")
 
             url = row.get('url')
+            title_eng = row.get('title_eng')
             translated_high = row.get('translated_high')
             translated_medium = row.get('translated_medium')
             translated_low = row.get('translated_low')
@@ -57,40 +61,40 @@ def process_translated_csv(filename, output_filename, chunksize=5):
             translated_low_kor = row.get('translated_low_kor')
 
             if not url or pd.isna(translated_high) or pd.isna(translated_medium) or pd.isna(translated_low) or pd.isna(translated_high_kor) \
-                    or pd.isna(translated_medium_kor) or pd.isna(translated_low_kor):
-                print("필수 값이 비어 있음")
+                    or pd.isna(translated_medium_kor) or pd.isna(translated_low_kor) or pd.isna(title_eng):
+                logger.warning("필수 값이 비어 있음")
                 continue
 
             if isinstance(translated_high, str) and isinstance(translated_high_kor, str):
                 if len(translated_high.split('.')) != len(translated_high_kor.split('.')):
-                    print("high 문장 수 불일치")
+                    logger.warning("high 문장 수 불일치")
                     continue
             else:
-                print("high 필드가 유효하지 않음")
+                logger.warning("high 필드가 유효하지 않음")
                 continue
 
             if isinstance(translated_medium, str) and isinstance(translated_medium_kor, str):
                 if len(translated_medium.split('.')) != len(translated_medium_kor.split('.')):
-                    print("medium 문장 수 불일치")
+                    logger.warning("medium 문장 수 불일치")
                     continue
             else:
-                print("medium 필드가 유효하지 않음")
+                logger.warning("medium 필드가 유효하지 않음")
                 continue
 
             if isinstance(translated_low, str) and isinstance(translated_low_kor, str):
                 if len(translated_low.split('.')) != len(translated_low_kor.split('.')):
-                    print("low 문장 수 불일치")
+                    logger.warning("low 문장 수 불일치")
                     continue
             else:
-                print("low 필드가 유효하지 않음")
+                logger.warning("low 필드가 유효하지 않음")
                 continue
 
             if redis_client.exists(url):
-                print(f"이미 등록된 URL: {url}")
+                logger.info(f"이미 등록된 URL: {url}")
                 continue
             else:
                 redis_client.set(url, 1)
-
+                redis_client.expire(url, 432000)
                 row_dict = row.to_dict()
 
                 # numpy 타입 변환
@@ -107,7 +111,7 @@ def process_translated_csv(filename, output_filename, chunksize=5):
                 try:
                     collection.insert_one(row_dict)
                 except Exception as e:
-                    logging.error(f"MongoDB 삽입 오류: {e}")
+                    logger.error(f"MongoDB 삽입 오류: {e}")
 
                 rows_to_add.append(row)
 
@@ -127,4 +131,4 @@ class Command(BaseCommand):
         filename = options['filename']
         output = options['output']
         process_translated_csv(filename, output)
-        self.stdout.write(self.style.SUCCESS('성공적으로 처리했습니다.'))
+        logger.info('성공적으로 처리했습니다.')

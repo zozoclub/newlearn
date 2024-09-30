@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import com.newlearn.backend.word.model.Word;
@@ -31,6 +32,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Data
 @Entity
@@ -39,6 +41,7 @@ import lombok.Setter;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @EqualsAndHashCode(of = "userId")
+@ToString(exclude = {"avatar", "words"})
 public class Users {
 
 	@Id
@@ -94,7 +97,7 @@ public class Users {
 	private Set<Category> categories = new HashSet<>();
 
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<Word> words = new ArrayList<>();
+	private Set<Word> words = new HashSet<>();
 
 	@Column(name = "created_at", nullable = false, updatable = false,
 		insertable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
@@ -113,6 +116,31 @@ public class Users {
 
 	public void addWord(Word word) {
 		this.words.add(word);
-		word.setUser(this);
+
+		if (word.getUser() == null || word.getUser() != this) {
+			word.setUser(this);
+		}
+	}
+
+	public void removeWord(Word word) {
+		this.words.remove(word);
+		word.setUser(null); // 단어와의 연관 관계도 해제
+	}
+
+	// 조회수 +1
+	public void incrementNewsReadCnt() {
+		this.totalNewsReadCount++;
+	}
+	// 스크랩수 +1
+	public void incrementScrapCount() {
+		this.scrapCount++;
+	}
+	// 스크랩수 -1
+	public void decrementScrapCount() {
+		this.scrapCount--;
+	}
+	// 경험치
+	public void incrementExperience(Long experience) {
+		this.experience += experience;
 	}
 }

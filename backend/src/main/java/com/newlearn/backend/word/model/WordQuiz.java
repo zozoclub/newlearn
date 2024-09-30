@@ -1,6 +1,5 @@
 package com.newlearn.backend.word.model;
 
-import com.newlearn.backend.user.model.Users;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,9 +17,8 @@ public class WordQuiz {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long quizId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private Users user;
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
 
     @Column(name = "total_count")
     private Long totalCount;

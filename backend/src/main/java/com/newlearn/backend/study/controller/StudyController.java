@@ -137,7 +137,7 @@ public class StudyController {
                 return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
             }
 
-            WordTestResultDetailResponseDTO result = studyService.getWordTestResult(user.getUserId(), quizId);
+            List<WordTestResultDetailResponseDTO> result = studyService.getWordTestResult(user.getUserId(), quizId);
 
             return ApiResponse.createSuccess(result, "단어 테스트 결과 상세 조회 성공");
         } catch (Exception e) {

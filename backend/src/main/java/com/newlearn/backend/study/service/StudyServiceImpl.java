@@ -27,6 +27,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -53,30 +54,30 @@ public class StudyServiceImpl implements StudyService{
     @Override
     public void saveGoal(Long userId, GoalRequestDTO goalRequestDTO) {
         Goal goal = Goal.builder()
-            .userId(userId)
-            .goalReadNewsCount(goalRequestDTO.getGoalReadNewsCount())
-            .goalPronounceTestScore(goalRequestDTO.getGoalPronounceTestScore())
-            .goalCompleteWord(goalRequestDTO.getGoalCompleteWord())
-            .currentReadNewsCount(0L)
-            .currentPronounceTestScore(0L)
-            .currentCompleteWord(0L)
-            .build();
+                .userId(userId)
+                .goalReadNewsCount(goalRequestDTO.getGoalReadNewsCount())
+                .goalPronounceTestScore(goalRequestDTO.getGoalPronounceTestScore())
+                .goalCompleteWord(goalRequestDTO.getGoalCompleteWord())
+                .currentReadNewsCount(0L)
+                .currentPronounceTestScore(0L)
+                .currentCompleteWord(0L)
+                .build();
         studyRepository.save(goal);
     }
 
     @Override
     public StudyProgressDTO getStudyProgress(Long userId) {
         Goal goal = studyRepository.findByUserId(userId)
-            .orElseThrow(() -> new RuntimeException("목표가 없습니다."));
+                .orElseThrow(() -> new RuntimeException("목표가 없습니다."));
 
         return StudyProgressDTO.builder()
-            .goalReadNewsCount(goal.getGoalReadNewsCount())
-            .goalPronounceTestScore(goal.getGoalPronounceTestScore())
-            .goalCompleteWord(goal.getGoalCompleteWord())
-            .currentReadNewsCount(goal.getCurrentReadNewsCount())
-            .currentPronounceTestScore(goal.getCurrentPronounceTestScore())
-            .currentCompleteWord(goal.getCurrentCompleteWord())
-            .build();
+                .goalReadNewsCount(goal.getGoalReadNewsCount())
+                .goalPronounceTestScore(goal.getGoalPronounceTestScore())
+                .goalCompleteWord(goal.getGoalCompleteWord())
+                .currentReadNewsCount(goal.getCurrentReadNewsCount())
+                .currentPronounceTestScore(goal.getCurrentPronounceTestScore())
+                .currentCompleteWord(goal.getCurrentCompleteWord())
+                .build();
     }
 
     @Override
@@ -170,7 +171,7 @@ public class StudyServiceImpl implements StudyService{
     }
 
     @Override
-    public WordTestResultDetailResponseDTO getWordTestResult(Long userId, Long quizId) {
+    public List<WordTestResultDetailResponseDTO> getWordTestResult(Long userId, Long quizId) {
         // 퀴즈 가져오기
         WordQuiz quiz = wordQuizRepository.findById(quizId)
                 .orElseThrow(() -> new IllegalArgumentException("퀴즈를 찾을 수 없습니다."));
@@ -178,30 +179,38 @@ public class StudyServiceImpl implements StudyService{
         // 퀴즈 질문 가져오기
         List<WordQuizQuestion> questions = wordQuizQuestionRepository.findByWordQuiz(quiz);
 
-        // 결과 리스트는 하나의 질문과 답변만 포함
+        // 결과 리스트는 질문과 답변들을 포함
         if (questions.isEmpty()) {
             throw new IllegalArgumentException("퀴즈 질문이 없습니다.");
         }
 
-        WordQuizQuestion question = questions.get(0);
+        // 반환할 결과 리스트
+        List<WordTestResultDetailResponseDTO> resultList = new ArrayList<>();
 
-        // 해당 질문에 대한 답변 찾기
-        List<WordQuizAnswer> answers = wordQuizAnswerRepository.findByWordQuizQuestion_WordQuiz_QuizIdAndWordQuizQuestion_WordQuizQuestionId(quizId, question.getWordQuizQuestionId());
+        // 각 질문에 대해 처리
+        for (WordQuizQuestion question : questions) {
+            // 해당 질문에 대한 하나의 답변 가져오기
+            Optional<WordQuizAnswer> answerObj = wordQuizAnswerRepository.findByWordQuizQuestion_WordQuizQuestionId(question.getWordQuizQuestionId());
+            System.out.println(answerObj);
 
-        // 첫 번째 답변을 기준으로 결과 생성
-        String answer = answers.isEmpty() ? "" : answers.get(0).getAnswer();
-        boolean isCorrect = !answers.isEmpty() && answers.get(0).getIsCorrect();
+            // 답변이 없는 경우 빈 문자열과 false 설정
+            String answer = answerObj.map(WordQuizAnswer::getAnswer).orElse("");
+            boolean isCorrect = answerObj.map(WordQuizAnswer::getIsCorrect).orElse(false);
 
-        WordTestResultDetailResponseDTO resultDetail = WordTestResultDetailResponseDTO.builder()
-                .quizId(question.getWordQuizQuestionId())
-                .answer(answer)
-                .correctAnswer(question.getCorrectAnswer())
-                .isCorrect(isCorrect)
-                .sentence(question.getSentence())
-                .createdAt(quiz.getCreatedAt())
-                .build();
+            // DTO 빌드 및 리스트에 추가
+            WordTestResultDetailResponseDTO result = WordTestResultDetailResponseDTO.builder()
+                    .quizId(question.getWordQuizQuestionId())
+                    .answer(answer)
+                    .correctAnswer(question.getCorrectAnswer())
+                    .isCorrect(isCorrect)
+                    .sentence(question.getSentence())
+                    .createdAt(quiz.getCreatedAt())
+                    .build();
 
-        return resultDetail;
+            resultList.add(result);
+        }
+
+        return resultList;
     }
 
     @Override
@@ -222,10 +231,10 @@ public class StudyServiceImpl implements StudyService{
             WordSentence sentence = wordQuizQuestionRepository.findRandomSentenceByWordId(word.getWordId());
 
             tests.add(PronounceTestResponseDTO.builder()
-                            .sentenceId(sentence.getSentenceId())
-                            .sentence(sentence.getSentence())
-                            .sentenceMeaning(sentence.getSentenceMeaning())
-                            .build());
+                    .sentenceId(sentence.getSentenceId())
+                    .sentence(sentence.getSentence())
+                    .sentenceMeaning(sentence.getSentenceMeaning())
+                    .build());
         }
         return tests;
     }

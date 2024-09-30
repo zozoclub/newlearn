@@ -23,7 +23,7 @@ public interface StudyService {
 
     List<WordTestResultResponseDTO> getWordTestResults(Long userId);
 
-    WordTestResultDetailResponseDTO getWordTestResult(Long userId, Long quizId);
+    List<WordTestResultDetailResponseDTO> getWordTestResult(Long userId, Long quizId);
 
     void exitQuiz(Long quizId);
 

@@ -21,7 +21,7 @@ const SpeakingTestHistoryCardList: React.FC<Props> = ({
   const navigate = useNavigate();
 
   const intoDetailHandler = () => {
-    navigate(`/speakresult/${audioFileId}`);
+    navigate(`/speaking/result/${audioFileId}`);
   };
   const renderStamp = () => {
     if (score > 90) return <PerfectStamp />;

@@ -6,7 +6,7 @@ const StartSpeakingTestWidget: React.FC = () => {
   const navigate = useNavigate();
 
   const handleStartTest = () => {
-    navigate("/speak");
+    navigate("/speakingtest");
   };
   return (
     <WidgetContainer>

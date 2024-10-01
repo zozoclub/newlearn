@@ -4,6 +4,7 @@ import { Navigate, Outlet, useLocation } from "react-router-dom";
 import loginState from "@store/loginState";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { getRefreshToken } from "@services/axiosInstance";
+import { useMediaQuery } from "react-responsive";
 
 const useQuery = () => {
   return new URLSearchParams(useLocation().search);
@@ -14,6 +15,7 @@ const PrivateRoute = () => {
   const [isLoading, setIsLoading] = useState(true);
   const isLogin = useRecoilValue(loginState);
   const setLoginState = useSetRecoilState(loginState);
+  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
 
   useEffect(() => {
     const checkAuthentication = async () => {
@@ -63,7 +65,8 @@ const PrivateRoute = () => {
     return <div>Loading...</div>;
   }
 
-  return isLogin ? <Outlet /> : <Navigate to="/login" />;
+  // 모바일 여부에 따라 다른 로그인 페이지로 리다이렉트
+  return isLogin ? <Outlet /> : <Navigate to={isMobile ? "/m/login" : "/login"} />;
 };
 
 export default PrivateRoute;

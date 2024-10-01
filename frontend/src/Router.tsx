@@ -1,21 +1,22 @@
 import { createBrowserRouter } from "react-router-dom";
+import App from "./App";
+
 import MainPage from "@pages/MainPage";
 import SpeakingTestPage from "@pages/SpeakingTestPage";
 import SpeakingTestResultPage from "@pages/SpeakingTestResultPage";
 import WordTestPage from "@pages/WordTestPage";
 import WordTestResultPage from "@pages/WordTestResultPage";
-import NotFoundPage from "@pages/NotFoundPage";
-import MyPage from "@pages/MyPage";
-import App from "./App";
 import NewsPage from "@pages/NewsPage";
+import MyPage from "@pages/MyPage";
 import MyStudyPage from "@pages/MyStudyPage";
 import VocabularyPage from "@pages/VocabularyPage";
 import TestHistoryPage from "@pages/TestHistoryPage";
 import LoginPage from "@pages/LoginPage";
 import SignUpPage from "@pages/SignUpPage";
-import PrivateRoute from "@hooks/PrivateRoute";
 import LandingPage from "@pages/LandingPage";
 import NewsDetailPage from "@pages/NewsDetailPage";
+import NotFoundPage from "@pages/NotFoundPage";
+import PrivateRoute from "@hooks/PrivateRoute";
 
 export const router = createBrowserRouter([
   {
@@ -30,11 +31,11 @@ export const router = createBrowserRouter([
             element: <MainPage />,
           },
           {
-            path: "speak",
+            path: "speakingtest",
             element: <SpeakingTestPage />,
           },
           {
-            path: "speakresult/:audioFileId",
+            path: "speaking/result/:audioFileId",
             element: <SpeakingTestResultPage />,
           },
           {
@@ -42,7 +43,7 @@ export const router = createBrowserRouter([
             element: <WordTestPage />,
           },
           {
-            path: "wordtestresult/:quizId",
+            path: "word/result/:quizId",
             element: <WordTestResultPage />,
           },
           {

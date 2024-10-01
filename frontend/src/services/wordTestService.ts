@@ -75,7 +75,7 @@ export const getWordTestResultList = async (): Promise<
   WordTestResultListResponse[]
 > => {
   try {
-    const response = await axiosInstance.get(`study/word/test/list`);
+    const response = await axiosInstance.get(`study/word/test/result/list`);
 
     return response.data.data;
   } catch (error) {
@@ -103,8 +103,10 @@ export const getWordTestResultDetail = async (
   try {
     console.log(quizId);
 
-    const response = await axiosInstance.get(`study/word/test/${quizId}`);
-    console.log(response);
+    const response = await axiosInstance.get(
+      `study/word/test/result/${quizId}`
+    );
+    console.log(response.data.data);
     return response.data.data;
   } catch (error) {
     console.error("단어 문장 빈칸 테스트 결과 상세 조회 오류", error);

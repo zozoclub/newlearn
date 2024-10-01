@@ -2,13 +2,18 @@ import React, { useEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import locationState from "@store/locationState";
 import styled from "styled-components";
+import { useMediaQuery } from "react-responsive"; // 모바일 여부 감지
 
 import StartWordTestWidget from "@components/testpage/StartWordTestWidget";
 import StartSpeakingTestWidget from "@components/testpage/StartSpeakingTestWidget";
 import SpeakingTestHistory from "@components/testpage/SpeakingTestHistory";
 import WordTestHistory from "@components/testpage/WordTestHistory";
 
+// 모바일
+import TestIntroMobilePage from "./mobile/TestIntroMobilePage";
+
 const TestHistoryPage: React.FC = () => {
+  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const setCurrentLocation = useSetRecoilState(locationState);
   const [activeTab, setActiveTab] = useState("word");
 
@@ -19,7 +24,9 @@ const TestHistoryPage: React.FC = () => {
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
   };
-
+  if (isMobile) {
+    <TestIntroMobilePage />
+  }
   return (
     <Layout>
       <LeftContainer>

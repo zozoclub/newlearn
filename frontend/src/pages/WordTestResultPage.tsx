@@ -11,12 +11,33 @@ import PerfectStamp from "@assets/icons/PerfectStamp";
 import GreatStamp from "@assets/icons/GreatStamp";
 import GoodStamp from "@assets/icons/GoodStamp";
 import BadStamp from "@assets/icons/BadStamp";
+import { useQuery } from "@tanstack/react-query";
+import { useParams } from "react-router-dom";
+import {
+  getWordTestResultDetail,
+  WordTestResultDetailResponseDto,
+} from "@services/wordTestService";
+import Spinner from "@components/Spinner";
+import { useMediaQuery } from "react-responsive"; // 모바일 여부 감지
+
+import WordTestResultListMobilePage from "./mobile/WordTestResultListMobilePage";
 
 const WordTestResultPage: React.FC = () => {
+  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
+  const { quizId } = useParams<{ quizId: string }>();
   const setCurrentLocation = useSetRecoilState(locationState);
   useEffect(() => {
     setCurrentLocation("Word Test Page");
   }, [setCurrentLocation]);
+
+  const {
+    data: testDetail,
+    isLoading,
+    error,
+  } = useQuery<WordTestResultDetailResponseDto[]>({
+    queryKey: ["wordTestDetail", quizId],
+    queryFn: () => getWordTestResultDetail(Number(quizId)),
+  });
 
   const [currentWordIndex, setCurrentWordIndex] = useState<number>(0);
   const [currentWord, setCurrentWord] = useState<string>("");
@@ -116,6 +137,18 @@ const WordTestResultPage: React.FC = () => {
     return <BadStamp />;
   };
 
+  // 로딩 상태 처리
+  if (isLoading) return <Spinner />;
+
+  // 에러 상태 처리
+  if (error)
+    return <ErrorText>에러가 발생했습니다. 다시 시도해 주세요.</ErrorText>;
+
+  // testDetail이 null일 때
+  if (!testDetail) return <ErrorText>No data available.</ErrorText>;
+
+  // 모바일
+  if (isMobile) return <WordTestResultListMobilePage />;
   return (
     <MainLayout>
       <MainContainer>
@@ -217,5 +250,11 @@ const WordExplainContainer = styled.div`
   padding: 1rem;
   border-radius: 0.75rem;
   width: 100%;
+  text-align: center;
+`;
+
+const ErrorText = styled.div`
+  color: ${(props) => props.theme.colors.danger};
+  font-size: 1.25rem;
   text-align: center;
 `;

@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import styled, { useTheme } from "styled-components";
 import { Line } from "react-chartjs-2";
-
 import WordTestHistoryCardList from "@components/testpage/WordTestHistoryCardList";
 import { getWordTestResultList } from "@services/wordTestService";
 import { useQuery } from "@tanstack/react-query";
@@ -27,7 +26,7 @@ ChartJS.register(
   Legend
 );
 
-const WordTestHistory: React.FC = () => {
+const WordTestResultListMobilePage: React.FC = () => {
   const [wordNum] = useState<number>(89);
   const average = 90;
   const theme = useTheme();
@@ -107,32 +106,28 @@ const WordTestHistory: React.FC = () => {
 
   return (
     <MainContainer>
-      <Layout>
-        <InfoContainer>
-          <TitleText>최근 평균보다 많이 학습했어요!</TitleText>
-          <InfoText>
-            9월에 학습된 단어 개수 :
-            {wordNum ? (
-              wordNum >= average ? (
-                <InfoTextEmphasizeBlue>{wordNum}</InfoTextEmphasizeBlue>
-              ) : (
-                <InfoTextEmphasizeRed>{wordNum}</InfoTextEmphasizeRed>
-              )
-            ) : null}
-          </InfoText>
-          <StatsHistory>
-            <StatItem>테스트 횟수: 5회</StatItem>
-            <StatItem>맞춘 단어수: 80개</StatItem>
-            <StatItem>틀린 단어수: 10개</StatItem>
-          </StatsHistory>
-        </InfoContainer>
+      <ChartContainer>
+        <Line data={dateData} options={options} />
+      </ChartContainer>
 
-        <ChartContainer>
-          <Line data={dateData} options={options} />
-        </ChartContainer>
-      </Layout>
+      <InfoContainer>
+        <TitleText>최근 평균보다 많이 학습했어요!</TitleText>
+        <InfoText>
+          9월에 학습된 단어 개수 :
+          {wordNum >= average ? (
+            <InfoTextEmphasizeBlue>{wordNum}</InfoTextEmphasizeBlue>
+          ) : (
+            <InfoTextEmphasizeRed>{wordNum}</InfoTextEmphasizeRed>
+          )}
+        </InfoText>
+        <StatsHistory>
+          <StatItem>테스트 횟수: 5회</StatItem>
+          <StatItem>맞춘 단어수: 80개</StatItem>
+          <StatItem>틀린 단어수: 10개</StatItem>
+        </StatsHistory>
+      </InfoContainer>
 
-      {/* 고정된 높이 및 스크롤 가능한 영역 */}
+      {/* 테스트 결과 리스트 */}
       <ScrollableTestHistoryList>
         {cardData.map((data, index) => (
           <WordTestHistoryCardList
@@ -147,83 +142,75 @@ const WordTestHistory: React.FC = () => {
   );
 };
 
-export default WordTestHistory;
+export default WordTestResultListMobilePage;
 
 const MainContainer = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  padding: 2rem;
+  padding: 1rem;
   box-sizing: border-box;
-`;
-
-const Layout = styled.div`
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  margin-bottom: 2rem;
-`;
-
-const InfoContainer = styled.div`
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
 `;
 
 const ChartContainer = styled.div`
   width: 100%;
-  justify-content: center;
+  margin-bottom: 1rem;
+`;
+
+const InfoContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  width: 100%;
+  margin-bottom: 1.5rem;
 `;
 
 const TitleText = styled.h1`
-  font-size: 2rem;
+  font-size: 1.5rem;
   font-weight: 700;
   margin-bottom: 1rem;
 `;
 
 const InfoText = styled.p`
-  font-size: 1.25rem;
+  font-size: 1rem;
   font-weight: 600;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 `;
 
 const InfoTextEmphasizeRed = styled.span`
-  margin-left: 0.25rem;
-  font-size: 2rem;
+  font-size: 1.5rem;
   color: #ff6573;
 `;
 
 const InfoTextEmphasizeBlue = styled.span`
-  margin-left: 0.25rem;
-  font-size: 2rem;
+  font-size: 1.5rem;
   color: ${(props) => props.theme.colors.primary};
 `;
 
 const StatsHistory = styled.div`
   display: flex;
   flex-direction: column;
+  align-items: center;
+  font-size: 1rem;
+  margin-top: 0.5rem;
 `;
 
 const StatItem = styled.p`
-  font-size: 1rem;
+  font-size: 0.875rem;
   margin-bottom: 0.5rem;
 `;
 
 const ScrollableTestHistoryList = styled.div`
   display: flex;
-  flex-wrap: wrap;
-  justify-content: space-around;
-  width: 100%;
-  max-height: 300px;
-  overflow-y: auto; /* 세로 스크롤 가능 */
-  overflow-x: hidden; /* 좌우 스크롤 제거 */
+  flex-direction: column;
+  max-height: 400px;
+  overflow-y: auto;
   padding-top: 1rem;
-  padding-right: 1rem;
 `;
 
 const ErrorText = styled.div`
   color: ${(props) => props.theme.colors.danger};
   font-size: 1.25rem;
   text-align: center;
+  margin-top: 2rem;
 `;

@@ -51,6 +51,11 @@ const SpeakingTestPage: React.FC = () => {
           item.sentenceMeaning.trim().replace(/\.$/, "")
         )
         .join(". ");
+
+      // 백엔드에서 받은 문장의 ID 배열을 상태로 저장
+      const ids = data.map((item: PronounceTestListDto) => item.sentenceId);
+      setSentenceIds(ids);
+
       setReferenceText(text);
       setReferenceTextTranslate(translatedText);
     }
@@ -92,6 +97,9 @@ const SpeakingTestPage: React.FC = () => {
     import.meta.env.VITE_SPEECH_REGION
   );
 
+  // sentenceIds 저장
+  const [sentenceIds, setSentenceIds] = useState<number[]>([]);
+
   // 점수 측정용 변수
   const [isSubmitLoading, setIsSubmitLoading] = useState<boolean>(false);
 
@@ -122,7 +130,7 @@ const SpeakingTestPage: React.FC = () => {
       const { audioFileId } = data; // 응답에서 audioFileId 추출
       console.log("audioFileId:", audioFileId);
       // audioFileId를 결과 페이지로 전달
-      navigate(`/speakresult/${audioFileId}`);
+      navigate(`/speaking/result/${audioFileId}`);
     },
     onError: (mutationError) => {
       console.error("저장 에러", mutationError);
@@ -236,6 +244,7 @@ const SpeakingTestPage: React.FC = () => {
           accuracyScores.push(pronunciationResult.accuracyScore);
           fluencyScores.push(pronunciationResult.fluencyScore);
           prosodyScores.push(pronunciationResult.prosodyScore);
+          console.log("중간점수", pronunciationScores, accuracyScores, fluencyScores, prosodyScores);
 
           // 인식된 텍스트를 저장
           recognizedTexts.push(e.result.text);
@@ -277,11 +286,11 @@ const SpeakingTestPage: React.FC = () => {
 
       const completeness = (similarity * 100).toFixed(1);
       console.log("Completeness Score:", completeness);
-      console.log("파일 명 확인", audioFile);
-      console.log("파일 타입 확인", typeof audioFile);
+
+      console.log(sentenceIds);
 
       const results = {
-        sentenceIds: [1, 2, 3],
+        sentenceIds: sentenceIds,
         accuracyScore: Number(avgAccuracy),
         fluencyScore: Number(avgFluency),
         completenessScore: Number(completeness),
@@ -289,8 +298,11 @@ const SpeakingTestPage: React.FC = () => {
         totalScore: Number(avgPronunciation),
         files: audioFile,
       };
-      setIsSubmitLoading(false);
+
+      console.log(results);
+
       mutation.mutate(results);
+      setIsSubmitLoading(false);
     };
 
     reco.startContinuousRecognitionAsync(
@@ -434,7 +446,7 @@ const SubmitButton = styled.button<{ disabled: boolean }>`
 
   &:hover {
     background-color: ${(props) =>
-      props.disabled ? "#ccc" : props.theme.colors.primaryPress};
+    props.disabled ? "#ccc" : props.theme.colors.primaryPress};
   }
 `;
 

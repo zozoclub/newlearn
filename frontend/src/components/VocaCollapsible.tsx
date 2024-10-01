@@ -1,19 +1,19 @@
 import React, { useRef, useState } from "react";
-import { useNavigate } from "react-router-dom"; 
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import Modal from "./Modal";
 import { getWordDetail, WordDetailResponseDto } from "@services/wordMemorize";
 import { useQuery } from "@tanstack/react-query";
 import Spinner from "./Spinner";
 
-type CollapsibleProps = {
+type VocaCollapsibleProps = {
   title: string;
   meaning: string;
   isExpanded: boolean;
   onDelete: () => void;
 };
 
-const VocaCollapsible: React.FC<CollapsibleProps> = ({
+const VocaCollapsible: React.FC<VocaCollapsibleProps> = ({
   title,
   meaning,
   isExpanded,
@@ -21,7 +21,7 @@ const VocaCollapsible: React.FC<CollapsibleProps> = ({
 }) => {
   const [expanded, setExpanded] = useState<boolean>(isExpanded);
   const contentRef = useRef<HTMLDivElement>(null);
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   const { data, isLoading } = useQuery<WordDetailResponseDto>({
     queryKey: ["wordDetail", title],
@@ -45,6 +45,8 @@ const VocaCollapsible: React.FC<CollapsibleProps> = ({
     navigate(`/news/detail/${newsId}`);
   };
 
+  const currentHeight = expanded ? contentRef.current?.scrollHeight : 0;
+
   return (
     <>
       <ListItem>
@@ -56,7 +58,11 @@ const VocaCollapsible: React.FC<CollapsibleProps> = ({
           <Arrow $isExpanded={expanded}>▼</Arrow>
           <DeleteButton onClick={openDeleteModal}>&times;</DeleteButton>
         </Title>
-        <ContentContainer ref={contentRef} $isExpanded={expanded}>
+        <ContentContainer
+          ref={contentRef}
+          style={{ height: `${currentHeight}px` }}
+          $isExpanded={expanded}
+        >
           {isLoading ? (
             <Spinner />
           ) : (
@@ -141,15 +147,15 @@ const Arrow = styled.div<{ $isExpanded: boolean }>`
   margin-left: auto;
   margin-top: 0.15rem;
   margin-right: 1rem;
-  transform: ${({ $isExpanded }) => ($isExpanded ? "rotate(180deg)" : "rotate(0deg)")};
-  transition: transform 0.2s ease;
+  transform: ${({ $isExpanded }) =>
+    $isExpanded ? "rotate(180deg)" : "rotate(0deg)"};
+  transition: transform 0.3s ease;
 `;
 
 const ContentContainer = styled.div<{ $isExpanded: boolean }>`
   overflow: hidden;
-  transition: height 0.2s ease-in-out, opacity 0.2s ease-in-out;
+  transition: height 0.3s ease-in-out;
   height: ${({ $isExpanded }) => ($isExpanded ? "auto" : "0")};
-  opacity: ${({ $isExpanded }) => ($isExpanded ? 1 : 0)};
 `;
 
 const Content = styled.div`
@@ -171,14 +177,9 @@ const SentenceHeader = styled.div`
   margin-bottom: 0.5rem;
 `;
 
-// difficulty를 Chip 형태로 표시
 const DifficultyChip = styled.div<{ $difficulty: number }>`
-  background-color: ${(props) =>
-    props.$difficulty === 1
-      ? "#4caf50"
-      : props.$difficulty === 2
-        ? "#ff9800"
-        : "#f44336"}; /* 색상은 난이도에 따라 변경 */
+  background-color: ${({ $difficulty }) =>
+    $difficulty === 1 ? "#4caf50" : $difficulty === 2 ? "#ff9800" : "#f44336"};
   color: white;
   padding: 0.25rem 0.5rem;
   border-radius: 0.5rem;

@@ -46,17 +46,18 @@ export const postPronounceTestResult = async (
 
   // FormData 객체 생성
   const formData = new FormData();
-  pronounceTestResultDataSet.sentenceIds.forEach((id) => {
-    formData.append('sentenceIds', id.toString());
-  });
+  
   // FormData에 파일과 다른 데이터를 추가
   formData.append('files', pronounceTestResultDataSet.files);
-  // formData.append('sentenceIds', JSON.stringify(pronounceTestResultDataSet.sentenceIds));
+  formData.append('sentenceIds', JSON.stringify(pronounceTestResultDataSet.sentenceIds));
   formData.append('accuracyScore', pronounceTestResultDataSet.accuracyScore.toString());
   formData.append('fluencyScore', pronounceTestResultDataSet.fluencyScore.toString());
   formData.append('completenessScore', pronounceTestResultDataSet.completenessScore.toString());
   formData.append('prosodyScore', pronounceTestResultDataSet.prosodyScore.toString());
   formData.append('totalScore', pronounceTestResultDataSet.totalScore.toString());
+
+  console.log(formData);
+  
 
   try {
     const response = await axiosInstance.post(

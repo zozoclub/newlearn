@@ -31,6 +31,7 @@ const SpeakingTestPage: React.FC = () => {
   const { isLoading, error, data } = useQuery({
     queryKey: ["pronounceTestData"],
     queryFn: () => getPronounceTestList(),
+    refetchOnWindowFocus: false,
   });
 
   // 예문

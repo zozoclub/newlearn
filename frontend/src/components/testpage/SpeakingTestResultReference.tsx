@@ -22,11 +22,11 @@ const SpeakingTestResultReference: React.FC<Props> = ({
   useEffect(() => {
     return () => {
       if (synthesizer) {
-        synthesizer.close();
+        synthesizer.close(); // TTS 정지
         console.log("TTS 정지");
       }
       if (audioPlayer) {
-        audioPlayer.pause();
+        audioPlayer.pause(); // 클라이언트 음성 정지
         console.log("클라이언트 음성 정지");
       }
     };
@@ -39,8 +39,9 @@ const SpeakingTestResultReference: React.FC<Props> = ({
   speechConfig.speechSynthesisVoiceName = "en-US-JennyNeural";
   const audioConfig = sdk.AudioConfig.fromDefaultSpeakerOutput();
 
+  // TTS 음성 재생 핸들러
   const handleRead = (sentence: string) => {
-    if (isSpeaking || isAudioPlaying) return; // 다른 재생 중에는 불가
+    if (isSpeaking || isAudioPlaying) return; // 다른 음성이 재생 중이면 중단
 
     setIsSpeaking(true);
 
@@ -70,13 +71,14 @@ const SpeakingTestResultReference: React.FC<Props> = ({
     );
   };
 
+  // 클라이언트 녹음 파일 재생 핸들러
   const handlePlayRecordedAudio = () => {
-    if (isSpeaking || isAudioPlaying) return;
+    if (isSpeaking || isAudioPlaying) return; // 다른 음성이 재생 중이면 중단
 
     setIsAudioPlaying(true);
 
     if (audioPlayer) {
-      audioPlayer.pause();
+      audioPlayer.pause(); // 기존 오디오 재생 종료
     }
 
     const newAudioPlayer = new Audio(audioUrl);
@@ -103,7 +105,7 @@ const SpeakingTestResultReference: React.FC<Props> = ({
 
   return (
     <SentenceArea>
-      {/* 클라이언트 음성 재생 */}
+      {/* 클라이언트 음성 */}
       <RecordedAudioBlock>
         <SpeakerIcon onClick={handlePlayRecordedAudio} disabled={isAudioPlaying || isSpeaking}>
           <SpeakerClickIcon />
@@ -112,7 +114,7 @@ const SpeakingTestResultReference: React.FC<Props> = ({
       </RecordedAudioBlock>
       {englishSentences.map((sentence, index) => (
         <SentenceBlock key={index}>
-          {/* TTS */}
+          {/* TTS 음성 */}
           <SpeakerIcon onClick={() => !isSpeaking && handleRead(sentence)} disabled={isSpeaking || isAudioPlaying}>
             <SpeakerClickIcon />
           </SpeakerIcon>
@@ -129,7 +131,6 @@ const SpeakingTestResultReference: React.FC<Props> = ({
 export default SpeakingTestResultReference;
 
 const SentenceArea = styled.div`
-  position: relative;
   width: 90%;
   margin: 0.75rem;
   padding: 3%;
@@ -168,15 +169,14 @@ const SpeakerIcon = styled.div<{ disabled: boolean }>`
 `;
 
 const RecordedAudioBlock = styled.div`
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
   display: flex;
+  justify-content: end;
   align-items: center;
+  margin: 1.5rem;
 `;
 
 const RecordedAudioText = styled.div`
   font-size: 1rem;
   margin-left: 0.75rem;
-  color: ${(props) => props.theme.colors.primary};
+  color: ${(props) => props.theme.colors.text};
 `;

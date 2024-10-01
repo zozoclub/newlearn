@@ -134,7 +134,7 @@ export const searchDaumDictionary = async (
 ): Promise<SearchResult[]> => {
   try {
     const response = await axios.get(
-      `https://dic.daum.net/search.do?q=${word}`,
+      `http://localhost:3000/proxy?word=${word}`,
       {
         responseType: "text",
       }

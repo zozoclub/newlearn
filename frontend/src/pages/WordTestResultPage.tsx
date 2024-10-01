@@ -3,33 +3,29 @@ import { useSetRecoilState } from "recoil";
 import locationState from "@store/locationState";
 import styled from "styled-components";
 import BackArrow from "@assets/icons/BackArrow";
-
 import WordTestResultWordList from "@components/testpage/WordTestResultWordList";
 import WordTestResultWordDetail from "@components/testpage/WordTestResultWordDetail";
-
 import PerfectStamp from "@assets/icons/PerfectStamp";
 import GreatStamp from "@assets/icons/GreatStamp";
 import GoodStamp from "@assets/icons/GoodStamp";
 import BadStamp from "@assets/icons/BadStamp";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
-import {
-  getWordTestResultDetail,
-  WordTestResultDetailResponseDto,
-} from "@services/wordTestService";
+import { getWordTestResultDetail, WordTestResultDetailResponseDto } from "@services/wordTestService";
 import Spinner from "@components/Spinner";
 import { useMediaQuery } from "react-responsive"; // 모바일 여부 감지
-
 import WordTestResultListMobilePage from "./mobile/WordTestResultListMobilePage";
 
 const WordTestResultPage: React.FC = () => {
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const { quizId } = useParams<{ quizId: string }>();
   const setCurrentLocation = useSetRecoilState(locationState);
+  
   useEffect(() => {
     setCurrentLocation("Word Test Page");
   }, [setCurrentLocation]);
 
+  // 서버에서 데이터를 가져오기
   const {
     data: testDetail,
     isLoading,
@@ -39,96 +35,33 @@ const WordTestResultPage: React.FC = () => {
     queryFn: () => getWordTestResultDetail(Number(quizId)),
   });
 
+  // 현재 선택된 단어 인덱스와 단어
   const [currentWordIndex, setCurrentWordIndex] = useState<number>(0);
   const [currentWord, setCurrentWord] = useState<string>("");
+
+  // 서버에서 받은 데이터를 기존 형식에 맞게 변환
+  const transformTestData = (testDetail: WordTestResultDetailResponseDto[]) => {
+    return testDetail.map((item) => ({
+      word: item.correctAnswer,
+      userAnswer: item.answer,
+      sentence: item.sentence,
+      sentenceTranslation: "",  // 번역이 없는 경우, 기본적으로 비워둘 수 있습니다.
+      correct: item.correct,    // 정답 여부
+    }));
+  };
+
+  // testDetail이 있을 경우 변환, 없을 경우 빈 배열
+  const data = testDetail ? transformTestData(testDetail) : [];
+
+  const dataDate = "2024-10-01";
+  const dataScore = data.length > 0
+    ? (data.filter((item) => item.correct).length / data.length) * 100
+    : 0;
 
   const wordExplainDetailHandler = (index: number) => {
     setCurrentWordIndex(index);
     setCurrentWord(data[index].word);
   };
-
-  // TODO: 예문을 어떻게 저장하는지 알아야함.
-  const data = [
-    {
-      word: "foundation",
-      userAnswer: "foundation",
-      sentence:
-        "The foundation of the charity was established in 2005 to help children in need.",
-      sentenceTranslation:
-        "그 자선 단체의 기초는 2005년에 어려운 아이들을 돕기 위해 설립되었다.",
-    },
-    {
-      word: "fromisnine",
-      userAnswer: "fromisnine",
-      sentence:
-        "fromisnine gained a large fanbase after their debut performance on national TV.",
-      sentenceTranslation:
-        "프로미스나인은 그들의 데뷔 무대 이후 많은 팬층을 확보했다.",
-    },
-    {
-      word: "facilities",
-      userAnswer: "facitily",
-      sentence:
-        "The hospital has state-of-the-art medical facilities for patient care.",
-      sentenceTranslation:
-        "그 병원은 환자 치료를 위한 최신식 의료 시설을 갖추고 있다.",
-    },
-    {
-      word: "found",
-      userAnswer: "fuck",
-      sentence: "She found her keys under the pile of books on her desk.",
-      sentenceTranslation: "그녀는 책 더미 아래에서 열쇠를 발견했다.",
-    },
-    {
-      word: "firebase",
-      userAnswer: "firebase",
-      sentence:
-        "Firebase allows developers to quickly deploy and manage applications.",
-      sentenceTranslation:
-        "Firebase는 개발자들이 애플리케이션을 빠르게 배포하고 관리할 수 있게 해준다.",
-    },
-    {
-      word: "inspiration",
-      userAnswer: "inspiration",
-      sentence:
-        "The artist found inspiration for her latest work while traveling through Europe.",
-      sentenceTranslation:
-        "그 예술가는 유럽을 여행하는 동안 그녀의 최신 작품에 대한 영감을 얻었다.",
-    },
-    {
-      word: "architecture",
-      userAnswer: "architecture",
-      sentence:
-        "The architecture of the ancient temple was both intricate and breathtaking.",
-      sentenceTranslation:
-        "고대 사원의 건축 양식은 복잡하면서도 숨이 멎을 만큼 아름다웠다.",
-    },
-    {
-      word: "technology",
-      userAnswer: "technology",
-      sentence:
-        "Advances in technology have transformed the way we communicate.",
-      sentenceTranslation: "기술의 발전은 우리의 의사소통 방식을 변화시켰다.",
-    },
-    {
-      word: "sustainability",
-      userAnswer: "sustainability",
-      sentence:
-        "Sustainability is at the heart of their business model, focusing on renewable resources.",
-      sentenceTranslation:
-        "지속 가능성은 그들의 비즈니스 모델의 핵심이며, 재생 가능한 자원에 중점을 둔다.",
-    },
-    {
-      word: "community",
-      userAnswer: "community",
-      sentence:
-        "The local community organized a fundraiser to support the new school project.",
-      sentenceTranslation:
-        "지역 사회는 새로운 학교 프로젝트를 지원하기 위해 기금 모금 행사를 조직했다.",
-    },
-  ];
-  const dataDate = "2024-09-09";
-  const dataScore = 80;
 
   const renderStamp = () => {
     if (dataScore > 90) return <PerfectStamp />;
@@ -141,14 +74,14 @@ const WordTestResultPage: React.FC = () => {
   if (isLoading) return <Spinner />;
 
   // 에러 상태 처리
-  if (error)
-    return <ErrorText>에러가 발생했습니다. 다시 시도해 주세요.</ErrorText>;
+  if (error) return <ErrorText>에러가 발생했습니다. 다시 시도해 주세요.</ErrorText>;
 
   // testDetail이 null일 때
-  if (!testDetail) return <ErrorText>No data available.</ErrorText>;
+  if (!testDetail || testDetail.length === 0) return <ErrorText>No data available.</ErrorText>;
 
   // 모바일
   if (isMobile) return <WordTestResultListMobilePage />;
+
   return (
     <MainLayout>
       <MainContainer>
@@ -157,15 +90,15 @@ const WordTestResultPage: React.FC = () => {
           평가 리스트로 돌아가기
         </BackHeader>
         <WordListLayout>
-          {data.map((data, index) => {
+          {data.map((item, index) => {
             return (
               <WordTestResultWordList
-                word={data.word}
-                userAnswer={data.userAnswer}
+                word={item.word}
+                userAnswer={item.userAnswer}
                 index={index}
                 key={index}
                 onClick={() => wordExplainDetailHandler(index)}
-                isFocusWord={data.word === currentWord}
+                isFocusWord={item.word === currentWord}
               />
             );
           })}
@@ -183,7 +116,7 @@ const WordTestResultPage: React.FC = () => {
           ) : (
             <>
               <div>평가 날짜 : {dataDate}</div>
-              <div>평가 점수 : {dataScore}</div>
+              <div>평가 점수 : {dataScore.toFixed(2)}</div>
               <div>{renderStamp()}</div>
             </>
           )}
@@ -199,21 +132,15 @@ const MainContainer = styled.div`
   display: flex;
   align-items: center;
   flex-direction: column;
-
   width: 90%;
   min-height: 45rem;
   max-height: 45rem;
-
   margin: 0 0.5rem;
   padding: 0.5rem;
-
   background-color: ${(props) => props.theme.colors.cardBackground + "BF"};
   box-shadow: 0.5rem 0.5rem 0.25rem ${(props) => props.theme.colors.shadow};
-
   border-radius: 0.75rem;
-
   transition: box-shadow 0.5s;
-
   backdrop-filter: blur(0.25rem);
 `;
 
@@ -232,7 +159,6 @@ const MainLayout = styled.div`
   justify-content: space-between;
 `;
 
-// 스크롤 추가
 const WordListLayout = styled.div`
   display: flex;
   flex-direction: column;

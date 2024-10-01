@@ -87,10 +87,10 @@ export const getWordTestResultList = async (): Promise<
 
 // 단어 문장 빈칸 테스트 결과 상세 조회 Dto
 export type WordTestResultDetailResponseDto = {
-  wordId: number;
+  questionId: number;
   answer: string;
   correctAnswer: string;
-  isCorrect: boolean;
+  correct: boolean;
   sentence: string;
   createdAt: string;
   originURL: string;

@@ -25,7 +25,7 @@ const TestHistoryPage: React.FC = () => {
     setActiveTab(tab);
   };
   if (isMobile) {
-    <TestIntroMobilePage />
+    return <TestIntroMobilePage />
   }
   return (
     <Layout>

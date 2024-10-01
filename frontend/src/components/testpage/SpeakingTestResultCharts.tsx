@@ -188,7 +188,7 @@ const SpeakingTestResultCharts: React.FC<Props> = ({ results }) => {
   );
 };
 
-export default SpeakingTestResultCharts;
+export default React.memo(SpeakingTestResultCharts);
 
 const ChartContainer = styled.div`
   display: flex;

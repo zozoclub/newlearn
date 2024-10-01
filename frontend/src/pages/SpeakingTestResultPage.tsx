@@ -1,28 +1,29 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import * as sdk from "microsoft-cognitiveservices-speech-sdk";
 import { useSetRecoilState } from "recoil";
-import { useParams } from "react-router-dom"; // useParams로 audioFileId 가져오기
+import { useParams } from "react-router-dom";
 import locationState from "@store/locationState";
 import SpeakingTestResultReference from "@components/testpage/SpeakingTestResultReference";
 import SpeakingTestResultCharts from "@components/testpage/SpeakingTestResultCharts";
 import SpeakingTestResultInfoWidget from "@components/testpage/SpeakingTestResultInfoWidget";
-import { getAccuracyFeedback, getFluencyFeedback, getProsodyFeedback, getCompletenessFeedback } from "@utils/speakingFeedback";
 import { getPronounceTestResultDetail, PronounceTestResultDetailDto } from "@services/speakingTestService";
 import { useQuery } from "@tanstack/react-query";
 import Spinner from "@components/Spinner";
 import styled from "styled-components";
 import BackArrow from "@assets/icons/BackArrow";
+import { getAccuracyFeedback, getCompletenessFeedback, getFluencyFeedback, getProsodyFeedback } from "@utils/speakingFeedback";
 
 const SpeakingTestResultPage: React.FC = () => {
-  const { audioFileId } = useParams<{ audioFileId: string }>(); // audioFileId를 URL에서 가져오기
+  const { audioFileId } = useParams<{ audioFileId: string }>(); 
   const setCurrentLocation = useSetRecoilState(locationState);
   const [synthesizer, setSynthesizer] = useState<sdk.SpeechSynthesizer | null>(null);
+  const [isSpeaking, setIsSpeaking] = useState(false);
 
   useEffect(() => {
     setCurrentLocation("Speaking Test Result Page");
   }, [setCurrentLocation]);
 
-  // 컴포넌트가 언마운트될 때 음성 재생을 중단하는 cleanup 함수 추가
+  // 컴포넌트가 언마운트될 때 음성 재생을 중단하는 cleanup 함수
   useEffect(() => {
     return () => {
       if (synthesizer) {
@@ -33,15 +34,10 @@ const SpeakingTestResultPage: React.FC = () => {
     };
   }, [synthesizer]);
 
-  // React Query로 발음 테스트 결과 상세 데이터를 가져옴
-  const { data: testDetail, isLoading, error } = useQuery<PronounceTestResultDetailDto>(
-    {
-      queryKey: ["pronounceTestDetail", audioFileId],
-      queryFn: () => getPronounceTestResultDetail(Number(audioFileId)),
-    }
-  );
-
-  const [isSpeaking, setIsSpeaking] = useState(false);
+  const { data: testDetail, isLoading, error } = useQuery<PronounceTestResultDetailDto>({
+    queryKey: ["pronounceTestDetail", audioFileId],
+    queryFn: () => getPronounceTestResultDetail(Number(audioFileId)),
+  });
 
   // 음성 합성 설정
   const speechConfig = sdk.SpeechConfig.fromSubscription(
@@ -66,15 +62,26 @@ const SpeakingTestResultPage: React.FC = () => {
           console.log("Synthesis completed.");
         }
         synthesizer.close();
-        setIsSpeaking(false); // 음성 재생 완료 후 상태 업데이트
+        setIsSpeaking(false);
       },
       (err) => {
         console.error("Error: ", err);
         synthesizer.close();
-        setIsSpeaking(false); // 에러 발생 시 상태 해제
+        setIsSpeaking(false);
       }
     );
   };
+
+  // `results`를 useMemo로 캐싱하여 불필요한 객체 생성 방지
+  const results = useMemo(() => {
+    return testDetail ? {
+      pronunciationScore: testDetail.totalScore,
+      accuracyScore: testDetail.accuracyScore,
+      fluencyScore: testDetail.fluencyScore,
+      prosodyScore: testDetail.prosodyScore,
+      completenessScore: testDetail.completenessScore,
+    } : null;
+  }, [testDetail]);
 
   // 로딩 상태 처리
   if (isLoading) return <Spinner />;
@@ -83,19 +90,10 @@ const SpeakingTestResultPage: React.FC = () => {
   if (error) return <ErrorText>에러가 발생했습니다. 다시 시도해 주세요.</ErrorText>;
 
   // testDetail이 null일 때
-  if (!testDetail) return <ErrorText>No data available.</ErrorText>;
+  if (!testDetail || !results) return <ErrorText>No data available.</ErrorText>;
 
-  // tests 배열에서 sentence와 sentenceMeaning을 각각 join하여 하나의 문자열로 합치기
   const referenceTest = testDetail.tests.map(test => test.sentence).join(" ");
   const referenceTextTranslate = testDetail.tests.map(test => test.sentenceMeaning).join(" ");
-
-  const results = {
-    pronunciationScore: testDetail.totalScore,
-    accuracyScore: testDetail.accuracyScore,
-    fluencyScore: testDetail.fluencyScore,
-    prosodyScore: testDetail.prosodyScore,
-    completenessScore: testDetail.completenessScore,
-  };
 
   return (
     <MainLayout>
@@ -104,30 +102,34 @@ const SpeakingTestResultPage: React.FC = () => {
           <BackArrow width={48} height={48} />
           평가 리스트로 돌아가기
         </BackHeader>
+        
+        {/* 차트 컴포넌트는 results가 변경되지 않으면 리렌더링되지 않음 */}
         <SpeakingTestResultCharts results={results} />
+
         <GridContainer>
           <SpeakingTestResultInfoWidget
             title="AccuracyScore"
-            estimate={getAccuracyFeedback(testDetail.accuracyScore)}
+            estimate={getAccuracyFeedback(results.accuracyScore)}
             content="음성의 발음 정확도입니다."
           />
           <SpeakingTestResultInfoWidget
             title="FluencyScore"
-            estimate={getFluencyFeedback(testDetail.fluencyScore)}
+            estimate={getFluencyFeedback(results.fluencyScore)}
             content="지정된 음성의 능숙도입니다."
           />
           <SpeakingTestResultInfoWidget
             title="ProsodyScore"
-            estimate={getProsodyFeedback(testDetail.prosodyScore)}
+            estimate={getProsodyFeedback(results.prosodyScore)}
             content="지정된 음성의 운율입니다."
           />
           <SpeakingTestResultInfoWidget
             title="CompletenessScore"
-            estimate={getCompletenessFeedback(testDetail.completenessScore)}
+            estimate={getCompletenessFeedback(results.completenessScore)}
             content="입력 참조 텍스트에 대한 발음 단어의 비율로 계산된 음성의 완전성입니다."
           />
         </GridContainer>
       </MainContainer>
+
       <MainContainer>
         <SpeakingTestResultReference
           referenceTest={referenceTest}

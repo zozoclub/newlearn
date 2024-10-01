@@ -1,7 +1,12 @@
 import DifficultyToggleBtn from "@components/newspage/DifficultyToggleBtn";
 import LanguageToggleBtn from "@components/newspage/LanguageToggleBtn";
 import Spinner from "@components/Spinner";
-import { DetailNewsType, getNewsDetail, readNews } from "@services/newsService";
+import {
+  DetailNewsType,
+  getNewsDetail,
+  readNews,
+  searchDaumDictionary,
+} from "@services/newsService";
 import languageState from "@store/languageState";
 import locationState from "@store/locationState";
 import userInfoState from "@store/userInfoState";
@@ -90,18 +95,29 @@ const NewsDetailPage = () => {
     }
   };
 
-  // 스크롤 이벤트 추가
+  const handleSelectionChange = () => {
+    const selection = window.getSelection()?.toString();
+    const selectionInvalid =
+      selection?.includes(".") || selection?.includes(" ");
+    if (!selectionInvalid && selection && selection.length > 0) {
+      console.log(searchDaumDictionary(selection));
+    }
+  };
+
+  // 스크롤, 드래그 이벤트 추가
   useEffect(() => {
     const handleScroll = () => {
       calculateProgress();
     };
     window.addEventListener("scroll", handleScroll);
+    document.addEventListener("selectionchange", handleSelectionChange);
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
+      document.removeEventListener("selectionchange", handleSelectionChange);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [newsId]);
+  }, []);
 
   // 데이터 fetching이 끝나면 progress 계산
   useEffect(() => {
@@ -114,7 +130,7 @@ const NewsDetailPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading]);
 
-  // 난이도가 바뀌면
+  // 난이도가 바뀌면 progress 다시 계산
   useEffect(() => {
     calculateProgress();
     if (!isRead![3 - difficulty]) {
@@ -144,7 +160,9 @@ const NewsDetailPage = () => {
     <>
       <ProgressBar
         $isReadFinished={isReadFinished}
-        style={{ width: `${isReadFinished ? 100 : scrollProgress}%` }}
+        style={{
+          width: `${isReadFinished ? 100 : scrollProgress}%`,
+        }}
       />
       <Container>
         <NewsContainer ref={newsContainerRef}>
@@ -340,6 +358,7 @@ const NewsContent = styled.div`
 const ThumbnailImageDiv = styled.div`
   width: 100%;
   min-height: 400px;
+  height: 400px;
   background-color: ${(props) => props.theme.colors.cardBackground + "AA"};
   border-radius: 0.75rem;
   text-align: center;
@@ -348,6 +367,7 @@ const ThumbnailImageDiv = styled.div`
 const ThumbnailImage = styled.img`
   width: 600px;
   min-height: 400px;
+  height: 400px;
   border-radius: 0.75rem;
 `;
 

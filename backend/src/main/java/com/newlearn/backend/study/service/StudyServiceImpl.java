@@ -231,7 +231,7 @@ public class StudyServiceImpl implements StudyService{
 
             // DTO 빌드 및 결과 리스트에 추가
             WordTestResultDetailResponseDTO result = WordTestResultDetailResponseDTO.builder()
-                    .quizId(question.getWordQuizQuestionId())
+                    .questionId(question.getWordQuizQuestionId())
                     .answer(answer)
                     .correctAnswer(question.getCorrectAnswer())
                     .correct(isCorrect)
@@ -312,13 +312,12 @@ public class StudyServiceImpl implements StudyService{
         }
 
         // 목표 업데이트
-        Goal userGoal = studyRepository.findByUserId(userId)
-                .orElseThrow(() -> new IllegalArgumentException("No study goal found for user with id: " + userId));
-
-        // 현재 발음 테스트 점수 업데이트
-        long updatedScore = userGoal.getCurrentPronounceTestScore() + pronounceRequestDTO.getTotalScore();
-        userGoal.setCurrentPronounceTestScore(updatedScore);
-        studyRepository.save(userGoal);
+        studyRepository.findByUserId(userId).ifPresent(userGoal -> {
+            // 현재 발음 테스트 점수 업데이트
+            long updatedScore = userGoal.getCurrentPronounceTestScore() + pronounceRequestDTO.getTotalScore();
+            userGoal.setCurrentPronounceTestScore(updatedScore);
+            studyRepository.save(userGoal);
+        });
 
         log.info("발음 테스트 결과가 성공적으로 저장되었습니다. 사용자 ID: {}, 점수: {}", userId, pronounceRequestDTO.getTotalScore());
 

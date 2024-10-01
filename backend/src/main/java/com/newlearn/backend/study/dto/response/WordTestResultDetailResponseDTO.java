@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Builder
 public class WordTestResultDetailResponseDTO {
 
-    private long quizId;
+    private long questionId;
     private String answer;
     private String correctAnswer;
     private boolean correct;

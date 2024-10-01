@@ -24,10 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -181,49 +178,58 @@ public class StudyServiceImpl implements StudyService{
 
         // 퀴즈 질문 가져오기
         List<WordQuizQuestion> questions = wordQuizQuestionRepository.findByWordQuiz(quiz);
-
-        // 결과 리스트는 질문과 답변들을 포함
         if (questions.isEmpty()) {
             throw new IllegalArgumentException("퀴즈 질문이 없습니다.");
         }
 
-        // 반환할 결과 리스트
+        // word_ids 미리 가져오기
+        List<Long> wordIds = questions.stream()
+                .map(q -> q.getWord().getWordId())
+                .collect(Collectors.toList());
+
+        // wordRepository에서 모든 단어를 미리 가져옴
+        Map<Long, Word> wordsMap = wordRepository.findAllById(wordIds).stream()
+                .collect(Collectors.toMap(Word::getWordId, word -> word));
+
+        // wordSentenceRepository에서 모든 문장을 미리 가져옴
+        Map<Long, WordSentence> wordSentencesMap = wordSentenceRepository.findAllById(wordIds).stream()
+                .collect(Collectors.toMap(sentence -> sentence.getWord().getWordId(), sentence -> sentence));
+
+        // news_id로 newsRepository에서 모든 뉴스를 미리 가져옴
+        Set<Long> newsIds = wordSentencesMap.values().stream()
+                .map(WordSentence::getNewsId)
+                .collect(Collectors.toSet());
+        Map<Long, News> newsMap = newsRepository.findAllById(newsIds).stream()
+                .collect(Collectors.toMap(News::getNewsId, news -> news));
+
+        // 결과 리스트 빌드
         List<WordTestResultDetailResponseDTO> resultList = new ArrayList<>();
 
-        // 각 질문에 대해 처리
         for (WordQuizQuestion question : questions) {
-            // 해당 질문에 대한 하나의 답변 가져오기
+            // 답변 가져오기
             Optional<WordQuizAnswer> answerObj = wordQuizAnswerRepository.findByWordQuizQuestion_WordQuizQuestionId(question.getWordQuizQuestionId());
-
-            // 답변이 없는 경우 빈 문자열과 false 설정
             String answer = answerObj.map(WordQuizAnswer::getAnswer).orElse("");
             boolean isCorrect = answerObj.map(WordQuizAnswer::getIsCorrect).orElse(false);
 
-            // word_id로 word 테이블에서 단어 가져오기
-            Optional<Word> wordOpt = wordRepository.findById(question.getWord().getWordId());
-            if (!wordOpt.isPresent()) {
+            // word 가져오기
+            Word word = wordsMap.get(question.getWord().getWordId());
+            if (word == null) {
                 System.out.println("단어를 찾을 수 없습니다. ID: " + question.getWord().getWordId());
-                continue; // 단어가 없으면 다음 질문으로 넘어감
+                continue;
             }
-            Word word = wordOpt.get();
-            System.out.println("wordOpt : " + word);
 
-            // word_id로 word_sentence 테이블에서 문장 가져오기
-            Optional<WordSentence> wordSentenceOpt = wordSentenceRepository.findById(word.getWordId());
-            if (!wordSentenceOpt.isPresent()) {
+            // wordSentence 가져오기
+            WordSentence wordSentence = wordSentencesMap.get(word.getWordId());
+            if (wordSentence == null) {
                 System.out.println("문장을 찾을 수 없습니다. Word ID: " + word.getWordId());
-                continue; // 문장이 없으면 다음 질문으로 넘어감
+                continue;
             }
-            WordSentence wordSentence = wordSentenceOpt.get();
-            System.out.println("wordSentenceOpt - newsId : " + wordSentence.getNewsId());
 
-            // news_id로 news 테이블에서 URL 가져오기
-            Optional<News> newsOpt = newsRepository.findById(Objects.requireNonNull(wordSentenceOpt.map(WordSentence::getNewsId).orElse(null)));
-            System.out.println("wordSentenceOpt : " + wordSentenceOpt);
-            String originURL = newsOpt.map(News::getUrl).orElse(null);
-            System.out.println("originURL : " + originURL);
+            // 뉴스 가져오기 및 URL 설정
+            News news = newsMap.get(wordSentence.getNewsId());
+            String originURL = news != null ? news.getUrl() : null;
 
-            // DTO 빌드 및 리스트에 추가
+            // DTO 빌드 및 결과 리스트에 추가
             WordTestResultDetailResponseDTO result = WordTestResultDetailResponseDTO.builder()
                     .quizId(question.getWordQuizQuestionId())
                     .answer(answer)

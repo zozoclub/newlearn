@@ -6,6 +6,7 @@ import languageState from "@store/languageState";
 import locationState from "@store/locationState";
 import userInfoState from "@store/userInfoState";
 import { useQuery } from "@tanstack/react-query";
+import { useWordSelection } from "@utils/wordSelection";
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useRecoilValue, useSetRecoilState } from "recoil";
@@ -24,6 +25,7 @@ const NewsDetailPage = () => {
     false,
     false,
   ]);
+  const { handleSelectionChange } = useWordSelection();
   const [isFirstView, setIsFirstView] = useState<boolean>(true);
   const { newsId } = useParams();
   const { isLoading, data } = useQuery<DetailNewsType>({
@@ -90,7 +92,7 @@ const NewsDetailPage = () => {
     }
   };
 
-  // 스크롤 이벤트 추가
+  // 스크롤, 드래그 이벤트 추가
   useEffect(() => {
     const handleScroll = () => {
       calculateProgress();
@@ -101,7 +103,7 @@ const NewsDetailPage = () => {
       window.removeEventListener("scroll", handleScroll);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [newsId]);
+  }, []);
 
   // 데이터 fetching이 끝나면 progress 계산
   useEffect(() => {
@@ -114,7 +116,7 @@ const NewsDetailPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading]);
 
-  // 난이도가 바뀌면
+  // 난이도가 바뀌면 progress 다시 계산
   useEffect(() => {
     calculateProgress();
     if (!isRead![3 - difficulty]) {
@@ -144,7 +146,9 @@ const NewsDetailPage = () => {
     <>
       <ProgressBar
         $isReadFinished={isReadFinished}
-        style={{ width: `${isReadFinished ? 100 : scrollProgress}%` }}
+        style={{
+          width: `${isReadFinished ? 100 : scrollProgress}%`,
+        }}
       />
       <Container>
         <NewsContainer ref={newsContainerRef}>
@@ -247,7 +251,7 @@ const NewsDetailPage = () => {
                 </LoadingDiv>
               </div>
             ) : (
-              <div>{data?.content}</div>
+              <div onMouseUp={handleSelectionChange}>{data?.content}</div>
             )}
           </NewsContent>
         </NewsContainer>
@@ -340,6 +344,7 @@ const NewsContent = styled.div`
 const ThumbnailImageDiv = styled.div`
   width: 100%;
   min-height: 400px;
+  height: 400px;
   background-color: ${(props) => props.theme.colors.cardBackground + "AA"};
   border-radius: 0.75rem;
   text-align: center;
@@ -348,6 +353,7 @@ const ThumbnailImageDiv = styled.div`
 const ThumbnailImage = styled.img`
   width: 600px;
   min-height: 400px;
+  height: 400px;
   border-radius: 0.75rem;
 `;
 

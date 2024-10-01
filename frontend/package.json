@@ -17,6 +17,8 @@
     "axios": "^1.7.7",
     "chart.js": "^4.4.4",
     "chartjs-plugin-datalabels": "^2.2.0",
+    "cors": "^2.8.5",
+    "express": "^4.21.0",
     "firebase": "^10.13.2",
     "framer-motion": "^11.5.4",
     "lodash": "^4.17.21",
@@ -53,5 +55,10 @@
     "typescript-eslint": "^8.0.1",
     "vite": "^5.4.1",
     "vite-plugin-pwa": "^0.20.5"
-  }
+  },
+  "description": "This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.",
+  "main": "eslint.config.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }

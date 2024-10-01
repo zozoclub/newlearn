@@ -100,7 +100,7 @@ public class StudyController {
                 return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
             }
 
-            studyService.saveWordTestResult(user.getUserId(), wordTestResultRequestDTO);
+            studyService.saveWordTestResult(user, wordTestResultRequestDTO);
 
             return ApiResponse.createSuccess(null, "단어 테스트 저장 성공");
         } catch (Exception e) {
@@ -207,7 +207,7 @@ public class StudyController {
                     .build();
 
             // 비동기적으로 파일 업로드
-            CompletableFuture<Long> fileUploadFuture = studyService.savePronounceTestResultAsync(user.getUserId(), pronounceRequestDTO, file, sentenceIds);
+            CompletableFuture<Long> fileUploadFuture = studyService.savePronounceTestResultAsync(user, pronounceRequestDTO, file, sentenceIds);
 
             // Future가 완료될 때까지 기다리고 audioFileId를 가져옴
             Long audioFileId = fileUploadFuture.join(); // 결과를 기다림

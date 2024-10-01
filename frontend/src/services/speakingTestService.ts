@@ -109,7 +109,7 @@ export type PronounceTestResultDetailDto = {
   completenessScore: number;
   prosodyScore: number;
   totalScore: number;
-  createAt: string;
+  createdAt: string;
   tests: Array<{
     sentence: string;
     sentenceMeaning: string;
@@ -123,9 +123,7 @@ export const getPronounceTestResultDetail = async (
   console.log(audioFileId);
 
   try {
-    const response = await axiosInstance.get(
-      `study/pronounce/test/${audioFileId}`
-    );
+    const response = await axiosInstance.get(`study/pronounce/${audioFileId}`);
     console.log(response);
 
     return response.data.data;

@@ -1,4 +1,5 @@
 import React, { useRef, useState } from "react";
+import { useNavigate } from "react-router-dom"; 
 import styled from "styled-components";
 import Modal from "./Modal";
 import { getWordDetail, WordDetailResponseDto } from "@services/wordMemorize";
@@ -20,6 +21,7 @@ const VocaCollapsible: React.FC<CollapsibleProps> = ({
 }) => {
   const [expanded, setExpanded] = useState<boolean>(isExpanded);
   const contentRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate(); 
 
   const { data, isLoading } = useQuery<WordDetailResponseDto>({
     queryKey: ["wordDetail", title],
@@ -37,6 +39,10 @@ const VocaCollapsible: React.FC<CollapsibleProps> = ({
 
   const handleDeleteConfirm = () => {
     onDelete();
+  };
+
+  const handleNewsLinkClick = (newsId: number) => {
+    navigate(`/news/detail/${newsId}`);
   };
 
   return (
@@ -68,11 +74,9 @@ const VocaCollapsible: React.FC<CollapsibleProps> = ({
                             : "알 수 없음"}
                     </DifficultyChip>
                     <NewsLinkButton
-                      href={sentence.url} // 문장의 원문 기사 URL이 전달됨
-                      target="_blank" // 링크가 클릭되면 새 창(또는 새 탭)에서 열림
-                      rel="noopener noreferrer" // 보안 및 성능 최적화를 위한 속성
+                      onClick={() => handleNewsLinkClick(sentence.newsId)}
                     >
-                      원문 보기 // 버튼에 표시되는 텍스트
+                      원문 보기
                     </NewsLinkButton>
                   </SentenceHeader>
                   <SentenceText>{sentence.sentence}</SentenceText>
@@ -90,9 +94,7 @@ const VocaCollapsible: React.FC<CollapsibleProps> = ({
       >
         <p>삭제하시겠습니까?</p>
         <ModalButtonContainer>
-          <ModalCancelButton onClick={closeDeleteModal}>
-            취소
-          </ModalCancelButton>
+          <ModalCancelButton onClick={closeDeleteModal}>취소</ModalCancelButton>
           <ModalConfirmButton onClick={handleDeleteConfirm}>확인</ModalConfirmButton>
         </ModalButtonContainer>
       </Modal>
@@ -183,14 +185,14 @@ const DifficultyChip = styled.div<{ $difficulty: number }>`
   font-weight: bold;
 `;
 
-// 원문 기사 버튼
-const NewsLinkButton = styled.a`
+const NewsLinkButton = styled.button`
   background-color: ${(props) => props.theme.colors.primary};
   color: white;
   padding: 0.5rem 1rem;
-  text-decoration: none;
+  border: none;
   border-radius: 0.5rem;
   font-size: 0.875rem;
+  cursor: pointer;
 
   &:hover {
     background-color: ${(props) => props.theme.colors.primaryPress};

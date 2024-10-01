@@ -16,10 +16,22 @@ import BackArrow from "@assets/icons/BackArrow";
 const SpeakingTestResultPage: React.FC = () => {
   const { audioFileId } = useParams<{ audioFileId: string }>(); // audioFileId를 URL에서 가져오기
   const setCurrentLocation = useSetRecoilState(locationState);
+  const [synthesizer, setSynthesizer] = useState<sdk.SpeechSynthesizer | null>(null);
 
   useEffect(() => {
     setCurrentLocation("Speaking Test Result Page");
   }, [setCurrentLocation]);
+
+  // 컴포넌트가 언마운트될 때 음성 재생을 중단하는 cleanup 함수 추가
+  useEffect(() => {
+    return () => {
+      if (synthesizer) {
+        synthesizer.close();
+        setIsSpeaking(false);
+        console.log("Speech synthesis stopped.");
+      }
+    };
+  }, [synthesizer]);
 
   // React Query로 발음 테스트 결과 상세 데이터를 가져옴
   const { data: testDetail, isLoading, error } = useQuery<PronounceTestResultDetailDto>(
@@ -45,7 +57,8 @@ const SpeakingTestResultPage: React.FC = () => {
 
     setIsSpeaking(true);
     const synthesizer = new sdk.SpeechSynthesizer(speechConfig, audioConfig);
-
+    setSynthesizer(synthesizer);
+    
     synthesizer.speakTextAsync(
       sentence,
       (result) => {

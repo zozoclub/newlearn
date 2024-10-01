@@ -231,7 +231,7 @@ public class StudyServiceImpl implements StudyService{
 
             // DTO 빌드 및 결과 리스트에 추가
             WordTestResultDetailResponseDTO result = WordTestResultDetailResponseDTO.builder()
-                    .quizId(question.getWordQuizQuestionId())
+                    .questionId(question.getWordQuizQuestionId())
                     .answer(answer)
                     .correctAnswer(question.getCorrectAnswer())
                     .correct(isCorrect)

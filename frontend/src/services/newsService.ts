@@ -1,3 +1,4 @@
+import axios from "axios";
 import axiosInstance from "./axiosInstance";
 
 export type NewsType = {
@@ -22,6 +23,10 @@ export type DetailNewsType = NewsType & {
   hit: number;
   isScrapped: boolean; //유저가 이 난이도로 스크랩했는지 여부
   words: WordType[];
+};
+
+type SearchResult = {
+  text: string;
 };
 
 export const getTotalNewsList = async (
@@ -120,6 +125,43 @@ export const readNews = async (newsId: number, difficulty: number) => {
     console.log(response);
   } catch (error) {
     console.error("read News failed: ", error);
+    throw error;
+  }
+};
+
+export const searchDaumDictionary = async (
+  word: string
+): Promise<SearchResult[]> => {
+  try {
+    const response = await axios.get(
+      `https://dic.daum.net/search.do?q=${word}`,
+      {
+        responseType: "text",
+      }
+    );
+
+    const parser = new DOMParser();
+    const daumDocument = parser.parseFromString(response.data, "text/html");
+    const searchResults = daumDocument.querySelector(".search_box");
+
+    if (searchResults) {
+      const searchLi = searchResults.getElementsByTagName("li");
+      const results: SearchResult[] = Array.from(searchLi).map((li) => {
+        const txtSearchElements = li.getElementsByClassName("txt_search");
+        return {
+          text: Array.from(txtSearchElements)
+            .map((txt) => txt.innerHTML.replace(/(<([^>]+)>)/gi, ""))
+            .join(""),
+        };
+      });
+
+      return results;
+    } else {
+      console.log("검색 결과가 없습니다.");
+      return [];
+    }
+  } catch (error) {
+    console.error("error", error);
     throw error;
   }
 };

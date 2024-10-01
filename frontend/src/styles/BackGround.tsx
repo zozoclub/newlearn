@@ -16,12 +16,10 @@ const Background = () => {
 const Container = styled.div<{ $ismobile: boolean }>`
   position: absolute;
   z-index: -1;
-  width: 100vw;
+  width: calc(100vw - 0.375rem);
   height: 100vh;
   background-color: ${(props) =>
-    props.$ismobile
-      ? props.theme.colors.cardBackground
-      : "transparent"};
+    props.$ismobile ? props.theme.colors.cardBackground : "transparent"};
 `;
 
 const LightBackgroundImg = styled.img.attrs({
@@ -30,7 +28,7 @@ const LightBackgroundImg = styled.img.attrs({
 })`
   position: fixed;
   z-index: 1;
-  width: 100vw;
+  width: calc(100vw - 0.375rem);
   height: 100vh;
   transition: opacity 0.5s;
 `;
@@ -41,7 +39,7 @@ const DarkBackgroundImg = styled.img.attrs({
 })`
   position: fixed;
   z-index: 2;
-  width: 100vw;
+  width: calc(100vw - 0.375rem);
   height: 100vh;
   transition: opacity 0.5s;
   opacity: ${(props) => props.theme.opacities.background};
@@ -50,7 +48,7 @@ const DarkBackgroundImg = styled.img.attrs({
 const BackgroundDiv = styled.div<{ $ismobile: boolean }>`
   position: fixed;
   z-index: 1;
-  width: 100vw;
+  width: calc(100vw - 0.375rem);
   height: 100vh;
   transition: opacity 0.5s;
   opacity: ${(props) => props.theme.opacities.background};

@@ -268,13 +268,11 @@ const SpeakingTestPage: React.FC = () => {
     };
 
     reco.sessionStopped = () => {
-      // 인식이 끝나면 각 점수의 평균을 계산
-      const avgPronunciation = _.mean(pronunciationScores).toFixed(1);
-      const avgAccuracy = _.mean(accuracyScores).toFixed(1);
-      const avgFluency = _.mean(fluencyScores).toFixed(1);
-      const avgProsody = _.mean(prosodyScores).toFixed(1);
-
-      // 평균 점수 상태 업데이트
+      // 인식이 끝나면 각 점수의 평균을 계산 (정수)
+      const avgPronunciation = _.mean(pronunciationScores).toFixed(0);
+      const avgAccuracy = _.mean(accuracyScores).toFixed(0);
+      const avgFluency = _.mean(fluencyScores).toFixed(0);
+      const avgProsody = _.mean(prosodyScores).toFixed(0);
 
       // completenessScore 계산
       const recognizedTextJoined = recognizedTexts.join(" ").toLowerCase();
@@ -284,10 +282,7 @@ const SpeakingTestPage: React.FC = () => {
         recognizedTextJoined
       );
 
-      const completeness = (similarity * 100).toFixed(1);
-      console.log("Completeness Score:", completeness);
-
-      console.log(sentenceIds);
+      const completeness = (similarity * 100).toFixed(0);
 
       const results = {
         sentenceIds: sentenceIds,

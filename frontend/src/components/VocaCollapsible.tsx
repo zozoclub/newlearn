@@ -58,8 +58,14 @@ const VocaCollapsible: React.FC<CollapsibleProps> = ({
               {data?.sentences.map((sentence) => (
                 <SentenceContainer key={sentence.newsId}>
                   <SentenceHeader>
-                    <DifficultyChip difficulty={sentence.difficulty}>
-                      {sentence.difficulty}
+                    <DifficultyChip $difficulty={sentence.difficulty}>
+                      {sentence.difficulty === 1
+                        ? "초급"
+                        : sentence.difficulty === 2
+                          ? "중급"
+                          : sentence.difficulty === 3
+                            ? "고급"
+                            : "알 수 없음"}
                     </DifficultyChip>
                     <NewsLinkButton
                       href={sentence.url} // 문장의 원문 기사 URL이 전달됨
@@ -163,11 +169,11 @@ const SentenceHeader = styled.div`
 `;
 
 // difficulty를 Chip 형태로 표시
-const DifficultyChip = styled.div<{ difficulty: number }>`
+const DifficultyChip = styled.div<{ $difficulty: number }>`
   background-color: ${(props) =>
-    props.difficulty === 1
+    props.$difficulty === 1
       ? "#4caf50"
-      : props.difficulty === 2
+      : props.$difficulty === 2
         ? "#ff9800"
         : "#f44336"}; /* 색상은 난이도에 따라 변경 */
   color: white;

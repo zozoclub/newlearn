@@ -1,14 +1,28 @@
 import React from "react";
+import { useNavigate } from "react-router-dom"; // useNavigate 사용
 import useBackPage from "@hooks/useBackPage";
-
 import { useTheme } from "styled-components";
 
-const BackArrow: React.FC<{ width: number; height: number }> = ({
-  width,
-  height,
-}) => {
+type BackArrowProps = {
+  width: number;
+  height: number;
+  url?: string; 
+};
+
+const BackArrow: React.FC<BackArrowProps> = ({ width, height, url }) => {
   const back = useBackPage();
+  const navigate = useNavigate();
   const theme = useTheme();
+
+  // 조건을 추가하여 back으로 갈지 원하는 url로 갈지 추가할 수 있음
+  const handleClick = () => {
+    if (url) {
+      navigate(url);
+    } else {
+      back();
+    }
+  };
+
   return (
     <svg
       width={width}
@@ -16,7 +30,7 @@ const BackArrow: React.FC<{ width: number; height: number }> = ({
       viewBox="0 0 96 96"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      onClick={back}
+      onClick={handleClick} // onClick에서 handleClick 호출
       style={{ cursor: "pointer" }}
     >
       <g clipPath="url(#clip0_100_794)">

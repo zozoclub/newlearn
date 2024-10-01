@@ -84,7 +84,7 @@ const VocabularyPage: React.FC = () => {
     const { source, destination } = result;
     if (!destination) return;
     if (source.droppableId === destination.droppableId) {
-      // 리스트 내에서 위치만 변경
+      // 리스트 내에서 위치만 변경 (실질적인 인덱스 변경은 없음)
       const list =
         source.droppableId === "toStudy" ? toStudyWords : learnedWords;
       const setList =
@@ -144,7 +144,9 @@ const VocabularyPage: React.FC = () => {
         <Droppable droppableId="toStudy">
           {(provided) => (
             <MainContainer ref={provided.innerRef} {...provided.droppableProps}>
-              <Title>공부해야 될 단어 리스트</Title>
+              <Title>
+                공부해야 될 단어 리스트 <WordCount>({toStudyWords.length})</WordCount>
+              </Title>
               {toStudyWords.length === 0 ? (
                 <EmptyMessage>공부할 단어가 없습니다.</EmptyMessage>
               ) : (
@@ -177,7 +179,9 @@ const VocabularyPage: React.FC = () => {
         <Droppable droppableId="learned">
           {(provided) => (
             <MainContainer ref={provided.innerRef} {...provided.droppableProps}>
-              <Title>외운 단어 리스트</Title>
+              <Title>
+                외운 단어 리스트 <WordCount>({learnedWords.length})</WordCount>
+              </Title>
               {learnedWords.length === 0 ? (
                 <EmptyMessage>외운 단어가 없습니다.</EmptyMessage>
               ) : (
@@ -224,7 +228,9 @@ const MainContainer = styled.div`
   padding: 1rem;
   background-color: ${(props) => `${props.theme.colors.cardBackground}BF`};
   border-radius: 0.75rem;
-  min-height: 600px;
+  min-height: 800px;
+  max-height: 800px; 
+  overflow-y: auto; 
   box-shadow: 0.5rem 0.5rem 0.25rem ${(props) => props.theme.colors.shadow};
   transition: box-shadow 0.5s;
 `;
@@ -235,6 +241,12 @@ const Title = styled.h2`
   font-weight: 700;
   margin-top: 1rem;
   margin-bottom: 1rem;
+`;
+
+const WordCount = styled.span`
+  font-size: 1rem;
+  color: ${(props) => props.theme.colors.text04};
+  margin-left: 0.5rem;
 `;
 
 const Item = styled.div<{ $isDragging: boolean }>`

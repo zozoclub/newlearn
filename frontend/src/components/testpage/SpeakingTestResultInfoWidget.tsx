@@ -16,11 +16,10 @@ const SpeakingTestResultInfoWidget: React.FC<Props> = ({
     <SubContainer>
       <Title>{title}</Title>
       <br />
+      <Explain>{content}</Explain>
+      <br />
       <br />
       <Estimate>{estimate}</Estimate>
-      <br />
-      <br />
-      <Explain>{content}</Explain>
     </SubContainer>
   );
 };

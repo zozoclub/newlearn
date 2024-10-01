@@ -90,6 +90,14 @@ const WordTestPage: React.FC = () => {
     subIndex: number,
     value: string
   ) => {
+    // 영어 알파벳만 허용하는 정규식
+    const englishOnly = /^[a-zA-Z]*$/;
+
+    // 입력된 값이 영어가 아닐 경우 무시
+    if (!englishOnly.test(value)) {
+      return;
+    }
+
     const newAnswers = [...userAnswers];
     const currentAnswer = userAnswers[indexOfFirstQuestion + index] || "";
 
@@ -104,6 +112,7 @@ const WordTestPage: React.FC = () => {
       inputRefs.current[index][subIndex + 1]?.focus();
     }
   };
+
 
   const handleKeyDown = (
     event: React.KeyboardEvent<HTMLInputElement>,
@@ -169,7 +178,7 @@ const WordTestPage: React.FC = () => {
     return <ErrorText>에러가 발생했습니다. 다시 시도해 주세요.</ErrorText>;
 
   if (isMobile) return <WordTestMobilePage />;
-  
+
   return (
     <MainContainer>
       {/* 페이지 표시 */}

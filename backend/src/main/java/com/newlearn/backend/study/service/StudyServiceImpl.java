@@ -116,13 +116,13 @@ public class StudyServiceImpl implements StudyService{
     }
 
     @Override
-    public void saveWordTestResult(Long userId, WordTestResultRequestDTO wordTestResultRequestDTO) {
+    public void saveWordTestResult(Users user, WordTestResultRequestDTO wordTestResultRequestDTO) {
         // 퀴즈 가져오기
         WordQuiz quiz = wordQuizRepository.findById(wordTestResultRequestDTO.getQuizId())
                 .orElseThrow(() -> new IllegalArgumentException("퀴즈를 찾을 수 없습니다."));
 
         // 정답 개수 초기화
-        Long correctCount = quiz.getCorrectCount();
+        long correctCount = 0L;
 
         for (WordTestResultRequestDTO.WordTestDetail result : wordTestResultRequestDTO.getResults()) {
             // 질문 찾기
@@ -147,6 +147,11 @@ public class StudyServiceImpl implements StudyService{
         // correctCount 갱신
         quiz.setCorrectCount(correctCount);
         wordQuizRepository.save(quiz); // 퀴즈 저장 (정답 수 갱신)
+
+        // 단어 시험 후 경험치 갱신
+        // (정답*2)점
+        user.incrementExperience(correctCount*2);
+        userRepository.save(user);
     }
 
     @Override
@@ -272,16 +277,14 @@ public class StudyServiceImpl implements StudyService{
     }
 
     @Override
-    public CompletableFuture<Long> savePronounceTestResultAsync(Long userId, PronounceRequestDTO pronounceRequestDTO,
+    public CompletableFuture<Long> savePronounceTestResultAsync(Users user, PronounceRequestDTO pronounceRequestDTO,
                                                                 MultipartFile file, List<Long> sentenceIds) {
         // 파일이 비어 있는지 확인
         if (file == null || file.isEmpty()) {
             throw new IllegalArgumentException("발음 테스트를 위한 파일이 제공되지 않았습니다.");
         }
 
-        // 사용자 조회
-        Users user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + userId));
+        Long userId = user.getUserId();
 
         // S3에 파일 업로드
         String fileUrl = s3ObjectStorage.uploadFile(file).join(); // join()을 통해 CompletableFuture 결과 대기
@@ -318,6 +321,11 @@ public class StudyServiceImpl implements StudyService{
             userGoal.setCurrentPronounceTestScore(updatedScore);
             studyRepository.save(userGoal);
         });
+
+        // 발음 시험 후 경험치 갱신
+        // (정답*2)점
+        user.incrementExperience(20L);
+        userRepository.save(user);
 
         log.info("발음 테스트 결과가 성공적으로 저장되었습니다. 사용자 ID: {}, 점수: {}", userId, pronounceRequestDTO.getTotalScore());
 

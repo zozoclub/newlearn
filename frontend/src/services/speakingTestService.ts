@@ -49,7 +49,10 @@ export const postPronounceTestResult = async (
   
   // FormData에 파일과 다른 데이터를 추가
   formData.append('files', pronounceTestResultDataSet.files);
-  formData.append('sentenceIds', JSON.stringify(pronounceTestResultDataSet.sentenceIds));
+  // sentenceIds 배열을 개별 항목으로 추가
+  pronounceTestResultDataSet.sentenceIds.forEach((id) => {
+    formData.append('sentenceIds', id.toString());
+  });
   formData.append('accuracyScore', pronounceTestResultDataSet.accuracyScore.toString());
   formData.append('fluencyScore', pronounceTestResultDataSet.fluencyScore.toString());
   formData.append('completenessScore', pronounceTestResultDataSet.completenessScore.toString());
@@ -64,11 +67,6 @@ export const postPronounceTestResult = async (
     const response = await axiosInstance.post(
       `study/pronounce/test`,
       formData,
-      {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      }
     );
 
     console.log(response.data.message);

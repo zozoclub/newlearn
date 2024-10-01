@@ -55,11 +55,12 @@ export const postPronounceTestResult = async (
   formData.append('completenessScore', pronounceTestResultDataSet.completenessScore.toString());
   formData.append('prosodyScore', pronounceTestResultDataSet.prosodyScore.toString());
   formData.append('totalScore', pronounceTestResultDataSet.totalScore.toString());
-
-  console.log(formData);
   
-
   try {
+    // FormData 내용 확인
+    formData.forEach((value, key) => {
+    console.log(`${key}: ${value}`)
+    });
     const response = await axiosInstance.post(
       `study/pronounce/test`,
       formData,

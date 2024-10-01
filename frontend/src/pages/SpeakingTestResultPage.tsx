@@ -13,7 +13,7 @@ import BackArrow from "@assets/icons/BackArrow";
 import { getAccuracyFeedback, getCompletenessFeedback, getFluencyFeedback, getProsodyFeedback } from "@utils/speakingFeedback";
 
 const SpeakingTestResultPage: React.FC = () => {
-  const { audioFileId } = useParams<{ audioFileId: string }>(); 
+  const { audioFileId } = useParams<{ audioFileId: string }>();
   const setCurrentLocation = useSetRecoilState(locationState);
 
   useEffect(() => {
@@ -52,10 +52,10 @@ const SpeakingTestResultPage: React.FC = () => {
     <MainLayout>
       <MainContainer>
         <BackHeader>
-          <BackArrow width={48} height={48} />
+          <BackArrow width={48} height={48} url="/testhistory" />
           평가 리스트로 돌아가기
         </BackHeader>
-        
+
         {/* 차트 컴포넌트는 results가 변경되지 않으면 리렌더링되지 않음 */}
         <SpeakingTestResultCharts results={results} />
 

@@ -81,6 +81,7 @@ const DateContainer = styled.div`
 const ScoreContainer = styled.div`
   display: flex;
   padding-top: 30%;
+  padding-bottom: 20%;
   justify-content: center;
   align-items: end;
 `;

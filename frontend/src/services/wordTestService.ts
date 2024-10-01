@@ -50,9 +50,9 @@ export const postWordTestResult = async (
   try {
     console.log("테스트 셋", wordTestwordTestResultDataSet);
 
-    const response = await axiosInstance.post(`study/word/test`, {
+    const response = await axiosInstance.post(`study/word/test`, 
       wordTestwordTestResultDataSet,
-    });
+    );
 
     return response.data.data;
   } catch (error) {

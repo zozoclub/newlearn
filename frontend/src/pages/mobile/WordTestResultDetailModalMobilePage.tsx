@@ -4,7 +4,8 @@ import locationState from "@store/locationState";
 import styled from "styled-components";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
-import Collapsible from "@components/Collapsible";
+import WordTestCollapsible from "@components/testpage/WordTestCollapsible";
+
 import {
   getWordTestResultDetail,
   WordTestResultDetailResponseDto,
@@ -12,7 +13,7 @@ import {
 import Spinner from "@components/Spinner";
 
 const WordTestResultDetailModalMobilePage: React.FC = () => {
-  const { quizId } = useParams<{ quizId: string }>();
+  const { quizId } = useParams<{ quizId: string }>(); 
   const setCurrentLocation = useSetRecoilState(locationState);
 
   useEffect(() => {
@@ -28,28 +29,28 @@ const WordTestResultDetailModalMobilePage: React.FC = () => {
     queryFn: () => getWordTestResultDetail(Number(quizId)),
   });
 
-  const [expandedWordIndex, setExpandedWordIndex] = useState<number | null>(
-    null
-  );
+  const [expandedWordIndex, setExpandedWordIndex] = useState<number | null>(null);
 
   const handleToggle = (index: number) => {
     setExpandedWordIndex((prevIndex) => (prevIndex === index ? null : index));
   };
 
   if (isLoading) return <Spinner />;
+
   if (error)
-    return <ErrorText>에러가 발생했습니다. 다시 시도해 주세요.</ErrorText>;
+    return <ErrorText>데이터를 불러오는 중 오류가 발생했습니다. 다시 시도해 주세요.</ErrorText>;
+
+  if (!testDetail || testDetail.length === 0)
+    return <ErrorText>결과 데이터가 없습니다.</ErrorText>;
 
   return (
     <MobileMainContainer>
-      {testDetail?.map((test, index) => (
-        <Collapsible
+      {testDetail.map((test, index) => (
+        <WordTestCollapsible
           key={index}
           title={test.correctAnswer}
-          meaning=""
           isExpanded={expandedWordIndex === index}
           onToggle={() => handleToggle(index)}
-          onDelete={() => null}
         >
           <MobileSentenceDetail>
             <strong>정답:</strong> {test.correctAnswer}
@@ -60,10 +61,7 @@ const WordTestResultDetailModalMobilePage: React.FC = () => {
           <MobileSentenceDetail>
             <strong>문장:</strong> {test.sentence}
           </MobileSentenceDetail>
-          <MobileSentenceDetail>
-            <strong>문장 해석:</strong> {test.sentence}
-          </MobileSentenceDetail>
-        </Collapsible>
+        </WordTestCollapsible>
       ))}
     </MobileMainContainer>
   );

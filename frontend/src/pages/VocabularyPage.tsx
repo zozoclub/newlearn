@@ -83,27 +83,27 @@ const VocabularyPage: React.FC = () => {
   const onDragEnd = (result: DropResult) => {
     const { source, destination } = result;
     if (!destination) return;
-
-    const moveBetweenLists = source.droppableId !== destination.droppableId;
-    const wordId =
-      source.droppableId === "toStudy"
-        ? toStudyWords[source.index].id
-        : learnedWords[source.index].id;
-
-    if (moveBetweenLists) {
-      toggleMemorizeMutation(Number(wordId));
-      if (source.droppableId === "toStudy") {
-        moveItemBetweenLists(toStudyWords, learnedWords, source, destination);
-      } else {
-        moveItemBetweenLists(learnedWords, toStudyWords, source, destination);
-      }
-    } else {
+    if (source.droppableId === destination.droppableId) {
+      // 리스트 내에서 위치만 변경
       const list =
         source.droppableId === "toStudy" ? toStudyWords : learnedWords;
       const setList =
         source.droppableId === "toStudy" ? setToStudyWords : setLearnedWords;
       const reorderedItems = reorder(list, source.index, destination.index);
       setList(reorderedItems);
+    } else {
+      // 외움 상태 변경 API 호출
+      const wordId =
+        source.droppableId === "toStudy"
+          ? toStudyWords[source.index].id
+          : learnedWords[source.index].id;
+      toggleMemorizeMutation(Number(wordId));
+
+      if (source.droppableId === "toStudy") {
+        moveItemBetweenLists(toStudyWords, learnedWords, source, destination);
+      } else {
+        moveItemBetweenLists(learnedWords, toStudyWords, source, destination);
+      }
     }
   };
 
@@ -124,8 +124,13 @@ const VocabularyPage: React.FC = () => {
     const destClone = Array.from(destinationList);
     const [movedItem] = sourceClone.splice(source.index, 1);
     destClone.splice(destination.index, 0, movedItem);
-    setToStudyWords(sourceClone);
-    setLearnedWords(destClone);
+    if (source.droppableId === "toStudy") {
+      setToStudyWords(sourceClone);
+      setLearnedWords(destClone);
+    } else {
+      setLearnedWords(sourceClone);
+      setToStudyWords(destClone);
+    }
   };
 
   if (isLoading) return <Spinner />;

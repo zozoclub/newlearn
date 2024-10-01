@@ -1,16 +1,12 @@
 import DifficultyToggleBtn from "@components/newspage/DifficultyToggleBtn";
 import LanguageToggleBtn from "@components/newspage/LanguageToggleBtn";
 import Spinner from "@components/Spinner";
-import {
-  DetailNewsType,
-  getNewsDetail,
-  readNews,
-  searchDaumDictionary,
-} from "@services/newsService";
+import { DetailNewsType, getNewsDetail, readNews } from "@services/newsService";
 import languageState from "@store/languageState";
 import locationState from "@store/locationState";
 import userInfoState from "@store/userInfoState";
 import { useQuery } from "@tanstack/react-query";
+import { useWordSelection } from "@utils/wordSelection";
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useRecoilValue, useSetRecoilState } from "recoil";
@@ -29,6 +25,7 @@ const NewsDetailPage = () => {
     false,
     false,
   ]);
+  const { handleSelectionChange } = useWordSelection();
   const [isFirstView, setIsFirstView] = useState<boolean>(true);
   const { newsId } = useParams();
   const { isLoading, data } = useQuery<DetailNewsType>({
@@ -95,26 +92,15 @@ const NewsDetailPage = () => {
     }
   };
 
-  const handleSelectionChange = () => {
-    const selection = window.getSelection()?.toString();
-    const selectionInvalid =
-      selection?.includes(".") || selection?.includes(" ");
-    if (!selectionInvalid && selection && selection.length > 0) {
-      console.log(searchDaumDictionary(selection));
-    }
-  };
-
   // 스크롤, 드래그 이벤트 추가
   useEffect(() => {
     const handleScroll = () => {
       calculateProgress();
     };
     window.addEventListener("scroll", handleScroll);
-    document.addEventListener("selectionchange", handleSelectionChange);
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
-      document.removeEventListener("selectionchange", handleSelectionChange);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -265,7 +251,7 @@ const NewsDetailPage = () => {
                 </LoadingDiv>
               </div>
             ) : (
-              <div>{data?.content}</div>
+              <div onMouseUp={handleSelectionChange}>{data?.content}</div>
             )}
           </NewsContent>
         </NewsContainer>

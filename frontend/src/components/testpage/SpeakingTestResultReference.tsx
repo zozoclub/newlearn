@@ -15,17 +15,19 @@ const SpeakingTestResultReference: React.FC<Props> = ({
   audioUrl,
 }) => {
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [isAudioPlaying, setIsAudioPlaying] = useState(false);
   const [synthesizer, setSynthesizer] = useState<sdk.SpeechSynthesizer | null>(null);
   const [audioPlayer, setAudioPlayer] = useState<HTMLAudioElement | null>(null);
 
   useEffect(() => {
-    // synthesizer와 audioPlayer 종료
     return () => {
       if (synthesizer) {
         synthesizer.close();
+        console.log("TTS 정지");
       }
       if (audioPlayer) {
         audioPlayer.pause();
+        console.log("클라이언트 음성 정지");
       }
     };
   }, [synthesizer, audioPlayer]);
@@ -38,11 +40,10 @@ const SpeakingTestResultReference: React.FC<Props> = ({
   const audioConfig = sdk.AudioConfig.fromDefaultSpeakerOutput();
 
   const handleRead = (sentence: string) => {
-    if (isSpeaking) return;
+    if (isSpeaking || isAudioPlaying) return; // 다른 재생 중에는 불가
 
     setIsSpeaking(true);
 
-    // 기존 synthesizer가 있다면 닫기
     if (synthesizer) {
       synthesizer.close();
     }
@@ -54,14 +55,14 @@ const SpeakingTestResultReference: React.FC<Props> = ({
       sentence,
       (result) => {
         if (result.reason === sdk.ResultReason.SynthesizingAudioCompleted) {
-          console.log("Synthesis completed.");
+          console.log("TTS synthesis completed.");
         }
         newSynthesizer.close();
         setIsSpeaking(false);
         setSynthesizer(null);
       },
       (err) => {
-        console.error("Error: ", err);
+        console.error("TTS Error: ", err);
         newSynthesizer.close();
         setIsSpeaking(false);
         setSynthesizer(null);
@@ -69,8 +70,11 @@ const SpeakingTestResultReference: React.FC<Props> = ({
     );
   };
 
-  // 녹음 파일 재생 핸들러
   const handlePlayRecordedAudio = () => {
+    if (isSpeaking || isAudioPlaying) return;
+
+    setIsAudioPlaying(true);
+
     if (audioPlayer) {
       audioPlayer.pause();
     }
@@ -78,14 +82,17 @@ const SpeakingTestResultReference: React.FC<Props> = ({
     const newAudioPlayer = new Audio(audioUrl);
     setAudioPlayer(newAudioPlayer);
 
-    newAudioPlayer.play().then(() => {
-      console.log("클라이언트 음성 재생");
-    }).catch((error) => {
-      console.error("Error during audio playback:", error);
-    });
+    newAudioPlayer.play()
+      .then(() => {
+        console.log("Audio playback started.");
+      })
+      .catch((error) => {
+        console.error("Error during audio playback:", error);
+      });
 
     newAudioPlayer.onended = () => {
       setAudioPlayer(null);
+      setIsAudioPlaying(false);
       console.log("Audio playback finished.");
     };
   };
@@ -96,17 +103,17 @@ const SpeakingTestResultReference: React.FC<Props> = ({
 
   return (
     <SentenceArea>
-      {/* 사용자 음성 */}
+      {/* 클라이언트 음성 재생 */}
       <RecordedAudioBlock>
-        <SpeakerIcon onClick={handlePlayRecordedAudio} disabled={!!audioPlayer}>
+        <SpeakerIcon onClick={handlePlayRecordedAudio} disabled={isAudioPlaying || isSpeaking}>
           <SpeakerClickIcon />
         </SpeakerIcon>
-        <RecordedAudioText>녹음된 파일 재생</RecordedAudioText>
+        <RecordedAudioText>내 음성 다시 듣기</RecordedAudioText>
       </RecordedAudioBlock>
       {englishSentences.map((sentence, index) => (
         <SentenceBlock key={index}>
           {/* TTS */}
-          <SpeakerIcon onClick={() => !isSpeaking && handleRead(sentence)} disabled={isSpeaking}>
+          <SpeakerIcon onClick={() => !isSpeaking && handleRead(sentence)} disabled={isSpeaking || isAudioPlaying}>
             <SpeakerClickIcon />
           </SpeakerIcon>
           <TextBlock>
@@ -122,6 +129,7 @@ const SpeakingTestResultReference: React.FC<Props> = ({
 export default SpeakingTestResultReference;
 
 const SentenceArea = styled.div`
+  position: relative;
   width: 90%;
   margin: 0.75rem;
   padding: 3%;
@@ -160,9 +168,11 @@ const SpeakerIcon = styled.div<{ disabled: boolean }>`
 `;
 
 const RecordedAudioBlock = styled.div`
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
   display: flex;
   align-items: center;
-  margin-top: 1.5rem;
 `;
 
 const RecordedAudioText = styled.div`

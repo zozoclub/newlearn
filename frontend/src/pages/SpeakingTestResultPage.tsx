@@ -23,17 +23,6 @@ const SpeakingTestResultPage: React.FC = () => {
     setCurrentLocation("Speaking Test Result Page");
   }, [setCurrentLocation]);
 
-  // 컴포넌트가 언마운트될 때 음성 재생을 중단하는 cleanup 함수
-  useEffect(() => {
-    return () => {
-      if (synthesizer) {
-        synthesizer.close();
-        setIsSpeaking(false);
-        console.log("Speech synthesis stopped.");
-      }
-    };
-  }, [synthesizer]);
-
   const { data: testDetail, isLoading, error } = useQuery<PronounceTestResultDetailDto>({
     queryKey: ["pronounceTestDetail", audioFileId],
     queryFn: () => getPronounceTestResultDetail(Number(audioFileId)),
@@ -47,32 +36,53 @@ const SpeakingTestResultPage: React.FC = () => {
   speechConfig.speechSynthesisVoiceName = "en-US-JennyNeural";
   const audioConfig = sdk.AudioConfig.fromDefaultSpeakerOutput();
 
-  // 음성 재생 핸들러
-  const handleRead = (sentence: string) => {
+   // 음성 재생 핸들러
+   const handleRead = (sentence: string) => {
     if (isSpeaking) return;
 
     setIsSpeaking(true);
-    const synthesizer = new sdk.SpeechSynthesizer(speechConfig, audioConfig);
-    setSynthesizer(synthesizer);
-    
-    synthesizer.speakTextAsync(
+
+    // 기존 synthesizer가 있다면 닫고 새로 생성
+    if (synthesizer) {
+      synthesizer.close();
+    }
+
+    const newSynthesizer = new sdk.SpeechSynthesizer(speechConfig, audioConfig);
+    setSynthesizer(newSynthesizer);
+
+    newSynthesizer.speakTextAsync(
       sentence,
       (result) => {
         if (result.reason === sdk.ResultReason.SynthesizingAudioCompleted) {
           console.log("Synthesis completed.");
         }
-        synthesizer.close();
-        setIsSpeaking(false);
+        newSynthesizer.close(); // 완료 후 해제
+        setIsSpeaking(false); // 음성 재생 완료 후 상태 업데이트
+        setSynthesizer(null); // 사용 완료 후 synthesizer를 null로 설정
       },
       (err) => {
         console.error("Error: ", err);
-        synthesizer.close();
-        setIsSpeaking(false);
+        newSynthesizer.close();
+        setIsSpeaking(false); // 에러 발생 시 상태 해제
+        setSynthesizer(null); // 에러 발생 시 synthesizer를 null로 설정
       }
     );
   };
 
-  // `results`를 useMemo로 캐싱하여 불필요한 객체 생성 방지
+  // 컴포넌트 언마운트 시 synthesizer 닫기
+  useEffect(() => {
+    return () => {
+      if (synthesizer) {
+        try {
+          synthesizer.close(); // synthesizer가 존재할 때만 close() 호출
+        } catch (error) {
+          console.error("Error closing synthesizer:", error);
+        }
+      }
+    };
+  }, [synthesizer]);
+
+  // useMemo로 캐싱하여 불필요한 객체 생성 방지
   const results = useMemo(() => {
     return testDetail ? {
       pronunciationScore: testDetail.totalScore,

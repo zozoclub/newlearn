@@ -25,20 +25,34 @@ const NewsDetailPage = () => {
     false,
     false,
   ]);
-  const { handleSelectionChange } = useWordSelection();
   const [isFirstView, setIsFirstView] = useState<boolean>(true);
   const { newsId } = useParams();
-  const { isLoading, data } = useQuery<DetailNewsType>({
-    queryKey: ["getNewsDetail", languageData, difficulty, newsId],
-    queryFn: () =>
-      getNewsDetail(Number(newsId), difficulty, languageData, isFirstView),
+  const { isLoading: engIsLoading, data: engData } = useQuery<DetailNewsType>({
+    queryKey: ["getEngNewsDetail", difficulty, newsId],
+    queryFn: () => getNewsDetail(Number(newsId), difficulty, "en", isFirstView),
+    staleTime: 0, // staleTime을 0으로 설정하여 항상 최신 데이터를 가져옴
+  });
+  const { isLoading: korIsLoading, data: korData } = useQuery<DetailNewsType>({
+    queryKey: ["getKorNewsDetail", difficulty, newsId],
+    queryFn: () => getNewsDetail(Number(newsId), difficulty, "kr", isFirstView),
     staleTime: 0, // staleTime을 0으로 설정하여 항상 최신 데이터를 가져옴
   });
 
-  const isLoadingRef = useRef(isLoading);
+  const [selectedKorContent, setSelectedKorContent] = useState<string>("");
+
+  // korData가 변경될 때마다 useWordSelection의 인자도 업데이트
   useEffect(() => {
-    isLoadingRef.current = isLoading;
-  }, [isLoading]);
+    if (korData?.content) {
+      setSelectedKorContent(korData.content);
+    }
+  }, [korData]);
+
+  const { handleSelectionChange } = useWordSelection(selectedKorContent);
+
+  const isLoadingRef = useRef(engIsLoading || korIsLoading);
+  useEffect(() => {
+    isLoadingRef.current = engIsLoading || korIsLoading;
+  }, [engIsLoading, korIsLoading]);
 
   useEffect(() => {
     setCurrentLocation("news Page");
@@ -55,10 +69,6 @@ const NewsDetailPage = () => {
   const calculateProgress = () => {
     // 데이터 fetching이 됐을 때만 calculate
     if (newsContainerRef.current && !isLoadingRef.current) {
-      // 조회수가 여러 번 올라가는 것을 막음
-      if (isFirstView) {
-        setIsFirstView(false);
-      }
       const containerRect = newsContainerRef.current.getBoundingClientRect();
       const containerTop = containerRect.top;
       const containerHeight = containerRect.height;
@@ -102,19 +112,22 @@ const NewsDetailPage = () => {
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // 데이터 fetching이 끝나면 progress 계산
   useEffect(() => {
-    if (!isLoading) {
-      setIsRead(data?.isRead);
+    if (!engIsLoading && !korIsLoading) {
+      // 조회수가 여러 번 올라가는 것을 막음
+      if (isFirstView) {
+        setIsFirstView(false);
+      }
+      setIsRead(engData?.isRead);
       if (!isRead![difficulty - 1]) {
         calculateProgress();
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoading]);
+  }, [engIsLoading, korIsLoading]);
 
   // 난이도가 바뀌면 progress 다시 계산
   useEffect(() => {
@@ -126,7 +139,7 @@ const NewsDetailPage = () => {
   }, [difficulty]);
 
   useEffect(() => {
-    if (isRead && isRead[3 - difficulty] && !isLoading) {
+    if (isRead && isRead[3 - difficulty] && !engIsLoading && !korIsLoading) {
       setIsReadFinished(true);
     } else if (scrollProgress === 100) {
       setIsReadFinished(true);
@@ -154,24 +167,24 @@ const NewsDetailPage = () => {
         <NewsContainer ref={newsContainerRef}>
           <NewsHeader>
             <NewsCategory>
-              {isLoading ? (
+              {engIsLoading || korIsLoading ? (
                 <LoadingDiv>
                   <LoadingBar />
                 </LoadingDiv>
               ) : (
-                <>{data?.category}</>
+                <>{engData?.category}</>
               )}
             </NewsCategory>
             <NewsTitle>
-              {isLoading ? (
+              {engIsLoading || korIsLoading ? (
                 <LoadingDiv>
                   <LoadingBar />
                 </LoadingDiv>
               ) : (
-                <>{data?.title}</>
+                <>{languageData === "en" ? engData?.title : korData?.title}</>
               )}
             </NewsTitle>
-            {isLoading ? (
+            {engIsLoading || korIsLoading ? (
               <>
                 <LoadingDiv>
                   <LoadingBar />
@@ -181,10 +194,14 @@ const NewsDetailPage = () => {
               <div
                 style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
               >
-                <NewsDate>{data?.publishedDate}</NewsDate>
+                <NewsDate>
+                  {languageData === "en"
+                    ? engData?.publishedDate
+                    : korData?.publishedDate}
+                </NewsDate>
                 <OriginalUrlButton
                   onClick={() =>
-                    (window.location.href = `${data?.originalUrl}`)
+                    (window.location.href = `${engData?.originalUrl}`)
                   }
                 >
                   기사원문
@@ -201,16 +218,16 @@ const NewsDetailPage = () => {
                 marginTop: "0.5rem",
               }}
             >
-              {isLoading ? (
+              {engIsLoading || korIsLoading ? (
                 <LoadingDiv style={{ width: "calc(100% - 20rem)" }}>
                   <LoadingBar />
                 </LoadingDiv>
               ) : (
                 <>
-                  <PressDiv>{data?.press}</PressDiv>
+                  <PressDiv>{engData?.press}</PressDiv>
                   <div>|</div>
-                  <JournalistDiv>{data?.journalist}</JournalistDiv>
-                  <HitDiv>조회 {data?.hit}</HitDiv>
+                  <JournalistDiv>{engData?.journalist}</JournalistDiv>
+                  <HitDiv>조회 {engData?.hit}</HitDiv>
                 </>
               )}
               <SettingDiv>
@@ -218,21 +235,21 @@ const NewsDetailPage = () => {
                 <DifficultyToggleBtn
                   difficulty={difficulty}
                   setDifficulty={setDifficulty}
-                  isRead={data?.isRead[difficulty - 1]}
+                  isRead={engData?.isRead[difficulty - 1]}
                   setIsReadFinished={setIsReadFinished}
                 />
               </SettingDiv>
             </div>
           </NewsHeader>
           <ThumbnailImageDiv>
-            {isLoading ? (
+            {engIsLoading || korIsLoading ? (
               <Spinner />
             ) : (
-              <ThumbnailImage src={data?.thumbnailImageUrl} alt="noImage" />
+              <ThumbnailImage src={engData?.thumbnailImageUrl} alt="noImage" />
             )}
           </ThumbnailImageDiv>
           <NewsContent>
-            {isLoading ? (
+            {engIsLoading || korIsLoading ? (
               <div
                 style={{
                   display: "flex",
@@ -251,7 +268,9 @@ const NewsDetailPage = () => {
                 </LoadingDiv>
               </div>
             ) : (
-              <div onMouseUp={handleSelectionChange}>{data?.content}</div>
+              <div onMouseUp={handleSelectionChange}>
+                {languageData === "en" ? engData?.content : korData?.content}
+              </div>
             )}
           </NewsContent>
         </NewsContainer>

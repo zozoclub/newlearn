@@ -83,6 +83,9 @@ define(['./workbox-b5f7729d'], (function (workbox) { 'use strict';
   }, {
     "url": "index.html",
 <<<<<<< HEAD
+    "revision": "0.rc6n2cvofag"
+=======
+<<<<<<< HEAD
     "revision": "0.c6dcn7ko4"
 =======
 <<<<<<< HEAD
@@ -91,6 +94,7 @@ define(['./workbox-b5f7729d'], (function (workbox) { 'use strict';
     "revision": "0.mj4o53f3jn8"
 >>>>>>> 414f83ea112aec25e6502dfce1c3b5ceec58e672
 >>>>>>> f88ea02b90ba966c903e0a3313cc48d2b3f9e5de
+>>>>>>> eee23ea71afdcd1ebc02e46b674b3d768cdbadbb
   }], {});
   workbox.cleanupOutdatedCaches();
   workbox.registerRoute(new workbox.NavigationRoute(workbox.createHandlerBoundToURL("index.html"), {

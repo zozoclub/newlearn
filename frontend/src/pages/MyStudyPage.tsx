@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 import locationState from "@store/locationState";
 import goalState from "@store/goalState";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { useMutation } from "@tanstack/react-query";
 
 import GoalChart from "@components/GoalChart";
@@ -14,10 +14,15 @@ import vocaMenuBg from "@assets/images/background-vocamenu.png";
 import Modal from "@components/Modal";
 import Spinner from "@components/Spinner";
 
-import { GoalSettingType, goalSetting } from "@services/goalService.ts";
+import {
+  GoalSettingType,
+  goalSetting,
+  getStudyProgress,
+} from "@services/goalService.ts";
 
 const MyStudyPage = () => {
   const navigate = useNavigate();
+  const [studyProgress, setStudyProgress] = useRecoilState(goalState);
 
   // 페이지 헤더
   const setCurrentLocation = useSetRecoilState(locationState);
@@ -49,11 +54,23 @@ const MyStudyPage = () => {
   const goalMutation = useMutation<GoalSettingType, Error, GoalSettingType>({
     mutationFn: (data: GoalSettingType) => goalSetting(data),
     onSuccess: (result) => {
-      setStudyProgress((prevState) => ({
-        ...prevState,
+      setStudyProgress((goalInfo) => ({
+        ...goalInfo,
         ...result,
         isInitialized: true,
       }));
+
+      getStudyProgress()
+        .then((updatedStudyProgress) => {
+          setStudyProgress((goalInfo) => ({
+            ...goalInfo,
+            ...updatedStudyProgress,
+          }));
+        })
+        .catch((error) => {
+          console.error("Failed to fetch updated study progress", error);
+        });
+
       closeModal();
     },
     onError: (error) => {
@@ -61,11 +78,14 @@ const MyStudyPage = () => {
     },
   });
 
-  // 목표 현황 가져오기
+  const isSetGoal =
+    studyProgress.goalCompleteWord &&
+    studyProgress.goalPronounceTestScore &&
+    studyProgress.goalReadNewsCount
+      ? true
+      : false;
 
-  const studyProgress = useRecoilValue(goalState);
-  const setStudyProgress = useSetRecoilState(goalState);
-  if (!studyProgress.isInitialized) return <Spinner />;
+  if (isSetGoal && !studyProgress.isInitialized) return <Spinner />;
 
   return (
     <Container>

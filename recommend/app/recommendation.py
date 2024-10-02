@@ -34,15 +34,18 @@ def get_cbf_news(user_id: int, db: Session):
 
     # 추천할 뉴스 기사의 인덱스 찾기
     similar_news_indices = cosine_sim.argsort()[:, -6:][:, :-1]  # 자기 자신을 제외하고자 상위 6개 인덱스 선택
+    print(f"Similar news indices : {similar_news_indices.shape}")
 
-    recommended_news = []
+    recommended_news = {}
     for index_list in similar_news_indices:
         for index in index_list:
             if all_news[index] not in user_read_news:
-                recommended_news.append({
-                    'news_id': all_news[index].news_id,
-                    'title': all_news[index].title
-                })
-        print(all_news[index].news_id, " ", all_news[index].title)
-
-    return {"recommendations": recommended_news}
+                news = all_news[index]
+                if news.news_id not in recommended_news:
+                    recommended_news[news.news_id] = {
+                        'news_id': news.news_id,
+                        'title': news.title
+                    }
+                    print(f"Added recommendation: {news.news_id} - {news.title}")
+    print(f"Total recommendations: {len(recommended_news)}")
+    return list(recommended_news.values())

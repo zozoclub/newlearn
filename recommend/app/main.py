@@ -18,7 +18,7 @@ def get_db():
 @app.get("/cbf-news/{user_id}")
 def read_recommendations(user_id: int, db: Session = Depends(get_db)):
     recommendations = get_cbf_news(user_id, db)
-    if not recommendations:
-        raise HTTPException(status_code=404, detail="No recommendations found")
     print(recommendations)
-    return {"recommendations": [{"title": news.title, "news_id": news.news_id} for news in recommendations]}
+    if not recommendations:  # recommendations가 비어있는지 확인
+        raise HTTPException(status_code=404, detail="No recommendations found")
+    return {"recommendations": recommendations}

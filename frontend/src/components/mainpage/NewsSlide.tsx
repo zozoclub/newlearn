@@ -20,7 +20,7 @@ const NewsSlide: React.FC<NewsSlideProps> = React.memo(
 );
 
 const StyledImage = styled.img`
-  width: 520px;
+  width: 580px;
   height: 340px;
   border-radius: 0.5rem;
   opacity: 0.9;

@@ -1,208 +1,129 @@
+import React, { useState, useEffect } from "react";
+import styled, { keyframes } from "styled-components";
+import { PointRankingType, ReadRankingType } from "./TopRankingWidget";
 import Spinner from "@components/Spinner";
-import {
-  getPointRankingList,
-  getReadRankingList,
-} from "@services/rankingService";
-import { useQuery } from "@tanstack/react-query";
 import { calculateExperience } from "@utils/calculateExperience";
-import { useState } from "react";
-import styled from "styled-components";
+import { useRecoilValue } from "recoil";
+import { selectedRankingState } from "@store/selectedRankingState";
+import LevelIcon from "@components/common/LevelIcon";
 
-type RankingType = {
-  userId: number;
-  nickname: string;
-  ranking: number;
-};
+const RankingWidget: React.FC<{
+  pointIsLoading: boolean;
+  readIsLoading: boolean;
+  pointRankingList: PointRankingType[] | undefined;
+  readRankingList: ReadRankingType[] | undefined;
+}> = ({ pointIsLoading, readIsLoading, pointRankingList, readRankingList }) => {
+  const selectedType = useRecoilValue(selectedRankingState);
+  const [animate, setAnimate] = useState(false);
 
-export type PointRankingType = RankingType & {
-  experience: number;
-};
+  useEffect(() => {
+    setAnimate(false);
+    const timer = setTimeout(() => {
+      if (!pointIsLoading && !readIsLoading) {
+        setAnimate(true);
+      }
+    }, 100); // 리렌더링을 확실하게 하기 위한 딜레이
 
-export type ReadRankingType = RankingType & {
-  experience: number;
-  totalNewsReadCount: number;
-};
+    return () => clearTimeout(timer);
+  }, [pointIsLoading, readIsLoading, selectedType]);
 
-const RankingWidget = () => {
-  const [selectedType, setSelectedType] = useState<"point" | "read">("point");
-  const { isLoading: pointIsLoading, data: pointRankingList } = useQuery<
-    PointRankingType[]
-  >({
-    queryKey: ["pointRankingData"],
-    queryFn: getPointRankingList,
-  });
-  const { isLoading: readIsLoading, data: readRankingList } = useQuery<
-    ReadRankingType[]
-  >({
-    queryKey: ["readRankingList"],
-    queryFn: getReadRankingList,
-  });
+  const renderRankingList = (
+    list: PointRankingType[] | ReadRankingType[] | undefined
+  ) => {
+    return list?.map((ranking, index) => (
+      <Ranking
+        key={`${selectedType}-${index}`}
+        style={{ animationDelay: `${index * 0.1}s` }}
+      >
+        <div className="rank">{index + 1}</div>
+        <div className="level">
+          <LevelIcon
+            level={calculateExperience(ranking.experience).level}
+            size={25}
+          />
+        </div>
+        <div className="nickname">{ranking.nickname}</div>
+        <div className="point">
+          {selectedType === "point"
+            ? (ranking as PointRankingType).experience
+            : (ranking as ReadRankingType).totalNewsReadCount}
+        </div>
+      </Ranking>
+    ));
+  };
 
   return (
     <Container>
-      <RankingKindContainer $type={selectedType}>
-        <RankingKind
-          $isSelected={selectedType === "point"}
-          $type={"point"}
-          onClick={() => setSelectedType("point")}
-        >
-          포인트왕
-        </RankingKind>
-        <RankingKind
-          $isSelected={selectedType === "read"}
-          $type={"read"}
-          onClick={() => setSelectedType("read")}
-        >
-          다독왕
-        </RankingKind>
-      </RankingKindContainer>
-      <TopRanking>
-        <RankingTable>
-          <thead>
-            <tr>
-              <th className="rank">순위</th>
-              <th className="level">레벨</th>
-              <th className="nickname">닉네임</th>
-              <th className="count">
-                {selectedType === "point" ? "포인트" : "읽은 수"}
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {selectedType === "point" ? (
-              pointIsLoading ? (
-                <tr>
-                  <LoadingDiv>
-                    <Spinner />
-                  </LoadingDiv>
-                </tr>
-              ) : (
-                <>
-                  {pointRankingList?.map((pointRanking) => (
-                    <tr key={pointRanking.ranking} className="rank">
-                      <td>{pointRanking.ranking}</td>
-                      <td>
-                        {calculateExperience(pointRanking.experience).level}
-                      </td>
-                      <td style={{ textAlign: "start" }}>
-                        {pointRanking.nickname}
-                      </td>
-                      <td>{pointRanking.experience}</td>
-                    </tr>
-                  ))}
-                </>
-              )
-            ) : readIsLoading ? (
-              <tr>
-                <LoadingDiv>
-                  <Spinner />
-                </LoadingDiv>
-              </tr>
-            ) : (
-              <>
-                {readRankingList?.map((readRanking) => (
-                  <tr key={readRanking.ranking} className="rank">
-                    <td>{readRanking.ranking}</td>
-                    <td>{calculateExperience(readRanking.experience).level}</td>
-                    <td style={{ textAlign: "start" }}>
-                      {readRanking.nickname}
-                    </td>
-                    <td>{readRanking.totalNewsReadCount}</td>
-                  </tr>
-                ))}
-              </>
-            )}
-          </tbody>
-        </RankingTable>
-      </TopRanking>
+      {selectedType === "point" ? (
+        pointIsLoading ? (
+          <LoadingDiv>
+            <Spinner />
+          </LoadingDiv>
+        ) : (
+          animate && renderRankingList(pointRankingList)
+        )
+      ) : readIsLoading ? (
+        <LoadingDiv>
+          <Spinner />
+        </LoadingDiv>
+      ) : (
+        animate && renderRankingList(readRankingList)
+      )}
     </Container>
   );
 };
 
+const slideIn = keyframes`
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+`;
+
 const Container = styled.div`
-  width: 90%;
-  height: 90%;
-  padding: 5%;
-`;
-
-const RankingKindContainer = styled.div<{ $type: "point" | "read" }>`
   position: relative;
-  width: 10rem;
-  height: 1rem;
-  margin: auto;
-  padding: 0.5rem 2rem;
-  color: white;
-  border-radius: 1rem;
-  box-shadow: gray 0px 0px 2px 2px inset;
-  background-color: white;
-  cursor: pointer;
-  &::after {
-    content: "";
-    position: absolute;
-    transform: ${(props) =>
-      props.$type === "point" ? "translateX(0)" : "translateX(6.5rem)"};
-    transition: transform 0.5s;
-    top: 0;
-    left: 0;
-    border-radius: 1rem;
-    background-color: ${(props) => props.theme.colors.primary};
-    width: 5.5rem;
-    height: 1rem;
-    padding: 0.5rem 1rem;
-  }
+  display: flex;
+  flex-direction: column;
+  width: 90%;
+  height: 95%;
+  padding: 2.5% 5%;
+  overflow: hidden;
 `;
 
-const RankingKind = styled.div<{
-  $isSelected: boolean;
-  $type: "point" | "read";
-}>`
-  position: absolute;
-  z-index: 1;
-  width: 5.5rem;
-  height: 1rem;
-  padding: 0.5rem 1rem;
-  transform: translate(0, -50%);
-  color: ${(props) => (props.$isSelected ? "white" : "black")};
-  transition: color 0.5s;
+const Ranking = styled.div`
+  display: flex;
+  justify-items: center;
+  align-items: center;
   text-align: center;
-  top: 50%;
-  left: ${(props) => (props.$type === "point" ? 0 : "6.5rem")};
-`;
+  animation: ${slideIn} 0.5s ease-out forwards;
+  opacity: 0;
 
-const RankingTable = styled.table`
-  width: 100%;
-  font-size: 0.875rem;
-  text-align: center;
-  table-layout: fixed;
-  margin-top: 1rem;
-  th {
-    padding-bottom: 0.4rem;
-  }
-  td {
-    padding: 0.2rem 0;
-    font-weight: 100;
-  }
   .rank {
     width: 10%;
   }
   .level {
-    width: 20%;
+    width: 15%;
   }
   .nickname {
-    width: 40%;
+    width: 50%;
+    text-align: start;
+    overflow: hidden;
   }
-  .count {
-    width: 30%;
+  .point {
+    width: 25%;
+    text-align: start;
   }
 `;
 
-const TopRanking = styled.div``;
-
-const LoadingDiv = styled.td`
+const LoadingDiv = styled.div`
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translate(-50%, -50%);
 `;
 
 export default RankingWidget;

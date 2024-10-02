@@ -53,7 +53,7 @@ export const goalAverageSelector = selector({
     const goalData = get(goalDataSelector);
 
     const percentages = goalData.map(
-      (item) => (item.current / item.goal) * 100
+      (item) => (Math.min(item.current, item.goal) / item.goal) * 100
     );
     const validPercentages = percentages.filter(
       (p) => !isNaN(p) && isFinite(p)
@@ -61,11 +61,8 @@ export const goalAverageSelector = selector({
 
     const perAverage =
       validPercentages.length > 0
-        ? Math.min(
-            validPercentages.reduce((sum, p) => sum + p, 0) /
-              validPercentages.length,
-            100
-          )
+        ? validPercentages.reduce((sum, p) => sum + p, 0) /
+          validPercentages.length
         : 0;
 
     const displayPerAverage =

@@ -11,6 +11,7 @@ import { getTopNewsList } from "@services/newsService";
 import { useRecoilValue } from "recoil";
 import userInfoState from "@store/userInfoState";
 import languageState from "@store/languageState";
+import { usePageTransition } from "@hooks/usePageTransition";
 
 const NewsSlide = React.lazy(() => import("./NewsSlide"));
 
@@ -18,6 +19,7 @@ const DailyNews: React.FC = () => {
   const userInfoData = useRecoilValue(userInfoState);
   const difficulty = userInfoData.difficulty;
   const languageData = useRecoilValue(languageState);
+  const transitionTo = usePageTransition();
 
   const { data: dailyNewsList, isLoading } = useQuery({
     queryKey: ["dailyNewsList", difficulty, languageData],
@@ -40,16 +42,18 @@ const DailyNews: React.FC = () => {
         coverflowEffect={{
           rotate: 50,
           stretch: 0,
-          depth: 100,
+          depth: 50,
           modifier: 1,
-          slideShadows: true,
         }}
         pagination={true}
         modules={[EffectCoverflow, Pagination, Mousewheel]}
         className="mySwiper"
       >
         {dailyNewsList.map((news) => (
-          <SwiperSlide key={news.newsId}>
+          <SwiperSlide
+            key={news.newsId}
+            onClick={() => transitionTo(`/news/detail/${news.newsId}`)}
+          >
             <Suspense fallback={<div>Loading...</div>}>
               <NewsSlide
                 image={news.thumbnailImageUrl}
@@ -61,6 +65,7 @@ const DailyNews: React.FC = () => {
         ))}
       </Swiper>
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dailyNewsList, isLoading]);
 
   if (isLoading) return <div>Loading news...</div>;
@@ -71,7 +76,7 @@ const DailyNews: React.FC = () => {
 const Container = styled.div`
   justify-content: flex-start;
   position: absolute;
-  top: 7.5rem;
+  top: 10rem;
   left: -30vw;
   width: calc(125vw - 0.375rem);
   overflow: hidden;
@@ -85,12 +90,12 @@ const Container = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 600px;
-    height: 400px;
+    width: 540px;
+    height: 360px;
     background-color: ${(props) => props.theme.colors.cardBackground + "BF"};
     border-radius: 0.5rem;
     backdrop-filter: blur(4px);
-    box-shadow: 0.5rem 0.5rem 0.25rem ${(props) => props.theme.colors.shadow};
+    box-shadow: ${(props) => props.theme.shadows.medium};
     transition: all 0.3s ease;
   }
 

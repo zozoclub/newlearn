@@ -5,12 +5,20 @@ import locationState from "@store/locationState";
 import SpeakingTestResultReference from "@components/testpage/SpeakingTestResultReference";
 import SpeakingTestResultCharts from "@components/testpage/SpeakingTestResultCharts";
 import SpeakingTestResultInfoWidget from "@components/testpage/SpeakingTestResultInfoWidget";
-import { getPronounceTestResultDetail, PronounceTestResultDetailDto } from "@services/speakingTestService";
+import {
+  getPronounceTestResultDetail,
+  PronounceTestResultDetailDto,
+} from "@services/speakingTestService";
 import { useQuery } from "@tanstack/react-query";
 import Spinner from "@components/Spinner";
 import styled from "styled-components";
 import BackArrow from "@assets/icons/BackArrow";
-import { getAccuracyFeedback, getCompletenessFeedback, getFluencyFeedback, getProsodyFeedback } from "@utils/speakingFeedback";
+import {
+  getAccuracyFeedback,
+  getCompletenessFeedback,
+  getFluencyFeedback,
+  getProsodyFeedback,
+} from "@utils/speakingFeedback";
 
 const SpeakingTestResultPage: React.FC = () => {
   const { audioFileId } = useParams<{ audioFileId: string }>();
@@ -20,33 +28,42 @@ const SpeakingTestResultPage: React.FC = () => {
     setCurrentLocation("Speaking Test Result Page");
   }, [setCurrentLocation]);
 
-  const { data: testDetail, isLoading, error } = useQuery<PronounceTestResultDetailDto>({
+  const {
+    data: testDetail,
+    isLoading,
+    error,
+  } = useQuery<PronounceTestResultDetailDto>({
     queryKey: ["pronounceTestDetail", audioFileId],
     queryFn: () => getPronounceTestResultDetail(Number(audioFileId)),
   });
 
   // useMemo로 캐싱하여 불필요한 객체 생성 방지
   const results = useMemo(() => {
-    return testDetail ? {
-      pronunciationScore: testDetail.totalScore,
-      accuracyScore: testDetail.accuracyScore,
-      fluencyScore: testDetail.fluencyScore,
-      prosodyScore: testDetail.prosodyScore,
-      completenessScore: testDetail.completenessScore,
-    } : null;
+    return testDetail
+      ? {
+          pronunciationScore: testDetail.totalScore,
+          accuracyScore: testDetail.accuracyScore,
+          fluencyScore: testDetail.fluencyScore,
+          prosodyScore: testDetail.prosodyScore,
+          completenessScore: testDetail.completenessScore,
+        }
+      : null;
   }, [testDetail]);
 
   // 로딩 상태 처리
   if (isLoading) return <Spinner />;
 
   // 에러 상태 처리
-  if (error) return <ErrorText>에러가 발생했습니다. 다시 시도해 주세요.</ErrorText>;
+  if (error)
+    return <ErrorText>에러가 발생했습니다. 다시 시도해 주세요.</ErrorText>;
 
   // testDetail이 null일 때
   if (!testDetail || !results) return <ErrorText>No data available.</ErrorText>;
 
-  const referenceTest = testDetail.tests.map(test => test.sentence).join(" ");
-  const referenceTextTranslate = testDetail.tests.map(test => test.sentenceMeaning).join(" ");
+  const referenceTest = testDetail.tests.map((test) => test.sentence).join(" ");
+  const referenceTextTranslate = testDetail.tests
+    .map((test) => test.sentenceMeaning)
+    .join(" ");
 
   return (
     <MainLayout>
@@ -106,7 +123,7 @@ const MainContainer = styled.div`
   margin: 0 0.5rem;
   padding: 0.5rem;
   background-color: ${(props) => props.theme.colors.cardBackground + "BF"};
-  box-shadow: 0.5rem 0.5rem 0.25rem ${(props) => props.theme.colors.shadow};
+  box-shadow: ${(props) => props.theme.shadows.medium};
   border-radius: 0.75rem;
   transition: box-shadow 0.5s;
   backdrop-filter: blur(0.25rem);

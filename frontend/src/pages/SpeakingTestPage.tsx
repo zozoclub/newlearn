@@ -245,7 +245,13 @@ const SpeakingTestPage: React.FC = () => {
           accuracyScores.push(pronunciationResult.accuracyScore);
           fluencyScores.push(pronunciationResult.fluencyScore);
           prosodyScores.push(pronunciationResult.prosodyScore);
-          console.log("중간점수", pronunciationScores, accuracyScores, fluencyScores, prosodyScores);
+          console.log(
+            "중간점수",
+            pronunciationScores,
+            accuracyScores,
+            fluencyScores,
+            prosodyScores
+          );
 
           // 인식된 텍스트를 저장
           recognizedTexts.push(e.result.text);
@@ -387,7 +393,7 @@ const MainContainer = styled.div`
   background-color: ${(props) => props.theme.colors.cardBackground + "BF"};
   backdrop-filter: blur(0.25rem);
   border-radius: 0.75rem;
-  box-shadow: 0.5rem 0.5rem 0.25rem ${(props) => props.theme.colors.shadow};
+  box-shadow: ${(props) => props.theme.shadows.medium};
   transition: box-shadow 0.5s;
 `;
 
@@ -415,7 +421,7 @@ const SubContainer = styled.div`
   background-color: ${(props) => props.theme.colors.cardBackground + "BF"};
   backdrop-filter: blur(0.25rem);
   border-radius: 0.75rem;
-  box-shadow: 0.5rem 0.5rem 0.25rem ${(props) => props.theme.colors.shadow};
+  box-shadow: ${(props) => props.theme.shadows.medium};
   transition: box-shadow 0.5s;
 `;
 
@@ -442,7 +448,7 @@ const SubmitButton = styled.button<{ disabled: boolean }>`
 
   &:hover {
     background-color: ${(props) =>
-    props.disabled ? "#ccc" : props.theme.colors.primaryPress};
+      props.disabled ? "#ccc" : props.theme.colors.primaryPress};
   }
 `;
 

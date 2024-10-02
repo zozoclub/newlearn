@@ -11,7 +11,7 @@ const NewsSlide: React.FC<NewsSlideProps> = React.memo(
   ({ image, title, content }) => (
     <>
       <StyledImage loading="lazy" src={image} alt="news" />
-      <NewsContent>
+      <NewsContent className="news-content">
         <h1>{title}</h1>
         <div>{content}</div>
       </NewsContent>
@@ -20,8 +20,8 @@ const NewsSlide: React.FC<NewsSlideProps> = React.memo(
 );
 
 const StyledImage = styled.img`
-  width: 580px;
-  height: 380px;
+  width: 520px;
+  height: 340px;
   border-radius: 0.5rem;
   opacity: 0.9;
   object-fit: cover; // 이미지 비율 유지
@@ -35,8 +35,8 @@ const NewsContent = styled.div`
   margin: 1rem;
   padding: 1rem 1rem;
   border-radius: 0.5rem;
-  background-color: rgba(0, 0, 0, 0.7);
-  color: #ffffff;
+  background-color: ${(props) => props.theme.colors.cardBackground01};
+  color: ${(props) => props.theme.colors.text};
   transition: background-color 0.3s ease;
 
   h1 {

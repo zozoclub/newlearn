@@ -119,7 +119,7 @@ const ListItem = styled.div`
 `;
 
 const Title = styled.div`
-  background-color: ${(props) => props.theme.colors.shadow}7F;
+  background-color: ${(props) => props.theme.shadows.medium};
   color: ${(props) => props.theme.colors.text};
   padding: 1rem;
   cursor: pointer;
@@ -161,7 +161,7 @@ const ContentContainer = styled.div<{ $isExpanded: boolean }>`
 
 const Content = styled.div`
   padding: 1rem;
-  background-color: ${(props) => props.theme.colors.shadow}4F;
+  background-color: ${(props) => props.theme.shadows.medium};
   color: ${(props) => props.theme.colors.text};
   font-size: 1rem;
   line-height: 1.5;

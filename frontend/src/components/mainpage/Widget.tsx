@@ -4,6 +4,7 @@ import { goalDataSelector } from "@store/goalState";
 import CategoryChart from "@components/CategoryChart";
 import RankingWidget from "./RankingWidget";
 import GoalChartDoughnut from "@components/GoalChartDoughnut";
+import MainGoalBar from "@components/mainpage/MainGoalBar";
 
 const Widget: React.FC<{ variety: string }> = ({ variety }) => {
   const goalData = useRecoilValue(goalDataSelector);
@@ -18,7 +19,7 @@ const Widget: React.FC<{ variety: string }> = ({ variety }) => {
       );
     case "chart":
       return (
-        <WidgetContainer>
+        <WidgetContainer className="chartt">
           <Descripsion>Learn Category</Descripsion>
           <CategoryChart />
         </WidgetContainer>
@@ -35,6 +36,7 @@ const Widget: React.FC<{ variety: string }> = ({ variety }) => {
         <WidgetContainer>
           <Descripsion>study goal</Descripsion>
           <GoalChartDoughnut />
+          <MainGoalBar />
         </WidgetContainer>
       );
   }
@@ -45,12 +47,18 @@ const WidgetContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+
+  width: 300px;
+  height: 300px;
+
   aspect-ratio: 1;
-  background-color: ${(props) => props.theme.colors.cardBackground + "BF"};
+  background-color: ${(props) => props.theme.colors.cardBackground + "CC"};
   border-radius: 0.75rem;
   transition: box-shadow 0.5s;
   backdrop-filter: blur(4px);
-  box-shadow: 0.5rem 0.5rem 0.25rem ${(props) => props.theme.colors.shadow};
+  box-shadow: 0.25rem 0.25rem 0.25rem ${(props) => props.theme.colors.shadow};
+
   .middle-space {
     width: 10rem;
     margin: 0 1rem;

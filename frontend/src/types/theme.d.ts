@@ -21,7 +21,9 @@ export type Theme = {
     text04: string;
     readonly: string;
     placeholder: string;
-    shadow: string;
+  };
+  shadows: {
+    medium: string;
   };
   opacities: {
     background: number;

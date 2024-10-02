@@ -2,27 +2,15 @@ import { PWAInstallPrompt } from "@components/PWAInstallPrompt";
 import Clock from "@components/mainpage/Clock";
 import DailyNews from "@components/mainpage/DailyNews";
 import Widget from "@components/mainpage/Widget";
-import locationState from "@store/locationState";
-import { useEffect } from "react";
-import { useSetRecoilState } from "recoil";
 import styled from "styled-components";
 
 const MainPage = () => {
-  const setCurrentLocation = useSetRecoilState(locationState);
   const widgetList = [
     { variety: "profile" },
     { variety: "chart" },
     { variety: "ranking" },
     { variety: "goal" },
   ];
-
-  useEffect(() => {
-    setCurrentLocation("main");
-    return () => {
-      setCurrentLocation("");
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   return (
     <Container>
@@ -46,7 +34,6 @@ const Container = styled.div`
   display: flex;
   position: relative;
   height: 35rem;
-  justify-content: space-around;
   padding: 5rem 0;
 `;
 
@@ -61,7 +48,7 @@ const WidgetContainer = styled.div`
   position: absolute;
   z-index: 1;
   right: 0;
-  grid-template-columns: 1fr 1fr;
-  grid-gap: 2.5rem;
+  grid-template-columns: calc(50% - 1.5rem) calc(50% - 1.5rem);
+  grid-gap: 3rem;
   width: 40rem;
 `;

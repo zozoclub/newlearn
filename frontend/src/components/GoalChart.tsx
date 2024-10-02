@@ -18,16 +18,17 @@ const GoalChart: React.FC = () => {
           <NicknameContainer>{nickname}</NicknameContainer> 님의 학습 현황
         </TitleContainer>
         <GoalChartDoughnut />
-        {goalData.map((item, index) => (
-          <GoalChartBar
-            key={index}
-            title={item.title}
-            current={item.current}
-            goal={item.goal}
-            percentage={(item.current / item.goal) * 100}
-          />
-        ))}
       </ChartContainer>
+
+      {goalData.map((item, index) => (
+        <GoalChartBar
+          key={index}
+          title={item.title}
+          current={item.current}
+          goal={item.goal}
+          percentage={(item.current / item.goal) * 100}
+        />
+      ))}
     </div>
   );
 };

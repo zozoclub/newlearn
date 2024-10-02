@@ -6,10 +6,10 @@ import styled from "styled-components";
 
 const MainPage = () => {
   const widgetList = [
-    { variety: "profile" },
-    { variety: "chart" },
-    { variety: "ranking" },
     { variety: "goal" },
+    { variety: "chart" },
+    { variety: "topRanking" },
+    { variety: "ranking" },
   ];
 
   return (
@@ -48,7 +48,7 @@ const WidgetContainer = styled.div`
   position: absolute;
   z-index: 1;
   right: 0;
-  grid-template-columns: calc(50% - 1.5rem) calc(50% - 1.5rem);
-  grid-gap: 3rem;
-  width: 40rem;
+  grid-template-columns: calc(50% - 1rem) calc(50% - 1rem);
+  grid-gap: 2rem;
+  width: 35rem;
 `;

@@ -46,23 +46,24 @@ export default MainGoalBar;
 
 const ChartContainer = styled.div`
   width: 90%;
-  max-width: 400px;
 `;
 
 const BarItem = styled.div`
   display: flex;
-  margin: 1rem 0;
+  align-items: center;
+  margin: 0.75rem 0;
   gap: 0.5rem;
 `;
 
 const BarLabel = styled.div`
-  width: 70px;
+  width: 4rem;
   font-weight: bold;
+  text-align: center;
 `;
 
 const BarContainer = styled.div`
   width: 100%;
-  height: 1rem;
+  height: 0.75rem;
   background-color: #e0e0e0;
   border-radius: 8px;
   overflow: hidden;

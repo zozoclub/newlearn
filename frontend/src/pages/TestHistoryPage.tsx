@@ -25,7 +25,7 @@ const TestHistoryPage: React.FC = () => {
     setActiveTab(tab);
   };
   if (isMobile) {
-    return <TestIntroMobilePage />
+    return <TestIntroMobilePage />;
   }
   return (
     <Layout>
@@ -108,7 +108,7 @@ const BigContainer = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  min-height: 36rem;
+  min-height: 48rem;
   margin: 0.75rem 0;
   background-color: ${(props) => props.theme.colors.cardBackground + "BF"};
   backdrop-filter: blur(0.25rem);

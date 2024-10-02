@@ -18,12 +18,13 @@ import Modal from "@components/Modal";
 
 // 모바일
 import WordTestMobilePage from "./mobile/WordTestMobilePage";
+import { isExpModalState } from "@store/expState";
 
 const WordTestPage: React.FC = () => {
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const [searchParams] = useSearchParams();
   const totalCount = searchParams.get("totalCount");
-  console.log(totalCount);
+  const setExpModal = useSetRecoilState(isExpModalState);
 
   const navigate = useNavigate();
 
@@ -32,6 +33,11 @@ const WordTestPage: React.FC = () => {
       postWordTestResult(wordTestResultDataSet),
     onSuccess: () => {
       console.log("결과 전달 완료");
+      setExpModal({
+        isOpen: true,
+        experience: 30,
+        action: "워드점수드립니다.",
+      });
       navigate(`/word/result/${data!.quizId}`);
     },
   });
@@ -45,7 +51,6 @@ const WordTestPage: React.FC = () => {
     queryKey: ["wordTestData", Number(totalCount)],
     queryFn: () => getWordTestList(Number(totalCount)),
     refetchOnWindowFocus: false,
-    staleTime: 1000 * 60 * 5,
   });
 
   // 퀴즈 형식으로 변환
@@ -112,7 +117,6 @@ const WordTestPage: React.FC = () => {
       inputRefs.current[index][subIndex + 1]?.focus();
     }
   };
-
 
   const handleKeyDown = (
     event: React.KeyboardEvent<HTMLInputElement>,

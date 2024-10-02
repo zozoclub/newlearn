@@ -21,6 +21,8 @@ public class WordRequestDto {
 	private String sentenceMeaning;
 	private String pronounceUs;
 	private String pronounceUk;
+	private String audioUs;
+	private String audioUk;
 
 	public Word toWordEntity(Users user) {
 		return Word.builder()
@@ -32,6 +34,8 @@ public class WordRequestDto {
 			.isFinalComplete(false)
 			.pronounceUs(pronounceUs)
 			.pronounceUk(pronounceUk)
+			.audioUs(audioUs)
+			.audioUk(audioUk)
 			.createdAt(LocalDateTime.now())
 			.build();
 	}

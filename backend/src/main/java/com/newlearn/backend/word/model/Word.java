@@ -47,6 +47,12 @@ public class Word {
 	@Column(name = "pronounce_uk")
 	private String pronounceUk;
 
+	@Column(name = "audio_us")
+	private String audioUs;
+
+	@Column(name = "audio_uk")
+	private String audioUk;
+
 	@Column(name = "created_at")
 	private LocalDateTime createdAt;
 

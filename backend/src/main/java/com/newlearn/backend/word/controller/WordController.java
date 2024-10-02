@@ -43,7 +43,6 @@ public class WordController {
 			if(user == null) {
 				return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
 			}
-
 			wordService.addWord(wordRequestDto, user);
 			return ApiResponse.createSuccess(null, "성공적으로 단어가 저장되었습니;다");
 		}

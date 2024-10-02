@@ -152,6 +152,15 @@ public class StudyServiceImpl implements StudyService{
         // (정답*2)점
         user.incrementExperience(correctCount*2);
         userRepository.save(user);
+
+        // 목표 업데이트
+        long score = correctCount*20;
+        studyRepository.findByUserId(user.getUserId()).ifPresent(userGoal -> {
+            // 현재 단어 테스트 점수 업데이트
+            long updatedScore = userGoal.getCurrentCompleteWord() + score;
+            userGoal.setCurrentCompleteWord(updatedScore);
+            studyRepository.save(userGoal);
+        });
     }
 
     @Override

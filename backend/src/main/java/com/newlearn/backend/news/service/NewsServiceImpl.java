@@ -6,14 +6,12 @@ import com.newlearn.backend.news.dto.request.NewsReadRequestDTO;
 import com.newlearn.backend.news.dto.response.NewsDetailResponseDTO;
 import com.newlearn.backend.news.dto.response.NewsDetailResponseDTO.WordInfo;
 import com.newlearn.backend.news.dto.response.NewsResponseDTO;
-import com.newlearn.backend.news.model.News;
-import com.newlearn.backend.news.model.UserDailyNewsRead;
-import com.newlearn.backend.news.model.UserNewsRead;
-import com.newlearn.backend.news.model.UserNewsScrap;
+import com.newlearn.backend.news.model.*;
 import com.newlearn.backend.news.repository.NewsRepository;
 import com.newlearn.backend.news.repository.UserDailyNewsReadRepository;
 import com.newlearn.backend.news.repository.UserNewsReadRepository;
 import com.newlearn.backend.news.repository.UserNewsScrapRepository;
+import com.newlearn.backend.news.repository.mongo.UserNewsClickRepository;
 import com.newlearn.backend.user.model.Users;
 import com.newlearn.backend.user.repository.CategoryRepository;
 import com.newlearn.backend.user.repository.UserRepository;
@@ -24,9 +22,12 @@ import com.newlearn.backend.word.repository.WordSentenceRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.User;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.function.Function;
@@ -45,8 +46,8 @@ public class NewsServiceImpl implements NewsService{
     private final UserNewsReadRepository userNewsReadRepository;
     private final UserDailyNewsReadRepository userDailyNewsReadRepository;
     private final UserNewsScrapRepository userNewsScrapRepository;
-    private final WordRepository wordRepository;
     private final WordSentenceRepository wordSentenceRepository;
+    private final UserNewsClickRepository userNewsClickRepository;
 
     @Override
     public Page<NewsResponseDTO> getAllNews(Users user, NewsListRequestDTO newsRequestDTO) {
@@ -150,6 +151,15 @@ public class NewsServiceImpl implements NewsService{
         news.incrementHitIfFirstView(newsDetailRequestDTO.getIsFirstView());
         newsRepository.save(news);
 
+        // 뉴스 클릭 +1
+        if (newsDetailRequestDTO.getIsFirstView()) {
+            UserNewsClick userNewsClick = userNewsClickRepository.findByUserIdAndNewsId(user.getUserId(), newsId)
+                    .orElse(new UserNewsClick(user.getUserId(), newsId, news.getCategory().getCategoryId()));
+            userNewsClick.setCreatedAt(LocalDateTime.now(ZoneId.of("Asia/Seoul")));
+            // 이미 있으면 created_at 업데이트, 없으면 새로 추가
+            userNewsClickRepository.save(userNewsClick);
+        }
+
         return NewsDetailResponseDTO.of(news, title, content, isScrapped, userNewsRead, words);
     }
 
@@ -182,6 +192,13 @@ public class NewsServiceImpl implements NewsService{
 
         dailyRead.incrementNewsReadCount();
         userDailyNewsReadRepository.save(dailyRead);
+
+        Optional<Goal> optionalGoal = studyRepository.findByUserId(user.getUserId());
+        if (optionalGoal.isPresent()) {
+            Goal goal = optionalGoal.get();
+            goal.setGoalReadNewsCount(goal.getCurrentReadNewsCount() + 1);
+            studyRepository.save(goal);
+        }
     }
 
     @Override

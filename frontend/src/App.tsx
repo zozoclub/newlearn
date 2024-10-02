@@ -22,10 +22,14 @@ import { getUserInfo } from "@services/userService";
 import goalState, { StudyProgressType } from "@store/goalState";
 import { getStudyProgress } from "@services/goalService";
 
+import { isExpModalState } from "@store/expState";
+import ExperienceModal from "@components/common/ExperienceModal";
+
 const App: React.FC = () => {
   const theme = useRecoilValue(themeState) === "dark" ? darkTheme : lightTheme;
   const isLogin = useRecoilValue(loginState);
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
+  const expModalState = useRecoilValue(isExpModalState);
 
   useEffect(() => {
     console.log(
@@ -102,6 +106,12 @@ Welcome To NewsLearn!"
           <Outlet />
         </TransitionContent>
         {isLogin && (isMobile ? <MobileNavbar /> : <Navbar />)}
+        {/* ExperienceModal 컴포넌트 렌더링 */}
+        <ExperienceModal
+          isOpen={expModalState.isOpen}
+          experience={expModalState.experience}
+          action={expModalState.action}
+        />
       </AppContainer>
     </ThemeProvider>
   );

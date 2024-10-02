@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import styled, { keyframes, css } from "styled-components";
+import { useSetRecoilState } from "recoil";
+import { isExpModalState } from "@store/expState";
 
 type ModalProps = {
   isOpen: boolean;
@@ -14,18 +16,27 @@ const ExperienceModal: React.FC<ModalProps> = ({
   action,
 }) => {
   const [isAnimating, setIsAnimating] = useState(false);
+  const setExpModal = useSetRecoilState(isExpModalState);
 
   useEffect(() => {
     if (isOpen) {
       setIsAnimating(true);
-      // 2초 후에 모달 닫기
-      const timer = setTimeout(() => {
-        setIsAnimating(false); // 애니메이션 종료
+      const openTimer = setTimeout(() => {
+        setIsAnimating(false);
+        const closeTimer = setTimeout(() => {
+          setExpModal({
+            isOpen: false,
+            experience: 0,
+            action: "",
+          });
+        }, 500);
+
+        return () => clearTimeout(closeTimer);
       }, 2000);
 
-      return () => clearTimeout(timer);
+      return () => clearTimeout(openTimer);
     }
-  }, [isOpen]);
+  }, [isOpen, setExpModal]);
 
   if (!isOpen && !isAnimating) return null;
 

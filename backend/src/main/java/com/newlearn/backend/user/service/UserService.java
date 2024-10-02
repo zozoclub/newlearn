@@ -18,15 +18,15 @@ public interface UserService {
 
 	void signUp(SignUpRequestDTO signUpRequestDTO);
 
-	void updateAvatar(Long userId, UpdateAvatarDTO updateAvatarDTO);
+	void updateAvatar(Users user, UpdateAvatarDTO updateAvatarDTO);
 
 	boolean checkNickname(String nickname);
 
-	void updateNickname(Long userId, String nickname);
+	void updateNickname(Users user, String nickname);
 
-	void updateDifficulty(Long userId, Long difficulty);
+	void updateDifficulty(Users user, Long difficulty);
 
-	void updateCategory(Long userId, List<String> categories);
+	void updateCategory(Users user, List<String> categories);
 
 	void deleteUser(Long userId);
 
@@ -39,4 +39,5 @@ public interface UserService {
 
 	Long getUserRank(Long userId) throws Exception;
 
+	void updateExperience(Users user, Long experience);
 }

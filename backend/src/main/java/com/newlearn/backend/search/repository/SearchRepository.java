@@ -10,6 +10,8 @@ import com.newlearn.backend.search.model.SearchNews;
 
 @Repository
 public interface SearchRepository extends ElasticsearchRepository<SearchNews, Long> {
-	// 제목으로 뉴스 검색 (커스텀 쿼리)
 
+	//List<SearchNews> findByTitleOrTitleEng(String title, String titleEng);
+
+	//List<SearchNews> findByTitleStartingWithOrTitleEngStartingWith(String title, String titleEng);
 }

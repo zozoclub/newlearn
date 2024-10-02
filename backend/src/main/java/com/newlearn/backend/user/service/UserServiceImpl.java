@@ -84,9 +84,7 @@ public class UserServiceImpl implements UserService{
 
 	@Override
 	@Transactional
-	public void updateAvatar(Long userId, UpdateAvatarDTO updateAvatarDTO) {
-		Users user = userRepository.findById(userId)
-			.orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다"));
+	public void updateAvatar(Users user, UpdateAvatarDTO updateAvatarDTO) {
 
 		Avatar avatar = user.getAvatar();
 		if (avatar == null) {
@@ -106,26 +104,21 @@ public class UserServiceImpl implements UserService{
 	}
 
 	@Override
-	public void updateNickname(Long userId, String nickname) {
-
-		Users user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다"));
+	public void updateNickname(Users user, String nickname) {
 
 		user.setNickname(nickname);
 		userRepository.save(user);
 	}
 
 	@Override
-	public void updateDifficulty(Long userId, Long difficulty) {
-		Users user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다"));
+	public void updateDifficulty(Users user, Long difficulty) {
 
 		user.setDifficulty(difficulty);
 		userRepository.save(user);
 	}
 
 	@Override
-	public void updateCategory(Long userId, List<String> categories) {
-
-		Users user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다"));
+	public void updateCategory(Users user, List<String> categories) {
 
 		Set<Category> newCategories = new HashSet<>();
 		for(String categoryName : categories) {
@@ -159,6 +152,12 @@ public class UserServiceImpl implements UserService{
 	public Long getUserRank(Long userId) {
 		int rank = userRepository.findUserRankById(userId);
 		return Long.valueOf(rank);
+	}
+
+	@Override
+	public void updateExperience(Users user, Long experience) {
+		user.incrementExperience(experience);
+		userRepository.save(user);
 	}
 
 

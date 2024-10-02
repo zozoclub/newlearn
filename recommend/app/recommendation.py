@@ -131,13 +131,17 @@ def get_cbf_news(user_id: int, db: Session):
 #
 #     return recommendations
 
-@lru_cache(maxsize=128)
-def get_user_news_matrix(user_news_click):
+# 사용자-뉴스 매트릭스 생성
+
+# 사용자-뉴스 매트릭스 생성
+def get_user_news_matrix(db: Session):
     user_news_matrix = defaultdict(set)
-    for click in user_news_click.find():
-        user_news_matrix[click['user_id']].add(click['news_id'])
+    user_news_clicks = db.query(UserNewsRead).all()  # UserNewsRead 테이블에서 모든 클릭 기록을 가져옴
+    for click in user_news_clicks:
+        user_news_matrix[click.user_id].add(click.news_id)  # 사용자별로 읽은 뉴스 ID를 매트릭스에 저장
     return user_news_matrix
 
+# 사용자-아이템 매트릭스 생성
 def create_user_item_matrix(user_news_matrix):
     users = list(user_news_matrix.keys())
     news_items = set.union(*user_news_matrix.values())
@@ -151,36 +155,9 @@ def create_user_item_matrix(user_news_matrix):
 
     return user_item_matrix, users, list(news_items)
 
-def tune_knn_parameters(user_item_matrix):
-    if len(user_item_matrix) < 10:  # 데이터가 충분하지 않으면 기본값 사용
-        return NearestNeighbors(n_neighbors=5, metric='cosine')
-
-    # 훈련/검증 세트 분할
-    train_matrix, val_matrix = train_test_split(user_item_matrix, test_size=0.2, random_state=42)
-
-    best_mse = float('inf')
-    best_params = {}
-
-    for n_neighbors in [5, 10, 15, 20]:
-        for metric in ['cosine', 'euclidean']:
-            knn = NearestNeighbors(n_neighbors=n_neighbors, metric=metric)
-            knn.fit(train_matrix)
-
-            # 검증 세트에 대한 예측
-            _, indices = knn.kneighbors(val_matrix)
-            val_pred = np.mean(train_matrix[indices], axis=1)
-
-            mse = mean_squared_error(val_matrix, val_pred)
-
-            if mse < best_mse:
-                best_mse = mse
-                best_params = {'n_neighbors': n_neighbors, 'metric': metric}
-
-    return NearestNeighbors(**best_params)
-
-def get_cf_news(user_id: int, db: Session, user_news_click: Collection, n_recommendations: int = 10):
-    # 사용자의 뉴스 클릭 데이터를 기반으로 사용자-뉴스 매트릭스 생성
-    user_news_matrix = get_user_news_matrix(user_news_click)
+def get_cf_news(user_id: int, db: Session, n_recommendations: int = 10):
+    # 사용자-뉴스 매트릭스 생성
+    user_news_matrix = get_user_news_matrix(db)
 
     # 사용자가 읽은 뉴스가 없으면 빈 리스트 반환
     if user_id not in user_news_matrix or not user_news_matrix[user_id]:
@@ -188,69 +165,24 @@ def get_cf_news(user_id: int, db: Session, user_news_click: Collection, n_recomm
 
     user_item_matrix, users, news_items = create_user_item_matrix(user_news_matrix)
 
-    # KNN 모델 튜닝 및 학습
-    knn_model = tune_knn_parameters(user_item_matrix)
+    # KNN 모델 학습
+    knn_model = NearestNeighbors(n_neighbors=5, metric='cosine')
     knn_model.fit(user_item_matrix)
 
     user_index = users.index(user_id)
     # 유사 사용자 찾기
-    distances, indices = knn_model.kneighbors(user_item_matrix[user_index].reshape(1, -1), n_neighbors=min(5, len(users) - 1))
-    similar_users = [users[idx] for idx in indices.flatten() if idx != user_index]
+    distances, indices = knn_model.kneighbors(user_item_matrix[user_index].reshape(1, -1))
 
     # 추천할 뉴스 집합 초기화
     recommended_news = set()
-    for similar_user in similar_users:
-        # 유사 사용자들이 읽은 뉴스 중 현재 사용자가 읽지 않은 뉴스 추가
-        recommended_news.update(user_news_matrix[similar_user] - user_news_matrix[user_id])
+    for idx in indices.flatten():
+        if idx != user_index:
+            similar_user = users[idx]
+            recommended_news.update(user_news_matrix[similar_user] - user_news_matrix[user_id])
 
-    # 사용자의 관심 카테고리 가져오기
-    user_categories = (
-        db.query(UserCategory.category_id)
-        .filter(UserCategory.user_id == user_id)
-        .all()
-    )
-    user_categories = [category[0] for category in user_categories]  # 튜플 형태를 리스트로 변환
+    # 디버깅을 위한 출력
+    print(f"Total recommended news before slicing: {len(recommended_news)}")
+    print(f"n_recommendations: {n_recommendations}")
 
-    # 카테고리 기반으로 추천 다양성 증가
-    recommendations = []
-    category_count = defaultdict(int)
-    max_per_category = 3  # 카테고리당 최대 추천 수
-
-    for news_id in recommended_news:
-        news = db.query(News).filter(News.news_id == news_id).first()
-        if news and category_count[news.category_id] < max_per_category:
-            # 관심 카테고리에 해당하는 뉴스 우선 추천
-            if news.category_id in user_categories:
-                recommendations.append({
-                    'news_id': news.news_id,
-                    'title': news.title,
-                    'category_id': news.category_id
-                })
-                category_count[news.category_id] += 1
-
-            # 원하는 추천 수에 도달하면 중단
-            if len(recommendations) >= n_recommendations:
-                break
-
-    # 추천 결과가 부족한 경우, 인기 있는 뉴스로 보충
-    if len(recommendations) < n_recommendations:
-        popular_news = db.query(News).order_by(News.hit.desc()).limit(n_recommendations).all()
-        for news in popular_news:
-            if len(recommendations) >= n_recommendations:
-                break
-            # 이미 추천된 뉴스가 아닐 경우 추가
-            if news.news_id not in user_news_matrix[user_id] and news.news_id not in [r['news_id'] for r in recommendations]:
-                recommendations.append({
-                    'news_id': news.news_id,
-                    'title': news.title,
-                    'category_id': news.category_id
-                })
-
-    return recommendations
-
-# 성능 평가를 위한 함수
-def evaluate_recommendations(recommendations, actual_reads):
-    precision = len(set(recommendations) & set(actual_reads)) / len(recommendations) if recommendations else 0
-    recall = len(set(recommendations) & set(actual_reads)) / len(actual_reads) if actual_reads else 0
-    f1_score = 2 * (precision * recall) / (precision + recall) if (precision + recall) > 0 else 0
-    return {'precision': precision, 'recall': recall, 'f1_score': f1_score}
+    # 추천 뉴스 반환 (최대 n_recommendations개)
+    return list(recommended_news)[:n_recommendations]

@@ -27,7 +27,7 @@ def read_cbf_recommendations(user_id: int, db: Session = Depends(get_db)):
 # 협업 필터링 (CF) 뉴스 추천
 @app.get("/cf-news/{user_id}")
 def read_cf_recommendations(user_id: int, db: Session = Depends(get_db)):
-    recommendations = get_cf_news(user_id, db, user_news_click)  # Collaborative Filtering
+    recommendations = get_cf_news(user_id, db)  # Collaborative Filtering
     if not recommendations:
         raise HTTPException(status_code=404, detail="No CF recommendations found")
     return {"recommendations": recommendations}

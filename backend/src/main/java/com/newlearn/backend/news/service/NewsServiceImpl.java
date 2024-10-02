@@ -192,6 +192,13 @@ public class NewsServiceImpl implements NewsService{
 
         dailyRead.incrementNewsReadCount();
         userDailyNewsReadRepository.save(dailyRead);
+
+        Optional<Goal> optionalGoal = studyRepository.findByUserId(user.getUserId());
+        if (optionalGoal.isPresent()) {
+            Goal goal = optionalGoal.get();
+            goal.setGoalReadNewsCount(goal.getCurrentReadNewsCount() + 1);
+            studyRepository.save(goal);
+        }
     }
 
     @Override

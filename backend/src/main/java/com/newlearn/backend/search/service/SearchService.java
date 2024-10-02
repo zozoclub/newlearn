@@ -45,6 +45,30 @@ public class SearchService {
 			.collect(Collectors.toList());
 	}
 
+	public List<SearchNewsDTO> searchAutoCompleteByTitleOrTitleEng(String query) throws IOException {
+		if (isKorean(query) && isEnglish(query)) {
+			return null;
+		}
+
+		String analyzer = isKorean(query) ? "title.suggest" : "title_eng.suggest";
+
+		SearchRequest searchRequest = SearchRequest.of(s -> s
+			.index("news")
+			.size(10)  // 자동완성 결과를 10개로 제한
+			.query(q -> q
+				.matchPhrasePrefix(m -> m
+					.field(analyzer)
+					.query(query)
+				)
+			)
+		);
+
+		SearchResponse<SearchNews> response = elasticsearchClient.search(searchRequest, SearchNews.class);
+		return response.hits().hits().stream()
+			.map(Hit::source)
+			.map(this::toSearchNewsDTO)
+			.collect(Collectors.toList());
+	}
 
 	private boolean isKorean(String text) {
 		return text.matches(".*[ㄱ-ㅎㅏ-ㅣ가-힣]+.*");

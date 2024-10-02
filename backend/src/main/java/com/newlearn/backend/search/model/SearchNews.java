@@ -11,7 +11,7 @@ import lombok.Getter;
 
 @Getter
 @Document(indexName = "news")
-@JsonIgnoreProperties(ignoreUnknown = true) 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class SearchNews {
 
 	@Id

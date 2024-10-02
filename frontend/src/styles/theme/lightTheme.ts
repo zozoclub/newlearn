@@ -23,7 +23,9 @@ export const lightTheme: Theme = {
     text04: "#8b8b8b",
     readonly: "#ececec",
     placeholder: "#c1c1c1",
-    shadow: "#8b8b8b",
+  },
+  shadows: {
+    medium: "0.5rem 0.5rem 0.25rem #0000007F",
   },
   opacities: {
     background: 0,

@@ -166,7 +166,7 @@ public class StudyServiceImpl implements StudyService{
     @Override
     public List<WordTestResultResponseDTO> getWordTestResults(Long userId) {
         // 유저와 관련된 모든 시험 가져오기
-        List<WordQuiz> wordQuizzes = wordQuizRepository.findByUserId(userId);
+        List<WordQuiz> wordQuizzes = wordQuizRepository.findByUserIdOrderByQuizIdDesc(userId);
 
         return wordQuizzes.stream().map(quiz -> {
             // 시험에 관련된 답변 가져오기

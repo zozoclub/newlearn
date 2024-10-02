@@ -46,6 +46,6 @@ def get_cbf_news(user_id: int, db: Session):
                         'news_id': news.news_id,
                         'title': news.title
                     }
-                    print(f"Added recommendation: {news.news_id} - {news.title}")
+                    # print(f"Added recommendation: {news.news_id} - {news.title}")
     print(f"Total recommendations: {len(recommended_news)}")
     return list(recommended_news.values())

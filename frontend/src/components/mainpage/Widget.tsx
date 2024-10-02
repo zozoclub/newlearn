@@ -1,9 +1,13 @@
 import styled from "styled-components";
-
+import { useRecoilValue } from "recoil";
+import { goalDataSelector } from "@store/goalState";
 import CategoryChart from "@components/CategoryChart";
 import RankingWidget from "./RankingWidget";
+import GoalChartDoughnut from "@components/GoalChartDoughnut";
 
 const Widget: React.FC<{ variety: string }> = ({ variety }) => {
+  const goalData = useRecoilValue(goalDataSelector);
+  console.log(goalData);
   switch (variety) {
     // 다른 걸로 대체 예정
     case "profile":
@@ -30,6 +34,7 @@ const Widget: React.FC<{ variety: string }> = ({ variety }) => {
       return (
         <WidgetContainer>
           <Descripsion>study goal</Descripsion>
+          <GoalChartDoughnut />
         </WidgetContainer>
       );
   }

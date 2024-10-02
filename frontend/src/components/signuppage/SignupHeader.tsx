@@ -14,6 +14,9 @@ const SignupHeader: React.FC<{
       {pageNum === 2 && (
         <PrevButton onClick={() => setPageNum(1)}>이전</PrevButton>
       )}
+      {pageNum === 3 && (
+        <PrevButton onClick={() => setPageNum(2)}>이전</PrevButton>
+      )}
     </Container>
   );
 };

@@ -344,7 +344,7 @@ public class StudyServiceImpl implements StudyService{
     @Override
     public List<PronounceTestResultResponseDTO> getPronounceTestResults(Long userId) {
         // 사용자 ID로 발음 테스트 결과 조회
-        List<UserAudioFile> audioFiles = userAudioFileRepository.findByUserId(userId);
+        List<UserAudioFile> audioFiles = userAudioFileRepository.findByUserIdOrderByAudioFileIdDesc(userId);
 
         // 결과가 없는 경우 빈 리스트 반환
         if (audioFiles.isEmpty()) {

@@ -4,14 +4,12 @@ import styled, { keyframes, css } from "styled-components";
 
 type ModalProps = {
   isOpen: boolean;
-  onClose: () => void;
-  experience: number;
-  action: string;
+  experience?: number;
+  action?: string;
 };
 
 const ExperienceModal: React.FC<ModalProps> = ({
   isOpen,
-  onClose,
   experience,
   action,
 }) => {
@@ -20,24 +18,20 @@ const ExperienceModal: React.FC<ModalProps> = ({
   useEffect(() => {
     if (isOpen) {
       setIsAnimating(true);
-      // 1초 후에 모달 닫기
+      // 2초 후에 모달 닫기
       const timer = setTimeout(() => {
-        onClose();
-      }, 1000);
+        setIsAnimating(false); // 애니메이션 종료
+      }, 2000);
 
       return () => clearTimeout(timer);
-    } else {
-      // 페이드 아웃 애니메이션을 위한 짧은 지연
-      const animationTimer = setTimeout(() => setIsAnimating(false), 200);
-      return () => clearTimeout(animationTimer);
     }
-  }, [isOpen, onClose]);
+  }, [isOpen]);
 
   if (!isOpen && !isAnimating) return null;
 
   return ReactDOM.createPortal(
-    <ModalOverlay $isOpen={isOpen}>
-      <ModalContent $isOpen={isOpen}>
+    <ModalOverlay $isOpen={isAnimating}>
+      <ModalContent $isOpen={isAnimating}>
         <ExperienceText>
           Exp <ExperienceNumber>+{experience}</ExperienceNumber>
         </ExperienceText>
@@ -68,27 +62,26 @@ const ModalOverlay = styled.div<{ $isOpen: boolean }>`
   position: fixed;
   top: 0;
   right: 0;
-  bottom: 0;
+  bottom: 50;
   left: 0;
-  z-index: 10;
-
-  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 100;
 
   animation: ${({ $isOpen }) =>
     $isOpen
       ? css`
-          ${fadeIn} 0.2s ease-out forwards
+          ${fadeIn} 0.5s ease-out forwards
         `
       : css`
-          ${fadeOut} 0.2s ease-in forwards
+          ${fadeOut} 0.5s ease-in forwards
         `};
 `;
 
 const ModalContent = styled.div<{ $isOpen: boolean }>`
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
+  margin-top: 3rem;
   width: auto;
   padding: 2rem 3rem;
   background-color: ${(props) => props.theme.colors.cardBackground};
@@ -97,10 +90,10 @@ const ModalContent = styled.div<{ $isOpen: boolean }>`
   animation: ${({ $isOpen }) =>
     $isOpen
       ? css`
-          ${fadeIn} 0.2s ease-out forwards
+          ${fadeIn} 0.5s ease-out forwards
         `
       : css`
-          ${fadeOut} 0.2s ease-in forwards
+          ${fadeOut} 0.5s ease-in forwards
         `};
 `;
 

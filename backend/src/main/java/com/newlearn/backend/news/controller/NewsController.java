@@ -9,6 +9,7 @@ import com.newlearn.backend.news.dto.response.NewsDetailResponseDTO;
 import com.newlearn.backend.news.dto.response.NewsResponseDTO;
 import com.newlearn.backend.news.dto.response.NewsSimpleResponseDTO;
 import com.newlearn.backend.news.service.NewsService;
+import com.newlearn.backend.search.dto.response.SearchNewsDTO;
 import com.newlearn.backend.user.model.Users;
 import com.newlearn.backend.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @Slf4j
@@ -231,7 +233,16 @@ public class NewsController {
 
     }
 
-
+    @GetMapping("/search")
+    public ApiResponse<?> searchNews(@RequestParam String query) throws IOException {
+        // contains 방식으로 검색 수행
+        try {
+            List<SearchNewsDTO> dto = newsService.searchByTitleOrTitleEngContains(query);
+            return ApiResponse.createSuccess(dto, "good");
+        }catch(Exception e) {
+            return ApiResponse.createError(ErrorCode.WORD_CREATE_FAILED);
+        }
+    }
 
     /* 추천 */
 

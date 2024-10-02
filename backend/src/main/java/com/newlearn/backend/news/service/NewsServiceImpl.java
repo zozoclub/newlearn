@@ -13,6 +13,7 @@ import com.newlearn.backend.news.repository.UserDailyNewsReadRepository;
 import com.newlearn.backend.news.repository.UserNewsReadRepository;
 import com.newlearn.backend.news.repository.UserNewsScrapRepository;
 import com.newlearn.backend.news.repository.mongo.UserNewsClickRepository;
+import com.newlearn.backend.search.dto.response.SearchNewsDTO;
 import com.newlearn.backend.study.model.Goal;
 import com.newlearn.backend.study.repository.StudyRepository;
 import com.newlearn.backend.user.model.Users;
@@ -285,4 +286,33 @@ public class NewsServiceImpl implements NewsService{
 //        user.setScrapCount(--userScrapedCnt);
         userRepository.save(user);
     }
+
+    public List<SearchNewsDTO> searchByTitleOrTitleEngContains(String query) {
+        boolean isKorean = isKorean(query);
+        boolean isEnglish = isEnglish(query);
+
+        if (isKorean && isEnglish) {
+            return null;
+        }
+
+        List<News> newsList;
+        if (isKorean) {
+            newsList = newsRepository.findByTitleContaining(query);
+        } else {
+            newsList = newsRepository.findByTitleEngContaining(query);
+        }
+
+        return newsList.stream()
+            .map(news -> new SearchNewsDTO(news.getNewsId(), news.getTitle(), news.getTitleEng()))
+            .collect(Collectors.toList());
+    }
+
+    private boolean isKorean(String text) {
+        return text.matches(".*[ㄱ-ㅎㅏ-ㅣ가-힣]+.*");
+    }
+
+    private boolean isEnglish(String text) {
+        return text.matches(".*[a-zA-Z]+.*");
+    }
+
 }

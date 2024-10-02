@@ -7,6 +7,7 @@ import com.newlearn.backend.news.dto.request.NewsReadRequestDTO;
 import com.newlearn.backend.news.dto.response.NewsDetailResponseDTO;
 import com.newlearn.backend.news.dto.response.NewsResponseDTO;
 import com.newlearn.backend.news.dto.response.NewsSimpleResponseDTO;
+import com.newlearn.backend.search.dto.response.SearchNewsDTO;
 import com.newlearn.backend.user.model.Users;
 import org.springframework.data.domain.Page;
 
@@ -37,4 +38,6 @@ public interface NewsService {
 
     // 뉴스 스크랩 취소
     void cancelScrapedNews(Users user, NewsReadRequestDTO newsReadRequestDTO);
+
+    List<SearchNewsDTO> searchByTitleOrTitleEngContains(String query);
 }

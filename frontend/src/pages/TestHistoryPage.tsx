@@ -11,11 +11,51 @@ import WordTestHistory from "@components/testpage/WordTestHistory";
 
 // 모바일
 import TestIntroMobilePage from "./mobile/TestIntroMobilePage";
+import {
+  MemorizeWordListResponseDto,
+  getMemorizeWordList,
+} from "@services/wordMemorize";
+import { useQuery } from "@tanstack/react-query";
+
+type Word = {
+  id: string;
+  title: string;
+  content: string;
+};
 
 const TestHistoryPage: React.FC = () => {
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const setCurrentLocation = useSetRecoilState(locationState);
   const [activeTab, setActiveTab] = useState("word");
+
+  const { data: wordList } = useQuery<MemorizeWordListResponseDto[]>({
+    queryKey: ["memorizeWordList"],
+    queryFn: () => getMemorizeWordList(),
+  });
+
+  const [toStudyWords, setToStudyWords] = useState<Word[]>([]);
+  const [learnedWords, setLearnedWords] = useState<Word[]>([]);
+
+  useEffect(() => {
+    if (wordList) {
+      const toStudy = wordList
+        .filter((word) => !word.complete)
+        .map((word) => ({
+          id: word.wordId.toString(),
+          title: word.word,
+          content: word.wordMeaning,
+        }));
+      const learned = wordList
+        .filter((word) => word.complete)
+        .map((word) => ({
+          id: word.wordId.toString(),
+          title: word.word,
+          content: word.wordMeaning,
+        }));
+      setToStudyWords(toStudy);
+      setLearnedWords(learned);
+    }
+  }, [wordList]);
 
   useEffect(() => {
     setCurrentLocation("TestHistoryPage");
@@ -31,10 +71,10 @@ const TestHistoryPage: React.FC = () => {
     <Layout>
       <LeftContainer>
         <SmallContainer>
-          <StartWordTestWidget />
+          <StartWordTestWidget posibleWords={toStudyWords.length} />
         </SmallContainer>
         <SmallContainer>
-          <StartSpeakingTestWidget />
+          <StartSpeakingTestWidget posibleWords={toStudyWords.length + learnedWords.length}/>
         </SmallContainer>
       </LeftContainer>
 

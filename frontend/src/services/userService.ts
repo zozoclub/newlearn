@@ -130,14 +130,27 @@ export const getUserInfo = async (): Promise<userInfoType> => {
   }
 };
 
+import { SetterOrUpdater } from "recoil";
+import { ExpType } from "@store/expState";
 
-export const putExpUp = async (exp: number): Promise<void> => {
+export const putExpUp = async (
+  experience: number,
+  setExpModal: SetterOrUpdater<ExpType>
+): Promise<void> => {
   try {
-    console.log(exp);
-    
-    const response = await axiosInstance.put(`user/update-experience`, exp);
+    console.log(experience);
+
+    const response = await axiosInstance.put(`user/update-experience`, {
+      experience,
+    });
+    // 성공하면 모달을 표시
+    setExpModal({
+      isOpen: true,
+      experience: experience,
+      action: "경험치 상승",
+    });
     console.log(response);
   } catch (error) {
-    console.error(`경험치 상승 오류`,error);
+    console.error(`경험치 상승 오류`, error);
   }
 };

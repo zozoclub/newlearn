@@ -26,7 +26,6 @@ const VocaCollapsible: React.FC<VocaCollapsibleProps> = ({
   const { data, isLoading } = useQuery<WordDetailResponseDto>({
     queryKey: ["wordDetail", title],
     queryFn: () => getWordDetail(title),
-    enabled: expanded, // 확장 시에만 데이터 가져오기
   });
 
   const toggleExpand = () => {

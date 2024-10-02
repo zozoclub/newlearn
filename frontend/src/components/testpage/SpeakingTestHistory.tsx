@@ -41,14 +41,6 @@ const SpeakingTestHistory: React.FC = () => {
 
   const theme = useTheme();
 
-  // 데이터를 carddata 형식으로 변환
-  const cardData =
-    data?.map((quiz) => ({
-      quizId: quiz.audioFileId,
-      date: formatDate(quiz.createdAt),
-      score: quiz.totalScore, // 정답 비율을 점수로 변환
-    })) || [];
-
   const chartformatDate = (createdAt: string) => {
     const date = new Date(createdAt);
     const month = (date.getMonth() + 1).toString().padStart(2, "0"); // 월을 2자리로 표시
@@ -119,6 +111,14 @@ const SpeakingTestHistory: React.FC = () => {
   const monthLabels = generateLastSixMonthsLabels(); // 최근 6개월의 월 레이블
 
   const recentSixMonthsData = data ? getSixMonthsData(data) : {};
+
+  // 데이터를 carddata 형식으로 변환
+  const cardData =
+    data?.map((quiz) => ({
+      quizId: quiz.audioFileId,
+      date: formatDate(quiz.createdAt),
+      score: quiz.totalScore, // 정답 비율을 점수로 변환
+    })) || [];
 
   // 월별 데이터를 배열로 변환하여 차트 데이터에 사용
   const correctPercentagePerMonth = monthLabels.map(
@@ -334,6 +334,7 @@ const ScrollableTestHistoryList = styled.div`
   display: flex;
   flex-wrap: wrap;
   justify-content: space-around;
+  max-height: 300px;
   width: 100%;
   overflow-y: auto; /* 세로 스크롤 가능 */
   overflow-x: hidden; /* 좌우 스크롤 제거 */

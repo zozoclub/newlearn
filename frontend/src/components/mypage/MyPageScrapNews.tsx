@@ -144,4 +144,7 @@ const GoNewsButton = styled.button`
   font-size: 1.25rem;
   font-weight: bold;
   cursor: pointer;
+  &:hover {
+    background-color: ${(props) => props.theme.colors.primaryPress};
+  }
 `;

@@ -26,7 +26,6 @@ const VocaCollapsible: React.FC<VocaCollapsibleProps> = ({
   const { data, isLoading } = useQuery<WordDetailResponseDto>({
     queryKey: ["wordDetail", title],
     queryFn: () => getWordDetail(title),
-    enabled: expanded, // 확장 시에만 데이터 가져오기
   });
 
   const toggleExpand = () => {
@@ -74,10 +73,10 @@ const VocaCollapsible: React.FC<VocaCollapsibleProps> = ({
                       {sentence.difficulty === 1
                         ? "초급"
                         : sentence.difficulty === 2
-                          ? "중급"
-                          : sentence.difficulty === 3
-                            ? "고급"
-                            : "알 수 없음"}
+                        ? "중급"
+                        : sentence.difficulty === 3
+                        ? "고급"
+                        : "알 수 없음"}
                     </DifficultyChip>
                     <NewsLinkButton
                       onClick={() => handleNewsLinkClick(sentence.newsId)}
@@ -101,7 +100,9 @@ const VocaCollapsible: React.FC<VocaCollapsibleProps> = ({
         <p>삭제하시겠습니까?</p>
         <ModalButtonContainer>
           <ModalCancelButton onClick={closeDeleteModal}>취소</ModalCancelButton>
-          <ModalConfirmButton onClick={handleDeleteConfirm}>확인</ModalConfirmButton>
+          <ModalConfirmButton onClick={handleDeleteConfirm}>
+            확인
+          </ModalConfirmButton>
         </ModalButtonContainer>
       </Modal>
     </>

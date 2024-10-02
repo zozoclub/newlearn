@@ -6,9 +6,11 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Data
+@AllArgsConstructor
 public class SearchNewsDTO {
 
 	private Long newsId;
 	private String title;
 	private String titleEng;
+
 }

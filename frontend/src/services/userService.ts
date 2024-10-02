@@ -129,3 +129,15 @@ export const getUserInfo = async (): Promise<userInfoType> => {
     throw error;
   }
 };
+
+
+export const putExpUp = async (exp: number): Promise<void> => {
+  try {
+    console.log(exp);
+    
+    const response = await axiosInstance.put(`user/update-experience`, exp);
+    console.log(response);
+  } catch (error) {
+    console.error(`경험치 상승 오류`,error);
+  }
+};

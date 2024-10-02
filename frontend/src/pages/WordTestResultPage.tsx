@@ -11,7 +11,10 @@ import GoodStamp from "@assets/icons/GoodStamp";
 import BadStamp from "@assets/icons/BadStamp";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
-import { getWordTestResultDetail, WordTestResultDetailResponseDto } from "@services/wordTestService";
+import {
+  getWordTestResultDetail,
+  WordTestResultDetailResponseDto,
+} from "@services/wordTestService";
 import Spinner from "@components/Spinner";
 import { useMediaQuery } from "react-responsive"; // 모바일 여부 감지
 import WordTestResultListMobilePage from "./mobile/WordTestResultListMobilePage";
@@ -54,9 +57,10 @@ const WordTestResultPage: React.FC = () => {
   const data = testDetail ? transformTestData(testDetail) : [];
 
   const dataDate = "2024-10-01";
-  const dataScore = data.length > 0
-    ? (data.filter((item) => item.correct).length / data.length) * 100
-    : 0;
+  const dataScore =
+    data.length > 0
+      ? (data.filter((item) => item.correct).length / data.length) * 100
+      : 0;
 
   const wordExplainDetailHandler = (index: number) => {
     setCurrentWordIndex(index);
@@ -74,10 +78,12 @@ const WordTestResultPage: React.FC = () => {
   if (isLoading) return <Spinner />;
 
   // 에러 상태 처리
-  if (error) return <ErrorText>에러가 발생했습니다. 다시 시도해 주세요.</ErrorText>;
+  if (error)
+    return <ErrorText>에러가 발생했습니다. 다시 시도해 주세요.</ErrorText>;
 
   // testDetail이 null일 때
-  if (!testDetail || testDetail.length === 0) return <ErrorText>No data available.</ErrorText>;
+  if (!testDetail || testDetail.length === 0)
+    return <ErrorText>No data available.</ErrorText>;
 
   // 모바일
   if (isMobile) return <WordTestResultListMobilePage />;
@@ -138,7 +144,7 @@ const MainContainer = styled.div`
   margin: 0 0.5rem;
   padding: 0.5rem;
   background-color: ${(props) => props.theme.colors.cardBackground + "BF"};
-  box-shadow: 0.5rem 0.5rem 0.25rem ${(props) => props.theme.colors.shadow};
+  box-shadow: ${(props) => props.theme.shadows.medium};
   border-radius: 0.75rem;
   transition: box-shadow 0.5s;
   backdrop-filter: blur(0.25rem);

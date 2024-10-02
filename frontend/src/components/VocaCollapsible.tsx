@@ -74,10 +74,10 @@ const VocaCollapsible: React.FC<VocaCollapsibleProps> = ({
                       {sentence.difficulty === 1
                         ? "초급"
                         : sentence.difficulty === 2
-                          ? "중급"
-                          : sentence.difficulty === 3
-                            ? "고급"
-                            : "알 수 없음"}
+                        ? "중급"
+                        : sentence.difficulty === 3
+                        ? "고급"
+                        : "알 수 없음"}
                     </DifficultyChip>
                     <NewsLinkButton
                       onClick={() => handleNewsLinkClick(sentence.newsId)}
@@ -101,7 +101,9 @@ const VocaCollapsible: React.FC<VocaCollapsibleProps> = ({
         <p>삭제하시겠습니까?</p>
         <ModalButtonContainer>
           <ModalCancelButton onClick={closeDeleteModal}>취소</ModalCancelButton>
-          <ModalConfirmButton onClick={handleDeleteConfirm}>확인</ModalConfirmButton>
+          <ModalConfirmButton onClick={handleDeleteConfirm}>
+            확인
+          </ModalConfirmButton>
         </ModalButtonContainer>
       </Modal>
     </>
@@ -118,7 +120,7 @@ const ListItem = styled.div`
 `;
 
 const Title = styled.div`
-  background-color: ${(props) => props.theme.colors.shadow}7F;
+  background-color: ${(props) => props.theme.shadows.medium};
   color: ${(props) => props.theme.colors.text};
   padding: 1rem;
   cursor: pointer;
@@ -160,7 +162,7 @@ const ContentContainer = styled.div<{ $isExpanded: boolean }>`
 
 const Content = styled.div`
   padding: 1rem;
-  background-color: ${(props) => props.theme.colors.shadow}4F;
+  background-color: ${(props) => props.theme.shadows.medium};
   color: ${(props) => props.theme.colors.text};
   font-size: 1rem;
   line-height: 1.5;

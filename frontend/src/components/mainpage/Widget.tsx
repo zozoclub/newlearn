@@ -50,11 +50,7 @@ const WidgetContainer = styled.div`
   border-radius: 0.75rem;
   transition: box-shadow 0.5s;
   backdrop-filter: blur(4px);
-  box-shadow: 0.5rem 0.5rem 0.25rem ${(props) => props.theme.colors.shadow};
-  .middle-space {
-    width: 10rem;
-    margin: 0 1rem;
-  }
+  box-shadow: ${(props) => props.theme.shadows.medium};
 `;
 
 const Descripsion = styled.div`

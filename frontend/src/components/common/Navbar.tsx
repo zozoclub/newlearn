@@ -47,7 +47,7 @@ const Container = styled.div`
   left: 50%;
   transform: translate(-50%, 7rem);
   bottom: 1.5rem;
-  box-shadow: 0.5rem 0.5rem 0.25rem ${(props) => props.theme.colors.shadow};
+  box-shadow: ${(props) => props.theme.shadows.medium};
   transition: transform 0.5s, background-color 0.5s, box-shadow 0.5s;
   &:hover {
     transform: translate(-50%, 0);

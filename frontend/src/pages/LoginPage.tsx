@@ -31,6 +31,9 @@ const LoginPage = () => {
 
   useEffect(() => {
     setCurrentLocation("login");
+    return () => {
+      setCurrentLocation("");
+    };
   }, [setCurrentLocation]);
 
   useEffect(() => {

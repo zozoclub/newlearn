@@ -1,4 +1,3 @@
-import axios from "axios";
 import axiosInstance from "./axiosInstance";
 
 export type NewsType = {
@@ -25,7 +24,7 @@ export type DetailNewsType = NewsType & {
   words: WordType[];
 };
 
-type SearchResult = {
+export type SearchResult = {
   text: string;
 };
 
@@ -131,22 +130,43 @@ export const readNews = async (newsId: number, difficulty: number) => {
 
 export const searchDaumDictionary = async (
   word: string
-): Promise<SearchResult[]> => {
+): Promise<[SearchResult[], string[], string[]]> => {
   try {
-    const response = await axios.get(
-      `https://dic.daum.net/search.do?q=${word}`,
-      {
-        responseType: "text",
-      }
-    );
+    const response = await axiosInstance.get(`proxy`, {
+      params: {
+        word: word,
+      },
+      responseType: "text",
+    });
 
     const parser = new DOMParser();
     const daumDocument = parser.parseFromString(response.data, "text/html");
     const searchResults = daumDocument.querySelector(".search_box");
+    const searchListen = searchResults?.querySelector(".wrap_listen") || null;
+
+    console.log(searchListen);
+    const pronounceDiv = searchListen?.querySelectorAll(".txt_pronounce");
+    let pronounce: string[] = [];
+    if (pronounceDiv && pronounceDiv[0] && pronounceDiv[1]) {
+      pronounce.push(pronounceDiv[0].innerHTML);
+      pronounce.push(pronounceDiv[1].innerHTML);
+    }
+    pronounce = pronounce.map((str) =>
+      str.replace(/<daum:[^>]+>.*?<\/daum:[^>]+>/g, "")
+    );
+
+    const audioUrl: string[] = [];
+    const url = searchListen?.querySelectorAll("a");
+    if (url && url[0] && url[1]) {
+      audioUrl.push(url[0].getAttribute("href")!);
+      audioUrl.push(url[1].getAttribute("href")!);
+    }
+
+    console.log(pronounce);
 
     if (searchResults) {
       const searchLi = searchResults.getElementsByTagName("li");
-      const results: SearchResult[] = Array.from(searchLi).map((li) => {
+      const wordMeans: SearchResult[] = Array.from(searchLi).map((li) => {
         const txtSearchElements = li.getElementsByClassName("txt_search");
         return {
           text: Array.from(txtSearchElements)
@@ -155,13 +175,41 @@ export const searchDaumDictionary = async (
         };
       });
 
-      return results;
+      return [wordMeans, pronounce, audioUrl];
     } else {
       console.log("검색 결과가 없습니다.");
-      return [];
+      return [[], [], []];
     }
   } catch (error) {
     console.error("error", error);
     throw error;
   }
+};
+
+export const highlightingWord = (
+  newsId: number,
+  difficulty: number,
+  word: string,
+  wordMeaning: string,
+  sentence: string,
+  sentenceMeaning: string,
+  pronounceUs: string,
+  pronounceUk: string,
+  audioUs: string,
+  audioUk: string
+) => {
+  axiosInstance
+    .post(`word`, {
+      newsId,
+      difficulty,
+      word,
+      wordMeaning,
+      sentence,
+      sentenceMeaning,
+      pronounceUs,
+      pronounceUk,
+      audioUs,
+      audioUk,
+    })
+    .then((response) => console.log(response));
 };

@@ -1,5 +1,4 @@
 import { useCallback } from "react";
-import { searchDaumDictionary } from "@services/newsService"; // 사전에 정의된 함수
 
 type SelectionResult = {
   word: string;
@@ -89,16 +88,6 @@ export const useWordSelection = (korData: string) => {
         englishSentence: sentences.engSentence,
         koreanSentence: sentences.korSentence,
       };
-      console.log(result);
-
-      // 선택된 단어에 대한 추가 정보를 외부 사전에서 조회
-      searchDaumDictionary(word)
-        .then((searchResult) => {
-          console.log("Daum Dictionary Result:", searchResult);
-        })
-        .catch((error) => {
-          console.error("Error searching Daum Dictionary:", error);
-        });
 
       return result;
     }

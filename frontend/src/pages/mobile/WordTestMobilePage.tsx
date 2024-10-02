@@ -193,7 +193,9 @@ const WordTestMobilePage: React.FC = () => {
 
       {currentPage === Math.ceil(quiz.length / questionsPerPage) && (
         <MobileSubmitButtonContainer>
-          <MobileSubmitButton onClick={handleWordDataSubmit}>제출</MobileSubmitButton>
+          <MobileSubmitButton onClick={handleWordDataSubmit}>
+            제출
+          </MobileSubmitButton>
         </MobileSubmitButtonContainer>
       )}
       <Modal
@@ -203,8 +205,12 @@ const WordTestMobilePage: React.FC = () => {
       >
         <p>정말로 제출하시겠습니까?</p>
         <MobileModalButtonContainer>
-          <MobileModalCancelButton onClick={closeSubmitModal}>취소</MobileModalCancelButton>
-          <MobileModalConfirmButton onClick={handleSubmit}>확인</MobileModalConfirmButton>
+          <MobileModalCancelButton onClick={closeSubmitModal}>
+            취소
+          </MobileModalCancelButton>
+          <MobileModalConfirmButton onClick={handleSubmit}>
+            확인
+          </MobileModalConfirmButton>
         </MobileModalButtonContainer>
       </Modal>
     </MobileMainContainer>
@@ -224,7 +230,7 @@ const MobileMainContainer = styled.div`
   padding: 1rem;
   background-color: ${(props) => props.theme.colors.cardBackground};
   border-radius: 0.5rem;
-  box-shadow: 0 4px 10px ${(props) => props.theme.colors.shadow};
+  box-shadow: ${(props) => props.theme.shadows.medium};
 `;
 
 const MobilePageInfo = styled.div`
@@ -344,4 +350,3 @@ const ErrorText = styled.div`
   font-size: 1.25rem;
   text-align: center;
 `;
-

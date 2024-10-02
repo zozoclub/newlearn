@@ -49,12 +49,14 @@ const VocabularyPage: React.FC = () => {
 
   const { mutate: deleteMutation } = useMutation<void, Error, number>({
     mutationFn: (wordId: number) => deleteMemorizeWord(wordId),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["memorizeWordList"] }),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ["memorizeWordList"] }),
   });
 
   const { mutate: toggleMemorizeMutation } = useMutation<void, Error, number>({
     mutationFn: (wordId: number) => postMemorizeWord(wordId),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["memorizeWordList"] }),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ["memorizeWordList"] }),
   });
 
   useEffect(() => {
@@ -107,7 +109,11 @@ const VocabularyPage: React.FC = () => {
     }
   };
 
-  const reorder = (list: Word[], startIndex: number, endIndex: number): Word[] => {
+  const reorder = (
+    list: Word[],
+    startIndex: number,
+    endIndex: number
+  ): Word[] => {
     const result = Array.from(list);
     const [removed] = result.splice(startIndex, 1);
     result.splice(endIndex, 0, removed);
@@ -145,7 +151,8 @@ const VocabularyPage: React.FC = () => {
           {(provided) => (
             <MainContainer ref={provided.innerRef} {...provided.droppableProps}>
               <Title>
-                공부해야 될 단어 리스트 <WordCount>({toStudyWords.length})</WordCount>
+                공부해야 될 단어 리스트{" "}
+                <WordCount>({toStudyWords.length})</WordCount>
               </Title>
               {toStudyWords.length === 0 ? (
                 <EmptyMessage>공부할 단어가 없습니다.</EmptyMessage>
@@ -229,9 +236,9 @@ const MainContainer = styled.div`
   background-color: ${(props) => `${props.theme.colors.cardBackground}BF`};
   border-radius: 0.75rem;
   min-height: 800px;
-  max-height: 800px; 
-  overflow-y: auto; 
-  box-shadow: 0.5rem 0.5rem 0.25rem ${(props) => props.theme.colors.shadow};
+  max-height: 800px;
+  overflow-y: auto;
+  box-shadow: ${(props) => props.theme.shadows.medium};
   transition: box-shadow 0.5s;
 `;
 

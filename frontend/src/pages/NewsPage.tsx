@@ -1,22 +1,12 @@
-import { useEffect, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useState } from "react";
 import styled from "styled-components";
 
 import Recommand from "@components/newspage/Recommand";
 import NewsListHeader from "@components/newspage/NewsListHeader";
-import locationState from "@store/locationState";
 import NewsList from "@components/newspage/NewsList";
 
 const NewsPage = () => {
-  const setCurrentLocation = useSetRecoilState(locationState);
   const [selectedCategory, setSelectedCategory] = useState(0);
-
-  useEffect(() => {
-    setCurrentLocation("news Page");
-    return () => {
-      setCurrentLocation("");
-    };
-  }, [setCurrentLocation]);
 
   return (
     <Container>

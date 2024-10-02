@@ -4,12 +4,12 @@ import { useRecoilState } from "recoil";
 import styled from "styled-components";
 
 const categories = [
-  { name: "전체" },
+  { name: "정치" },
   { name: "경제" },
   { name: "사회" },
-  { name: "연예" },
+  { name: "생활/문화" },
+  { name: "세계" },
   { name: "IT/과학" },
-  { name: "몰라" },
 ];
 
 const SelectCategory = () => {

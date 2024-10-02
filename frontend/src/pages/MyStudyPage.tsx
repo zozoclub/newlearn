@@ -105,7 +105,7 @@ const MyStudyPage = () => {
             </Modal>
           </GoalSettingContainer>
         ) : (
-          <GoalChart studyProgress={studyProgress} />
+          <GoalChart />
         )}
       </GoalContainer>
       <MenuContainer>
@@ -132,7 +132,7 @@ export default MyStudyPage;
 const Container = styled.div`
   display: flex;
   gap: 3rem;
-  min-height: 530px;
+  min-height: 560px;
 `;
 
 const GoalContainer = styled.div`
@@ -142,7 +142,7 @@ const GoalContainer = styled.div`
   align-items: center;
 
   height: 100%;
-  min-height: 530px;
+  min-height: 560px;
 
   background-color: ${(props) => props.theme.colors.cardBackground + "BF"};
   box-shadow: ${(props) => props.theme.shadows.medium};
@@ -181,7 +181,7 @@ const MenuContainer = styled.div`
   flex: 2;
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 2.75rem;
 `;
 
 const MenuItemBase = styled.div`
@@ -191,7 +191,7 @@ const MenuItemBase = styled.div`
   position: relative;
 
   width: 100%;
-  height: 250px;
+  height: 100%;
   padding: 1.75rem;
 
   color: white;
@@ -246,7 +246,7 @@ const Overlay = styled.div`
 
   width: 100%;
   height: 100%;
-  padding: 0 2rem;
+  padding: 0 3rem;
   background: linear-gradient(
     90deg,
     rgba(0, 0, 0, 0.7) 0%,

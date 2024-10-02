@@ -1,9 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled, { useTheme } from "styled-components";
 import { Line } from "react-chartjs-2";
 import SpeakingTestHistoryCardList from "@components/testpage/SpeakingTestHistoryCardList";
 import Spinner from "@components/Spinner";
-import { getPronounceTestResultList, PronounceTestResultListDto } from "@services/speakingTestService";
+import {
+  getPronounceTestResultList,
+  PronounceTestResultListDto,
+} from "@services/speakingTestService";
 import { useQuery } from "@tanstack/react-query";
 import {
   Chart as ChartJS,
@@ -16,17 +19,124 @@ import {
   Legend,
 } from "chart.js";
 
-ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement, Title, Tooltip, Legend);
+ChartJS.register(
+  LineElement,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 const SpeakingTestHistory: React.FC = () => {
   const { isLoading, data, error } = useQuery({
-    queryKey: ['speakingTestHistory'],
+    queryKey: ["speakingTestHistory"],
     queryFn: () => getPronounceTestResultList(),
   });
 
-  const [wordNum] = useState<number>(89);
-  const average = 90;
+  const [currentCount, setCurrentCount] = useState(0); // 이번 달 평가 횟수
+  const [monthAgoScoreAverage, setMonthAgoScoreAverage] = useState(0); // 이전 5개월간 음성 평가 평균
+  const [monthCurrentScoreAverage, setMonthCurrentScoreAverage] = useState(0); // 현재 월 음성 평가 평균
+
   const theme = useTheme();
+
+  // 데이터를 carddata 형식으로 변환
+  const cardData =
+    data?.map((quiz) => ({
+      quizId: quiz.audioFileId,
+      date: formatDate(quiz.createdAt),
+      score: quiz.totalScore, // 정답 비율을 점수로 변환
+    })) || [];
+
+  const chartformatDate = (createdAt: string) => {
+    const date = new Date(createdAt);
+    const month = (date.getMonth() + 1).toString().padStart(2, "0"); // 월을 2자리로 표시
+    return `${month}월`; // 예: 09월
+  };
+
+  // 최근 6개월 데이터 필터링
+  const getSixMonthsData = (data: PronounceTestResultListDto[]) => {
+    const currentDate = new Date();
+    const sixMonthsAgo = new Date(
+      currentDate.setMonth(currentDate.getMonth() - 6)
+    );
+
+    const monthData: {
+      [key: string]: { totalScore: number; totalCount: number };
+    } = {};
+    data?.forEach((quiz) => {
+      const quizData = new Date(quiz.createdAt);
+      if (quizData >= sixMonthsAgo) {
+        const monthKey = chartformatDate(quiz.createdAt);
+
+        // 데이터 없을때 처리
+        if (!monthData[monthKey]) {
+          monthData[monthKey] = { totalScore: 0, totalCount: 0 };
+        }
+
+        monthData[monthKey].totalScore += quiz.totalScore;
+        monthData[monthKey].totalCount += 1;
+      }
+    });
+    return monthData;
+  };
+
+  useEffect(() => {
+    if (data) {
+      let count = 0;
+      let wholeSum = 0;
+
+      data.forEach((quiz) => {
+        count += 1;
+        wholeSum += quiz.totalScore;
+      });
+
+      setCurrentCount(count);
+      setMonthCurrentScoreAverage(wholeSum / count);
+    }
+  }, [data]);
+
+  // 최근 6개월의 월을 미리 생성 (현재 월을 기준으로)
+  const generateLastSixMonthsLabels = (): string[] => {
+    const labels = [];
+    const currentDate = new Date();
+
+    for (let i = 5; i >= 0; i--) {
+      const pastDate = new Date(
+        currentDate.getFullYear(),
+        currentDate.getMonth() - i,
+        1
+      );
+      const monthKey = `${(pastDate.getMonth() + 1)
+        .toString()
+        .padStart(2, "0")}월`;
+      labels.push(monthKey);
+    }
+    return labels;
+  };
+
+  const monthLabels = generateLastSixMonthsLabels(); // 최근 6개월의 월 레이블
+
+  const recentSixMonthsData = data ? getSixMonthsData(data) : {};
+
+  // 월별 데이터를 배열로 변환하여 차트 데이터에 사용
+  const correctPercentagePerMonth = monthLabels.map(
+    (month) =>
+      recentSixMonthsData[month]?.totalScore /
+        recentSixMonthsData[month]?.totalCount || 0 // 데이터가 없으면 0으로 채움
+  );
+
+  // 현재 월 제외한 이전 5개월의 학습한 단어수(totalCnt) 평균 계산
+  useEffect(() => {
+    if (correctPercentagePerMonth.length > 1) {
+      const previousFiveMonthsData = correctPercentagePerMonth.slice(0, 5); // 현재 월 제외한 5개월 데이터
+      const totalAverage =
+        previousFiveMonthsData.reduce((acc, curr) => acc + curr, 0) /
+        previousFiveMonthsData.length;
+      setMonthAgoScoreAverage(Math.floor(totalAverage)); // 평균 값을 정수로 설정
+    }
+  }, [correctPercentagePerMonth]);
 
   // 시간 포맷
   const formatDate = (createdAt: string) => {
@@ -41,11 +151,11 @@ const SpeakingTestHistory: React.FC = () => {
   };
 
   const dateData = {
-    labels: ["3월", "4월", "5월", "6월", "7월", "8월", "9월"], // X축
+    labels: monthLabels, // X축
     datasets: [
       {
         label: "월별 데이터",
-        data: [20, 45, 30, 55, 80, 60, 90], // Y축 데이터
+        data: correctPercentagePerMonth, // Y축 데이터
         borderColor: theme.colors.primary, // 라인 색상
         pointBackgroundColor: theme.colors.primaryPress, // 꼭지점 하이라이트 색상
         pointBorderColor: "#fff", // 꼭지점 테두리 색상
@@ -86,46 +196,73 @@ const SpeakingTestHistory: React.FC = () => {
   // 로딩 중일 때 Spinner 표시
   if (isLoading) return <Spinner />;
   // 에러 메시지 표시
-  if (error) return <ErrorText>에러가 발생했습니다. 다시 시도해 주세요.</ErrorText>;
+  if (error)
+    return <ErrorText>에러가 발생했습니다. 다시 시도해 주세요.</ErrorText>;
 
   return (
     <MainContainer>
       <Layout>
-        <InfoContainer>
-          <TitleText>최근 평균보다 많이 학습했어요!</TitleText>
-          <InfoText>
-            9월에 학습된 단어 개수 :
-            {wordNum ? (
-              wordNum >= average ? (
-                <InfoTextEmphasizeBlue>{wordNum}</InfoTextEmphasizeBlue>
-              ) : (
-                <InfoTextEmphasizeRed>{wordNum}</InfoTextEmphasizeRed>
-              )
-            ) : null}
-          </InfoText>
-          <StatsHistory>
-            <StatItem>테스트 횟수: 5회</StatItem>
-            <StatItem>맞춘 단어수: 80개</StatItem>
-            <StatItem>틀린 단어수: 10개</StatItem>
-          </StatsHistory>
-        </InfoContainer>
+        {data?.length === 0 ? (
+          <EmptyMessage>첫 테스트를 진행해보세요!</EmptyMessage>
+        ) : (
+          <>
+            <InfoContainer>
+              <TitleText>
+                최근 평균 점수 보다{" "}
+                {monthCurrentScoreAverage ? (
+                  monthCurrentScoreAverage >= monthAgoScoreAverage ? (
+                    <InfoTextEmphasizeBlue>증가</InfoTextEmphasizeBlue>
+                  ) : (
+                    <InfoTextEmphasizeRed>감소</InfoTextEmphasizeRed>
+                  )
+                ) : null}{" "}
+                했어요.
+              </TitleText>
+              <InfoText>
+                10월에 학습된 발음 평균 점수 :
+                {monthCurrentScoreAverage ? (
+                  monthCurrentScoreAverage >= monthAgoScoreAverage ? (
+                    <InfoTextEmphasizeBlue>
+                      {monthCurrentScoreAverage}
+                    </InfoTextEmphasizeBlue>
+                  ) : (
+                    <InfoTextEmphasizeRed>
+                      {monthCurrentScoreAverage}
+                    </InfoTextEmphasizeRed>
+                  )
+                ) : null}
+              </InfoText>
+              <StatsHistory>
+                <StatItem>테스트 횟수: {currentCount}회</StatItem>
+                <StatItem>
+                  이번 달 평균 점수: {monthCurrentScoreAverage}회
+                </StatItem>
+                <StatItem>이전 평균 점수: {monthAgoScoreAverage}점</StatItem>
+              </StatsHistory>
+            </InfoContainer>
 
-        <ChartContainer>
-          <Line data={dateData} options={options} />
-        </ChartContainer>
+            <ChartContainer>
+              <Line data={dateData} options={options} />
+            </ChartContainer>
+          </>
+        )}
       </Layout>
 
       {/* 고정된 높이 및 스크롤 가능한 영역 */}
-      <ScrollableTestHistoryList>
-        {data?.map((test: PronounceTestResultListDto, index: number) => (
-          <SpeakingTestHistoryCardList
-          audioFileId={test.audioFileId}
-            score={test.totalScore}
-            date={formatDate(test.createdAt)} // 날짜 포맷 적용
-            key={index}
-          />
-        ))}
-      </ScrollableTestHistoryList>
+      {cardData.length === 0 ? (
+        <EmptyMessage>테스트 진행하면 리스트들이 출력됩니다.</EmptyMessage>
+      ) : (
+        <ScrollableTestHistoryList>
+          {data?.map((test: PronounceTestResultListDto, index: number) => (
+            <SpeakingTestHistoryCardList
+              audioFileId={test.audioFileId}
+              score={test.totalScore}
+              date={formatDate(test.createdAt)}
+              key={index}
+            />
+          ))}
+        </ScrollableTestHistoryList>
+      )}
     </MainContainer>
   );
 };
@@ -174,7 +311,7 @@ const InfoText = styled.p`
 const InfoTextEmphasizeRed = styled.span`
   margin-left: 0.25rem;
   font-size: 2rem;
-  color: #ff6573;
+  color: ${(props) => props.theme.colors.danger};
 `;
 
 const InfoTextEmphasizeBlue = styled.span`
@@ -198,7 +335,6 @@ const ScrollableTestHistoryList = styled.div`
   flex-wrap: wrap;
   justify-content: space-around;
   width: 100%;
-  max-height: 300px;
   overflow-y: auto; /* 세로 스크롤 가능 */
   overflow-x: hidden; /* 좌우 스크롤 제거 */
   padding-top: 1rem;
@@ -208,4 +344,14 @@ const ErrorText = styled.div`
   color: ${(props) => props.theme.colors.danger};
   font-size: 1.25rem;
   text-align: center;
+`;
+
+const EmptyMessage = styled.p`
+  margin-top: 5rem;
+  justify-content: center;
+  margin: auto;
+  padding-top: 10rem;
+  text-align: center;
+  font-size: 1.25rem;
+  color: ${(props) => props.theme.colors.text04};
 `;

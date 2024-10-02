@@ -5,12 +5,14 @@ import styled from "styled-components";
 const NicknameInput: React.FC<{
   isNicknameAvailable: boolean;
   isNicknameDuplicated: boolean;
-}> = ({ isNicknameAvailable, isNicknameDuplicated }) => {
+  onNicknameChange: (nickname: string) => void;
+}> = ({ isNicknameAvailable, isNicknameDuplicated, onNicknameChange }) => {
   const [signupData, setSignupData] = useRecoilState(signupState);
   const nickname = signupData.nickname;
 
   function handleNicknameChange(nickname: string) {
     if (nickname.length <= 8) {
+      onNicknameChange(nickname);
       setSignupData({ ...signupData, nickname });
     }
   }

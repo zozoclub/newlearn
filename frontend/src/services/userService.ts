@@ -80,8 +80,8 @@ export const checkNicknameDup = async (nickname: string): Promise<boolean> => {
   console.log(nickname);
   try {
     const response = await axios.get(`user/check/${nickname}`);
-    console.log(response);
-    return !response.data.data.isDuplicate;
+    console.log("api", response.data.data);
+    return response.data.data;
   } catch (error) {
     console.error(error);
     throw error;
@@ -127,5 +127,17 @@ export const getUserInfo = async (): Promise<userInfoType> => {
   } catch (error) {
     console.error("logout failed: ", error);
     throw error;
+  }
+};
+
+
+export const putExpUp = async (exp: number): Promise<void> => {
+  try {
+    console.log(exp);
+    
+    const response = await axiosInstance.put(`user/update-experience`, exp);
+    console.log(response);
+  } catch (error) {
+    console.error(`경험치 상승 오류`,error);
   }
 };

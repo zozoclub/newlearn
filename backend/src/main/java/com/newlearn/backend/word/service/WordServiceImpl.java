@@ -151,17 +151,17 @@ public class WordServiceImpl implements WordService {
 		word.completeWord();
 		wordRepository.save(word);
 
-		Optional<Goal> optionalGoal = studyRepository.findByUserId(user.getUserId());
-		if (optionalGoal.isPresent()) {
-			Goal goal = optionalGoal.get();
-
-			if (word.isComplete()) {
-				goal.setCurrentCompleteWord(goal.getCurrentCompleteWord() + 1);
-			} else {
-				goal.setCurrentCompleteWord(goal.getCurrentCompleteWord() - 1);
-			}
-			studyRepository.save(goal);
-		}
+//		Optional<Goal> optionalGoal = studyRepository.findByUserId(user.getUserId());
+//		if (optionalGoal.isPresent()) {
+//			Goal goal = optionalGoal.get();
+//
+//			if (word.isComplete()) {
+//				goal.setCurrentCompleteWord(goal.getCurrentCompleteWord() + 1);
+//			} else {
+//				goal.setCurrentCompleteWord(goal.getCurrentCompleteWord() - 1);
+//			}
+//			studyRepository.save(goal);
+//		}
 	}
 
 	/**

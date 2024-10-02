@@ -41,6 +41,12 @@ public class Word {
 	@Column(name = "is_final_complete")
 	private boolean isFinalComplete = false;
 
+	@Column(name = "pronounce_us")
+	private String pronounceUs;
+
+	@Column(name = "pronounce_uk")
+	private String pronounceUk;
+
 	@Column(name = "created_at")
 	private LocalDateTime createdAt;
 

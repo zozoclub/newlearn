@@ -20,7 +20,7 @@ const Header = () => {
             transitionTo("/");
           }}
         >
-          <FullLogo width={360} height={60} />
+          <FullLogo width={280} height={60} />
         </Logo>
       )}
       <div className="right-side">
@@ -49,9 +49,11 @@ const HeaderContainer = styled.div<{ $currentLocation: string }>`
       : "end"};
   align-items: center;
   height: 9.375rem;
+  padding: 0 5%;
   .right-side {
     display: flex;
     align-items: center;
+    padding-right: 2.5%;
   }
   @media (max-width: ${(props) => props.theme.size.mobile}) {
     display: none;
@@ -67,7 +69,7 @@ const Logo = styled.div`
 const PageInfo = styled.div`
   margin-right: 1rem;
   font-family: "Righteous";
-  font-size: 2rem;
+  font-size: 1.75rem;
 `;
 
 export default Header;

@@ -1,16 +1,19 @@
 import { usePageTransition } from "@hooks/usePageTransition";
 import locationState from "@store/locationState";
 import { useEffect } from "react";
-import { useResetRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import styled from "styled-components";
 
 const NotFoundPage = () => {
-  const resetCurrentLocation = useResetRecoilState(locationState);
+  const setCurrentLocation = useSetRecoilState(locationState);
   const transitionTo = usePageTransition();
 
   useEffect(() => {
-    resetCurrentLocation();
-  }, [resetCurrentLocation]);
+    setCurrentLocation("notFound");
+    return () => {
+      setCurrentLocation("");
+    };
+  }, [setCurrentLocation]);
 
   return (
     <Container>

@@ -17,10 +17,9 @@ const WordTestCollapsible: React.FC<CollapsibleProps> = ({
   const [expanded, setExpanded] = useState<boolean>(isExpanded);
   const contentRef = useRef<HTMLDivElement>(null);
 
-
   const toggleExpand = () => {
     setExpanded((prev) => !prev);
-    onToggle(); 
+    onToggle();
   };
 
   const currentHeight = expanded ? contentRef.current?.scrollHeight : 0;
@@ -39,9 +38,7 @@ const WordTestCollapsible: React.FC<CollapsibleProps> = ({
           style={{ height: `${currentHeight}px` }}
           $isExpanded={expanded}
         >
-          <Content>
-            {children}
-          </Content>
+          <Content>{children}</Content>
         </ContentContainer>
       </ListItem>
     </>
@@ -58,7 +55,7 @@ const ListItem = styled.div`
 `;
 
 const Title = styled.div`
-  background-color: ${(props) => props.theme.colors.shadow}7F;
+  background-color: ${(props) => props.theme.shadows.medium};
   color: ${(props) => props.theme.colors.text};
   padding: 1rem;
   cursor: pointer;
@@ -95,7 +92,7 @@ const ContentContainer = styled.div<{ $isExpanded: boolean }>`
 
 const Content = styled.div`
   padding: 1rem;
-  background-color: ${(props) => props.theme.colors.shadow}4F;
+  background-color: ${(props) => props.theme.shadows.medium};
   color: ${(props) => props.theme.colors.text};
   font-size: 1rem;
   line-height: 1.5;

@@ -216,7 +216,7 @@ const Container = styled.div<{ $pageNum: number }>`
   background-color: ${(props) => props.theme.colors.cardBackground + "7F"};
   transition: box-shadow 0.5s;
   backdrop-filter: blur(4px);
-  box-shadow: 0.5rem 0.5rem 0.25rem ${(props) => props.theme.colors.shadow};
+  box-shadow: ${(props) => props.theme.shadows.medium};
   transition: all 0.5s;
   overflow: hidden;
   ::placeholder {

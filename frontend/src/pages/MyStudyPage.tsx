@@ -145,7 +145,7 @@ const GoalContainer = styled.div`
   min-height: 530px;
 
   background-color: ${(props) => props.theme.colors.cardBackground + "BF"};
-  box-shadow: 0.25rem 0.25rem 0.25rem ${(props) => props.theme.colors.shadow};
+  box-shadow: ${(props) => props.theme.shadows.medium};
   box-sizing: border-box;
   border-radius: 0.75rem;
 `;
@@ -199,7 +199,7 @@ const MenuItemBase = styled.div`
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  box-shadow: 0.25rem 0.25rem 0.25rem ${(props) => props.theme.colors.shadow};
+  box-shadow: ${(props) => props.theme.shadows.medium};
   box-sizing: border-box;
 
   border-radius: 12px;

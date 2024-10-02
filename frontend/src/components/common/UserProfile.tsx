@@ -3,14 +3,12 @@ import styled from "styled-components";
 import ProfileWidget from "@components/common/Profile";
 import { logout } from "@services/userService";
 import { usePageTransition } from "@hooks/usePageTransition";
-import { useRecoilValue, useSetRecoilState } from "recoil";
-import locationState from "@store/locationState";
+import { useRecoilValue } from "recoil";
 import userInfoState from "@store/userInfoState";
 import Avatar, { AvatarType } from "./Avatar";
 
 const UserProfile = () => {
   const [isOpened, setIsOpened] = useState(false);
-  const setCurrentLocation = useSetRecoilState(locationState);
   const translateTo = usePageTransition();
   const userInfoData = useRecoilValue(userInfoState);
   const isInitialized = userInfoData.isInitialized;
@@ -45,7 +43,6 @@ const UserProfile = () => {
     try {
       await logout();
       sessionStorage.removeItem("accessToken");
-      setCurrentLocation("");
       setIsOpened(false);
       history.pushState(null, "", location.href);
       window.onpopstate = function () {

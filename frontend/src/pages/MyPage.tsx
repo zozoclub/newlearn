@@ -5,20 +5,8 @@ import MyPageCount from "@components/mypage/MyPageCount";
 import MyPageCategory from "@components/mypage/MyPageCategory";
 import MyPageGrass from "@components/mypage/MyPageGrass";
 import MyPageScrapNews from "@components/mypage/MyPageScrapNews";
-import { useEffect } from "react";
-import { useSetRecoilState } from "recoil";
-import locationState from "@store/locationState";
 
 const MyPage = () => {
-  const setCurrentLocation = useSetRecoilState(locationState);
-
-  useEffect(() => {
-    setCurrentLocation("My Page");
-    return () => {
-      setCurrentLocation("");
-    };
-  }, [setCurrentLocation]);
-
   return (
     <div>
       <MyPageContainer>
@@ -88,6 +76,6 @@ const WidgetContainer = styled.div`
   border-radius: 12px;
   transition: box-shadow 0.5s;
   backdrop-filter: blur(4px);
-  box-shadow: 0.25rem 0.25rem 0.25rem ${(props) => props.theme.colors.shadow};
+  box-shadow: ${(props) => props.theme.shadows.medium};
   box-sizing: border-box;
 `;

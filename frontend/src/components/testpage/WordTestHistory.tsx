@@ -94,18 +94,18 @@ const WordTestHistory: React.FC = () => {
     if (data) {
       let correctSum = 0;
       let wholeSum = 0;
-      let count = 0
+      let count = 0;
 
       data.forEach((quiz) => {
         correctSum += quiz.correctCnt;
         wholeSum += quiz.totalCnt;
-        count += 1
+        count += 1;
       });
 
       setCorrectCount(correctSum);
       setWholeCount(wholeSum);
       setWrongCount(wholeSum - correctSum);
-      setCurrentCount(count)
+      setCurrentCount(count);
     }
   }, [data]);
 
@@ -327,6 +327,7 @@ const ScrollableTestHistoryList = styled.div`
   flex-wrap: wrap;
   justify-content: space-around;
   width: 100%;
+  max-height: 300px;
   overflow-y: auto; /* 세로 스크롤 가능 */
   overflow-x: hidden; /* 좌우 스크롤 제거 */
   padding-top: 1rem;

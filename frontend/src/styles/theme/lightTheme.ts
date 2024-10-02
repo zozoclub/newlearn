@@ -9,7 +9,7 @@ export const lightTheme: Theme = {
   colors: {
     background: "#ffffff",
     cardBackground: "#ffffff",
-    cardBackground01: "ffffffbd",
+    cardBackground01: "#ffffffbd",
     primary: "#0268ed",
     primaryPress: "#0057b6",
     danger: "#df1d1d",

@@ -48,7 +48,7 @@ const WidgetContainer = styled.div`
   position: absolute;
   z-index: 1;
   right: 0;
-  grid-template-columns: 1fr 1fr;
-  grid-gap: 2.5rem;
+  grid-template-columns: calc(50% - 1.5rem) calc(50% - 1.5rem);
+  grid-gap: 3rem;
   width: 40rem;
 `;

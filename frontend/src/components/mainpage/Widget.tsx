@@ -46,7 +46,7 @@ const WidgetContainer = styled.div`
   flex-direction: column;
   align-items: center;
   aspect-ratio: 1;
-  background-color: ${(props) => props.theme.colors.cardBackground + "BF"};
+  background-color: ${(props) => props.theme.colors.cardBackground + "CC"};
   border-radius: 0.75rem;
   transition: box-shadow 0.5s;
   backdrop-filter: blur(4px);

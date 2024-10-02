@@ -14,6 +14,8 @@ import com.newlearn.backend.news.repository.NewsRepository;
 import com.newlearn.backend.news.repository.UserDailyNewsReadRepository;
 import com.newlearn.backend.news.repository.UserNewsReadRepository;
 import com.newlearn.backend.news.repository.UserNewsScrapRepository;
+import com.newlearn.backend.study.model.Goal;
+import com.newlearn.backend.study.repository.StudyRepository;
 import com.newlearn.backend.user.model.Users;
 import com.newlearn.backend.user.repository.CategoryRepository;
 import com.newlearn.backend.user.repository.UserRepository;
@@ -45,7 +47,7 @@ public class NewsServiceImpl implements NewsService{
     private final UserNewsReadRepository userNewsReadRepository;
     private final UserDailyNewsReadRepository userDailyNewsReadRepository;
     private final UserNewsScrapRepository userNewsScrapRepository;
-    private final WordRepository wordRepository;
+    private final StudyRepository studyRepository;
     private final WordSentenceRepository wordSentenceRepository;
 
     @Override
@@ -182,6 +184,13 @@ public class NewsServiceImpl implements NewsService{
 
         dailyRead.incrementNewsReadCount();
         userDailyNewsReadRepository.save(dailyRead);
+
+        Optional<Goal> optionalGoal = studyRepository.findByUserId(user.getUserId());
+        if (optionalGoal.isPresent()) {
+            Goal goal = optionalGoal.get();
+            goal.setGoalReadNewsCount(goal.getCurrentReadNewsCount() + 1);
+            studyRepository.save(goal);
+        }
     }
 
     @Override

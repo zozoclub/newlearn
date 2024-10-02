@@ -188,7 +188,7 @@ public class NewsServiceImpl implements NewsService{
         Optional<Goal> optionalGoal = studyRepository.findByUserId(user.getUserId());
         if (optionalGoal.isPresent()) {
             Goal goal = optionalGoal.get();
-            goal.setGoalReadNewsCount(goal.getCurrentReadNewsCount() + 1);
+            goal.setCurrentReadNewsCount(goal.getCurrentReadNewsCount() + 1);
             studyRepository.save(goal);
         }
     }

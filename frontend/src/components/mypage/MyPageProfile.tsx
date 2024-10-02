@@ -187,7 +187,7 @@ const MyPageProfile: React.FC = () => {
     <div>
       <Container>
         <AvatarContainer>
-          <Avatar avatar={avatar} size={9} />
+          <Avatar avatar={avatar} size={8} />
         </AvatarContainer>
         <ProfileInfoContainer>
           {/* 닉네임, 레벨 */}
@@ -308,11 +308,13 @@ const LevelContainer = styled.div`
   align-items: center;
   gap: 0.5rem;
 `;
+
 const NicknameContainer = styled.div`
   display: flex;
+  align-items: center;
+  justify-content: space-between;
   font-size: 1.5rem;
   font-weight: bold;
-  justify-content: space-between;
 `;
 
 const NicknameEditInput = styled.input`

@@ -1,5 +1,5 @@
 import React from "react";
-import ContributionGraph from "@components/ContributionGraph";
+import ContributionGraph from "@components/mypage/ContributionGraph";
 import styled from "styled-components";
 import { GrassType, getUserGrass } from "@services/mypageService";
 import { useQuery } from "@tanstack/react-query";

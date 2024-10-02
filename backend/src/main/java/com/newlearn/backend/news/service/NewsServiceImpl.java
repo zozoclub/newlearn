@@ -6,6 +6,7 @@ import com.newlearn.backend.news.dto.request.NewsReadRequestDTO;
 import com.newlearn.backend.news.dto.response.NewsDetailResponseDTO;
 import com.newlearn.backend.news.dto.response.NewsDetailResponseDTO.WordInfo;
 import com.newlearn.backend.news.dto.response.NewsResponseDTO;
+import com.newlearn.backend.news.dto.response.NewsSimpleResponseDTO;
 import com.newlearn.backend.news.model.*;
 import com.newlearn.backend.news.repository.NewsRepository;
 import com.newlearn.backend.news.repository.UserDailyNewsReadRepository;
@@ -27,6 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.catalina.User;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -121,8 +123,27 @@ public class NewsServiceImpl implements NewsService{
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<NewsSimpleResponseDTO> getRecentNews(Users user) {
+        List<UserNewsClick> clickNewsList = userNewsClickRepository.findTop5ByUserIdOrderByCreatedAtDesc(user.getUserId());
+        List<NewsSimpleResponseDTO> recentClickNewsList = clickNewsList.stream()
+                .map(click -> {
+                    News news = newsRepository.findById(click.getNewsId())
+                            .orElseThrow(() -> new EntityNotFoundException("News not found with id: " + click.getNewsId()));
+                    return NewsSimpleResponseDTO.makeNewsSimpleResponseDTO(
+                            news,
+                            "kr",
+                            2
+                    );
+                })
+                .collect(Collectors.toList());
+
+        return recentClickNewsList;
+    }
+
 
     @Override
+    @Transactional
     public NewsDetailResponseDTO getNewsDetail(Users user, Long newsId, NewsDetailRequestDTO newsDetailRequestDTO) {
         News news = newsRepository.findById(newsId)
                 .orElseThrow(() -> new EntityNotFoundException("뉴스를 찾을 수 없습니다."));

@@ -21,11 +21,15 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
 # MongoDB 환경 변수 로드
-MONGO_URL = os.getenv("MONGO_URL")
+MONGO_USERNAME = os.getenv("MONGO_USERNAME")
+MONGO_PASSWORD = os.getenv("MONGO_PASSWORD")
+MONGO_HOST = os.getenv("MONGO_HOST")
+MONGO_PORT = os.getenv("MONGO_PORT")
 MONGO_DBNAME = os.getenv("MONGO_DBNAME")
 MONGO_TABLE_NAME = os.getenv("MONGO_TABLE_NAME")
 
 # MongoDB 연결 설정
+MONGO_URL = f"mongodb://{MONGO_USERNAME}:{MONGO_PASSWORD}@{MONGO_HOST}:{MONGO_PORT}/{MONGO_DBNAME}"
 mongo_client = MongoClient(MONGO_URL)
 
 # MongoDB 데이터 베이스 선택

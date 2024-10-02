@@ -42,9 +42,8 @@ const DailyNews: React.FC = () => {
         coverflowEffect={{
           rotate: 50,
           stretch: 0,
-          depth: 100,
+          depth: 50,
           modifier: 1,
-          slideShadows: true,
         }}
         pagination={true}
         modules={[EffectCoverflow, Pagination, Mousewheel]}
@@ -77,7 +76,7 @@ const DailyNews: React.FC = () => {
 const Container = styled.div`
   justify-content: flex-start;
   position: absolute;
-  top: 7.5rem;
+  top: 10rem;
   left: -30vw;
   width: calc(125vw - 0.375rem);
   overflow: hidden;
@@ -91,8 +90,8 @@ const Container = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 600px;
-    height: 400px;
+    width: 540px;
+    height: 360px;
     background-color: ${(props) => props.theme.colors.cardBackground + "BF"};
     border-radius: 0.5rem;
     backdrop-filter: blur(4px);

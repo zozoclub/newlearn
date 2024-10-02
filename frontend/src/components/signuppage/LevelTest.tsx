@@ -309,7 +309,7 @@ const WordButton = styled.button<{ isSelected: boolean }>`
 `;
 
 const Difficulty = styled.span`
-  color: black;
+  color: ${(props) => props.theme.colors.text};
   font-size: 1.5rem;
   font-weight: bold;
 `;

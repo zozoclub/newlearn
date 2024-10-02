@@ -235,7 +235,7 @@ const Container = styled.div<{ $pageNum: number }>`
       case 2:
         return "44rem";
       case 3:
-        return "33em";
+        return "23rem";
       default:
         return "38rem";
     }
@@ -246,7 +246,7 @@ const Container = styled.div<{ $pageNum: number }>`
   transition: box-shadow 0.5s;
   backdrop-filter: blur(4px);
   box-shadow: 0.5rem 0.5rem 0.25rem ${(props) => props.theme.colors.shadow};
-  transition: all 0.5s;
+  transition: all 0.3s ease, height 0.3s ease;
   overflow: hidden;
   ::placeholder {
     font-weight: 600;

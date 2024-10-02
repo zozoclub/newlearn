@@ -20,7 +20,7 @@ const WordTestResultPage: React.FC = () => {
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const { quizId } = useParams<{ quizId: string }>();
   const setCurrentLocation = useSetRecoilState(locationState);
-  
+
   useEffect(() => {
     setCurrentLocation("Word Test Page");
   }, [setCurrentLocation]);
@@ -45,8 +45,8 @@ const WordTestResultPage: React.FC = () => {
       word: item.correctAnswer,
       userAnswer: item.answer,
       sentence: item.sentence,
-      sentenceTranslation: "",  // 번역이 없는 경우, 기본적으로 비워둘 수 있습니다.
-      correct: item.correct,    // 정답 여부
+      sentenceTranslation: "",
+      correct: item.correct,
     }));
   };
 
@@ -86,7 +86,7 @@ const WordTestResultPage: React.FC = () => {
     <MainLayout>
       <MainContainer>
         <BackHeader>
-          <BackArrow width={48} height={48} />
+          <BackArrow width={48} height={48} url="/testhistory" />
           평가 리스트로 돌아가기
         </BackHeader>
         <WordListLayout>

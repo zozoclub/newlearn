@@ -12,6 +12,8 @@ import com.newlearn.backend.news.repository.UserDailyNewsReadRepository;
 import com.newlearn.backend.news.repository.UserNewsReadRepository;
 import com.newlearn.backend.news.repository.UserNewsScrapRepository;
 import com.newlearn.backend.news.repository.mongo.UserNewsClickRepository;
+import com.newlearn.backend.study.model.Goal;
+import com.newlearn.backend.study.repository.StudyRepository;
 import com.newlearn.backend.user.model.Users;
 import com.newlearn.backend.user.repository.CategoryRepository;
 import com.newlearn.backend.user.repository.UserRepository;
@@ -48,6 +50,7 @@ public class NewsServiceImpl implements NewsService{
     private final UserNewsScrapRepository userNewsScrapRepository;
     private final WordSentenceRepository wordSentenceRepository;
     private final UserNewsClickRepository userNewsClickRepository;
+    private final StudyRepository studyRepository;
 
     @Override
     public Page<NewsResponseDTO> getAllNews(Users user, NewsListRequestDTO newsRequestDTO) {

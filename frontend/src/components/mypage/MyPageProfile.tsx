@@ -11,7 +11,7 @@ import Avatar, { AvatarType } from "@components/common/Avatar";
 import { changeNickname, changeAvatar } from "@services/mypageService";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import LevelIcon from "@components/common/LevelIcon";
-
+import { checkNicknameDup } from "@services/userService";
 const MyPageProfile: React.FC = () => {
   const queryClient = useQueryClient();
   const userInfo = useRecoilValue(userInfoState);
@@ -25,6 +25,10 @@ const MyPageProfile: React.FC = () => {
   const [tempEyes, setTempEyes] = useState(userInfo.eyes);
   const [mask, setMask] = useState(userInfo.mask);
   const [tempMask, setTempMask] = useState(userInfo.mask);
+  const [isValidNickname, setIsValidNickname] = useState(true);
+  const [isNicknameDuplicate, setIsNicknameDuplicate] = useState<
+    boolean | null
+  >(null);
 
   // 경험치
   const calculatedExperience = calculateExperience(userInfo.experience);
@@ -90,7 +94,15 @@ const MyPageProfile: React.FC = () => {
 
   // 닉네임 입력 핸들러
   const handleNicknameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setTempNickname(e.target.value);
+    const newNickname = e.target.value;
+    setTempNickname(newNickname);
+    // 기본적인 유효성 검사 (길이 및 한글 체크)
+    setIsValidNickname(
+      newNickname.length >= 3 &&
+        newNickname.length <= 8 &&
+        /^[가-힣]+$/.test(newNickname)
+    );
+    setIsNicknameDuplicate(null);
   };
 
   // 아바타 설정
@@ -136,15 +148,41 @@ const MyPageProfile: React.FC = () => {
   };
 
   // 닉네임 및 아바타 수정 저장 핸들러
-  const handleSave = () => {
+  const handleSave = async () => {
     if (tempNickname !== nickname) {
-      nicknameMutation.mutate(tempNickname);
+      try {
+        const isDuplicate = await checkNicknameDup(tempNickname);
+        setIsNicknameDuplicate(isDuplicate);
+        if (!isDuplicate) {
+          nicknameMutation.mutate(tempNickname);
+        }
+      } catch (error) {
+        console.error("닉네임 중복 체크 실패:", error);
+        setIsNicknameDuplicate(null);
+      }
     }
     if (tempSkin !== skin || tempEyes !== eyes || tempMask !== mask) {
       avatarMutation.mutate({ skin: tempSkin, eyes: tempEyes, mask: tempMask });
     }
   };
 
+  useEffect(() => {
+    const checkNickname = async () => {
+      if (
+        tempNickname.length < 3 ||
+        !/^[가-힣ㄱ-ㅎㅏ-ㅣ]+$/.test(tempNickname)
+      ) {
+        setIsValidNickname(false);
+        return;
+      }
+    };
+
+    if (tempNickname !== nickname) {
+      checkNickname();
+    } else {
+      setIsValidNickname(true);
+    }
+  }, [tempNickname, nickname]);
   return (
     <div>
       <Container>
@@ -152,82 +190,92 @@ const MyPageProfile: React.FC = () => {
           <Avatar avatar={avatar} size={9} />
         </AvatarContainer>
         <ProfileInfoContainer>
+          {/* 닉네임, 레벨 */}
           <NicknameContainer>
             <LevelContainer>
               <LevelIcon level={level} />
               {nickname}
             </LevelContainer>
             <EditIcon onClick={openModal} />
-            <Modal
-              isOpen={isModalOpen}
-              onClose={closeModal}
-              title="아바타 및 닉네임 수정"
-            >
-              <AvatarSettingContainer>
-                <SettingContainer>
-                  <EyesSetting>
-                    <div onClick={() => handleAvatarChange("eyes", "prev")}>
-                      ◀
-                    </div>
-                    <div onClick={() => handleAvatarChange("eyes", "next")}>
-                      ▶
-                    </div>
-                  </EyesSetting>
-                  <MaskSetting>
-                    <div onClick={() => handleAvatarChange("mask", "prev")}>
-                      ◀
-                    </div>
-                    <div onClick={() => handleAvatarChange("mask", "next")}>
-                      ▶
-                    </div>
-                  </MaskSetting>
-                  <SkinSetting>
-                    <div onClick={() => handleAvatarChange("skin", "prev")}>
-                      ◀
-                    </div>
-                    <div onClick={() => handleAvatarChange("skin", "next")}>
-                      ▶
-                    </div>
-                  </SkinSetting>
-                </SettingContainer>
-                <Avatar
-                  avatar={{ skin: tempSkin, eyes: tempEyes, mask: tempMask }}
-                  size={9}
-                />
-              </AvatarSettingContainer>
-
-              <NicknameEditInput
-                type="text"
-                value={tempNickname}
-                onChange={handleNicknameChange}
-              />
-              <ButtonContainer>
-                <SaveButton
-                  onClick={handleSave}
-                  disabled={
-                    tempNickname === nickname &&
-                    tempSkin === skin &&
-                    tempEyes === eyes &&
-                    tempMask === mask
-                  }
-                >
-                  저장
-                </SaveButton>
-              </ButtonContainer>
-            </Modal>
           </NicknameContainer>
+          {/* 경험치 */}
           <ExperienceContainer>
             <ExperienceBarContainer>
               <ExperienceBarFill width={expPercentage} />
             </ExperienceBarContainer>
             <ExperienceText>{`${expInCurrentLevel} / ${requiredExpInCurrentLevel}`}</ExperienceText>
           </ExperienceContainer>
+          {/* 소셜 로그인 정보 */}
           <SocialInfoContainer>
             {name}
             {social === "naver" ? <SocialNaver /> : <SocialKakao />}
             {email}
           </SocialInfoContainer>
         </ProfileInfoContainer>
+        {/* 아바타 및 닉네임 수정 모달 */}
+        <Modal
+          isOpen={isModalOpen}
+          onClose={closeModal}
+          title="아바타 및 닉네임 수정"
+        >
+          <AvatarSettingContainer>
+            <SettingContainer>
+              <EyesSetting>
+                <div onClick={() => handleAvatarChange("eyes", "prev")}>◀</div>
+                <div onClick={() => handleAvatarChange("eyes", "next")}>▶</div>
+              </EyesSetting>
+              <MaskSetting>
+                <div onClick={() => handleAvatarChange("mask", "prev")}>◀</div>
+                <div onClick={() => handleAvatarChange("mask", "next")}>▶</div>
+              </MaskSetting>
+              <SkinSetting>
+                <div onClick={() => handleAvatarChange("skin", "prev")}>◀</div>
+                <div onClick={() => handleAvatarChange("skin", "next")}>▶</div>
+              </SkinSetting>
+            </SettingContainer>
+            <Avatar
+              avatar={{ skin: tempSkin, eyes: tempEyes, mask: tempMask }}
+              size={9}
+            />
+          </AvatarSettingContainer>
+
+          <NicknameEditInput
+            type="text"
+            value={tempNickname}
+            onChange={handleNicknameChange}
+          />
+          <MessageContainer>
+            {tempNickname !== nickname && (
+              <>
+                {!isValidNickname && (
+                  <NicknameValidationMessage isValid={false}>
+                    닉네임은 3~8자의 한글이어야 합니다.
+                  </NicknameValidationMessage>
+                )}
+                {isNicknameDuplicate === true && (
+                  <NicknameValidationMessage isValid={false}>
+                    이미 사용 중인 닉네임입니다.
+                  </NicknameValidationMessage>
+                )}
+              </>
+            )}
+          </MessageContainer>
+          <ButtonContainer>
+            <SaveButton
+              onClick={handleSave}
+              disabled={
+                (tempNickname === nickname &&
+                  tempSkin === skin &&
+                  tempEyes === eyes &&
+                  tempMask === mask) ||
+                !isValidNickname ||
+                isNicknameDuplicate === true
+              }
+            >
+              저장
+            </SaveButton>
+          </ButtonContainer>
+        </Modal>
       </Container>
     </div>
   );
@@ -273,7 +321,7 @@ const NicknameEditInput = styled.input`
   width: 100%;
   max-width: 200px;
 
-  margin: 0 auto 2rem;
+  margin: 0 auto 1rem;
   padding: 0.5rem;
 
   color: ${(props) => props.theme.colors.text};
@@ -389,4 +437,18 @@ const MaskSetting = styled(SettingDiv)`
 
 const SkinSetting = styled(SettingDiv)`
   top: 75%;
+`;
+
+const MessageContainer = styled.div`
+  height: 2.5rem; // 메시지의 최대 높이에 맞춰 조절
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+const NicknameValidationMessage = styled.div<{ isValid: boolean }>`
+  color: ${(props) =>
+    props.isValid ? props.theme.colors.primary : props.theme.colors.danger};
+  font-size: 1rem;
+  text-align: center;
+  margin-bottom: 1rem;
 `;

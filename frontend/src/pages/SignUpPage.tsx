@@ -6,8 +6,9 @@ import styled from "styled-components";
 import Button from "@components/Button";
 import NicknameInput from "@components/signuppage/NicknameInput";
 import SelectCategory from "@components/signuppage/SelectCategory";
-import SelectDifficulty from "@components/signuppage/SelectDifficulty";
+// import SelectDifficulty from "@components/signuppage/SelectDifficulty";
 import SignupHeader from "@components/signuppage/SignupHeader";
+import LevelTest from "@components/signuppage/LevelTest";
 import { usePageTransition } from "@hooks/usePageTransition";
 import {
   checkNicknameDup,
@@ -49,7 +50,15 @@ const SignUpPage = () => {
   const query = useQuery();
   const transitionTo = usePageTransition();
 
-  function checkNickname(): boolean {
+  function handleNicknameChange(newNickname: string) {
+    if (newNickname.length <= 8) {
+      setSignupData({ ...signupData, nickname: newNickname });
+      setIsNicknameDuplicated(false); // 닉네임이 변경되면 중복 상태를 초기화
+      setIsNicknameAvailable(checkNickname(newNickname));
+    }
+  }
+
+  function checkNickname(nickname: string): boolean {
     if (nickname.length < 3) {
       return false;
     }
@@ -65,18 +74,19 @@ const SignUpPage = () => {
   }
 
   async function handleSubmitButton() {
-    if (activeButton) {
-      try {
-        if (await checkNicknameDup(nickname)) {
-          signUp(signupData);
-          transitionTo("/login");
-        } else {
-          setPageNum(1);
-          setIsNicknameDuplicated(true);
-        }
-      } catch (error) {
-        console.log(error);
+    try {
+      // true 이면 중복된 닉네임이 있는 것
+      const isNicknameAvailable = await checkNicknameDup(nickname);
+      console.log(isNicknameAvailable);
+      if (!isNicknameAvailable) {
+        await signUp(signupData);
+        transitionTo("/login");
+      } else {
+        setPageNum(1);
+        setIsNicknameDuplicated(true);
       }
+    } catch (error) {
+      console.log(error);
     }
   }
 
@@ -115,7 +125,7 @@ const SignUpPage = () => {
 
   // 유효성 검사
   useEffect(() => {
-    if (nickname.length > 0 && !checkNickname()) {
+    if (nickname.length > 0 && !checkNickname(nickname)) {
       console.log("닉네임 체크");
       setIsNicknameAvailable(false);
       setActiveButton(false);
@@ -156,6 +166,7 @@ const SignUpPage = () => {
           <NicknameInput
             isNicknameAvailable={isNicknameAvailable}
             isNicknameDuplicated={isNicknameDuplicated}
+            onNicknameChange={handleNicknameChange}
           />
           <div>
             <Button
@@ -182,21 +193,28 @@ const SignUpPage = () => {
           </div>
         </FirstPage>
         <SecondPage $pageNum={pageNum}>
+          <LevelTest setPageNum={setPageNum} />
+        </SecondPage>
+        <ThirdPage $pageNum={pageNum}>
           {/* 관심 카테고리 */}
           <SelectCategory />
           {/* 영어 실력 */}
-          <SelectDifficulty />
+          {/* <SelectDifficulty /> */}
           {/* 입력 완료 버튼 */}
           <div>
             <Button
               $varient={activeButton ? "primary" : "cancel"}
               size="large"
-              onClick={handleSubmitButton}
+              onClick={async () => {
+                if (activeButton) {
+                  await handleSubmitButton();
+                }
+              }}
             >
               입력 완료
             </Button>
           </div>
-        </SecondPage>
+        </ThirdPage>
       </form>
     </Container>
   );
@@ -210,14 +228,25 @@ const Container = styled.div<{ $pageNum: number }>`
   left: 50%;
   transform: translate(-50%, 0);
   width: 27.25rem;
-  height: ${(props) => (props.$pageNum === 2 ? "33rem" : "38rem")};
+  height: ${(props) => {
+    switch (props.$pageNum) {
+      case 1:
+        return "38rem";
+      case 2:
+        return "44rem";
+      case 3:
+        return "23rem";
+      default:
+        return "38rem";
+    }
+  }};
   padding: 2rem 2rem 2rem 2rem;
   border-radius: 0.5rem;
   background-color: ${(props) => props.theme.colors.cardBackground + "7F"};
   transition: box-shadow 0.5s;
   backdrop-filter: blur(4px);
   box-shadow: 0.5rem 0.5rem 0.25rem ${(props) => props.theme.colors.shadow};
-  transition: all 0.5s;
+  transition: all 0.3s ease, height 0.3s ease;
   overflow: hidden;
   ::placeholder {
     font-weight: 600;
@@ -243,16 +272,52 @@ const Container = styled.div<{ $pageNum: number }>`
 const FirstPage = styled.div<{ $pageNum: number }>`
   position: absolute;
   left: 3rem;
-  transform: ${(props) =>
-    props.$pageNum === 1 ? "translateX(0)" : "translateX(-31.25rem)"};
+  transform: ${(props) => {
+    switch (props.$pageNum) {
+      case 1:
+        return "translateX(0)";
+      case 2:
+        return "translateX(-31.25rem)";
+      case 3:
+        return "translateX(-62.5rem)";
+      default:
+        return "translateX(0)";
+    }
+  }};
   transition: transform 0.5s;
 `;
 const SecondPage = styled.div<{ $pageNum: number }>`
   position: absolute;
   left: 3rem;
-  transform: ${(props) =>
-    props.$pageNum === 1 ? "translateX(31.25rem)" : "translateX(0)"};
+  transform: ${(props) => {
+    switch (props.$pageNum) {
+      case 1:
+        return "translateX(31.25rem)";
+      case 2:
+        return "translateX(0)";
+      case 3:
+        return "translateX(-31.25rem)";
+      default:
+        return "translateX(31.25rem)";
+    }
+  }};
   transition: transform 0.5s;
 `;
-
+const ThirdPage = styled.div<{ $pageNum: number }>`
+  position: absolute;
+  left: 3rem;
+  transform: ${(props) => {
+    switch (props.$pageNum) {
+      case 1:
+        return "translateX(62.5rem)";
+      case 2:
+        return "translateX(31.25rem)";
+      case 3:
+        return "translateX(0)";
+      default:
+        return "translateX(62.5rem)";
+    }
+  }};
+  transition: transform 0.5s;
+`;
 export default SignUpPage;

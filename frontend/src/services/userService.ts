@@ -80,8 +80,8 @@ export const checkNicknameDup = async (nickname: string): Promise<boolean> => {
   console.log(nickname);
   try {
     const response = await axios.get(`user/check/${nickname}`);
-    console.log(response);
-    return !response.data.data.isDuplicate;
+    console.log("api", response.data.data);
+    return response.data.data;
   } catch (error) {
     console.error(error);
     throw error;

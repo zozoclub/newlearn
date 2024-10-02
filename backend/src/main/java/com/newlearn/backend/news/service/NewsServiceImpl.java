@@ -27,6 +27,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.catalina.User;
 import org.springframework.data.domain.Page;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,6 +57,8 @@ public class NewsServiceImpl implements NewsService{
     private final WordSentenceRepository wordSentenceRepository;
     private final UserNewsClickRepository userNewsClickRepository;
     private final StudyRepository studyRepository;
+
+    private final MongoTemplate mongoTemplate;
 
     @Override
     public Page<NewsResponseDTO> getAllNews(Users user, NewsListRequestDTO newsRequestDTO) {
@@ -177,11 +183,15 @@ public class NewsServiceImpl implements NewsService{
 
         // 뉴스 클릭 +1
         if (newsDetailRequestDTO.getIsFirstView()) {
-            UserNewsClick userNewsClick = userNewsClickRepository.findByUserIdAndNewsId(user.getUserId(), newsId)
-                    .orElse(new UserNewsClick(user.getUserId(), newsId, news.getCategory().getCategoryId()));
-            userNewsClick.setCreatedAt(LocalDateTime.now(ZoneId.of("Asia/Seoul")));
-            // 이미 있으면 created_at 업데이트, 없으면 새로 추가
-            userNewsClickRepository.save(userNewsClick);
+            Query query = new Query(Criteria.where("userId").is(user.getUserId()).and("newsId").is(newsId));
+
+            Update update = new Update()
+                    .setOnInsert("userId", user.getUserId())
+                    .setOnInsert("newsId", newsId)
+                    .setOnInsert("categoryId", news.getCategory().getCategoryId())
+                    .set("createdAt", LocalDateTime.now(ZoneId.of("Asia/Seoul")));
+
+            mongoTemplate.upsert(query, update, UserNewsClick.class);
         }
 
         return NewsDetailResponseDTO.of(news, title, content, isScrapped, userNewsRead, words);

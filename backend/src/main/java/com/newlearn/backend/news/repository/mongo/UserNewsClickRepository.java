@@ -2,6 +2,7 @@ package com.newlearn.backend.news.repository.mongo;
 
 import com.newlearn.backend.news.model.UserNewsClick;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.core.query.Query;
 
 import java.util.List;
 import java.util.Optional;

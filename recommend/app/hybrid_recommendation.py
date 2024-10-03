@@ -2,7 +2,7 @@ from app.database import user_news_click
 from app.models import UserCategory, News, User, UserNewsScrap
 from sqlalchemy.orm import Session
 import numpy as np
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, Set
 from collections import defaultdict
 from datetime import datetime, timedelta
 import locale
@@ -17,9 +17,10 @@ locale.setlocale(locale.LC_TIME, 'ko_KR.UTF-8')
 # 1. 사용자 데이터 가져오기
 #####################################
 @lru_cache(maxsize=1024)
-def get_user_categories(user_id: int, db: Session):
+def get_user_categories(user_id: int, db: Session) -> Set[int]:
     """해당 유저의 UserCategory (MySQL) 가져오기"""
-    return db.query(UserCategory).filter(UserCategory.user_id == user_id).all()
+    categories = db.query(UserCategory.category_id).filter(UserCategory.user_id == user_id).all()
+    return set(category[0] for category in categories)
 
 @lru_cache(maxsize=1024)
 def get_user_difficulty(user_id: int, db: Session):
@@ -27,9 +28,28 @@ def get_user_difficulty(user_id: int, db: Session):
     user = db.query(User).filter(User.user_id == user_id).first()
     return user.difficulty if user else None
 
-def get_user_click_log(user_id: int, limit: int = 100):
-    """해당 유저의 user_news_click (MongoDB) 가져오기 (부분적 로딩)"""
-    return list(user_news_click.find({"user_id": user_id}).limit(limit))
+def get_user_clicks_batch(user_ids: List[int], limit: int = 100) -> Dict[int, Set[int]]:
+    """여러 사용자의 클릭 로그를 한 번에 가져옵니다."""
+    clicks = user_news_click.find(
+        {"user_id": {"$in": user_ids}},
+        {"user_id": 1, "news_id": 1}
+    ).limit(limit * len(user_ids))
+
+    user_clicks = defaultdict(set)
+    for click in clicks:
+        user_clicks[click["user_id"]].add(click["news_id"])
+    return user_clicks
+
+@lru_cache(maxsize=1)
+def get_popular_news_ids(limit: int = 1000) -> List[int]:
+    """가장 많이 클릭된 뉴스 ID 목록을 가져옵니다."""
+    pipeline = [
+        {"$group": {"_id": "$news_id", "count": {"$sum": 1}}},
+        {"$sort": {"count": -1}},
+        {"$limit": limit},
+        {"$project": {"_id": 1}}
+    ]
+    return [doc["_id"] for doc in user_news_click.aggregate(pipeline)]
 
 #####################################
 # 2. 데이터 전처리 및 유사도 계산
@@ -43,31 +63,31 @@ def vectorize_titles(titles_tuple: Tuple[str, ...]) -> Tuple[np.ndarray, TfidfVe
 #####################################
 # 3. 유사한 유저 찾기
 #####################################
-def find_similar_users(user_id: int, db: Session, limit: int = 100):
-    """코사인 유사도를 사용하여 유사한 사용자 찾기 (부분적 로딩)"""
-    user_clicks = get_user_click_log(user_id, limit)
-    user_news_set = {click["news_id"] for click in user_clicks}
+def find_similar_users(user_id: int, db: Session, limit: int = 100, top_k: int = 20):
+    """최적화된 코사인 유사도를 사용하여 유사한 사용자 찾기"""
+    popular_news_ids = get_popular_news_ids(1000)  # 상위 1000개의 인기 뉴스만 고려
 
-    all_users_clicks = {
-        user_click["user_id"]: get_user_click_log(user_click["user_id"], limit)
-        for user_click in user_news_click.find({"user_id": {"$ne": user_id}}).limit(limit)
-    }
+    # 대상 사용자와 다른 사용자들의 클릭 로그를 한 번에 가져옵니다
+    other_user_ids = [doc["user_id"] for doc in user_news_click.find(
+        {"user_id": {"$ne": user_id}},
+        {"user_id": 1}
+    ).limit(limit)]
+    all_user_ids = [user_id] + other_user_ids
+    all_user_clicks = get_user_clicks_batch(all_user_ids, limit)
 
-    all_news_ids = user_news_click.distinct("news_id")
-    user_vector_map = {}
+    # 벡터화
+    vectors = []
+    for uid in all_user_ids:
+        vector = np.array([1 if news_id in all_user_clicks[uid] else 0 for news_id in popular_news_ids])
+        vectors.append(vector)
 
-    user_vector = np.array([1 if news_id in user_news_set else 0 for news_id in all_news_ids])
+    # 코사인 유사도 계산
+    similarities = cosine_similarity([vectors[0]], vectors[1:])[0]
 
-    for other_user_id, other_user_clicks in all_users_clicks.items():
-        other_user_news_set = {click["news_id"] for click in other_user_clicks}
-        other_user_vector = np.array([1 if news_id in other_user_news_set else 0 for news_id in all_news_ids])
+    # 상위 K개의 유사한 사용자 선택
+    top_similar_indices = np.argsort(similarities)[-top_k:][::-1]
 
-        similarity = cosine_similarity([user_vector], [other_user_vector])[0][0]
-        if similarity > 0:
-            user_vector_map[other_user_id] = similarity
-
-    similar_users = sorted(user_vector_map.items(), key=lambda x: x[1], reverse=True)
-    return [user[0] for user in similar_users]
+    return [other_user_ids[i] for i in top_similar_indices if similarities[i] > 0]
 
 #####################################
 # 4. 뉴스 메타 데이터 및 날짜 파싱
@@ -104,6 +124,7 @@ def get_news_metadata(news_id: int, db: Session):
     return news
 
 # 시간대별 뉴스 인기도 계산하기 (스크랩 기반)
+@lru_cache(maxsize=1)
 def get_time_based_popularity(db: Session) -> Dict[int, Dict[str, int]]:
     current_time = datetime.now()
     one_day_ago = current_time - timedelta(days=1)
@@ -125,6 +146,7 @@ def get_time_based_popularity(db: Session) -> Dict[int, Dict[str, int]]:
     return dict(time_based_popularity)
 
 # 난이도별 뉴스 인기도(스크랩 수) 계산하기
+@lru_cache(maxsize=1)
 def get_difficulty_based_popularity(db: Session) -> Dict[int, Dict[int, int]]:
     difficulty_popularity = defaultdict(lambda: {1: 0, 2: 0, 3: 0})
     scraps = db.query(UserNewsScrap).all()
@@ -132,10 +154,10 @@ def get_difficulty_based_popularity(db: Session) -> Dict[int, Dict[int, int]]:
         difficulty_popularity[scrap.news_id][scrap.difficulty] += 1
     return dict(difficulty_popularity)
 
-
 #####################################
 # 5. 사용자 뉴스 읽기 패턴 분석
 #####################################
+@lru_cache(maxsize=1024)
 def get_user_time_pattern(user_id: int, db: Session) -> Dict[str, float]:
     one_week_ago = datetime.now() - timedelta(days=7)
     user_scraps = db.query(UserNewsScrap).filter(
@@ -167,53 +189,45 @@ def get_user_time_pattern(user_id: int, db: Session) -> Dict[str, float]:
 # 추천 로직
 #####################################
 def collaborative_filtering(user_id: int, db: Session, limit: int = 100) -> List[tuple]:
-    """협업 필터링 기반 추천"""
+    """최적화된 협업 필터링 기반 추천"""
     similar_users = find_similar_users(user_id, db, limit)
     user_categories = get_user_categories(user_id, db)
-    user_category_ids = {uc.category_id for uc in user_categories}
-    recommended_news = []
     current_time = datetime.now()
 
-    for similar_user_id in similar_users:
-        similar_user_clicks = get_user_click_log(similar_user_id, limit)
-        for click in similar_user_clicks:
-            if not user_news_click.find_one({"user_id": user_id, "news_id": click["news_id"]}):
-                news_metadata = get_news_metadata(click["news_id"], db)
+    all_user_ids = [user_id] + similar_users
+    all_user_clicks = get_user_clicks_batch(all_user_ids, limit)
 
+    user_clicks = all_user_clicks[user_id]
+    recommended_news = set()
+
+    for similar_user_id in similar_users:
+        for news_id in all_user_clicks[similar_user_id]:
+            if news_id not in user_clicks and news_id not in recommended_news:
+                news_metadata = get_news_metadata(news_id, db)
                 if not news_metadata:
                     continue
 
-                # 가중치 계산
                 weight = 0
-
                 # 1) 카테고리(관심도)에 따른 가중치
-                if news_metadata.category_id in user_category_ids:
-                    weight += 2  # 가중치 2 (관심 카테고리)
-                else:
-                    weight += 1  # 가중치 1 (비관심 카테고리)
-
+                weight += 2 if news_metadata.category_id in user_categories else 1
                 # 2) 조회수에 따른 가중치
-                weight += news_metadata.hit / 10  # 조회수를 10으로 나누어 가중치 부여
-
+                weight += news_metadata.hit / 10
                 # 3) 작성 시간(최신)에 따른 가중치
                 if isinstance(news_metadata.published_date, datetime):
                     time_diff = (current_time - news_metadata.published_date).total_seconds() / 3600
-                    if time_diff < 24:  # 24시간 이내의 뉴스에 추가 가중치
-                        weight += 1  # 최신 뉴스에 가중치 1 추가
+                    if time_diff < 24:
+                        weight += 1
 
-                # 추천 뉴스 수집
-                recommended_news.append((click["news_id"], news_metadata.title, news_metadata.category_id, weight, news_metadata.published_date, news_metadata.hit))
+                recommended_news.add((news_id, news_metadata.title, news_metadata.category_id, weight, news_metadata.published_date, news_metadata.hit))
 
-    # 가중치 기준으로 추천 뉴스 정렬
     return sorted(recommended_news, key=lambda x: x[3], reverse=True)[:20]
 
 def content_based_filtering(user_id: int, db: Session, limit: int = 100) -> List[tuple]:
     """컨텐츠 기반 필터링 추천"""
 
     # 사용자 정보 가져오기
-    user_categories = get_user_categories(user_id, db)
-    user_category_ids = {uc.category_id for uc in user_categories}
-    user_clicks = get_user_click_log(user_id)
+    user_categories = get_user_categories(user_id, db)  # 이미 Set[int]
+    user_clicks = get_user_clicks_batch([user_id], limit)[user_id]
     user_difficulty = get_user_difficulty(user_id, db)
     user_time_pattern = get_user_time_pattern(user_id, db)
 
@@ -226,7 +240,7 @@ def content_based_filtering(user_id: int, db: Session, limit: int = 100) -> List
 
     # 전체 뉴스 가져오기 (제한된 개수)
     all_news = db.query(News).limit(limit).all()
-    clicked_news_ids = {click["news_id"] for click in user_clicks}
+    clicked_news_ids = user_clicks
 
     # 뉴스 제목 벡터화
     news_titles = tuple(news.title for news in all_news)
@@ -235,7 +249,7 @@ def content_based_filtering(user_id: int, db: Session, limit: int = 100) -> List
     # 사용자와 유사한 뉴스 찾기
     user_vector_index = -1
     for index, news in enumerate(all_news):
-        if news.category_id in user_category_ids:
+        if news.category_id in user_categories:
             user_vector_index = index
             break
 
@@ -252,7 +266,7 @@ def content_based_filtering(user_id: int, db: Session, limit: int = 100) -> List
             weight = 0
 
             # 1) 카테고리 관심도에 따른 가중치
-            if news.category_id in user_category_ids:
+            if news.category_id in user_categories:
                 weight += 2
             else:
                 weight += 1

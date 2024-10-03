@@ -2,7 +2,7 @@ from app.database import user_news_click
 from app.models import UserCategory, News, User, UserNewsScrap
 from sqlalchemy.orm import Session
 import numpy as np
-from typing import Dict, List
+from typing import Dict, List, Tuple
 from collections import defaultdict
 from datetime import datetime, timedelta
 import locale
@@ -43,7 +43,7 @@ def vectorize_titles(titles: List[str]) -> np.ndarray:
 #####################################
 # 3. 유사한 유저 찾기
 #####################################
-def find_similar_users(user_id: int):
+def find_similar_users(user_id: int, db: Session) -> List[int]:
     user_clicks = get_user_click_log(user_id)
     user_news_set = {click["news_id"] for click in user_clicks}
 
@@ -52,13 +52,14 @@ def find_similar_users(user_id: int):
     all_news_ids = user_news_click.distinct("news_id")
     user_vector_map = {}
 
+    # 사용자 클릭 데이터 벡터화
+    user_vector = np.array([1 if news_id in user_news_set else 0 for news_id in all_news_ids])
+
     for other_user_id, other_user_clicks in all_users_clicks.items():
         other_user_news_set = {click["news_id"] for click in other_user_clicks}
+        other_user_vector = np.array([1 if news_id in other_user_news_set else 0 for news_id in all_news_ids])
 
-        vec1 = [1 if news_id in user_news_set else 0 for news_id in all_news_ids]
-        vec2 = [1 if news_id in other_user_news_set else 0 for news_id in all_news_ids]
-
-        similarity = cosine_similarity([vec1], [vec2])[0][0]
+        similarity = cosine_similarity([user_vector], [other_user_vector])[0][0]
         if similarity > 0:
             user_vector_map[other_user_id] = similarity
 
@@ -161,7 +162,7 @@ def get_user_time_pattern(user_id: int, db: Session) -> Dict[str, float]:
 #####################################
 
 def collaborative_filtering(user_id: int, db: Session) -> List[tuple]:
-    similar_users = find_similar_users(user_id)
+    similar_users = find_similar_users(user_id, db)
     user_categories = get_user_categories(user_id, db)
     user_category_ids = [uc.category_id for uc in user_categories]
     recommended_news = []
@@ -251,14 +252,21 @@ def content_based_filtering(user_id: int, db: Session):
     # 가중치 기준으로 추천 뉴스 정렬
     return sorted(recommended_news, key=lambda x: x[2], reverse=True)[:5]
 
-def hybrid_recommendation(user_id: int, db: Session) -> List[tuple]:
+def hybrid_recommendation(user_id: int, db: Session) -> List[Tuple[int, str, float, datetime, int]]:
     collaborative_recommendations = collaborative_filtering(user_id, db)
     content_recommendations = content_based_filtering(user_id, db)
 
-    combined_recommendations = {news[0]: news for news in collaborative_recommendations}
+    # 추천 뉴스 통합 및 가중치 조정
+    combined_recommendations = defaultdict(lambda: [0, None])  # [총 가중치, 뉴스]
+
+    for news in collaborative_recommendations:
+        combined_recommendations[news[0]][0] += news[2]  # 가중치 추가
+        combined_recommendations[news[0]][1] = news
 
     for news in content_recommendations:
-        if news[0] not in combined_recommendations:
-            combined_recommendations[news[0]] = news
+        combined_recommendations[news[0]][0] += news[2]  # 가중치 추가
+        if combined_recommendations[news[0]][1] is None:
+            combined_recommendations[news[0]][1] = news
 
-    return sorted(combined_recommendations.values(), key=lambda x: x[2], reverse=True)[:5]
+    # 가중치 기준으로 추천 뉴스 정렬
+    return sorted(combined_recommendations.values(), key=lambda x: x[0], reverse=True)[:5]

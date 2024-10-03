@@ -12,10 +12,25 @@ from functools import lru_cache
 
 ##################################### 데이터 처리
 
+###### 1. 사용자 데이터 가져오기
+# 해당 유저의 UserCategory (MySQL) 가져 오기
+@lru_cache(maxsize=1024)
+def get_user_categories(user_id: int, db: Session):
+    return db.query(UserCategory).filter(UserCategory.user_id == user_id).all()
+
+# User (MySQL) 가져 오기
+@lru_cache(maxsize=1024)
+def get_user_difficulty(user_id: int, db: Session):
+    user = db.query(User).filter(User.user_id == user_id).first()
+    if user:
+        return user.difficulty
+    return None
+
 # 해당 유저의 user_news_click (MongoDB) 가져 오기
 def get_user_click_log(user_id: int):
     return list(user_news_click.find({"user_id": user_id}))
 
+###### 2. 데이터 전처리 및 유사도 계산
 # 코사인 유사도 계산
 def cosine_similarity(vec1, vec2):
     dot_product = np.dot(vec1, vec2)
@@ -23,6 +38,12 @@ def cosine_similarity(vec1, vec2):
     norm_b = np.linalg.norm(vec2)
     return dot_product / (norm_a * norm_b) if norm_a and norm_b else 0.0
 
+# 제목을 벡터화하는 함수
+def vectorize_titles(titles: List[str]) -> np.ndarray:
+    vectorizer = TfidfVectorizer()
+    return vectorizer.fit_transform(titles).toarray(), vectorizer
+
+###### 3. 유사한 유저 찾기
 # 다른 유저와 유사한 클릭 패턴 찾기
 def find_similar_users(user_id: int):
     user_clicks = get_user_click_log(user_id)
@@ -50,11 +71,7 @@ def find_similar_users(user_id: int):
     similar_users = sorted(user_vector_map.items(), key=lambda x: x[1], reverse=True)
     return [user[0] for user in similar_users]
 
-# 해당 유저의 UserCategory (MySQL) 가져 오기
-@lru_cache(maxsize=1024)
-def get_user_categories(user_id: int, db: Session):
-    return db.query(UserCategory).filter(UserCategory.user_id == user_id).all()
-
+###### 4. 뉴스 메타데이터 및 날짜 파싱
 ### published_date가 문자열값이라서,,,
 # 한글 로케일 설정
 locale.setlocale(locale.LC_TIME, 'ko_KR.UTF-8')
@@ -95,14 +112,7 @@ def get_news_metadata(news_id: int, db: Session):
         news.published_date = parse_korean_date(news.published_date)
     return news
 
-# User (MySQL) 가져 오기
-@lru_cache(maxsize=1024)
-def get_user_difficulty(user_id: int, db: Session):
-    user = db.query(User).filter(User.user_id == user_id).first()
-    if user:
-        return user.difficulty
-    return None
-
+###### 5. 뉴스 인기도 계산
 # 시간대별 뉴스 인기도 계산하기 (스크랩 기반)
 def get_time_based_popularity(db: Session) -> Dict[int, Dict[str, int]]:
     current_time = datetime.now()
@@ -138,7 +148,7 @@ def get_difficulty_based_popularity(db: Session) -> Dict[int, Dict[int, int]]:
 
     return dict(difficulty_popularity)
 
-# 사용자의 시간대별 뉴스 읽기 패턴 분석
+###### 6. 사용자의 시간대별 뉴스 읽기 패턴 분석
 def get_user_time_pattern(user_id: int, db: Session) -> Dict[str, float]:
     one_week_ago = datetime.now() - timedelta(days=7)
     user_scraps = db.query(UserNewsScrap).filter(
@@ -165,11 +175,6 @@ def get_user_time_pattern(user_id: int, db: Session) -> Dict[str, float]:
             time_pattern[key] /= total_scraps
 
     return time_pattern
-
-# 제목을 벡터화하는 함수
-def vectorize_titles(titles: List[str]) -> np.ndarray:
-    vectorizer = TfidfVectorizer()
-    return vectorizer.fit_transform(titles).toarray(), vectorizer
 
 ##################################### 추천 로직
 

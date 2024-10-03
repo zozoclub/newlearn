@@ -11,40 +11,42 @@ import {
   handleMouseOver,
   handleMouseUp,
 } from "@components/WordMouseHandlers";
+import Modal from "./Modal";
 
 type EngDataProps = {
   engData?: string; // 긴 문단 형태로 string
 };
 
 const WordHunt: React.FC<EngDataProps> = ({ engData }) => {
-  // 전달받은 문자열을 text로 설정 (없으면 기본 값)
-  const text = engData ||
+  const text =
+    engData ||
     `Facing mounting pressure following a contentious draw against Palestine in their most recent World Cup qualifier, South Korea's national football team has arrived in Oman, their next destination in the arduous quest for a coveted spot in the 2026 FIFA World Cup. In a somber press conference upon their arrival in Muscat, Head Coach Hong Myung-bo acknowledged the palpable frustration of the South Korean fan base, acknowledging the criticism directed at both the team's performance and the Korean Football Association's overall direction.
     While expressing empathy for the fans' disillusionment, Hong Myung-bo asserted that he would bear the brunt of the criticism, urging the public to rally behind the players, who he believes are striving to overcome adversity and deliver a strong performance on the pitch. Hong Myung-bo's plea for fan support comes amidst mounting controversy surrounding the national team's recent performance, with questions arising regarding the team's tactical approach and player selection.
-    The match against Oman, scheduled for October 10th at the Sultan Qaboos Sports Complex, holds significant weight in South Korea's qualification hopes, as a victory would be crucial to maintaining momentum in Group B. Hong Myung-bo's words, imbued with a mixture of introspection and determination, reflect the immense pressure facing the South Korean squad as they embark on this critical juncture in their World Cup qualifying journey.`
+    The match against Oman, scheduled for October 10th at the Sultan Qaboos Sports Complex, holds significant weight in South Korea's qualification hopes, as a victory would be crucial to maintaining momentum in Group B. Hong Myung-bo's words, imbued with a mixture of introspection and determination, reflect the immense pressure facing the South Korean squad as they embark on this critical juncture in their World Cup qualifying journey.`;
 
   const [grid, setGrid] = useState<string[][]>([]);
-  const [selectedPositions, setSelectedPositions] = useState<
-    [number, number][]
-  >([]);
+  const [selectedPositions, setSelectedPositions] = useState<[number, number][]>(
+    []
+  );
   const [incorrectSelection, setIncorrectSelection] = useState<boolean>(false);
   const [placedWords, setPlacedWords] = useState<string[]>([]);
   const [placedWordPositions, setPlacedWordPositions] = useState<
     { word: string; positions: [number, number][] }[]
   >([]);
-  const [correctSelections, setCorrectSelections] = useState<
-    [number, number][]
-  >([]);
+  const [correctSelections, setCorrectSelections] = useState<[number, number][]>(
+    []
+  );
   const [showAnswer, setShowAnswer] = useState<boolean>(false);
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isCheckModal, setIsCheckModal] = useState<boolean>(false);
+  const [correctWords, setCorrectWords] = useState<string[]>([]);
 
   useEffect(() => {
     const handleExtractWords = () => {
       const words = extractWords(text); // 단어 추출
       const wordCounts = countWordFrequencies(words);
       const topWords = getTopWords(wordCounts, 10); // 빈도수가 높은 10개 단어 추출
-
       if (topWords.length < 10) {
         setErrorMessage("WordHunt 단어가 부족합니다"); // 단어가 부족할 때 처리
         return;
@@ -72,108 +74,146 @@ const WordHunt: React.FC<EngDataProps> = ({ engData }) => {
     }
   };
 
+  const handleSubmitConfirm = () => {
+    setShowAnswer(true);
+    setIsDisabled(true);
+    setIsCheckModal(false);
+  };
+  const updateCorrectWord = (selectedWord: string) => {
+    setCorrectWords((prev) => [...prev, selectedWord]);
+  };
+  const closeSubmitModal = () => {
+    setIsCheckModal(false);
+  };
+
+  const handleShowAnswerClick = () => {
+    setIsCheckModal(true);
+  };
+
   if (errorMessage) {
     return <ErrorText>{errorMessage}</ErrorText>;
   }
 
   return (
-    <Container>
-      <Title>Word Hunt</Title>
-      <Button onClick={() => setShowAnswer(!showAnswer)}>
-        {showAnswer ? "Hide Answer" : "Show Answer"}
-      </Button>
+    <>
+      <CustomhrTag />
+      <Container>
+        <Title>숨겨진 단어를 찾아보세요.</Title>
+        <Explain>Word Hunt Rule</Explain>
+        <WordHuntLayout>
 
-      <WordList>
-        <h2>Placed Words:</h2>
-        <ul>
-          {placedWords.map((word, index) => (
-            <li key={index}>{word}</li>
-          ))}
-        </ul>
-      </WordList>
-      <GridContainer onMouseLeave={handleMouseLeaveGrid}>
-        <h2>12x12 Grid:</h2>
-        <Grid>
-          {grid.map((row, rowIndex) =>
-            row.map((letter, colIndex) => {
-              const isSelected = selectedPositions.some(
-                ([r, c]) => r === rowIndex && c === colIndex
-              );
-              const isCorrect = correctSelections.some(
-                ([r, c]) => r === rowIndex && c === colIndex
-              );
-              const isIncorrect =
-                incorrectSelection && isSelected && !isCorrect;
-              const isAnswer =
-                showAnswer &&
-                placedWordPositions.some(({ positions }) =>
-                  positions.some(([r, c]) => r === rowIndex && c === colIndex)
-                );
+          <WordList>
+            <h2>숨겨진 단어들 리스트</h2>
+            <ul>
+              {placedWords.map((word, index) => (
+                <WordItem key={index} $isCorrect={correctWords.includes(word)}>{word}</WordItem>
+              ))}
+            </ul>
+          </WordList>
+          <GridContainer onMouseLeave={handleMouseLeaveGrid}>
+            <Grid>
+              {grid.map((row, rowIndex) =>
+                row.map((letter, colIndex) => {
+                  const isSelected = selectedPositions.some(
+                    ([r, c]) => r === rowIndex && c === colIndex
+                  );
+                  const isCorrect = correctSelections.some(
+                    ([r, c]) => r === rowIndex && c === colIndex
+                  );
+                  const isIncorrect =
+                    incorrectSelection && isSelected && !isCorrect;
+                  const isAnswer =
+                    showAnswer &&
+                    placedWordPositions.some(({ positions }) =>
+                      positions.some(([r, c]) => r === rowIndex && c === colIndex)
+                    );
 
-              return (
-                <Cell
-                  key={`${rowIndex}-${colIndex}`}
-                  $isSelected={isSelected}
-                  $isCorrect={isCorrect}
-                  $isIncorrect={isIncorrect}
-                  $isAnswer={isAnswer}
-                  onMouseDown={() =>
-                    handleMouseDown(
-                      rowIndex,
-                      colIndex,
-                      setSelectedPositions,
-                      setIncorrectSelection,
-                      isDisabled,
-                      correctSelections
-                    )
-                  }
-                  onMouseOver={() =>
-                    handleMouseOver(
-                      rowIndex,
-                      colIndex,
-                      selectedPositions,
-                      setSelectedPositions,
-                      isDisabled,
-                      grid
-                    )
-                  }
-                  onMouseUp={() =>
-                    handleMouseUp(
-                      grid,
-                      selectedPositions,
-                      placedWordPositions,
-                      setCorrectSelections,
-                      setIncorrectSelection,
-                      setSelectedPositions,
-                      setIsDisabled
-                    )
-                  }
-                >
-                  {letter}
-                </Cell>
-              );
-            })
-          )}
-        </Grid>
-      </GridContainer>
-    </Container>
+                  return (
+                    <Cell
+                      key={`${rowIndex}-${colIndex}`}
+                      $isSelected={isSelected}
+                      $isCorrect={isCorrect}
+                      $isIncorrect={isIncorrect}
+                      $isAnswer={isAnswer}
+                      onMouseDown={() =>
+                        !isDisabled &&
+                        handleMouseDown(
+                          rowIndex,
+                          colIndex,
+                          setSelectedPositions,
+                          setIncorrectSelection,
+                          isDisabled,
+                          correctSelections
+                        )
+                      }
+                      onMouseOver={() =>
+                        !isDisabled &&
+                        handleMouseOver(
+                          rowIndex,
+                          colIndex,
+                          selectedPositions,
+                          setSelectedPositions,
+                          isDisabled,
+                          grid
+                        )
+                      }
+                      onMouseUp={() =>
+                        !isDisabled &&
+                        handleMouseUp(
+                          grid,
+                          selectedPositions,
+                          placedWordPositions,
+                          setCorrectSelections,
+                          setIncorrectSelection,
+                          setSelectedPositions,
+                          setIsDisabled,
+                          updateCorrectWord
+                        )
+                      }
+                    >
+                      {letter}
+                    </Cell>
+                  );
+                })
+              )}
+            </Grid>
+          </GridContainer>
+        </WordHuntLayout>
+        <ButtonLayout>
+          <Button onClick={handleShowAnswerClick}>
+            {showAnswer ? "Hide Answer" : "Show Answer"}
+          </Button>
+        </ButtonLayout>
+        <Modal isOpen={isCheckModal} onClose={closeSubmitModal} title="Word Hunt">
+          <p>정답을 보게 되면 더이상 점수를 얻을 수 없습니다.</p>
+          <ModalButtonContainer>
+            <ModalCancelButton onClick={closeSubmitModal}>취소</ModalCancelButton>
+            <ModalConfirmButton onClick={handleSubmitConfirm}>확인</ModalConfirmButton>
+          </ModalButtonContainer>
+        </Modal>
+      </Container>
+    </>
   );
 };
 
 export default WordHunt;
 
 const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 2rem;
   user-select: none; /* 드래그 방지 */
 `;
 
-const Title = styled.h1`
-  font-size: 2.5rem;
+const Title = styled.div`
+  width: 100%;
+  font-size: 2rem;
   margin-bottom: 1.5rem;
+  text-align: center;
 `;
+
+const ButtonLayout = styled.div`
+  display:flex;
+  margin: 2rem 0;
+  justify-content:center;
+`
 
 const Button = styled.button`
   background-color: ${(props) => props.theme.colors.primary};
@@ -191,6 +231,10 @@ const Button = styled.button`
   }
 `;
 
+const WordHuntLayout = styled.div`
+  display: flex;
+`
+
 const WordList = styled.div`
   margin-top: 1rem;
   text-align: left;
@@ -199,16 +243,17 @@ const WordList = styled.div`
 
   h2 {
     font-size: 1.5rem;
-    margin-bottom: 0.5rem;
+    margin : 2rem 0;
+    text-align: center;
   }
 
   ul {
     list-style: none;
-    padding: 0;
     font-size: 1.125rem;
+    text-align: center;
 
     li {
-      padding: 0.25rem 0;
+      padding: 0.75rem 0; 
     }
   }
 `;
@@ -219,7 +264,7 @@ const GridContainer = styled.div`
 
 const Grid = styled.div`
   display: grid;
-  grid-template-columns: repeat(12, 2rem);
+  grid-template-columns: repeat(12, 2.5rem);
 `;
 
 const Cell = styled.div<{
@@ -229,24 +274,29 @@ const Cell = styled.div<{
   $isAnswer: boolean;
 }>`
   text-align: center;
-  line-height: 2rem;
+  line-height: 2.5rem;
   background-color: ${(props) =>
     props.$isAnswer
       ? props.theme.colors.primary
       : props.$isCorrect
-        ? props.theme.colors.primary
-        : props.$isIncorrect
-          ? props.theme.colors.danger
-          : props.$isSelected
-            ? "yellow"
-            : "white"};
+      ? props.theme.colors.primary
+      : props.$isIncorrect
+      ? props.theme.colors.danger
+      : props.$isSelected
+      ? "yellow"
+      : props.theme.colors.cardBackground01};
   color: ${(props) =>
     props.$isCorrect || props.$isIncorrect || props.$isAnswer
       ? "white"
-      : "black"};
-  border: 1px solid ${(props) => props.theme.colors.border};
+      : props.theme.colors.text};
+  border: 1px solid ${(props) => props.theme.colors.primaryPress}AA;
   border-radius: 0.25rem;
   cursor: pointer;
+`;
+
+const WordItem = styled.li<{ $isCorrect: boolean }>`
+  color: ${(props) => (props.$isCorrect ? props.theme.colors.primary : "black")};
+  font-weight: ${(props) => (props.$isCorrect ? "bold" : "normal")};
 `;
 
 const ErrorText = styled.p`
@@ -255,3 +305,48 @@ const ErrorText = styled.p`
   text-align: center;
   margin-top: 2rem;
 `;
+
+const Explain = styled.div`
+  text-align: center;
+  width: 100%;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+  color: ${(props) => props.theme.colors.text04};
+`;
+
+const ModalButtonContainer = styled.div`
+display: flex;
+  justify-content: space-around;
+  margin-top: 2rem;
+`;
+
+const ModalCancelButton = styled.button`
+  padding: 0.5rem 1.5rem;
+  background-color: ${(props) => props.theme.colors.placeholder};
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+
+  &:hover {
+    background-color: ${(props) => props.theme.colors.danger};
+  }
+`;
+
+const ModalConfirmButton = styled.button`
+  padding: 0.5rem 1.5rem;
+  background-color: ${(props) => props.theme.colors.primary};
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+
+  &:hover {
+    background-color: ${(props) => props.theme.colors.primaryPress};
+  }
+`;
+
+const CustomhrTag = styled.hr`
+  border-bottom: 1px solid ${(props) => props.theme.colors.placeholder};
+  margin: 3rem 0.1rem;
+`

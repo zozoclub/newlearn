@@ -11,6 +11,7 @@ import Spinner from "@components/Spinner";
 import { DetailNewsType, getNewsDetail } from "@services/newsService";
 import userInfoState from "@store/userInfoState";
 import newsWordState from "@store/newsWordState";
+import WordHunt from "@components/WordHunt";
 
 const NewsDetailPage: React.FC = () => {
   const userInfoData = useRecoilValue(userInfoState);
@@ -101,6 +102,7 @@ const NewsDetailPage: React.FC = () => {
             newsId={Number(newsId)}
             selectedKorContent={selectedKorContent}
           />
+          <WordHunt engData={engData?.content} />
         </NewsContainer>
         <RecommandContainer>추천 컨테이너</RecommandContainer>
       </Container>

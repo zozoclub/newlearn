@@ -44,7 +44,7 @@ const StartWordTestWidget: React.FC<Props> = ({ posibleWords }) => {
   return (
     <WidgetContainer>
       <Title>문장 속 빈칸 단어 맞히기</Title>
-      <Explain>예문 속 빈칸에 알맞은 단어를 넣어 문장을 완성해보세요.</Explain>
+      <Explain>기사 예문 속 빈칸에 알맞은 단어를 넣어 문장을 완성해보세요.</Explain>
       <Explain>
         현재 테스트 가능한 단어 갯수는
         <ExplainNumber>{posibleWords}</ExplainNumber>개 입니다.
@@ -90,16 +90,17 @@ const WidgetContainer = styled.div`
 `;
 
 const Title = styled.h2`
-  font-size: 1.5rem;
+  font-size: 1.75rem;
   font-weight: 700;
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
 `;
 
 const Explain = styled.p`
-  font-size: 1rem;
-  margin-bottom: 1rem;
+  font-size: 1.125rem;
+  margin-bottom: 1.5rem;
   text-align: center;
 `;
+
 const ExplainNumber = styled.span`
   font-size: 2rem;
   text-align: center;

@@ -112,6 +112,18 @@ const SpeakingTestHistory: React.FC = () => {
 
   const recentSixMonthsData = data ? getSixMonthsData(data) : {};
 
+  // 시간 포맷
+  const formatDate = (createdAt: string) => {
+    const date = new Date(createdAt);
+    const year = date.getFullYear();
+    const month = ("0" + (date.getMonth() + 1)).slice(-2);
+    const day = ("0" + date.getDate()).slice(-2);
+    const hours = ("0" + date.getHours()).slice(-2);
+    const minutes = ("0" + date.getMinutes()).slice(-2);
+
+    return `${year}.${month}.${day} ${hours}:${minutes}`;
+  };
+
   // 데이터를 carddata 형식으로 변환
   const cardData =
     data?.map((quiz) => ({
@@ -124,7 +136,7 @@ const SpeakingTestHistory: React.FC = () => {
   const correctPercentagePerMonth = monthLabels.map(
     (month) =>
       recentSixMonthsData[month]?.totalScore /
-        recentSixMonthsData[month]?.totalCount || 0 // 데이터가 없으면 0으로 채움
+      recentSixMonthsData[month]?.totalCount || 0 // 데이터가 없으면 0으로 채움
   );
 
   // 현재 월 제외한 이전 5개월의 학습한 단어수(totalCnt) 평균 계산
@@ -138,17 +150,7 @@ const SpeakingTestHistory: React.FC = () => {
     }
   }, [correctPercentagePerMonth]);
 
-  // 시간 포맷
-  const formatDate = (createdAt: string) => {
-    const date = new Date(createdAt);
-    const year = date.getFullYear();
-    const month = ("0" + (date.getMonth() + 1)).slice(-2);
-    const day = ("0" + date.getDate()).slice(-2);
-    const hours = ("0" + date.getHours()).slice(-2);
-    const minutes = ("0" + date.getMinutes()).slice(-2);
 
-    return `${year}.${month}.${day} ${hours}:${minutes}`;
-  };
 
   const dateData = {
     labels: monthLabels, // X축
@@ -208,7 +210,7 @@ const SpeakingTestHistory: React.FC = () => {
           <>
             <InfoContainer>
               <TitleText>
-                최근 평균 점수 보다{" "}
+                최근 점수보다{" "}
                 {monthCurrentScoreAverage ? (
                   monthCurrentScoreAverage >= monthAgoScoreAverage ? (
                     <InfoTextEmphasizeBlue>증가</InfoTextEmphasizeBlue>
@@ -223,21 +225,21 @@ const SpeakingTestHistory: React.FC = () => {
                 {monthCurrentScoreAverage ? (
                   monthCurrentScoreAverage >= monthAgoScoreAverage ? (
                     <InfoTextEmphasizeBlue>
-                      {monthCurrentScoreAverage}
+                      {Math.floor(monthCurrentScoreAverage)}
                     </InfoTextEmphasizeBlue>
                   ) : (
                     <InfoTextEmphasizeRed>
-                      {monthCurrentScoreAverage}
+                      {Math.floor(monthCurrentScoreAverage)}
                     </InfoTextEmphasizeRed>
                   )
-                ) : null}
+                ) : null}점
               </InfoText>
               <StatsHistory>
-                <StatItem>테스트 횟수: {currentCount}회</StatItem>
+                <StatItem>이번 달 테스트 횟수: {currentCount}회</StatItem>
                 <StatItem>
-                  이번 달 평균 점수: {monthCurrentScoreAverage}회
+                  이번 달 평균 점수: {Math.floor(monthCurrentScoreAverage)}점
                 </StatItem>
-                <StatItem>이전 평균 점수: {monthAgoScoreAverage}점</StatItem>
+                <StatItem>최근 평균 점수: {Math.floor(monthAgoScoreAverage)}점</StatItem>
               </StatsHistory>
             </InfoContainer>
 

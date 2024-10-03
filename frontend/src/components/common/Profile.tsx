@@ -3,6 +3,7 @@ import { useRecoilValue } from "recoil";
 import userInfoState from "@store/userInfoState";
 import Avatar, { AvatarType } from "./Avatar";
 import { calculateExperience } from "@utils/calculateExperience";
+import Spinner from "@components/Spinner";
 
 const Profile = () => {
   const userInfo = useRecoilValue(userInfoState);
@@ -14,7 +15,12 @@ const Profile = () => {
   const isInitialized = userInfo.isInitialized;
   const calculatedExperience = calculateExperience(userInfo.experience);
 
-  if (!isInitialized) return <div>로딩중이셈;</div>;
+  if (!isInitialized)
+    return (
+      <div>
+        <Spinner />
+      </div>
+    );
 
   return (
     <>

@@ -1,6 +1,4 @@
 import styled from "styled-components";
-import { useRecoilValue } from "recoil";
-import { goalDataSelector } from "@store/goalState";
 import CategoryChart from "@components/CategoryChart";
 import TopRankingWidget, {
   PointRankingType,
@@ -28,8 +26,6 @@ const Widget: React.FC<{ variety: string }> = ({ variety }) => {
     queryKey: ["readRankingList"],
     queryFn: getReadRankingList,
   });
-  const goalData = useRecoilValue(goalDataSelector);
-  console.log(goalData);
 
   switch (variety) {
     case "profile":

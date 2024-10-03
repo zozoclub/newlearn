@@ -1,7 +1,8 @@
 import React from "react";
 import styled from "styled-components";
 import { useRecoilValue } from "recoil";
-import { goalDataSelector } from "@store/goalState";
+import goalState, { goalDataSelector } from "@store/goalState";
+import Spinner from "@components/Spinner";
 
 interface GoalData {
   title: string;
@@ -16,12 +17,19 @@ const titleMapping: { [key: string]: string } = {
 };
 
 const MainGoalBar: React.FC = () => {
+  const isInitialized = useRecoilValue(goalState).isInitialized;
   const goalData = useRecoilValue(goalDataSelector);
-  console.log("goalData", goalData);
 
   const calculatePercentage = (current: number, goal: number): number => {
     return Math.min(Math.round((current / goal) * 100), 100);
   };
+
+  if (!isInitialized)
+    return (
+      <div>
+        <Spinner />
+      </div>
+    );
 
   return (
     <ChartContainer>
@@ -33,7 +41,7 @@ const MainGoalBar: React.FC = () => {
           <BarItem key={index}>
             <BarLabel>{englishTitle}</BarLabel>
             <BarContainer>
-              <BarFill percentage={percentage} />
+              <BarFill $percentage={percentage} />
             </BarContainer>
           </BarItem>
         );
@@ -69,8 +77,8 @@ const BarContainer = styled.div`
   overflow: hidden;
 `;
 
-const BarFill = styled.div<{ percentage: number }>`
-  width: ${(props) => props.percentage}%;
+const BarFill = styled.div<{ $percentage: number }>`
+  width: ${(props) => props.$percentage}%;
   height: 100%;
   background-color: ${(props) => props.theme.colors.primary};
   transition: width 0.5s ease-in-out;

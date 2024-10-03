@@ -40,7 +40,7 @@ const WordTestResultWordList: React.FC<Props> = ({
 export default WordTestResultWordList;
 
 const ListLayout = styled.div`
-  width: 90%;
+  width: 85%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -103,5 +103,5 @@ const WordWrongCard = styled.div<{ $isFocusWord: boolean }>`
 const Index = styled.div`
   font-size: 1.25rem;
   font-weight: 800;
-  width: 10%;
+  width: 4%;
 `;

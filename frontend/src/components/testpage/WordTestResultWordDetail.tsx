@@ -1,4 +1,3 @@
-import { toLower } from "lodash";
 import React from "react";
 import styled from "styled-components";
 
@@ -6,37 +5,41 @@ type Props = {
   answerWord: string;
   userAnswer: string;
   sentence: string;
-  sentenceTranslation: string;
   articleId?: number;
+  isCorrect: boolean;
 };
 
 const WordTestResultWordDetail: React.FC<Props> = ({
   answerWord,
   userAnswer,
   sentence,
-  sentenceTranslation,
   articleId,
+  isCorrect
 }) => {
-  // TODO : 실제 DB에 저장되는 형태에 따라 함수 변형해야함 (대,소문자)
-  const sentenceConvert = (sentence: string) => {
-    const lowerSentence = toLower(sentence);
-    return lowerSentence.replace(answerWord, "________");
+
+  const highlightWordInSentence = (sentence: string, word: string) => {
+    const parts = sentence.split(new RegExp(`(${word})`, 'gi')); // 단어로 split, 대소문자 무시
+    return parts.map((part, index) =>
+      part.toLowerCase() === word.toLowerCase() ? (
+        <HighlightedWord key={index} $isCorrect={isCorrect}>
+          {part}
+        </HighlightedWord>
+      ) : (
+        <span key={index}>{part}</span>
+      )
+    );
   };
 
   return (
     <DetailLayout>
       <br />
-      <AnswerTitle>Sentence</AnswerTitle>
+      <AnswerTitle>Quiz Sentence</AnswerTitle>
       <br />
       <br />
-      <AnswerTranslation>{sentenceConvert(sentence)}</AnswerTranslation>
+      <AnswerContent>{highlightWordInSentence(sentence, answerWord)}</AnswerContent>
       <br />
       <br />
-      <AnswerTranslation>{sentenceTranslation}</AnswerTranslation>
-      <br />
-      <br />
-      <br />
-      <AnswerTitle>Problem Answer</AnswerTitle>
+      <AnswerTitle>Quiz Answer</AnswerTitle>
       <br />
       <br />
       <ProblemAnswer>{answerWord}</ProblemAnswer>
@@ -66,7 +69,7 @@ const AnswerTitle = styled.div`
   font-weight: 600;
 `;
 
-const AnswerTranslation = styled.div`
+const AnswerContent = styled.div`
   font-size: 1.25rem;
 `;
 
@@ -81,4 +84,10 @@ const UserAnswer = styled.div`
 const ArticleLink = styled.div`
   font-size: 1rem;
   color: gray;
+`;
+
+const HighlightedWord = styled.span<{ $isCorrect: boolean }>`
+  color: ${(props) =>
+    props.$isCorrect ? props.theme.colors.primary : props.theme.colors.danger};
+  font-weight: bold;
 `;

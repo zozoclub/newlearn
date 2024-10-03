@@ -105,9 +105,8 @@ def get_cf_news(user_id: int, db: Session):
                 # 가중치에 따른 추천 뉴스 수집
                 recommended_news[click["news_id"]] = recommended_news.get(click["news_id"], 0) + weight
 
-    # 뉴스 데이터를 통해 뉴스 정보를 반환
-    sorted_news_ids = sorted(recommended_news, key=recommended_news.get, reverse=True)
-    return [get_news_metadata(news_id, db) for news_id in sorted_news_ids]
+    # 가중치 기준으로 추천 뉴스 정렬
+    return sorted(recommended_news.items(), key=lambda x: x[1], reverse=True)[:5]
 
 
 ##################################### 콘텐츠 기반 필터링 로직

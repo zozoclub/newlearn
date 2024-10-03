@@ -1,9 +1,7 @@
 from app.database import user_news_click
 from app.models import UserCategory, News
 from sqlalchemy.orm import Session
-from datetime import datetime
 import numpy as np
-import locale
 
 ##################################### 데이터 처리
 

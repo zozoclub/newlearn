@@ -2,7 +2,7 @@ from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.models import Base
 from app.database import SessionLocal, engine
-# from app.recommendation import get_cbf_news
+from app.recommendation import get_cbf_news
 from app.hybrid_recommendation import get_cf_news, get_cbf_news, hybrid_recommendation
 
 Base.metadata.create_all(bind=engine)

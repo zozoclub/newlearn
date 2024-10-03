@@ -10,7 +10,7 @@ export type NewsType = {
   isRead: boolean[];
 };
 
-type WordType = {
+export type WordType = {
   word: string;
   sentence: string;
 };
@@ -186,7 +186,7 @@ export const searchDaumDictionary = async (
   }
 };
 
-export const highlightingWord = (
+export const highlightingWord = async (
   newsId: number,
   difficulty: number,
   word: string,
@@ -198,8 +198,8 @@ export const highlightingWord = (
   audioUs: string,
   audioUk: string
 ) => {
-  axiosInstance
-    .post(`word`, {
+  try {
+    const response = await axiosInstance.post(`word`, {
       newsId,
       difficulty,
       word,
@@ -210,8 +210,12 @@ export const highlightingWord = (
       pronounceUk,
       audioUs,
       audioUk,
-    })
-    .then((response) => console.log(response));
+    });
+    console.log(response);
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
 };
 
 export const scrapNews = async (newsId: number, difficulty: number) => {

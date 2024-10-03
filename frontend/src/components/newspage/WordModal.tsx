@@ -1,5 +1,8 @@
 import { highlightingWord, SearchResult } from "@services/newsService";
-import styled from "styled-components";
+import newsWordState from "@store/newsWordState";
+import { useEffect, useState } from "react";
+import { useRecoilState } from "recoil";
+import styled, { keyframes, css } from "styled-components";
 
 const WordModal: React.FC<{
   wordModalPosition: { x: number; y: number };
@@ -36,6 +39,46 @@ const WordModal: React.FC<{
     const audio = new Audio(url); // Audio 객체 생성
     audio.play(); // 음성 파일 재생
   };
+  const [newsWordData, setNewsWordData] = useRecoilState(newsWordState);
+  const [isSaved, setIsSaved] = useState<boolean>(false);
+  const [isJustSaved, setIsJustSaved] = useState<boolean>(false); // 저장 애니메이션을 위한 추가 상태
+
+  useEffect(() => {
+    // 배열 내에 selected와 동일한 word와 sentence가 있는지 확인
+    const isWordSaved = newsWordData.some(
+      (data) =>
+        data.word === selected.word && data.sentence === selected.engSentence
+    );
+
+    setIsSaved(isWordSaved);
+  }, [newsWordData, selected.word, selected.engSentence]);
+
+  const handleSave = () => {
+    if (!isSaved) {
+      highlightingWord(
+        Number(newsId),
+        difficulty,
+        selected.word,
+        searchResult[0]
+          .slice(0, 5)
+          .map((mean) => mean.text)
+          .join("//"),
+        selected.engSentence,
+        selected.korSentence,
+        searchResult[1][0],
+        searchResult[1][1],
+        searchResult[2][0],
+        searchResult[2][1]
+      ).then(() => {
+        setNewsWordData([
+          ...newsWordData,
+          { word: selected.word, sentence: selected.engSentence },
+        ]);
+        setIsJustSaved(true); // 저장됨 애니메이션 트리거
+        setTimeout(() => setIsJustSaved(false), 2000); // 애니메이션 2초 후 원래 상태로 복귀
+      });
+    }
+  };
 
   return (
     <Container
@@ -49,7 +92,13 @@ const WordModal: React.FC<{
         <div>{selected.word}</div>
         <div style={{ display: "flex", gap: "1rem" }}>
           {searchResult[2][0] && (
-            <div style={{ fontSize: "1rem", lineHeight: "2rem" }}>
+            <div
+              style={{
+                fontSize: "1rem",
+                lineHeight: "2rem",
+                whiteSpace: "nowrap",
+              }}
+            >
               미국 {searchResult[1][0]}{" "}
               <a
                 href={searchResult[2][0]} // 음성 파일 링크
@@ -62,7 +111,13 @@ const WordModal: React.FC<{
           )}
 
           {searchResult[2][1] && (
-            <div style={{ fontSize: "1rem", lineHeight: "2rem" }}>
+            <div
+              style={{
+                fontSize: "1rem",
+                lineHeight: "2rem",
+                whiteSpace: "nowrap",
+              }}
+            >
               영국 {searchResult[1][1]}{" "}
               <a
                 href={searchResult[2][1]} // 음성 파일 링크
@@ -82,45 +137,60 @@ const WordModal: React.FC<{
           </div>
         </div>
       </Word>
-      <WordMeaning>
-        {searchResult[0].slice(0, 5).map((mean, index) => (
-          <div key={index}>
-            {index + 1}. {mean.text}
-          </div>
-        ))}
-      </WordMeaning>
       <div
         style={{
-          position: "absolute",
-          bottom: "1.5rem",
-          right: "1.5rem",
-          fontSize: "1rem",
+          display: "flex",
+          justifyContent: "space-between",
+          position: "relative",
+          width: "100%",
         }}
-        onClick={() =>
-          highlightingWord(
-            Number(newsId),
-            difficulty,
-            selected.word,
-            searchResult[0]
-              .slice(0, 5)
-              .map((mean) => mean.text)
-              .join("//"),
-            selected.engSentence,
-            selected.korSentence,
-            searchResult[1][0],
-            searchResult[1][1],
-            searchResult[2][0],
-            searchResult[2][1]
-          )
-        }
       >
-        저장하기
+        <WordMeaning>
+          {searchResult[0].slice(0, 5).map((mean, index) => (
+            <div key={index}>
+              {index + 1}. {mean.text}
+            </div>
+          ))}
+        </WordMeaning>
+        <SaveButton
+          isSaved={isSaved}
+          isJustSaved={isJustSaved}
+          onClick={handleSave}
+        >
+          {isSaved ? "저장됨" : "저장하기"}
+        </SaveButton>
       </div>
     </Container>
   );
 };
 
 export default WordModal;
+
+// 저장됨 애니메이션
+const fadeInOut = keyframes`
+  0% { opacity: 0; transform: scale(0.95); }
+  100% { opacity: 1; transform: scale(1); }
+`;
+
+const SaveButton = styled.div<{ isSaved: boolean; isJustSaved: boolean }>`
+  align-self: flex-end;
+  width: 5rem;
+  height: 2rem;
+  font-size: 1rem;
+  text-align: center;
+  line-height: 2rem;
+  cursor: pointer;
+  background-color: ${(props) => (props.isSaved ? "#4caf50" : "#f0f0f0")};
+  color: ${(props) => (props.isSaved ? "white" : "black")};
+  border-radius: 0.5rem;
+  transition: background-color 0.3s ease, color 0.3s ease;
+
+  ${(props) =>
+    props.isJustSaved &&
+    css`
+      animation: ${fadeInOut} 2s ease;
+    `}
+`;
 
 const Container = styled.div`
   position: absolute;

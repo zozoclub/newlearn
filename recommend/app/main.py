@@ -1,8 +1,9 @@
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.models import Base
-from app.database import SessionLocal, engine, user_news_click
-from app.recommendation import get_cbf_news, get_cf_news
+from app.database import SessionLocal, engine
+from app.recommendation import get_cbf_news
+from app.hybrid_recommendation import get_cf_news
 
 Base.metadata.create_all(bind=engine)
 
@@ -25,9 +26,9 @@ def read_cbf_recommendations(user_id: int, db: Session = Depends(get_db)):
     return {"recommendations": recommendations}
 
 # 협업 필터링 (CF) 뉴스 추천
-@app.get("/cf-news/{user_id}")
-def read_cf_recommendations(user_id: int, db: Session = Depends(get_db)):
-    recommendations = get_cf_news(user_id, db)  # Collaborative Filtering
-    if not recommendations:
-        raise HTTPException(status_code=404, detail="No CF recommendations found")
-    return {"recommendations": recommendations}
+@app.get("/hybrid-recommendation/cf/{user_id}")
+def recommend_cf_news(user_id: int, db: Session = Depends(get_db)):
+    recommended_news = get_cf_news(user_id, db)
+    if not recommended_news:
+        raise HTTPException(status_code=404, detail="No news recommendations available.")
+    return recommended_news

@@ -111,19 +111,20 @@ export default TestHistoryPage;
 
 const Layout = styled.div`
   display: flex;
-  width: 100%;
+  width: 95%;
+  margin: 0 auto;
   justify-content: space-between;
 `;
 
 const LeftContainer = styled.div`
   display: flex;
   flex-direction: column;
-  width: 35%;
+  width: 36%;
 `;
 
 const RightContainer = styled.div`
   display: flex;
-  width: 60%;
+  width: 61%;
   align-items: center;
   justify-content: center;
 `;

@@ -5,10 +5,6 @@ import styled from "styled-components";
 import BackArrow from "@assets/icons/BackArrow";
 import WordTestResultWordList from "@components/testpage/WordTestResultWordList";
 import WordTestResultWordDetail from "@components/testpage/WordTestResultWordDetail";
-import PerfectStamp from "@assets/icons/PerfectStamp";
-import GreatStamp from "@assets/icons/GreatStamp";
-import GoodStamp from "@assets/icons/GoodStamp";
-import BadStamp from "@assets/icons/BadStamp";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import {
@@ -42,36 +38,9 @@ const WordTestResultPage: React.FC = () => {
   const [currentWordIndex, setCurrentWordIndex] = useState<number>(0);
   const [currentWord, setCurrentWord] = useState<string>("");
 
-  // 서버에서 받은 데이터를 기존 형식에 맞게 변환
-  const transformTestData = (testDetail: WordTestResultDetailResponseDto[]) => {
-    return testDetail.map((item) => ({
-      word: item.correctAnswer,
-      userAnswer: item.answer,
-      sentence: item.sentence,
-      sentenceTranslation: "",
-      correct: item.correct,
-    }));
-  };
-
-  // testDetail이 있을 경우 변환, 없을 경우 빈 배열
-  const data = testDetail ? transformTestData(testDetail) : [];
-
-  const dataDate = "2024-10-01";
-  const dataScore =
-    data.length > 0
-      ? (data.filter((item) => item.correct).length / data.length) * 100
-      : 0;
-
   const wordExplainDetailHandler = (index: number) => {
     setCurrentWordIndex(index);
-    setCurrentWord(data[index].word);
-  };
-
-  const renderStamp = () => {
-    if (dataScore > 90) return <PerfectStamp />;
-    if (dataScore > 80) return <GreatStamp />;
-    if (dataScore > 70) return <GoodStamp />;
-    return <BadStamp />;
+    setCurrentWord(testDetail![index].correctAnswer);
   };
 
   // 로딩 상태 처리
@@ -83,7 +52,7 @@ const WordTestResultPage: React.FC = () => {
 
   // testDetail이 null일 때
   if (!testDetail || testDetail.length === 0)
-    return <ErrorText>No data available.</ErrorText>;
+    return <ErrorText>데이터가 없습니다.</ErrorText>;
 
   // 모바일
   if (isMobile) return <WordTestResultListMobilePage />;
@@ -93,18 +62,20 @@ const WordTestResultPage: React.FC = () => {
       <MainContainer>
         <BackHeader>
           <BackArrow width={48} height={48} url="/testhistory" />
-          평가 리스트로 돌아가기
+          <BackHeaderText>
+            평가 리스트로 돌아가기
+          </BackHeaderText>
         </BackHeader>
         <WordListLayout>
-          {data.map((item, index) => {
+          {testDetail.map((item, index) => {
             return (
               <WordTestResultWordList
-                word={item.word}
-                userAnswer={item.userAnswer}
+                word={item.correctAnswer}
+                userAnswer={item.answer}
                 index={index}
                 key={index}
                 onClick={() => wordExplainDetailHandler(index)}
-                isFocusWord={item.word === currentWord}
+                isFocusWord={item.correctAnswer === currentWord}
               />
             );
           })}
@@ -114,17 +85,15 @@ const WordTestResultPage: React.FC = () => {
         <WordExplainContainer>
           {currentWord ? (
             <WordTestResultWordDetail
-              answerWord={data[currentWordIndex].word}
-              userAnswer={data[currentWordIndex].userAnswer}
-              sentence={data[currentWordIndex].sentence}
-              sentenceTranslation={data[currentWordIndex].sentenceTranslation}
+              answerWord={testDetail[currentWordIndex].correctAnswer}
+              userAnswer={testDetail[currentWordIndex].answer}
+              sentence={testDetail[currentWordIndex].sentence}
+              isCorrect={testDetail[currentWordIndex].correct}
             />
           ) : (
-            <>
-              <div>평가 날짜 : {dataDate}</div>
-              <div>평가 점수 : {dataScore.toFixed(2)}</div>
-              <div>{renderStamp()}</div>
-            </>
+            <Explain>
+              단어를 클릭하면 테스트 상세 정보를 확인할 수 있습니다.
+            </Explain>
           )}
         </WordExplainContainer>
       </MainContainer>
@@ -154,7 +123,8 @@ const BackHeader = styled.div`
   display: flex;
   width: 100%;
   align-items: center;
-  padding-left: 1rem;
+  padding-top : 0.5rem;
+  padding-left: 2rem;
   font-size: 1.5rem;
   font-weight: 700;
 `;
@@ -189,4 +159,16 @@ const ErrorText = styled.div`
   color: ${(props) => props.theme.colors.danger};
   font-size: 1.25rem;
   text-align: center;
+`;
+
+const BackHeaderText = styled.span`
+margin-left: 1rem;
+`
+
+const Explain = styled.p`
+  display: flex;
+  font-size: 1.125rem;
+  color: ${(props) => props.theme.colors.placeholder};
+  margin-top: 25%;
+  justify-content: center;
 `;

@@ -224,7 +224,7 @@ const MainLayout = styled.div`
 `;
 
 const MainContainer = styled.div`
-  width: 45%;
+  width: 47%;
   padding: 1rem;
   background-color: ${(props) => `${props.theme.colors.cardBackground}BF`};
   border-radius: 0.75rem;
@@ -240,7 +240,7 @@ const Title = styled.h2`
   font-size: 2rem;
   font-weight: 700;
   margin-top: 1rem;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
 `;
 
 const WordCount = styled.span`

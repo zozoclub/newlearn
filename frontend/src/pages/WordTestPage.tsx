@@ -286,23 +286,25 @@ const PageInfo = styled.div`
 `;
 
 const QuizContainer = styled.div`
-  width: 100%;
+  width: 95%;
   margin-bottom: 1.5rem;
-  margin-left: 3rem;
   text-align: left;
 `;
 
 const Question = styled.div`
-  font-size: 1.25rem;
+  font-size: 1.375rem;
   font-weight: bold;
   display: flex;
   align-items: center;
+  flex-wrap: wrap; /* 줄 바꿈 */
 `;
 
 const Translation = styled.div`
-  font-size: 1rem;
+  font-size: 1.125rem;
+  margin-top: 0.75rem;
   margin-bottom: 0.5rem;
   margin-left: 1.375rem;
+  color: ${(props) => props.theme.colors.placeholder};
 `;
 
 const BlankInput = styled.input`

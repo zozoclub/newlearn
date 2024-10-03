@@ -12,7 +12,7 @@ const GoalChart: React.FC = () => {
   const nickname = userInfo.nickname;
 
   return (
-    <div>
+    <Container>
       <ChartContainer>
         <TitleContainer>
           <NicknameContainer>{nickname}</NicknameContainer> 님의 학습 현황
@@ -29,12 +29,15 @@ const GoalChart: React.FC = () => {
           percentage={(item.current / item.goal) * 100}
         />
       ))}
-    </div>
+    </Container>
   );
 };
 
 export default GoalChart;
 
+const Container = styled.div`
+  width: 400px;
+`;
 const TitleContainer = styled.div`
   display: flex;
   justify-content: center;
@@ -44,7 +47,7 @@ const TitleContainer = styled.div`
 `;
 
 const NicknameContainer = styled.div`
-  font-size: 1.5rem;
+  font-size: 1.75rem;
   font-weight: bold;
 `;
 

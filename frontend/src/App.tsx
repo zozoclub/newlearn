@@ -19,10 +19,14 @@ import loginState from "@store/loginState";
 import { getToken, messaging } from "./firebase";
 import userInfoState, { userInfoType } from "@store/userInfoState";
 import { getUserInfo } from "@services/userService";
-import goalState, { StudyProgressType } from "@store/goalState";
+import goalState, {
+  AchievedGoalsType,
+  StudyProgressType,
+} from "@store/goalState";
 import { getStudyProgress } from "@services/goalService";
 
 import { isExpModalState } from "@store/expState";
+import { putExpUp } from "@services/userService";
 import ExperienceModal from "@components/common/ExperienceModal";
 
 const App: React.FC = () => {
@@ -82,19 +86,82 @@ Welcome To NewsLearn!"
     }
   }, [userInfoData, setUserInfo]);
 
-  // 로그인 완료 시 회원 목표 및 현황 저장
+  //// 학습 목표 관련 코드
+  const userProgress = useRecoilValue(goalState);
   const setUserProgress = useSetRecoilState(goalState);
-  const { data: studyProgressData } = useQuery<StudyProgressType>({
+  const setExpModal = useSetRecoilState(isExpModalState);
+
+  // 로그인 완료 시 회원 목표 및 현황 저장
+  const { data: studyProgressData } = useQuery({
     queryKey: ["getStudyProgress"],
     queryFn: getStudyProgress,
-    enabled: isLogin, // isLogin이 true일 때만 쿼리 실행
+    enabled: isLogin,
   });
 
+  // 로그인 시 현재 상태를 저장하고 pastAchieved 계산
   useEffect(() => {
     if (studyProgressData) {
-      setUserProgress({ ...studyProgressData, isInitialized: true }); // 데이터가 로드되면 Recoil state 업데이트
+      setUserProgress(() => {
+        const newState = { ...studyProgressData, isInitialized: true };
+
+        // 현재 상태를 바탕으로 pastAchieved 설정
+        newState.pastAchieved = {
+          readNews: newState.currentReadNewsCount >= newState.goalReadNewsCount,
+          completeWord:
+            newState.currentCompleteWord >= newState.goalCompleteWord,
+          pronounceTest:
+            newState.currentPronounceTestScore >=
+            newState.goalPronounceTestScore,
+        };
+
+        return newState;
+      });
     }
   }, [studyProgressData, setUserProgress]);
+
+  // 목표 달성 여부 감지 및 모달 표시
+  useEffect(() => {
+    const checkAchievement = (progress: StudyProgressType) => {
+      const goals: Array<{
+        name: keyof AchievedGoalsType;
+        current: number;
+        goal: number;
+        exp: number;
+      }> = [
+        {
+          name: "readNews",
+          current: progress.currentReadNewsCount,
+          goal: progress.goalReadNewsCount,
+          exp: progress.goalReadNewsCount * 10,
+        },
+        {
+          name: "completeWord",
+          current: progress.currentCompleteWord,
+          goal: progress.goalCompleteWord,
+          exp: progress.goalCompleteWord * 2,
+        },
+        {
+          name: "pronounceTest",
+          current: progress.currentPronounceTestScore,
+          goal: progress.goalPronounceTestScore,
+          exp: progress.goalPronounceTestScore * 2,
+        },
+      ];
+      console.log("App에서 동작");
+      goals.forEach(({ name, current, goal, exp }) => {
+        if (current === goal && !progress.pastAchieved[name] && exp != 0) {
+          // 경험치 업데이트 함수 호출 후 모달 표시
+          putExpUp(exp, setExpModal, `${name} 목표 달성`);
+        }
+      });
+    };
+
+    setUserProgress((progress) => {
+      checkAchievement(progress);
+      return progress;
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userProgress, setExpModal]);
 
   return (
     <ThemeProvider theme={theme}>

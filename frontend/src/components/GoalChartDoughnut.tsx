@@ -9,7 +9,7 @@ const GoalChartDoughnut: React.FC = () => {
   const { perAverage, displayPerAverage } = useRecoilValue(goalAverageSelector);
   const theme = useTheme();
   const fillColor = theme.colors.primary;
-  const emptyColor = theme.colors.cancel;
+  const emptyColor = "#e0e0e0";
 
   const doughnutData = {
     datasets: [

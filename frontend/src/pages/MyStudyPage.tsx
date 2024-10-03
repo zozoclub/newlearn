@@ -53,23 +53,25 @@ const MyStudyPage = () => {
   // 학습 목표 설정
   const goalMutation = useMutation<GoalSettingType, Error, GoalSettingType>({
     mutationFn: (data: GoalSettingType) => goalSetting(data),
-    onSuccess: (result) => {
+    onSuccess: async (result) => {
+      // goalState 업데이트
       setStudyProgress((goalInfo) => ({
         ...goalInfo,
         ...result,
         isInitialized: true,
       }));
 
-      getStudyProgress()
-        .then((updatedStudyProgress) => {
-          setStudyProgress((goalInfo) => ({
-            ...goalInfo,
-            ...updatedStudyProgress,
-          }));
-        })
-        .catch((error) => {
-          console.error("Failed to fetch updated study progress", error);
-        });
+      try {
+        // 학습 진행 상황 가져오기
+        const updatedStudyProgress = await getStudyProgress();
+        // 상태 업데이트
+        setStudyProgress((goalInfo) => ({
+          ...goalInfo,
+          ...updatedStudyProgress,
+        }));
+      } catch (error) {
+        console.error("Failed to fetch updated study progress", error);
+      }
 
       closeModal();
     },
@@ -77,7 +79,6 @@ const MyStudyPage = () => {
       console.error("Goal setting Failed", error);
     },
   });
-
   const isSetGoal =
     studyProgress.goalCompleteWord &&
     studyProgress.goalPronounceTestScore &&
@@ -98,7 +99,7 @@ const MyStudyPage = () => {
               설정된 목표가 없습니다.
             </GoalSettingDescription>
             <GoalSettingButton onClick={openModal}>
-              목표 설정하기
+              {new Date().getMonth() + 1}월 목표 설정하기
             </GoalSettingButton>
             <Modal isOpen={isModalOpen} onClose={closeModal} title="목표 설정">
               <GoalSetting goalMutation={goalMutation} />
@@ -132,7 +133,10 @@ export default MyStudyPage;
 const Container = styled.div`
   display: flex;
   gap: 3rem;
-  min-height: 560px;
+  width: 90%;
+  padding: 50px 5%;
+  min-height: 600px;
+  height: 600px;
 `;
 
 const GoalContainer = styled.div`
@@ -142,9 +146,9 @@ const GoalContainer = styled.div`
   align-items: center;
 
   height: 100%;
-  min-height: 560px;
+  min-height: 600px;
 
-  background-color: ${(props) => props.theme.colors.cardBackground + "BF"};
+  background-color: ${(props) => props.theme.colors.cardBackground01};
   box-shadow: ${(props) => props.theme.shadows.medium};
   box-sizing: border-box;
   border-radius: 0.75rem;

@@ -10,6 +10,8 @@ export const lightTheme: Theme = {
     background: "#ffffff",
     cardBackground: "#ffffff",
     cardBackground01: "#ffffffbd",
+    newsItemBackground: "#eeeeee",
+    newsItemBackgroundPress: "#cccccc",
     primary: "#0268ed",
     primaryPress: "#0057b6",
     danger: "#df1d1d",
@@ -25,6 +27,7 @@ export const lightTheme: Theme = {
     placeholder: "#c1c1c1",
   },
   shadows: {
+    small: "0.25rem 0.25rem 0.25rem #0000007F",
     medium: "0.5rem 0.5rem 0.25rem #0000007F",
   },
   opacities: {

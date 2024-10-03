@@ -10,6 +10,8 @@ export const darkTheme: Theme = {
     background: "#000000",
     cardBackground: "#333344",
     cardBackground01: "#1a1925bd",
+    newsItemBackground: "#0000003f",
+    newsItemBackgroundPress: "#000000aa",
     primary: "#0268ed",
     primaryPress: "#0057b6",
     danger: "#e9404f",
@@ -25,6 +27,7 @@ export const darkTheme: Theme = {
     placeholder: "#8b8b8b",
   },
   shadows: {
+    small: "0.25rem 0.25rem 0.25rem #000000BD",
     medium: "0.5rem 0.5rem 0.25rem #000000BD",
   },
   opacities: {

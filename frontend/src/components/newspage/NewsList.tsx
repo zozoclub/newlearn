@@ -6,27 +6,49 @@ import { useQuery } from "@tanstack/react-query";
 import {
   getCategoryNewsList,
   getTotalNewsList,
-  NewsType,
+  NewsListType,
 } from "@services/newsService";
 import { useRecoilValue } from "recoil";
 import languageState from "@store/languageState";
+import { useParams } from "react-router-dom";
+import userInfoState from "@store/userInfoState";
 
-const NewsList: React.FC<{ selectedCategory: number }> = ({
-  selectedCategory,
-}) => {
+const NewsList: React.FC<{
+  setTotalPages: React.Dispatch<React.SetStateAction<number>>;
+}> = ({ setTotalPages }) => {
   const languageData = useRecoilValue(languageState);
-  const { data: totalNewsList } = useQuery<NewsType[]>({
-    queryKey: ["totalNewsList"],
-    queryFn: () => getTotalNewsList(2, languageData, 0, 20),
+  const { category, page } = useParams();
+  const selectedCategory = Number(category);
+  const selectedPage = Number(page);
+  const userInfoData = useRecoilValue(userInfoState);
+  const userDifficulty = userInfoData.difficulty;
+
+  const { data: totalNewsList } = useQuery<NewsListType>({
+    queryKey: ["totalNewsList", selectedCategory, selectedPage],
+    queryFn: () =>
+      getTotalNewsList(userDifficulty, languageData, selectedPage, 10),
     enabled: selectedCategory === 0,
   });
 
-  const { data: categoryNewsList } = useQuery<NewsType[]>({
-    queryKey: ["categoryNewsList", selectedCategory],
+  const { data: categoryNewsList } = useQuery<NewsListType>({
+    queryKey: ["categoryNewsList", selectedCategory, selectedPage],
     queryFn: () =>
-      getCategoryNewsList(1, languageData, 1, 20, selectedCategory),
+      getCategoryNewsList(
+        userDifficulty,
+        languageData,
+        selectedPage,
+        10,
+        selectedCategory
+      ),
     enabled: selectedCategory !== 0,
   });
+
+  useEffect(() => {
+    if (selectedCategory === 0 && totalNewsList) {
+      setTotalPages(totalNewsList?.totalPages);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [totalNewsList, categoryNewsList]);
 
   useEffect(() => {
     switch (selectedCategory) {
@@ -34,19 +56,22 @@ const NewsList: React.FC<{ selectedCategory: number }> = ({
         console.log("전체 선택");
         break;
       case 1:
-        console.log("경제 선택");
+        console.log("정치 선택");
         break;
       case 2:
-        console.log("사회 선택");
+        console.log("경제 선택");
         break;
       case 3:
-        console.log("연예 선택");
+        console.log("사회 선택");
         break;
       case 4:
-        console.log("IT/과학 선택");
+        console.log("생활/문화 선택");
         break;
       case 5:
-        console.log("몰라 선택");
+        console.log("IT/과학 선택");
+        break;
+      case 6:
+        console.log("세계 선택");
         break;
     }
   }, [selectedCategory]);
@@ -55,10 +80,10 @@ const NewsList: React.FC<{ selectedCategory: number }> = ({
     <Container>
       <NewsListContainer>
         {selectedCategory === 0
-          ? totalNewsList?.map((news) => (
+          ? totalNewsList?.newsList?.map((news) => (
               <NewsListItem key={news.newsId} news={news} />
             ))
-          : categoryNewsList?.map((news) => (
+          : categoryNewsList?.newsList?.map((news) => (
               <NewsListItem key={news.newsId} news={news} />
             ))}
       </NewsListContainer>

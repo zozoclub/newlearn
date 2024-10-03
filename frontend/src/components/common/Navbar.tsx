@@ -11,7 +11,7 @@ import NavbarItem from "@components/common/NavbarItem";
 const Navbar = () => {
   const iconList = [
     { src: homeIcon, alt: "메인 홈", link: "/" },
-    { src: newsIcon, alt: "뉴스", link: "/news" },
+    { src: newsIcon, alt: "뉴스", link: "/news/0/1" },
     { src: puzzleIcon, alt: "퍼즐", link: "/puzzle" },
     { src: wordBookIcon, alt: "단어장", link: "/voca" },
     { src: testIcon, alt: "스터디", link: "/mystudy" },

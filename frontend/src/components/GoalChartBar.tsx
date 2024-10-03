@@ -30,7 +30,9 @@ const GoalChartBar: React.FC<GoalChartBarProps> = ({
 export default GoalChartBar;
 
 const BarContainer = styled.div`
-  margin: 1.5rem 0rem;
+  margin: 2.5rem 0rem;
+  font-size: 1.25rem;
+  font-weight: bold;
 `;
 
 const GoalItem = styled.div`
@@ -42,7 +44,7 @@ const GoalItem = styled.div`
 const GoalBarContainer = styled.div`
   width: 100%;
   height: 1.25rem;
-  background-color: ${(props) => props.theme.colors.cancel};
+  background-color: #e0e0e0;
   border-radius: 5px;
   overflow: hidden;
 `;

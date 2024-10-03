@@ -33,12 +33,6 @@ const WordTestPage: React.FC = () => {
       postWordTestResult(wordTestResultDataSet),
     onSuccess: () => {
       console.log("결과 전달 완료");
-      setExpModal({
-        isOpen: true,
-        experience: 30,
-        action: "워드점수드립니다.",
-      });
-      navigate(`/word/result/${data!.quizId}`);
     },
   });
 
@@ -153,25 +147,41 @@ const WordTestPage: React.FC = () => {
   const handleSubmit = () => {
     closeSubmitModal();
     const results: WordTestRequestDto["results"] = [];
+    let correctAnswerCount = 0;
 
     quiz.forEach((_, index) => {
       const correctAnswer = data?.tests[index].word;
       const answer = userAnswers[index]?.toLowerCase().replace(/\s+/g, "");
+      const isCorrect = correctAnswer === answer;
+
+      if (isCorrect) correctAnswerCount += 1;
+
       const wordTestData = {
         sentence: data!.tests[index].sentence,
         correctAnswer: correctAnswer!,
         answer: answer,
-        isCorrect: correctAnswer === answer,
+        isCorrect: isCorrect,
       };
       results.push(wordTestData);
     });
+
+    const experience = correctAnswerCount * 2;
+
     const wordTestResultDataSet: WordTestRequestDto = {
       quizId: data!.quizId,
       results: results,
     };
-    console.log(wordTestResultDataSet);
 
-    mutation.mutate(wordTestResultDataSet);
+    mutation.mutate(wordTestResultDataSet, {
+      onSuccess: () => {
+        setExpModal({
+          isOpen: true,
+          experience: experience,
+          action: "문장 속 빈칸 맞히기 ",
+        });
+        navigate(`/word/result/${data!.quizId}`);
+      },
+    });
   };
 
   // 로딩 상태 처리

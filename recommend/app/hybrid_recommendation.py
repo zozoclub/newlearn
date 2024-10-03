@@ -5,6 +5,7 @@ import numpy as np
 from typing import Dict, List
 from collections import defaultdict
 from datetime import datetime, timedelta
+import locale
 
 ##################################### 데이터 처리
 
@@ -52,22 +53,44 @@ def find_similar_users(user_id: int):
 def get_user_categories(user_id: int, db: Session):
     return db.query(UserCategory).filter(UserCategory.user_id == user_id).all()
 
-# ## published_date가 문자열값이므로 적절히 고침
-# # (한글 로케일 설정)
-# locale.setlocale(locale.LC_TIME, 'ko_KR.UTF-8')
-# # (published_date (Varchar(100))을 datetime 객체로 변환)
-# def parse_published_date(date_str: str) -> datetime:
-#     return datetime.strptime(date_str, '%Y. %m. %d. %p %I:%M')
-# # News (MySQL) 가져 오기
-# def get_news_metadata(news_id: int, db: Session):
-#     news = db.query(News).filter(News.news_id == news_id).first()
-#     if news and isinstance(news.published_date, str):
-#         news.published_date = parse_published_date(news.published_date)
-#     return news
+### published_date가 문자열값이라서,,,
+# 한글 로케일 설정
+locale.setlocale(locale.LC_TIME, 'ko_KR.UTF-8')
 
-# News (MySQL) 가져 오기
+def parse_korean_date(date_str: str) -> datetime:
+    try:
+        # 날짜, AM/PM, 시간으로 분리
+        date_parts = date_str.split()
+        if len(date_parts) != 5:
+            raise ValueError("Invalid date format")
+
+        date = ' '.join(date_parts[:3])
+        am_pm = date_parts[3]
+        time = date_parts[4]
+
+        # 날짜 파싱
+        date_obj = datetime.strptime(date, '%Y. %m. %d.')
+
+        # 시간 파싱
+        hour, minute = map(int, time.split(':'))
+
+        # AM/PM 처리
+        if am_pm == 'PM' and hour != 12:
+            hour += 12
+        elif am_pm == 'AM' and hour == 12:
+            hour = 0
+
+        # 최종 datetime 객체 생성
+        return date_obj.replace(hour=hour, minute=minute)
+    except Exception as e:
+        print(f"날짜 파싱 오류: {date_str}. 오류 내용: {str(e)}")
+        return datetime.now()
+
 def get_news_metadata(news_id: int, db: Session):
-    return db.query(News).filter(News.news_id == news_id).first()
+    news = db.query(News).filter(News.news_id == news_id).first()
+    if news and isinstance(news.published_date, str):
+        news.published_date = parse_korean_date(news.published_date)
+    return news
 
 # User (MySQL) 가져 오기
 def get_user_difficulty(user_id: int, db: Session):
@@ -76,7 +99,7 @@ def get_user_difficulty(user_id: int, db: Session):
         return user.difficulty
     return None
 
-# 시간대별 뉴스 인기도 계산하기
+# 시간대별 뉴스 인기도 계산하기 (스크랩 기반)
 def get_time_based_popularity(db: Session) -> Dict[int, Dict[str, int]]:
     current_time = datetime.now()
     one_day_ago = current_time - timedelta(days=1)
@@ -143,20 +166,18 @@ def get_user_time_pattern(user_id: int, db: Session) -> Dict[str, float]:
 
 def collaborative_filtering(user_id: int, db: Session):
     similar_users = find_similar_users(user_id)
-
-    # 유저 관심 카테고리 기반 가중치 추가
     user_categories = get_user_categories(user_id, db)
     user_category_ids = [uc.category_id for uc in user_categories]
-
-    # 유사한 유저가 클릭한 뉴스 가져 오기
     recommended_news = {}
-    # current_time = datetime.now()
+    current_time = datetime.now()
 
     for similar_user_id in similar_users:
         similar_user_clicks = get_user_click_log(similar_user_id)
         for click in similar_user_clicks:
             if not user_news_click.find_one({"user_id": user_id, "news_id": click["news_id"]}):
                 news_metadata = get_news_metadata(click["news_id"], db)
+
+                if not news_metadata:   continue
 
                 # 가중치 계산
                 weight = 0
@@ -170,10 +191,13 @@ def collaborative_filtering(user_id: int, db: Session):
                 # 2) 조회수에 따른 가중치
                 weight += news_metadata.hit / 10  # ex) 조회수를 10으로 나누어 가중치 부여 (가중치가 너무 커질까봐)
 
-                # # 3) 작성 시간(최신)에 따른 가중치
-                # time_diff = (current_time - news_metadata.published_date).total_seconds() / 3600  # 시간 차이를 시간 단위로 변환
-                # if time_diff < 24:  # 24시간 이내의 뉴스에 추가 가중치
-                #     weight += 1  # 최신 뉴스에 가중치 1 추가
+                # 3) 작성 시간(최신)에 따른 가중치
+                if isinstance(news_metadata.published_date, str):
+                    news_metadata.published_date = parse_korean_date(news_metadata.published_date)
+                if isinstance(news_metadata.published_date, datetime):
+                    time_diff = (current_time - news_metadata.published_date).total_seconds() / 3600
+                    if time_diff < 24:  # 24시간 이내의 뉴스에 추가 가중치
+                        weight += 1  # 최신 뉴스에 가중치 1 추가
 
                 # 가중치에 따른 추천 뉴스 수집
                 recommended_news[click["news_id"]] = recommended_news.get(click["news_id"], 0) + weight
@@ -192,6 +216,7 @@ def content_based_filtering(user_id: int, db: Session):
     difficulty_based_popularity = get_difficulty_based_popularity(db)
 
     recommended_news = {}
+    current_time = datetime.now()
 
     all_news = db.query(News).all()
     for news in all_news:
@@ -216,11 +241,18 @@ def content_based_filtering(user_id: int, db: Session):
             news_difficulty_popularity = difficulty_based_popularity.get(news.news_id, {})
             weight += news_difficulty_popularity.get(user_difficulty, 0) / 5
 
+            # 5) 작성 시간(최신)에 따른 가중치
+            if isinstance(news.published_date, str):
+                news.published_date = parse_korean_date(news.published_date)
+            if isinstance(news.published_date, datetime):
+                time_diff = (current_time - news.published_date).total_seconds() / 3600
+                if time_diff < 24:  # 24시간 이내의 뉴스에 추가 가중치
+                    weight += 1  # 최신 뉴스에 가중치 1 추가
+
             recommended_news[news.news_id] = weight
 
     sorted_news_ids = sorted(recommended_news, key=recommended_news.get, reverse=True)
     return [get_news_metadata(news_id, db) for news_id in sorted_news_ids[:20]]  # 상위 20개 추천
-
 
 def hybrid_recommendation(user_id: int, db: Session, num_recommendations: int = 10) -> List[News]:
     cf_recommendations = collaborative_filtering(user_id, db)

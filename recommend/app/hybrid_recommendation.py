@@ -108,9 +108,9 @@ def get_time_based_popularity(db: Session) -> Dict[int, Dict[str, int]]:
     current_time = datetime.now()
     one_day_ago = current_time - timedelta(days=1)
 
-    time_based_popularity = defaultdict(lambda: {'아침': 0, '오후': 0, '저녁': 0, '밤': 0})
-
+    # 모든 스크랩 데이터를 가져와 메모리에서 처리
     reads = db.query(UserNewsScrap).filter(UserNewsScrap.scraped_date >= one_day_ago).all()
+    time_based_popularity = defaultdict(lambda: {'아침': 0, '오후': 0, '저녁': 0, '밤': 0})
 
     for read in reads:
         hour = read.scraped_date.hour

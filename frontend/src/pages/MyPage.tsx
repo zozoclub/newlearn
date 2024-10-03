@@ -55,6 +55,7 @@ export default MyPage;
 
 const MyPageContainer = styled.div`
   padding: 0 4rem;
+  margin-bottom: 5rem;
 `;
 
 const FlexContainer = styled.div`

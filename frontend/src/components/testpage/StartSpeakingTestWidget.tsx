@@ -22,8 +22,12 @@ const StartSpeakingTestWidget: React.FC<Props> = ({ posibleWords }) => {
   };
   return (
     <WidgetContainer>
-      <Title>발음 정확도 테스트</Title>
-      <Explain>제시되는 예문을 읽고 점수를 확인 해보세요.</Explain>
+      <Title>문장 발음 테스트</Title>
+      <Explain>제시되는 기사 예문을 읽고 내 발음 점수를 확인 해보세요.</Explain>
+      <Explain>
+        테스트 진행하는 문장 갯수는 총
+        <ExplainNumber>3</ExplainNumber>문항 입니다.
+      </Explain>
       <StartButton onClick={handleStartTest}>테스트 하러가기</StartButton>
       <Modal isOpen={isWarningModal} onClose={closewarningModal} title="알림">
         <p>단어장보다 테스트 개수가 많을 수 없습니다.</p>
@@ -48,15 +52,24 @@ const WidgetContainer = styled.div`
 `;
 
 const Title = styled.h2`
-  font-size: 1.5rem;
+  font-size: 1.75rem;
   font-weight: 700;
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
 `;
 
 const Explain = styled.p`
-  font-size: 1rem;
-  margin-bottom: 1rem;
+  font-size: 1.125rem;
+  margin-bottom: 1.5rem;
   text-align: center;
+`;
+
+const ExplainNumber = styled.span`
+  font-size: 2rem;
+  text-align: center;
+  font-family: "Righteous", sans-serif;
+  margin: 0 1rem;
+  font-weight: 700;
+  color: ${(props) => props.theme.colors.primary};
 `;
 
 const StartButton = styled.button`

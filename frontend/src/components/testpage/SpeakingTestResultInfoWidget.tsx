@@ -33,7 +33,7 @@ const SubContainer = styled.div`
   min-height: 12rem;
 
   margin: 0.25rem;
-  padding: 1rem;
+  padding: 1.5rem;
 
   background-color: #${"62B7FF" + "2F"};
 
@@ -41,9 +41,9 @@ const SubContainer = styled.div`
 `;
 
 const Title = styled.div`
-  color: ${(props) => props.theme.colors.primaryPress};
+  color: ${(props) => props.theme.colors.primary};
   font-size: 1.25rem;
-  font-weight: bold;
+  font-weight: 900;
 `;
 
 const Estimate = styled.div`
@@ -53,5 +53,6 @@ const Estimate = styled.div`
 
 const Explain = styled.div`
   font-size: 1rem;
-  font-weight: 200;
+  color: ${(props) => props.theme.colors.placeholder};
+  font-weight: 300;
 `;

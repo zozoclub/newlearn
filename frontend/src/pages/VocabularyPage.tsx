@@ -15,7 +15,6 @@ import {
   MemorizeWordListResponseDto,
   getMemorizeWordList,
   postMemorizeWord,
-  deleteMemorizeWord,
 } from "@services/wordMemorize";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Spinner from "@components/Spinner";
@@ -46,12 +45,6 @@ const VocabularyPage: React.FC = () => {
 
   const [toStudyWords, setToStudyWords] = useState<Word[]>([]);
   const [learnedWords, setLearnedWords] = useState<Word[]>([]);
-
-  const { mutate: deleteMutation } = useMutation<void, Error, number>({
-    mutationFn: (wordId: number) => deleteMemorizeWord(wordId),
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: ["memorizeWordList"] }),
-  });
 
   const { mutate: toggleMemorizeMutation } = useMutation<void, Error, number>({
     mutationFn: (wordId: number) => postMemorizeWord(wordId),
@@ -167,10 +160,10 @@ const VocabularyPage: React.FC = () => {
                         $isDragging={snapshot.isDragging}
                       >
                         <VocaCollapsible
+                          id={data.id}
                           title={data.title}
                           meaning={data.content}
                           isExpanded={data.isExpanded}
-                          onDelete={() => deleteMutation(Number(data.id))}
                         />
                       </Item>
                     )}
@@ -202,10 +195,10 @@ const VocabularyPage: React.FC = () => {
                         $isDragging={snapshot.isDragging}
                       >
                         <VocaCollapsible
+                          id={data.id}
                           title={data.title}
                           meaning={data.content}
                           isExpanded={data.isExpanded}
-                          onDelete={() => deleteMutation(Number(data.id))}
                         />
                       </Item>
                     )}

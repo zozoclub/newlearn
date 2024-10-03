@@ -12,11 +12,9 @@ const LevelIcon: React.FC<LevelIconProps> = ({ level, size = 48 }) => {
   const row = Math.floor(adjustedLevel / 10);
   const col = adjustedLevel % 10;
 
-  console.log(row, col);
-
   return (
     <IconWrapper size={size}>
-      <IconImage row={row} col={col} />
+      <IconImage $row={row} $col={col} />
     </IconWrapper>
   );
 };
@@ -26,13 +24,13 @@ const IconWrapper = styled.div<{ size: number }>`
   overflow: hidden;
 `;
 
-const IconImage = styled.div<{ row: number; col: number }>`
+const IconImage = styled.div<{ $row: number; $col: number }>`
   width: 100%;
   height: 100%;
   background-image: url(${levelIconsImage});
   background-size: 1000% 1000%;
   background-position: ${(props) =>
-    `${props.col * 11.11}% ${props.row * 11.11}%`};
+    `${props.$col * 11.11}% ${props.$row * 11.11}%`};
   image-rendering: pixelated;
 `;
 

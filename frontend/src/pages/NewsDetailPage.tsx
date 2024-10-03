@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
 
@@ -10,6 +10,7 @@ import ProgressBar from "@components/newspage/ProgressBar";
 import Spinner from "@components/Spinner";
 import { DetailNewsType, getNewsDetail } from "@services/newsService";
 import userInfoState from "@store/userInfoState";
+import newsWordState from "@store/newsWordState";
 
 const NewsDetailPage: React.FC = () => {
   const userInfoData = useRecoilValue(userInfoState);
@@ -47,6 +48,14 @@ const NewsDetailPage: React.FC = () => {
   useEffect(() => {
     setDifficulty(userInfoData.difficulty);
   }, [userInfoData.difficulty]);
+
+  const setNewsWordState = useSetRecoilState(newsWordState);
+  useEffect(() => {
+    if (engData) {
+      setNewsWordState(engData.words);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [engData]);
 
   return (
     <>

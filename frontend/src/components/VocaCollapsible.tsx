@@ -2,26 +2,33 @@ import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import Modal from "./Modal";
-import { getWordDetail, WordDetailResponseDto } from "@services/wordMemorize";
-import { useQuery } from "@tanstack/react-query";
+import { deleteMemorizeWord, getWordDetail, WordDetailResponseDto } from "@services/wordMemorize";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Spinner from "./Spinner";
 
 type VocaCollapsibleProps = {
+  id: string;
   title: string;
   meaning: string;
   isExpanded: boolean;
-  onDelete: () => void;
 };
 
 const VocaCollapsible: React.FC<VocaCollapsibleProps> = ({
+  id,
   title,
   meaning,
   isExpanded,
-  onDelete,
 }) => {
   const [expanded, setExpanded] = useState<boolean>(isExpanded);
   const contentRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  const { mutate: deleteMutation } = useMutation<void, Error, number>({
+    mutationFn: (wordId: number) => deleteMemorizeWord(wordId),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ["memorizeWordList"] }),
+  });
 
   const { data, isLoading } = useQuery<WordDetailResponseDto>({
     queryKey: ["wordDetail", title],
@@ -29,6 +36,8 @@ const VocaCollapsible: React.FC<VocaCollapsibleProps> = ({
   });
 
   const toggleExpand = () => {
+    console.log(id);
+
     setExpanded((prev) => !prev);
   };
 
@@ -37,12 +46,37 @@ const VocaCollapsible: React.FC<VocaCollapsibleProps> = ({
   const closeDeleteModal = () => setIsDeleteModal(false);
 
   const handleDeleteConfirm = () => {
-    onDelete();
+    console.log(id);
+    deleteMutation(Number(id));
+    closeDeleteModal()
   };
 
   const handleNewsLinkClick = (newsId: number) => {
     navigate(`/news/detail/${newsId}`);
   };
+
+  const processMeaning = (meaning: string) => {
+    const numberedMeaning = meaning
+      .split("//")
+      .map((word, index) => `${index + 1}. ${word}`)
+      .join(" ");
+
+    return numberedMeaning.length > 40
+      ? `${numberedMeaning.slice(0, 40)}...`
+      : numberedMeaning;
+  };
+
+  const highlightWordInSentence = (sentence: string, word: string) => {
+    const parts = sentence.split(new RegExp(`(${word})`, 'gi')); // 단어로 split, 대소문자 무시
+    return parts.map((part, index) =>
+      part.toLowerCase() === word.toLowerCase() ? (
+        <HighlightedWord key={index}>{part}</HighlightedWord>
+      ) : (
+        <span key={index}>{part}</span>
+      )
+    );
+  };
+
 
   const currentHeight = expanded ? contentRef.current?.scrollHeight : 0;
 
@@ -51,9 +85,9 @@ const VocaCollapsible: React.FC<VocaCollapsibleProps> = ({
       <ListItem>
         <Title onClick={toggleExpand}>
           <TitleContent>
-            <TitleWord>{title}</TitleWord>
+            <TitleWord>{title.toLowerCase()}</TitleWord>
           </TitleContent>
-          <TitleMeaning>{meaning}</TitleMeaning>
+          <TitleMeaning>{processMeaning(meaning)}</TitleMeaning>
           <Arrow $isExpanded={expanded}>▼</Arrow>
           <DeleteButton onClick={openDeleteModal}>&times;</DeleteButton>
         </Title>
@@ -73,10 +107,10 @@ const VocaCollapsible: React.FC<VocaCollapsibleProps> = ({
                       {sentence.difficulty === 1
                         ? "초급"
                         : sentence.difficulty === 2
-                        ? "중급"
-                        : sentence.difficulty === 3
-                        ? "고급"
-                        : "알 수 없음"}
+                          ? "중급"
+                          : sentence.difficulty === 3
+                            ? "고급"
+                            : "알 수 없음"}
                     </DifficultyChip>
                     <NewsLinkButton
                       onClick={() => handleNewsLinkClick(sentence.newsId)}
@@ -84,7 +118,7 @@ const VocaCollapsible: React.FC<VocaCollapsibleProps> = ({
                       원문 보기
                     </NewsLinkButton>
                   </SentenceHeader>
-                  <SentenceText>{sentence.sentence}</SentenceText>
+                  <SentenceText>{highlightWordInSentence(sentence.sentence, title)}</SentenceText>
                   <SentenceMeaning>{sentence.sentenceMeaning}</SentenceMeaning>
                 </SentenceContainer>
               ))}
@@ -116,10 +150,10 @@ const ListItem = styled.div`
   margin-bottom: 1rem;
   overflow: hidden;
   transition: all 0.3s ease-in-out;
+  background-color:  ${(props) => props.theme.colors.cardBackground01};
 `;
 
 const Title = styled.div`
-  background-color: ${(props) => props.theme.shadows.medium};
   color: ${(props) => props.theme.colors.text};
   padding: 1rem;
   cursor: pointer;
@@ -246,4 +280,9 @@ const ModalConfirmButton = styled.button`
 
 const DeleteButton = styled.div`
   color: ${(props) => props.theme.colors.danger};
+`;
+
+const HighlightedWord = styled.span`
+  color: ${(props) => props.theme.colors.primary};
+  font-weight: bold;
 `;

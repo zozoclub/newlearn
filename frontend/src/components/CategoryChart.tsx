@@ -88,7 +88,7 @@ const CategoryChart: React.FC = () => {
         suggestedMin: 0,
         suggestedMax: maxValue > 0 ? maxValue : 1,
         ticks: {
-          stepSize: 5,
+          stepSize: 10,
           font: {
             size: 12,
           },
@@ -119,5 +119,4 @@ export default CategoryChart;
 
 const ChartContainer = styled.div`
   width: 100%;
-  height: 300px;
 `;

@@ -132,6 +132,7 @@ export const getUserInfo = async (): Promise<userInfoType> => {
 
 import { SetterOrUpdater } from "recoil";
 import { ExpType } from "@store/expState";
+import { AvatarType } from "@components/common/Avatar";
 
 export const putExpUp = async (
   experience: number,
@@ -154,5 +155,16 @@ export const putExpUp = async (
     console.log("경험치 api", response);
   } catch (error) {
     console.error(`경험치 상승 오류`, error);
+  }
+};
+
+export const getUserAvatar = async (userId: number): Promise<AvatarType> => {
+  try {
+    const response = await axiosInstance.get(`user/avatar/${userId}`);
+    console.log(response);
+    return response.data.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
   }
 };

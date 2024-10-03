@@ -20,4 +20,8 @@ public interface NewsRepository extends JpaRepository<News, Long> {
     // TOP10
     @Query(value = "SELECT n FROM News n WHERE n.publishedDate LIKE :today% ORDER BY n.hit DESC LIMIT 10")
     List<News> findTop10ByPublishedDateStartingWithOrderByHitDesc(@Param("today") String today);
+
+    List<News> findByTitleContaining(String title);
+
+    List<News> findByTitleEngContaining(String titleEng);
 }

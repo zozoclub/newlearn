@@ -7,7 +7,9 @@ import com.newlearn.backend.news.dto.request.NewsDetailRequestDTO;
 import com.newlearn.backend.news.dto.request.NewsReadRequestDTO;
 import com.newlearn.backend.news.dto.response.NewsDetailResponseDTO;
 import com.newlearn.backend.news.dto.response.NewsResponseDTO;
+import com.newlearn.backend.news.dto.response.NewsSimpleResponseDTO;
 import com.newlearn.backend.news.service.NewsService;
+import com.newlearn.backend.search.dto.response.SearchNewsDTO;
 import com.newlearn.backend.user.model.Users;
 import com.newlearn.backend.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @Slf4j
@@ -46,7 +49,7 @@ public class NewsController {
                     .size(size)
                     .build();
 
-            Page<NewsResponseDTO> newsList = newsService.getAllNews(user.getUserId(), newsRequestDTO);
+            Page<NewsResponseDTO> newsList = newsService.getAllNews(user, newsRequestDTO);
 
             return ApiResponse.createSuccess(newsList, "전체 뉴스 조회 성공");
         } catch (Exception e) {
@@ -76,7 +79,7 @@ public class NewsController {
                     .size(size)
                     .build();
 
-            Page<NewsResponseDTO> newsList = newsService.getNewsByCategory(user.getUserId(), newsRequestDTO, categoryId);
+            Page<NewsResponseDTO> newsList = newsService.getNewsByCategory(user, newsRequestDTO, categoryId);
 
             return ApiResponse.createSuccess(newsList, categoryId + " 카테고리 뉴스 조회 성공");
         } catch (Exception e) {
@@ -96,11 +99,29 @@ public class NewsController {
                 return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
             }
 
-            List<NewsResponseDTO> newsList = newsService.getTodayTopNewsList(user.getUserId(), difficulty, lang);
+            List<NewsResponseDTO> newsList = newsService.getTodayTopNewsList(user, difficulty, lang);
 
             return ApiResponse.createSuccess(newsList, "오늘의 TOP10뉴스 조회 성공");
         } catch (Exception e) {
             log.error("뉴스 TOP10 불러오기 중 실패", e);
+            return ApiResponse.createError(ErrorCode.NEWS_LIST_NOT_FOUND);
+        }
+    }
+
+    // 유저가 최근 본 뉴스들 조회
+    @GetMapping("/recent")
+    public ApiResponse<?> getRecentNews(Authentication authentication) throws Exception {
+        try {
+            Users user = userService.findByEmail(authentication.getName());
+            if (user == null) {
+                return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
+            }
+
+            List<NewsSimpleResponseDTO> newsList = newsService.getRecentNews(user);
+
+            return ApiResponse.createSuccess(newsList, "최근 본 뉴스 목록 조회 성공");
+        } catch (Exception e) {
+            log.error("최근 본 뉴스 목록 불러오기 중 실패", e);
             return ApiResponse.createError(ErrorCode.NEWS_LIST_NOT_FOUND);
         }
     }
@@ -110,7 +131,8 @@ public class NewsController {
     public ApiResponse<?> getNewsDetail(Authentication authentication,
                                         @PathVariable("newsId") long newsId,
                                         @RequestParam("difficulty") int difficulty,
-                                        @RequestParam("lang") String lang) throws Exception {
+                                        @RequestParam("lang") String lang,
+                                        @RequestParam("isFirstView") boolean isViewed) throws Exception {
         try {
             Users user = userService.findByEmail(authentication.getName());
             if (user == null) {
@@ -120,9 +142,10 @@ public class NewsController {
             NewsDetailRequestDTO newsDetailRequestDTO = NewsDetailRequestDTO.builder()
                     .difficulty(difficulty)
                     .lang(lang)
+                    .isFirstView(isViewed)
                     .build();
 
-            NewsDetailResponseDTO newsDetailResponseDTO = newsService.getNewsDetail(user.getUserId(), newsId, newsDetailRequestDTO);
+            NewsDetailResponseDTO newsDetailResponseDTO = newsService.getNewsDetail(user, newsId, newsDetailRequestDTO);
 
             return ApiResponse.createSuccess(newsDetailResponseDTO, "뉴스 상세 조회 성공");
         } catch (Exception e) {
@@ -148,7 +171,7 @@ public class NewsController {
                     .difficulty(difficulty)
                     .build();
 
-            newsService.readNews(user.getUserId(), newsReadRequestDTO); //뉴스 읽음 처리
+            newsService.readNews(user, newsReadRequestDTO); //뉴스 읽음 처리
 
             return ApiResponse.createSuccessWithNoContent("뉴스 읽음 처리 성공");
         } catch (Exception e) {
@@ -174,7 +197,7 @@ public class NewsController {
                     .difficulty(difficulty)
                     .build();
 
-            newsService.scrapNews(user.getUserId(), newsReadRequestDTO); //뉴스 읽음 처리
+            newsService.scrapNews(user, newsReadRequestDTO); //뉴스 읽음 처리
 
             return ApiResponse.createSuccessWithNoContent("뉴스 스크랩 처리 성공");
         } catch (Exception e) {
@@ -200,7 +223,7 @@ public class NewsController {
                     .difficulty(difficulty)
                     .build();
 
-            newsService.cancelScrapedNews(user.getUserId(), newsReadRequestDTO);
+            newsService.cancelScrapedNews(user, newsReadRequestDTO);
 
             return ApiResponse.createSuccessWithNoContent("뉴스 스크랩 취소 처리 성공");
         } catch (Exception e) {
@@ -210,7 +233,16 @@ public class NewsController {
 
     }
 
-
+    @GetMapping("/search")
+    public ApiResponse<?> searchNews(@RequestParam String query) throws IOException {
+        // contains 방식으로 검색 수행
+        try {
+            List<SearchNewsDTO> dto = newsService.searchByTitleOrTitleEngContains(query);
+            return ApiResponse.createSuccess(dto, "good");
+        }catch(Exception e) {
+            return ApiResponse.createError(ErrorCode.WORD_CREATE_FAILED);
+        }
+    }
 
     /* 추천 */
 

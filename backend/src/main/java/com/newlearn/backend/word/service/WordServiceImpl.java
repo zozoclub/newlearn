@@ -3,13 +3,18 @@ package com.newlearn.backend.word.service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
+import com.newlearn.backend.study.model.Goal;
+import com.newlearn.backend.study.repository.StudyRepository;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.newlearn.backend.news.model.News;
+import com.newlearn.backend.news.repository.NewsRepository;
 import com.newlearn.backend.user.model.Users;
 import com.newlearn.backend.word.dto.request.RestudyResultRequestDTO;
 import com.newlearn.backend.word.dto.request.WordRequestDto;
@@ -32,6 +37,8 @@ public class WordServiceImpl implements WordService {
 
 	private final WordRepository wordRepository;
 	private final WordSentenceRepository wordSentenceRepository;
+	private final NewsRepository newsRepository;
+	private final StudyRepository studyRepository;
 
 	@Transactional
 	@Override
@@ -63,7 +70,7 @@ public class WordServiceImpl implements WordService {
 
 		for(Word word : findAllWords) {
 			WordResponseDTO wordResponseDTO = new WordResponseDTO(word.getWordId(), word.getWord(),
-				word.getWordMeaning(), word.isComplete());
+					word.getWordMeaning(), word.isComplete());
 			response.add(wordResponseDTO);
 		}
 
@@ -79,7 +86,7 @@ public class WordServiceImpl implements WordService {
 
 		for(Word word : findAllWords) {
 			WordResponseDTO wordResponseDTO = new WordResponseDTO(word.getWordId(), word.getWord(),
-				word.getWordMeaning(), word.isComplete());
+					word.getWordMeaning(), word.isComplete());
 			response.add(wordResponseDTO);
 		}
 
@@ -89,7 +96,7 @@ public class WordServiceImpl implements WordService {
 	@Override
 	public void deleteWord(Long wordId) {
 		Word word = wordRepository.findById(wordId)
-			.orElseThrow(() -> new IllegalArgumentException("단어로 찾을 수 없습니다. " + wordId));
+				.orElseThrow(() -> new IllegalArgumentException("단어로 찾을 수 없습니다. " + wordId));
 
 		// 연관된 사용자로부터 단어 제거
 		Users user = word.getUser();
@@ -109,23 +116,33 @@ public class WordServiceImpl implements WordService {
 		}
 
 		String wordMeaning = words.get(0).getWordMeaning();
-
 		List<WordDetailResponseDTO.SentenceResponseDTO> sentenceDTO = words.stream()
-			.map(w -> new WordDetailResponseDTO.SentenceResponseDTO(
-				w.getSentence().getNewsId(),
-				w.getSentence().getDifficulty(),
-				w.getSentence().getSentence(),
-				w.getSentence().getSentenceMeaning()
-			)).toList();
-
+				.map(w -> {
+					try {
+						return new WordDetailResponseDTO.SentenceResponseDTO(
+								w.getSentence().getNewsId(),
+								w.getSentence().getDifficulty(),
+								w.getSentence().getSentence(),
+								w.getSentence().getSentenceMeaning(),
+								getUrl(w.getSentence().getNewsId())
+						);
+					} catch (Exception e) {
+						throw new RuntimeException(e);
+					}
+				}).toList();
 		return new WordDetailResponseDTO(word, wordMeaning, sentenceDTO);
 
+	}
+
+	private String getUrl(Long newsId) throws Exception {
+		News news = newsRepository.findById(newsId).orElseThrow(() -> new Exception("뉴스 없음요"));
+		return news.getUrl();
 	}
 
 	@Transactional
 	public void completeWord(Long wordId, Users user) {
 		Word word = wordRepository.findById(wordId)
-			.orElseThrow(() -> new IllegalArgumentException("해당 단어를 찾을 수 없"));
+				.orElseThrow(() -> new IllegalArgumentException("해당 단어를 찾을 수 없"));
 
 		if (!word.getUser().equals(user)) {
 			throw new IllegalStateException("사용자와 단어가 일치하지 않습니다.");
@@ -133,6 +150,18 @@ public class WordServiceImpl implements WordService {
 
 		word.completeWord();
 		wordRepository.save(word);
+
+//		Optional<Goal> optionalGoal = studyRepository.findByUserId(user.getUserId());
+//		if (optionalGoal.isPresent()) {
+//			Goal goal = optionalGoal.get();
+//
+//			if (word.isComplete()) {
+//				goal.setCurrentCompleteWord(goal.getCurrentCompleteWord() + 1);
+//			} else {
+//				goal.setCurrentCompleteWord(goal.getCurrentCompleteWord() - 1);
+//			}
+//			studyRepository.save(goal);
+//		}
 	}
 
 	/**
@@ -145,15 +174,15 @@ public class WordServiceImpl implements WordService {
 
 		LocalDateTime now = LocalDateTime.now();
 		List<Word> words = wordRepository.findByUserAndNextRestudyDateLessThanEqualAndIsFinalCompleteFalseAndIsCompleteTrue(
-			user, now);
+				user, now);
 
 		List<RestudyWordResponseDTO> response = new ArrayList<>();
 
 		for(Word nowWord : words) {
 			WordSentence nowSentence = nowWord.getSentence();
 			RestudyWordResponseDTO dto = new RestudyWordResponseDTO(nowWord.getWordId(), nowWord.getWord(),
-				nowWord.getWordMeaning(), nowSentence.getSentence(), nowSentence.getSentenceMeaning(),
-				nowWord.getRestudyLevel());
+					nowWord.getWordMeaning(), nowSentence.getSentence(), nowSentence.getSentenceMeaning(),
+					nowWord.getRestudyLevel());
 			response.add(dto);
 		}
 
@@ -166,7 +195,7 @@ public class WordServiceImpl implements WordService {
 	@Override
 	public void processRestudy(Long wordId, boolean isCorrect) {
 		Word word = wordRepository.findById(wordId)
-			.orElseThrow(() -> new EntityNotFoundException("단어가 없슴요"));
+				.orElseThrow(() -> new EntityNotFoundException("단어가 없슴요"));
 
 		word.restudy(isCorrect);
 		wordRepository.save(word);
@@ -177,7 +206,7 @@ public class WordServiceImpl implements WordService {
 	@Override
 	public void skipRestudy(Long wordId) {
 		Word word = wordRepository.findById(wordId)
-			.orElseThrow(() -> new EntityNotFoundException("Word not found"));
+				.orElseThrow(() -> new EntityNotFoundException("Word not found"));
 
 		word.setNextRestudyDate(LocalDateTime.now().plusDays(1));
 		wordRepository.save(word);
@@ -188,7 +217,7 @@ public class WordServiceImpl implements WordService {
 	public void finalCompleteRestudy(Long wordId) {
 
 		Word word = wordRepository.findById(wordId)
-			.orElseThrow(() -> new EntityNotFoundException("Word not found"));
+				.orElseThrow(() -> new EntityNotFoundException("Word not found"));
 
 		//만약 아직 외운 단어가 아니라면
 		if(!word.isComplete()) {

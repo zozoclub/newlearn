@@ -20,10 +20,13 @@ import com.newlearn.backend.user.dto.request.UpdateAvatarDTO;
 import com.newlearn.backend.user.dto.request.SignUpRequestDTO;
 import com.newlearn.backend.user.dto.request.UpdateCategoryRequestDTO;
 import com.newlearn.backend.user.dto.request.UpdateDifficultyRequestDTO;
+import com.newlearn.backend.user.dto.request.UpdateExperienceRequestDTO;
 import com.newlearn.backend.user.dto.request.UpdateNicknameRequestDto;
+import com.newlearn.backend.user.dto.response.AvatarResponseDTO;
 import com.newlearn.backend.user.dto.response.LoginResponseDTO;
 import com.newlearn.backend.user.dto.response.RefreshTokenResponseDTO;
 import com.newlearn.backend.user.dto.response.UserProfileResponseDTO;
+import com.newlearn.backend.user.model.Avatar;
 import com.newlearn.backend.user.model.Users;
 import com.newlearn.backend.user.service.TokenService;
 import com.newlearn.backend.user.service.UserService;
@@ -66,11 +69,25 @@ public class UserController {
 			if(user == null) {
 				return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
 			}
-			userService.updateAvatar(user.getUserId(), updateAvatarDTO);
+			userService.updateAvatar(user, updateAvatarDTO);
 
 			return ApiResponse.createSuccess(null, "성공적으로 아바타 업데이트");
 		} catch (Exception e) {
 			return ApiResponse.createError(ErrorCode.USER_UPDATE_FAILED);
+		}
+	}
+
+	@GetMapping("/avatar/{userId}")
+	public ApiResponse<?> getAvatar(Authentication authentication, @PathVariable Long userId) {
+		try {
+			Users user = userService.findByEmail(authentication.getName());
+			if(user == null) {
+				return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
+			}
+			AvatarResponseDTO result = userService.getAvartar(userId);
+			return ApiResponse.createSuccess(result, "아바타 조회 성공");
+		} catch (Exception e) {
+			return ApiResponse.createError(ErrorCode.AVATAR_NOT_FOUND);
 		}
 	}
 
@@ -189,7 +206,7 @@ public class UserController {
 			if(userService.checkNickname(nickname)) {
 				return ApiResponse.createError(ErrorCode.NICKNAME_ALREADY_USED);
 			}
-			userService.updateNickname(user.getUserId(), nickname);
+			userService.updateNickname(user, nickname);
 			return ApiResponse.createSuccess(null, "닉네임 업데이트 성공");
 
 		} catch (Exception e) {
@@ -205,7 +222,7 @@ public class UserController {
 				return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
 			}
 
-			userService.updateDifficulty(user.getUserId(), updateDifficultyRequestDTO.getDifficulty());
+			userService.updateDifficulty(user, updateDifficultyRequestDTO.getDifficulty());
 			return ApiResponse.createSuccess(null, "난이도 업데이트 성공");
 
 		} catch (Exception e) {
@@ -221,8 +238,7 @@ public class UserController {
 				return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
 			}
 
-
-			userService.updateCategory(user.getUserId(), updateCategoryRequestDTO.getCategories());
+			userService.updateCategory(user, updateCategoryRequestDTO.getCategories());
 			return ApiResponse.createSuccess(null, "난이도 업데이트 성공");
 
 		} catch (Exception e) {
@@ -255,6 +271,20 @@ public class UserController {
 			return ApiResponse.createSuccess(null, "회원 탈퇴가 완료되었습니다.");
 		} catch (Exception e) {
 			return ApiResponse.createError(ErrorCode.USER_DELETE_FAILED);
+		}
+	}
+
+	@PutMapping("/update-experience")
+	public ApiResponse<?> updateExperience(Authentication authentication, @RequestBody UpdateExperienceRequestDTO updateExperienceRequestDTO) {
+		try {
+			Users user = userService.findByEmail(authentication.getName());
+			if (user == null) {
+				return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
+			}
+			userService.updateExperience(user, updateExperienceRequestDTO.getExperience());
+			return ApiResponse.createSuccess(null, "경험치 업뎃성공!!");
+		} catch (Exception e) {
+			return ApiResponse.createError(ErrorCode.USER_UPDATE_FAILED);
 		}
 	}
 }

@@ -7,7 +7,6 @@ export const PWAInstallPrompt = () => {
   const [isInstalled, , , handleInstallClick] = usePWAPrompt({});
   const [isOpen, setIsOpen] = useState<boolean>(true);
 
-  // 취소 버튼 클릭 시, 로컬 스토리지에 거절 상태를 저장하고 모달을 닫음
   const handleClose = () => {
     localStorage.setItem("pwaInstallRejected", "true"); // 거절 상태 저장
     setIsOpen(false);
@@ -16,12 +15,12 @@ export const PWAInstallPrompt = () => {
 
   return (
     !isInstalled &&
-    <Modal isOpen={isOpen} onClose={handleClose} title="앱 설치 멘트입니다.">
+    <Modal isOpen={isOpen} onClose={handleClose} title="New Learn">
       <p>앱으로 사용하면 더 편하게 사용할 수 있습니다!</p>
       <ModalButtonContainer>
         <ModalCancelButton onClick={handleClose}>취소</ModalCancelButton>
         <ModalConfirmButton onClick={handleInstallClick}>
-          확인
+          설치
         </ModalConfirmButton>
       </ModalButtonContainer>
     </Modal>

@@ -133,7 +133,10 @@ export default MyStudyPage;
 const Container = styled.div`
   display: flex;
   gap: 3rem;
-  min-height: 700px;
+  width: 90%;
+  padding: 50px 5%;
+  min-height: 600px;
+  height: 600px;
 `;
 
 const GoalContainer = styled.div`
@@ -143,7 +146,7 @@ const GoalContainer = styled.div`
   align-items: center;
 
   height: 100%;
-  min-height: 700px;
+  min-height: 600px;
 
   background-color: ${(props) => props.theme.colors.cardBackground01};
   box-shadow: ${(props) => props.theme.shadows.medium};

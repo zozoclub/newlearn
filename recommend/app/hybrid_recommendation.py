@@ -208,7 +208,7 @@ def collaborative_filtering(user_id: int, db: Session) -> List[tuple]:
                 recommended_news.append((click["news_id"], news_metadata.title, news_metadata.category_id, weight, news_metadata.published_date, news_metadata.hit))
 
     # 가중치 기준으로 추천 뉴스 정렬
-    return sorted(recommended_news, key=lambda x: x[3], reverse=True)[:5]
+    return sorted(recommended_news, key=lambda x: x[3], reverse=True)[:20]
 
 def content_based_filtering(user_id: int, db: Session) -> List[tuple]:
     """컨텐츠 기반 필터링 추천"""
@@ -244,7 +244,7 @@ def content_based_filtering(user_id: int, db: Session) -> List[tuple]:
                 recommended_news.append((news_metadata.news_id, news_metadata.title, news_metadata.category_id, weight, news_metadata.published_date, news_metadata.hit))
 
     # 가중치 기준으로 추천 뉴스 정렬
-    return sorted(recommended_news, key=lambda x: x[3], reverse=True)[:5]
+    return sorted(recommended_news, key=lambda x: x[3], reverse=True)[:20]
 
 def hybrid_recommendation(user_id: int, db: Session) -> List[tuple]:
     """하이브리드 추천 (협업 필터링 + 컨텐츠 기반 필터링)"""
@@ -253,7 +253,7 @@ def hybrid_recommendation(user_id: int, db: Session) -> List[tuple]:
 
     all_recommendations = {news[0]: news for news in collaborative_recommendations + content_recommendations}
 
-    return sorted(all_recommendations.values(), key=lambda x: x[2], reverse=True)[:5]
+    return sorted(all_recommendations.values(), key=lambda x: x[2], reverse=True)[:20]
 
 @lru_cache(maxsize=128)
 def recommend_news(user_id: int, db: Session) -> List[tuple]:

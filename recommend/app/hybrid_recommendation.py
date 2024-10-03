@@ -8,6 +8,7 @@ from datetime import datetime, timedelta
 import locale
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity as sklearn_cosine_similarity
+from functools import lru_cache
 
 ##################################### 데이터 처리
 
@@ -50,6 +51,7 @@ def find_similar_users(user_id: int):
     return [user[0] for user in similar_users]
 
 # 해당 유저의 UserCategory (MySQL) 가져 오기
+@lru_cache(maxsize=1024)
 def get_user_categories(user_id: int, db: Session):
     return db.query(UserCategory).filter(UserCategory.user_id == user_id).all()
 
@@ -86,6 +88,7 @@ def parse_korean_date(date_str: str) -> datetime:
         print(f"날짜 파싱 오류: {date_str}. 오류 내용: {str(e)}")
         return datetime.now()
 
+@lru_cache(maxsize=1024)
 def get_news_metadata(news_id: int, db: Session):
     news = db.query(News).filter(News.news_id == news_id).first()
     if news and isinstance(news.published_date, str):
@@ -93,6 +96,7 @@ def get_news_metadata(news_id: int, db: Session):
     return news
 
 # User (MySQL) 가져 오기
+@lru_cache(maxsize=1024)
 def get_user_difficulty(user_id: int, db: Session):
     user = db.query(User).filter(User.user_id == user_id).first()
     if user:

@@ -24,8 +24,11 @@ import {
   PronounceTestRequestDto,
   PronounceTestListDto,
 } from "@services/speakingTestService";
+import { isExpModalState } from "@store/expState";
+
 
 const SpeakingTestPage: React.FC = () => {
+  const setExpModal = useSetRecoilState(isExpModalState);
   const navigate = useNavigate();
 
   const { isLoading, error, data } = useQuery({
@@ -129,7 +132,6 @@ const SpeakingTestPage: React.FC = () => {
       postPronounceTestResult(testResult),
     onSuccess: (data) => {
       const { audioFileId } = data; // 응답에서 audioFileId 추출
-      console.log("audioFileId:", audioFileId);
       // audioFileId를 결과 페이지로 전달
       navigate(`/speaking/result/${audioFileId}`);
     },
@@ -301,9 +303,15 @@ const SpeakingTestPage: React.FC = () => {
         files: audioFile,
       };
 
-      console.log(results);
-
-      mutation.mutate(results);
+      mutation.mutate(results, {
+        onSuccess: () => {
+          setExpModal({
+            isOpen: true,
+            experience: 20,
+            action: "예문 스피킹 테스트  "
+          })
+        }
+      });
       setIsSubmitLoading(false);
     };
 

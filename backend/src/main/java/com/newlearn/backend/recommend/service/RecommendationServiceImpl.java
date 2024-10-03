@@ -1,6 +1,11 @@
 package com.newlearn.backend.recommend.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.newlearn.backend.news.dto.response.NewsSimpleResponseDTO;
+import com.newlearn.backend.news.model.News;
+import com.newlearn.backend.news.repository.NewsRepository;
 import com.newlearn.backend.recommend.dto.NewsRecommendationDTO;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,6 +17,11 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import static com.newlearn.backend.recommend.dto.NewsRecommendationDTO.convertToNewsRecommendationDTOList;
 
 @Slf4j
 @Service
@@ -19,14 +29,26 @@ import java.util.List;
 public class RecommendationServiceImpl implements RecommendationService {
 
     private final RestTemplate restTemplate;
+    private final NewsRepository newsRepository;
+    private final ObjectMapper objectMapper;
 
     @Value("${fast-api.base.url}")
     private String fastApiBaseUrl;
 
     @Override
-    public List<NewsRecommendationDTO> recommendContentNews(int newsId) {
+    public List<NewsSimpleResponseDTO> recommendContentNews(long newsId) {
         String url = fastApiBaseUrl + "/recommendation/news/" + newsId;
-        return getNewsRecommendations(url);
+
+        List<NewsRecommendationDTO> responseList = getNewsRecommendations(url);
+
+        List<NewsSimpleResponseDTO> recommendNewsList = responseList.stream()
+                .map(one -> {
+                    News news = newsRepository.findById(one.getNewsId())
+                            .orElseThrow(() -> new EntityNotFoundException("News not found with id: " + one.getNewsId()));
+                    return NewsSimpleResponseDTO.makeNewsSimpleResponseDTO(news);
+                })
+                .collect(Collectors.toList());
+        return recommendNewsList;
     }
 
     @Override
@@ -53,27 +75,21 @@ public class RecommendationServiceImpl implements RecommendationService {
         return getNewsRecommendations(url);
     }
 
-    private List<NewsRecommendationDTO> getNewsRecommendations(String url) {
+    public List<NewsRecommendationDTO> getNewsRecommendations(String url) {
         try {
-            ResponseEntity<List<NewsRecommendationDTO>> response = restTemplate.exchange(
-                    url,
-                    HttpMethod.GET,
-                    null,
-                    new ParameterizedTypeReference<List<NewsRecommendationDTO>>() {}
-            );
+            ResponseEntity<String> responseEntity = restTemplate.getForEntity(url, String.class);
 
-            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-                return response.getBody();
+            if (responseEntity.getStatusCode().is2xxSuccessful() && responseEntity.getBody() != null) {
+                List<List<Object>> rawData = objectMapper.readValue(responseEntity.getBody(),
+                        new TypeReference<List<List<Object>>>() {});
+                return convertToNewsRecommendationDTOList(rawData);
             } else {
-                log.error("Failed to retrieve recommendations: {}", response.getStatusCode());
+                log.error("Failed to retrieve recommendations: {}", responseEntity.getStatusCode());
                 return List.of();   // 우선, 빈 리스트 반환하도록
             }
-        } catch (HttpClientErrorException e) {
-            log.error("HTTP error while fetching recommendations: {}", e.getMessage());
-            return List.of();
         } catch (Exception e) {
             log.error("Error while fetching recommendations: {}", e.getMessage());
-            return List.of();
+            return List.of();   // 우선, 빈 리스트 반환하도록
         }
     }
 }

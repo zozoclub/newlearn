@@ -124,7 +124,11 @@ public class WordServiceImpl implements WordService {
 								w.getSentence().getDifficulty(),
 								w.getSentence().getSentence(),
 								w.getSentence().getSentenceMeaning(),
-								getUrl(w.getSentence().getNewsId())
+								getUrl(w.getSentence().getNewsId()),
+								w.getPronounceUs(),
+								w.getPronounceUk(),
+								w.getAudioUs(),
+								w.getAudioUk()
 						);
 					} catch (Exception e) {
 						throw new RuntimeException(e);

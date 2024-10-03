@@ -51,7 +51,7 @@ class News(Base):
     content = Column(Text, nullable=False)
     category_id = Column(BigInteger, ForeignKey('category.category_id', ondelete='SET NULL'), nullable=True)    # 카테고리
     hit = Column(BigInteger, default=0) # 조회수
-    published_date = Column(TIMESTAMP, nullable=False)  # 작성 시간
+    published_date = Column(TIMESTAMP, nullable=False)  # 작성 시간 ex) 2024. 09. 26. 오후 12:24
 
     # 뉴스 - 카테고리
     category = relationship('Category', back_populates='news')

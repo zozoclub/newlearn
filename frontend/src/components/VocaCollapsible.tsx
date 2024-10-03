@@ -2,26 +2,33 @@ import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import Modal from "./Modal";
-import { getWordDetail, WordDetailResponseDto } from "@services/wordMemorize";
-import { useQuery } from "@tanstack/react-query";
+import { deleteMemorizeWord, getWordDetail, WordDetailResponseDto } from "@services/wordMemorize";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Spinner from "./Spinner";
 
 type VocaCollapsibleProps = {
+  id: string;
   title: string;
   meaning: string;
   isExpanded: boolean;
-  onDelete: () => void;
 };
 
 const VocaCollapsible: React.FC<VocaCollapsibleProps> = ({
+  id,
   title,
   meaning,
   isExpanded,
-  onDelete,
 }) => {
   const [expanded, setExpanded] = useState<boolean>(isExpanded);
   const contentRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  const { mutate: deleteMutation } = useMutation<void, Error, number>({
+    mutationFn: (wordId: number) => deleteMemorizeWord(wordId),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ["memorizeWordList"] }),
+  });
 
   const { data, isLoading } = useQuery<WordDetailResponseDto>({
     queryKey: ["wordDetail", title],
@@ -29,6 +36,8 @@ const VocaCollapsible: React.FC<VocaCollapsibleProps> = ({
   });
 
   const toggleExpand = () => {
+    console.log(id);
+
     setExpanded((prev) => !prev);
   };
 
@@ -37,7 +46,9 @@ const VocaCollapsible: React.FC<VocaCollapsibleProps> = ({
   const closeDeleteModal = () => setIsDeleteModal(false);
 
   const handleDeleteConfirm = () => {
-    onDelete();
+    console.log(id);
+    deleteMutation(Number(id));
+    closeDeleteModal()
   };
 
   const handleNewsLinkClick = (newsId: number) => {
@@ -55,14 +66,13 @@ const VocaCollapsible: React.FC<VocaCollapsibleProps> = ({
       : numberedMeaning;
   };
 
-  // title(단어)을 문장 속에서 찾아서 강조
   const highlightWordInSentence = (sentence: string, word: string) => {
     const parts = sentence.split(new RegExp(`(${word})`, 'gi')); // 단어로 split, 대소문자 무시
     return parts.map((part, index) =>
       part.toLowerCase() === word.toLowerCase() ? (
-        <HighlightedWord key={index}>{part}</HighlightedWord> // 강조된 단어
+        <HighlightedWord key={index}>{part}</HighlightedWord>
       ) : (
-        <span key={index}>{part}</span> // 일반 텍스트
+        <span key={index}>{part}</span>
       )
     );
   };
@@ -77,7 +87,7 @@ const VocaCollapsible: React.FC<VocaCollapsibleProps> = ({
           <TitleContent>
             <TitleWord>{title.toLowerCase()}</TitleWord>
           </TitleContent>
-          <TitleMeaning>{processMeaning(meaning)}</TitleMeaning> {/* 뜻 처리 */}
+          <TitleMeaning>{processMeaning(meaning)}</TitleMeaning>
           <Arrow $isExpanded={expanded}>▼</Arrow>
           <DeleteButton onClick={openDeleteModal}>&times;</DeleteButton>
         </Title>

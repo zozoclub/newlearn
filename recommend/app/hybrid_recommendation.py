@@ -2,7 +2,7 @@ from app.database import user_news_click
 from app.models import UserCategory, News, User, UserNewsScrap
 from sqlalchemy.orm import Session
 import numpy as np
-from typing import Dict
+from typing import Dict, List
 from collections import defaultdict
 from datetime import datetime, timedelta
 
@@ -223,3 +223,21 @@ def get_cbf_news(user_id: int, db: Session):
 
     sorted_news_ids = sorted(recommended_news, key=recommended_news.get, reverse=True)
     return [get_news_metadata(news_id, db) for news_id in sorted_news_ids[:20]]  # 상위 20개 추천
+
+
+def hybrid_recommendation(user_id: int, db: Session, num_recommendations: int = 10) -> List[News]:
+    cf_recommendations = get_cf_news(user_id, db)
+    cbf_recommendations = get_cbf_news(user_id, db)
+
+    hybrid_scores = defaultdict(float)
+
+    for news_id, score in cf_recommendations:
+        hybrid_scores[news_id] += score
+
+    for news in cbf_recommendations:
+        hybrid_scores[news.news_id] += 1
+
+    final_recommendations = sorted(hybrid_scores.items(), key=lambda x: x[1], reverse=True)
+
+    recommended_news_ids = [news_id for news_id, _ in final_recommendations[:num_recommendations]]
+    return [get_news_metadata(news_id, db) for news_id in recommended_news_ids]

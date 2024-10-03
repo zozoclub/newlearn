@@ -1,55 +1,100 @@
+import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from sqlalchemy.orm import Session
+from sqlalchemy import func
+from typing import List, Tuple
+from datetime import datetime, timedelta
 
 from app.models import News
-from app.models import UserNewsRead
+from app.models import UserNewsRead, UserCategory
+from app.crud import get_user_category
 
+from app.hybrid_recommendation import get_news_metadata, parse_korean_date
 
-def get_cbf_news(user_id: int, db: Session):
-    # 사용자가 읽은 뉴스 기사 가져오기
-    user_read_news = (
-        db.query(News)
-        .join(UserNewsRead)
-        .filter(UserNewsRead.user_id == user_id)
-        .all()
-    )
+###############################################################################
+# 현재 기사 - 컨텐츠 기반 뉴스 추천
+class NewsContentsRecommender:
+    def __init__(self, db: Session, max_news: int = 2000):
+        self.db = db
+        self.max_news = max_news
+        self.tfidf_vectorizer = TfidfVectorizer(stop_words='english')
+        self.update_news_data()
 
-    if not user_read_news:
-        return []
+    def update_news_data(self):
+        """현재 보는 뉴스 데이터 업데이트"""
+        self.all_news = self.db.query(News).order_by(News.published_date.desc()).limit(self.max_news).all()
 
-    # 최근 뉴스 최대 100개 가져오기
-    all_news = db.query(News).limit(100).all()
+        self.categories = [news.category_id for news in self.all_news] # 카테고리
+        self.contents = [news.title + ' ' + news.content for news in self.all_news] # 제목 + 본문 결합해서 하나의 feature로 사용
 
-    # 제목 & 카테고리 기반 추천
-    titles = [news.title for news in all_news]
-    contents = [news.title + ' ' + str(news.category_id) for news in all_news]  # 제목과 카테고리를 결합하여 콘텐츠로 사용
+        # TF-IDF 벡터화
+        self.tfidf_matrix = self.tfidf_vectorizer.fit_transform(self.contents)
 
-    # TF-IDF 벡터화
-    tfidf_vectorizer = TfidfVectorizer(stop_words='english')
-    tfidf_matrix = tfidf_vectorizer.fit_transform(contents)
+    def get_hit_weight(self, hits: int) -> float:
+        """조회수 가중치 계산"""
+        return np.log1p(hits)  # log(1 + hits)를 사용하여 극단적인 차이 완화
 
-    # 사용자 읽은 뉴스 기사의 TF-IDF 벡터 찾기
-    user_vectors = tfidf_vectorizer.transform([news.title + ' ' + str(news.category_id) for news in user_read_news])
+    def get_date_weight(self, published_date: str) -> float:
+        """날짜 가중치 계산"""
+        published_date = parse_korean_date(published_date) # news테이블 작성시간이 string이라서 변경
+        days_old = (datetime.now() - published_date).days
+        return np.exp(-days_old / 30)  # 30일을 기준으로 지수 감소
 
-    # 코사인 유사도 계산
-    cosine_sim = cosine_similarity(user_vectors, tfidf_matrix)
+    def recommend_articles(self, news_id: int, top_n: int = 20) -> List[Tuple[int, str, int, float, int, datetime]]:
+        """기사 추천"""
+        current_news = get_news_metadata(news_id, self.db)
+        if not current_news:
+            return []
 
-    # 추천할 뉴스 기사의 인덱스 찾기
-    similar_news_indices = cosine_sim.argsort()[:, -6:][:, :-1]  # 자기 자신을 제외하고자 상위 6개 인덱스 선택
-    print(f"Similar news indices : {similar_news_indices.shape}")
+        current_index = self.all_news.index(current_news)
+        current_vector = self.tfidf_matrix[current_index]
 
-    recommended_news = {}
-    for index_list in similar_news_indices:
-        for index in index_list:
-            if all_news[index] not in user_read_news:
-                news = all_news[index]
-                if news.news_id not in recommended_news:
-                    recommended_news[news.news_id] = {
-                        'news_id': news.news_id,
-                        'title': news.title
-                    }
-                    # print(f"Added recommendation: {news.news_id} - {news.title}")
-    print(f"Total recommendations: {len(recommended_news)}")
-    return list(recommended_news.values())
+        similarities = cosine_similarity(current_vector, self.tfidf_matrix).flatten()
 
+        weighted_similarities = []
+        for i, sim in enumerate(similarities):
+            if i != current_index:
+                news = self.all_news[i]
+                hit_weight = self.get_hit_weight(news.hit)
+                date_weight = self.get_date_weight(news.published_date)
+                category_bonus = 1.2 if news.category_id == current_news.category_id else 1.0
+                weighted_sim = sim * hit_weight * date_weight * category_bonus
+                weighted_similarities.append((i, weighted_sim))
+
+        top_indices = sorted(weighted_similarities, key=lambda x: x[1], reverse=True)[:top_n]
+
+        recommendations = []
+        for idx, score in top_indices:
+            news = self.all_news[idx]
+            recommendations.append((
+                news.news_id,
+                news.title,
+                news.category_id,
+                float(score),
+                news.published_date,
+                news.hit
+            ))
+        return recommendations
+
+###############################################################################
+# 임시 - 카테고리 추천 (랜덤으로)
+def get_random_articles_by_categories(db: Session, user_categories: List[UserCategory]):
+    news_ids = []
+    for category in user_categories:
+        # 각 카테고리에 대해 news 테이블에서 랜덤으로 5개의 레코드를 선택
+        random_articles = db.query(News.news_id) \
+            .filter(News.category_id == category.category_id) \
+            .order_by(func.random()) \
+            .limit(5) \
+            .all()
+        # 선택된 레코드의 article_id를 article_ids 리스트에 추가
+        news_ids.extend([article.news_id for article in random_articles])
+    # print("랜덤뉴스by카테고리 : " , list(news_ids))
+    return news_ids
+
+def get_news_recomm_by_categories(user_id: int, db: Session):
+    user_categories = get_user_category(db, user_id)
+    news_ids = get_random_articles_by_categories(db, user_categories)
+    return news_ids
+###############################################################################

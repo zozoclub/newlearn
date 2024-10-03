@@ -51,9 +51,10 @@ public class RecommendationServiceImpl implements RecommendationService {
     }
 
     @Override
-    public List<NewsRecommendationDTO> recommendCategoryNews(int userId) {
-        String url = fastApiBaseUrl + "/recommendation/category/" + userId;
-        return getNewsRecommendations(url);
+    public List<NewsSimpleResponseDTO> recommendCategoryNews(Users user) {
+        String url = fastApiBaseUrl + "/recommendation/category/" + user.getUserId();
+        List<NewsRecommendationDTO> responseList = getNewsRecommendations(url);
+        return makeRecommendNewsList(responseList);
     }
 
     @Override

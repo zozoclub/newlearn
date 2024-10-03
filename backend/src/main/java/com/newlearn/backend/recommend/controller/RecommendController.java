@@ -56,7 +56,7 @@ public class RecommendController {
         }
     }
 
-    @GetMapping("/category/{userId}")
+    @GetMapping("/category")
     public ApiResponse<?> recommendCategoryNews(Authentication authentication) {
         try {
             Users user = userService.findByEmail(authentication.getName());

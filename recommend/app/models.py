@@ -1,4 +1,4 @@
-from sqlalchemy import Column, BigInteger, String, Text, ForeignKey
+from sqlalchemy import Column, BigInteger, String, Text, ForeignKey, TIMESTAMP
 from sqlalchemy.orm import relationship
 from app.database import Base
 
@@ -9,6 +9,7 @@ class User(Base):
     name = Column(String(50), nullable=False)
     email = Column(String(255), unique=True, nullable=False)
     nickname = Column(String(255), unique=True, nullable=False)
+    difficulty = Column(BigInteger)
 
     # 유저 - 읽은 뉴스 기록
     news_reads = relationship("UserNewsRead", back_populates="user")
@@ -45,8 +46,9 @@ class News(Base):
     news_id = Column(BigInteger, primary_key=True, index=True)
     title = Column(String(255), nullable=False)
     content = Column(Text, nullable=False)
-    category_id = Column(BigInteger, ForeignKey('category.category_id', ondelete='SET NULL'), nullable=True)
-    hit = Column(BigInteger, default=0)
+    category_id = Column(BigInteger, ForeignKey('category.category_id', ondelete='SET NULL'), nullable=True)    # 카테고리
+    hit = Column(BigInteger, default=0) # 조회수
+    published_date = Column(TIMESTAMP, nullable=False)  # 작성 시간
 
     # 뉴스 - 카테고리
     category = relationship('Category', back_populates='news')

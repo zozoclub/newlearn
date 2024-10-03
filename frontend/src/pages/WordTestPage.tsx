@@ -15,10 +15,10 @@ import {
 
 import Spinner from "@components/Spinner";
 import Modal from "@components/Modal";
+import { isExpModalState } from "@store/expState";
 
 // 모바일
 import WordTestMobilePage from "./mobile/WordTestMobilePage";
-import { isExpModalState } from "@store/expState";
 
 const WordTestPage: React.FC = () => {
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });

@@ -25,6 +25,7 @@ export const darkTheme: Theme = {
     text04: "#a5a5a5",
     readonly: "#333333",
     placeholder: "#8b8b8b",
+    highliting: "#78AFF0",
   },
   shadows: {
     small: "0.25rem 0.25rem 0.25rem #000000BD",

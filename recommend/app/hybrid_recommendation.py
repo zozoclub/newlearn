@@ -178,11 +178,27 @@ def get_user_time_pattern(user_id: int, db: Session) -> Dict[str, float]:
 
 ##################################### 추천 로직
 
+from app.database import user_news_click
+from app.models import UserCategory, News, User, UserNewsScrap
+from sqlalchemy.orm import Session
+import numpy as np
+from typing import Dict, List
+from collections import defaultdict
+from datetime import datetime, timedelta
+import locale
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity as sklearn_cosine_similarity
+from functools import lru_cache
+
+# ... (기존 데이터 처리 부분은 생략)
+
+##################################### 추천 로직
+
 def collaborative_filtering(user_id: int, db: Session):
     similar_users = find_similar_users(user_id)
     user_categories = get_user_categories(user_id, db)
     user_category_ids = [uc.category_id for uc in user_categories]
-    recommended_news = {}
+    recommended_news = []
     current_time = datetime.now()
 
     for similar_user_id in similar_users:
@@ -191,7 +207,8 @@ def collaborative_filtering(user_id: int, db: Session):
             if not user_news_click.find_one({"user_id": user_id, "news_id": click["news_id"]}):
                 news_metadata = get_news_metadata(click["news_id"], db)
 
-                if not news_metadata:   continue
+                if not news_metadata:
+                    continue
 
                 # 가중치 계산
                 weight = 0
@@ -203,7 +220,7 @@ def collaborative_filtering(user_id: int, db: Session):
                     weight += 1  # 가중치 1 (비관심 카테고리)
 
                 # 2) 조회수에 따른 가중치
-                weight += news_metadata.hit / 10  # ex) 조회수를 10으로 나누어 가중치 부여 (가중치가 너무 커질까봐)
+                weight += news_metadata.hit / 10  # 조회수를 10으로 나누어 가중치 부여
 
                 # 3) 작성 시간(최신)에 따른 가중치
                 if isinstance(news_metadata.published_date, str):
@@ -213,11 +230,12 @@ def collaborative_filtering(user_id: int, db: Session):
                     if time_diff < 24:  # 24시간 이내의 뉴스에 추가 가중치
                         weight += 1  # 최신 뉴스에 가중치 1 추가
 
-                # 가중치에 따른 추천 뉴스 수집
-                recommended_news[click["news_id"]] = recommended_news.get(click["news_id"], 0) + weight
+                # 추천 뉴스 수집
+                recommended_news.append((click["news_id"], news_metadata.title, weight, news_metadata.published_date, news_metadata.hit))
 
     # 가중치 기준으로 추천 뉴스 정렬
-    return sorted(recommended_news.items(), key=lambda x: x[1], reverse=True)[:5]
+    return sorted(recommended_news, key=lambda x: x[2], reverse=True)[:5]
+
 
 def content_based_filtering(user_id: int, db: Session):
     user_categories = get_user_categories(user_id, db)
@@ -229,7 +247,7 @@ def content_based_filtering(user_id: int, db: Session):
     time_based_popularity = get_time_based_popularity(db)
     difficulty_based_popularity = get_difficulty_based_popularity(db)
 
-    recommended_news = {}
+    recommended_news = []
     current_time = datetime.now()
 
     all_news = db.query(News).all()
@@ -266,32 +284,39 @@ def content_based_filtering(user_id: int, db: Session):
             if isinstance(news.published_date, datetime):
                 time_diff = (current_time - news.published_date).total_seconds() / 3600
                 if time_diff < 24:  # 24시간 이내의 뉴스에 추가 가중치
-                    weight += 1  # 최신 뉴스에 가중치 1 추가
+                    weight += 1
 
-            # 6) 제목 유사도에 따른 가중치
-            # 각 제목과 클릭한 제목 간의 유사도 계산
-            new_title_vector = vectorizer.transform([news.title]).toarray()
-            similarities = sklearn_cosine_similarity(new_title_vector, title_vectors)
-            weight += similarities.max()  # 최대 유사도를 가중치에 추가
+            # 추천 뉴스 수집
+            recommended_news.append((news.news_id, news.title, weight, news.published_date, news.hit))
 
-            recommended_news[news.news_id] = weight
+    # 가중치 기준으로 추천 뉴스 정렬
+    return sorted(recommended_news, key=lambda x: x[2], reverse=True)[:5]
 
-    sorted_news_ids = sorted(recommended_news, key=recommended_news.get, reverse=True)
-    return [get_news_metadata(news_id, db) for news_id in sorted_news_ids[:20]]  # 상위 20개 추천
 
-def hybrid_recommendation(user_id: int, db: Session, num_recommendations: int = 10) -> List[News]:
-    cf_recommendations = collaborative_filtering(user_id, db)
-    cbf_recommendations = content_based_filtering(user_id, db)
+def hybrid_recommendation(user_id: int, db: Session):
+    collaborative_recommendations = collaborative_filtering(user_id, db)
+    content_based_recommendations = content_based_filtering(user_id, db)
 
-    hybrid_scores = defaultdict(float)
+    combined_recommendations = defaultdict(lambda: {'weight': 0, 'title': '', 'published_date': None, 'hit': 0})
 
-    for news_id, score in cf_recommendations:
-        hybrid_scores[news_id] += score
+    for news_id, title, weight, published_date, hit in collaborative_recommendations:
+        combined_recommendations[news_id]['weight'] += weight * 0.5  # 협업 필터링 결과에 가중치 부여
+        combined_recommendations[news_id]['title'] = title
+        combined_recommendations[news_id]['published_date'] = published_date
+        combined_recommendations[news_id]['hit'] = hit
 
-    for news in cbf_recommendations:
-        hybrid_scores[news.news_id] += 1
+    for news_id, title, weight, published_date, hit in content_based_recommendations:
+        combined_recommendations[news_id]['weight'] += weight * 0.5  # 콘텐츠 기반 필터링 결과에 가중치 부여
+        if not combined_recommendations[news_id]['title']:  # 이미 추가된 제목이 없는 경우에만
+            combined_recommendations[news_id]['title'] = title
+            combined_recommendations[news_id]['published_date'] = published_date
+            combined_recommendations[news_id]['hit'] = hit
 
-    final_recommendations = sorted(hybrid_scores.items(), key=lambda x: x[1], reverse=True)
+    # 최종 추천 뉴스 목록 생성
+    final_recommendations = [
+        (news_id, data['title'], data['weight'], data['published_date'], data['hit'])
+        for news_id, data in combined_recommendations.items()
+    ]
 
-    recommended_news_ids = [news_id for news_id, _ in final_recommendations[:num_recommendations]]
-    return [get_news_metadata(news_id, db) for news_id in recommended_news_ids]
+    # 가중치 기준으로 정렬
+    return sorted(final_recommendations, key=lambda x: x[2], reverse=True)[:5]

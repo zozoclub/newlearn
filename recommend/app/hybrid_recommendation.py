@@ -6,6 +6,8 @@ from typing import Dict, List
 from collections import defaultdict
 from datetime import datetime, timedelta
 import locale
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity as sklearn_cosine_similarity
 
 ##################################### 데이터 처리
 
@@ -162,6 +164,11 @@ def get_user_time_pattern(user_id: int, db: Session) -> Dict[str, float]:
 
     return time_pattern
 
+# 제목을 벡터화하는 함수
+def vectorize_titles(titles: List[str]) -> np.ndarray:
+    vectorizer = TfidfVectorizer()
+    return vectorizer.fit_transform(titles).toarray(), vectorizer
+
 ##################################### 추천 로직
 
 def collaborative_filtering(user_id: int, db: Session):
@@ -219,6 +226,11 @@ def content_based_filtering(user_id: int, db: Session):
     current_time = datetime.now()
 
     all_news = db.query(News).all()
+    clicked_titles = [news.title for news in all_news if news.news_id in [click["news_id"] for click in user_clicks]]
+
+    # 기사 제목을 벡터화
+    title_vectors, vectorizer = vectorize_titles(clicked_titles)
+
     for news in all_news:
         if news.news_id not in [click["news_id"] for click in user_clicks]:
             weight = 0
@@ -248,6 +260,12 @@ def content_based_filtering(user_id: int, db: Session):
                 time_diff = (current_time - news.published_date).total_seconds() / 3600
                 if time_diff < 24:  # 24시간 이내의 뉴스에 추가 가중치
                     weight += 1  # 최신 뉴스에 가중치 1 추가
+
+            # 6) 제목 유사도에 따른 가중치
+            # 각 제목과 클릭한 제목 간의 유사도 계산
+            new_title_vector = vectorizer.transform([news.title]).toarray()
+            similarities = sklearn_cosine_similarity(new_title_vector, title_vectors)
+            weight += similarities.max()  # 최대 유사도를 가중치에 추가
 
             recommended_news[news.news_id] = weight
 

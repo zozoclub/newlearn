@@ -44,6 +44,30 @@ const VocaCollapsible: React.FC<VocaCollapsibleProps> = ({
     navigate(`/news/detail/${newsId}`);
   };
 
+  const processMeaning = (meaning: string) => {
+    const numberedMeaning = meaning
+      .split("//")
+      .map((word, index) => `${index + 1}. ${word}`)
+      .join(" ");
+
+    return numberedMeaning.length > 40
+      ? `${numberedMeaning.slice(0, 40)}...`
+      : numberedMeaning;
+  };
+
+  // title(단어)을 문장 속에서 찾아서 강조
+  const highlightWordInSentence = (sentence: string, word: string) => {
+    const parts = sentence.split(new RegExp(`(${word})`, 'gi')); // 단어로 split, 대소문자 무시
+    return parts.map((part, index) =>
+      part.toLowerCase() === word.toLowerCase() ? (
+        <HighlightedWord key={index}>{part}</HighlightedWord> // 강조된 단어
+      ) : (
+        <span key={index}>{part}</span> // 일반 텍스트
+      )
+    );
+  };
+
+
   const currentHeight = expanded ? contentRef.current?.scrollHeight : 0;
 
   return (
@@ -51,9 +75,9 @@ const VocaCollapsible: React.FC<VocaCollapsibleProps> = ({
       <ListItem>
         <Title onClick={toggleExpand}>
           <TitleContent>
-            <TitleWord>{title}</TitleWord>
+            <TitleWord>{title.toLowerCase()}</TitleWord>
           </TitleContent>
-          <TitleMeaning>{meaning}</TitleMeaning>
+          <TitleMeaning>{processMeaning(meaning)}</TitleMeaning> {/* 뜻 처리 */}
           <Arrow $isExpanded={expanded}>▼</Arrow>
           <DeleteButton onClick={openDeleteModal}>&times;</DeleteButton>
         </Title>
@@ -84,7 +108,7 @@ const VocaCollapsible: React.FC<VocaCollapsibleProps> = ({
                       원문 보기
                     </NewsLinkButton>
                   </SentenceHeader>
-                  <SentenceText>{sentence.sentence}</SentenceText>
+                  <SentenceText>{highlightWordInSentence(sentence.sentence, title)}</SentenceText>
                   <SentenceMeaning>{sentence.sentenceMeaning}</SentenceMeaning>
                 </SentenceContainer>
               ))}
@@ -246,4 +270,9 @@ const ModalConfirmButton = styled.button`
 
 const DeleteButton = styled.div`
   color: ${(props) => props.theme.colors.danger};
+`;
+
+const HighlightedWord = styled.span`
+  color: ${(props) => props.theme.colors.primary};
+  font-weight: bold;
 `;

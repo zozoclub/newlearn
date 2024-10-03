@@ -57,19 +57,17 @@ public class RecommendationServiceImpl implements RecommendationService {
         return makeRecommendNewsList(responseList);
     }
 
-    @Override
-    public List<NewsRecommendationDTO> recommendCfNews(int userId) {
-        String url = fastApiBaseUrl + "/hybrid-recommendation/cf/" + userId;
-        return getNewsRecommendations(url);
-    }
-
-    @Override
-    public List<NewsRecommendationDTO> recommendCbfNews(int userId) {
-        String url = fastApiBaseUrl + "/hybrid-recommendation/cbf/" + userId;
-        return getNewsRecommendations(url);
-    }
-
-
+//    @Override
+//    public List<NewsRecommendationDTO> recommendCfNews(int userId) {
+//        String url = fastApiBaseUrl + "/hybrid-recommendation/cf/" + userId;
+//        return getNewsRecommendations(url);
+//    }
+//
+//    @Override
+//    public List<NewsRecommendationDTO> recommendCbfNews(int userId) {
+//        String url = fastApiBaseUrl + "/hybrid-recommendation/cbf/" + userId;
+//        return getNewsRecommendations(url);
+//    }
 
     public List<NewsRecommendationDTO> getNewsRecommendations(String url) {
         try {

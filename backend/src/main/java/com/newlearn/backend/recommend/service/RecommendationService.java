@@ -11,7 +11,7 @@ public interface RecommendationService {
     List<NewsSimpleResponseDTO> recommendContentNews(Long newsId);
     List<NewsSimpleResponseDTO> recommendCategoryNews(Users user);
     List<NewsSimpleResponseDTO> recommendHybridNews(Users user);
-    List<NewsRecommendationDTO> recommendCfNews(int userId);
-    List<NewsRecommendationDTO> recommendCbfNews(int userId);
+//    List<NewsRecommendationDTO> recommendCfNews(int userId);
+//    List<NewsRecommendationDTO> recommendCbfNews(int userId);
 
 }

@@ -164,7 +164,7 @@ def get_user_time_pattern(user_id: int, db: Session) -> Dict[str, float]:
 def collaborative_filtering(user_id: int, db: Session) -> List[tuple]:
     similar_users = find_similar_users(user_id, db)
     user_categories = get_user_categories(user_id, db)
-    user_category_ids = [uc.category_id for uc in user_categories]
+    user_category_ids = {uc.category_id for uc in user_categories}
     recommended_news = []
     current_time = datetime.now()
 
@@ -203,7 +203,7 @@ def collaborative_filtering(user_id: int, db: Session) -> List[tuple]:
 
 def content_based_filtering(user_id: int, db: Session):
     user_categories = get_user_categories(user_id, db)
-    user_category_ids = [uc.category_id for uc in user_categories]
+    user_category_ids = {uc.category_id for uc in user_categories}
     user_clicks = get_user_click_log(user_id)
     user_difficulty = get_user_difficulty(user_id, db)
     user_time_pattern = get_user_time_pattern(user_id, db)

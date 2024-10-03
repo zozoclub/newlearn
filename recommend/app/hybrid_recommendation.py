@@ -41,14 +41,22 @@ def get_news_metadata(news_id: int, db: Session):
 def get_cf_news(user_id: int, db: Session):
     similar_users = find_similar_users(user_id)
 
+    # 유저 관심 카테 고리 기반 가중치 추가
+    user_categories = get_user_categories(user_id, db)
+    user_category_ids = [uc.category_id for uc in user_categories]
+
     # 유사한 유저가 클릭한 뉴스 가져 오기
-    recommended_news = set()
+    recommended_news = {}
     for similar_user_id in similar_users:
         similar_user_clicks = get_user_click_log(similar_user_id)
         for click in similar_user_clicks:
-            # 현재 유저가 클릭 하지 않은 뉴스만 추천
             if not user_news_click.find_one({"user_id": user_id, "news_id": click["news_id"]}):
-                recommended_news.add(click["news_id"])
+                news_metadata = get_news_metadata(click["news_id"], db)
+                if news_metadata.category_id in user_category_ids:
+                    recommended_news[click["news_id"]] = recommended_news.get(click["news_id"], 0) + 2  # 가중치 2
+                else:
+                    recommended_news[click["news_id"]] = recommended_news.get(click["news_id"], 0) + 1  # 가중치 1
 
     # 뉴스 데이터를 통해 뉴스 정보를 반환
-    return [get_news_metadata(news_id, db) for news_id in recommended_news]
+    sorted_news_ids = sorted(recommended_news, key=recommended_news.get, reverse=True)
+    return [get_news_metadata(news_id, db) for news_id in sorted_news_ids]

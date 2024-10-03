@@ -17,16 +17,16 @@ def get_db():
         db.close()
 
 # 콘텐츠 기반 필터링 뉴스 추천 - 뉴스 상세 페이지
-@app.get("/reccommendation/news/{news_id}")
+@app.get("/recommendation/news/{news_id}")
 def recommendation_contents_news(news_id: int, db: Session = Depends(get_db)):
     recommender = NewsContentsRecommender(db)
 
     recommended_news = recommender.recommend_articles(news_id, top_n=20)
 
-    print("추천 결과:")
-    for news_id, title, category_id, score, hit, published_date in recommended_news:
-        print(f"뉴스 ID: {news_id}, 제목: {title}, 카테고리 ID: {category_id}, "
-              f"점수: {score:.4f}, 조회수: {hit}, 작성일: {published_date}")
+    # print("추천 결과:")
+    # for news_id, title, category_id, score, published_date,  hit in recommended_news:
+    #     print(f"뉴스 ID: {news_id}, 제목: {title}, 카테고리 ID: {category_id}, "
+    #           f"점수: {score:.4f}, 조회수: {hit}, 작성일: {published_date}")
 
     if not recommended_news:
         raise HTTPException(status_code=404, detail="No news recommendations available.")

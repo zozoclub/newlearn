@@ -72,10 +72,9 @@ class NewsContentsRecommender:
                 news.title,
                 news.category_id,
                 float(score),
-                news.hit,
-                news.published_date
+                news.published_date,
+                news.hit
             ))
-
         return recommendations
 
 ###############################################################################

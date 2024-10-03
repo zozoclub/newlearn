@@ -13,6 +13,8 @@ import {
   getPointRankingList,
   getReadRankingList,
 } from "@services/rankingService";
+import { useRecoilValue } from "recoil";
+import { goalDataSelector } from "@store/goalState";
 
 const Widget: React.FC<{ variety: string }> = ({ variety }) => {
   const { isLoading: pointIsLoading, data: pointRankingList } = useQuery<

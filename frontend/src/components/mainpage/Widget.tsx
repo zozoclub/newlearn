@@ -96,10 +96,10 @@ const WidgetContainer = styled.div`
   padding: 2.5%;
 
   aspect-ratio: 1;
-  background-color: ${(props) => props.theme.colors.cardBackground + "CC"};
+  background-color: ${(props) => props.theme.colors.cardBackground01};
   border-radius: 1rem;
   transition: box-shadow 0.5s;
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(12px);
   box-shadow: ${(props) => props.theme.shadows.medium};
 `;
 

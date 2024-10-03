@@ -33,12 +33,13 @@ const Container = styled.div`
   padding: 2rem;
   margin: 1rem 0;
   border-radius: 1rem;
-  background-color: #0000003f;
+  background-color: ${(props) => props.theme.colors.newsItemBackground};
   overflow: hidden;
   transition: background-color 0.5s;
   cursor: pointer;
+  box-shadow: ${(props) => props.theme.shadows.small};
   &:hover {
-    background-color: #000000aa;
+    background-color: ${(props) => props.theme.colors.newsItemBackgroundPress};
   }
 `;
 
@@ -87,6 +88,7 @@ const Category = styled.div`
 const CategoryButton = styled.div`
   padding: 0.5rem 1rem;
   border-radius: 0.5rem;
+  color: #ffffff;
   background-color: ${(props) => props.theme.colors.primary};
   transition: background-color 0.5s;
   &:hover {

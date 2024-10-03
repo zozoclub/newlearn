@@ -5,6 +5,7 @@ import com.newlearn.backend.news.dto.response.NewsSimpleResponseDTO;
 import com.newlearn.backend.news.model.News;
 import com.newlearn.backend.news.repository.NewsRepository;
 import com.newlearn.backend.recommend.dto.NewsRecommendationDTO;
+import com.newlearn.backend.user.model.Users;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,19 +37,17 @@ public class RecommendationServiceImpl implements RecommendationService {
     private String fastApiBaseUrl;
 
     @Override
-    public List<NewsSimpleResponseDTO> recommendContentNews(long newsId) {
+    public List<NewsSimpleResponseDTO> recommendContentNews(Long newsId) {
         String url = fastApiBaseUrl + "/recommendation/news/" + newsId;
-
         List<NewsRecommendationDTO> responseList = getNewsRecommendations(url);
+        return makeRecommendNewsList(responseList);
+    }
 
-        List<NewsSimpleResponseDTO> recommendNewsList = responseList.stream()
-                .map(one -> {
-                    News news = newsRepository.findById(one.getNewsId())
-                            .orElseThrow(() -> new EntityNotFoundException("News not found with id: " + one.getNewsId()));
-                    return NewsSimpleResponseDTO.makeNewsSimpleResponseDTO(news);
-                })
-                .collect(Collectors.toList());
-        return recommendNewsList;
+    @Override
+    public List<NewsSimpleResponseDTO> recommendHybridNews(Users user) {
+        String url = fastApiBaseUrl + "/hybrid-recommendation/" + user.getUserId();
+        List<NewsRecommendationDTO> responseList = getNewsRecommendations(url);
+        return makeRecommendNewsList(responseList);
     }
 
     @Override
@@ -69,11 +68,7 @@ public class RecommendationServiceImpl implements RecommendationService {
         return getNewsRecommendations(url);
     }
 
-    @Override
-    public List<NewsRecommendationDTO> recommendHybridNews(int userId) {
-        String url = fastApiBaseUrl + "/hybrid-recommendation/" + userId;
-        return getNewsRecommendations(url);
-    }
+
 
     public List<NewsRecommendationDTO> getNewsRecommendations(String url) {
         try {
@@ -91,5 +86,16 @@ public class RecommendationServiceImpl implements RecommendationService {
             log.error("Error while fetching recommendations: {}", e.getMessage());
             return List.of();   // 우선, 빈 리스트 반환하도록
         }
+    }
+
+    private List<NewsSimpleResponseDTO> makeRecommendNewsList(List<NewsRecommendationDTO> responseList) {
+        List<NewsSimpleResponseDTO> recommendNewsList = responseList.stream()
+                .map(one -> {
+                    News news = newsRepository.findById(one.getNewsId())
+                            .orElseThrow(() -> new EntityNotFoundException("News not found with id: " + one.getNewsId()));
+                    return NewsSimpleResponseDTO.makeNewsSimpleResponseDTO(news);
+                })
+                .collect(Collectors.toList());
+        return recommendNewsList;
     }
 }

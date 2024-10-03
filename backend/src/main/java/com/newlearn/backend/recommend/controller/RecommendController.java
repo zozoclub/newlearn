@@ -40,40 +40,56 @@ public class RecommendController {
             return ApiResponse.createError(ErrorCode.NEWS_RECOMM_CONTENTS_FAILED);
         }
     }
+    @GetMapping("/hybrid")
+    public ApiResponse<?> recommendHybridNews(Authentication authentication) {
+        try {
+            Users user = userService.findByEmail(authentication.getName());
+            if (user == null) {
+                return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
+            }
+
+            List<NewsSimpleResponseDTO> recommendations = recommendationService.recommendHybridNews(user);
+            return ApiResponse.createSuccess(recommendations, "하이브리드 뉴스 추천 목록 불러오기 성공");
+        } catch (Exception e) {
+            log.error("하이브리드 기반 뉴스 추천 실패", e);
+            return ApiResponse.createError(ErrorCode.NEWS_RECOMM_HYBRID_FAILED);
+        }
+    }
 
     @GetMapping("/category/{userId}")
-    public ResponseEntity<List<NewsRecommendationDTO>> recommendCategoryNews(@PathVariable int userId) {
-        List<NewsRecommendationDTO> recommendations = recommendationService.recommendCategoryNews(userId);
-        if (recommendations.isEmpty()) {
-            return ResponseEntity.notFound().build();
+    public ApiResponse<?> recommendCategoryNews(Authentication authentication) {
+        try {
+            Users user = userService.findByEmail(authentication.getName());
+            if (user == null) {
+                return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
+            }
+
+            List<NewsSimpleResponseDTO> recommendations = recommendationService.recommendCategoryNews(user);
+            return ApiResponse.createSuccess(recommendations, "카테고리 뉴스 랜덤 목록 불러오기 성공");
+        } catch (Exception e) {
+            log.error("카테고리 랜덤 뉴스 추천 실패", e);
+            return ApiResponse.createError(ErrorCode.NEWS_RECOMM_CATEGORY_FAILED);
         }
-        return ResponseEntity.ok(recommendations);
     }
 
-    @GetMapping("/hybrid/cf/{userId}")
-    public ResponseEntity<List<NewsRecommendationDTO>> recommendCfNews(@PathVariable int userId) {
-        List<NewsRecommendationDTO> recommendations = recommendationService.recommendCfNews(userId);
-        if (recommendations.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(recommendations);
-    }
+//    @GetMapping("/hybrid/cf/{userId}")
+//    public ResponseEntity<List<NewsRecommendationDTO>> recommendCfNews(@PathVariable int userId) {
+//        List<NewsRecommendationDTO> recommendations = recommendationService.recommendCfNews(userId);
+//        if (recommendations.isEmpty()) {
+//            return ResponseEntity.notFound().build();
+//        }
+//        return ResponseEntity.ok(recommendations);
+//    }
+//
+//    @GetMapping("/hybrid/cbf/{userId}")
+//    public ResponseEntity<List<NewsRecommendationDTO>> recommendCbfNews(@PathVariable int userId) {
+//        List<NewsRecommendationDTO> recommendations = recommendationService.recommendCbfNews(userId);
+//        if (recommendations.isEmpty()) {
+//            return ResponseEntity.notFound().build();
+//        }
+//        return ResponseEntity.ok(recommendations);
+//    }
 
-    @GetMapping("/hybrid/cbf/{userId}")
-    public ResponseEntity<List<NewsRecommendationDTO>> recommendCbfNews(@PathVariable int userId) {
-        List<NewsRecommendationDTO> recommendations = recommendationService.recommendCbfNews(userId);
-        if (recommendations.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(recommendations);
-    }
 
-    @GetMapping("/hybrid/{userId}")
-    public ResponseEntity<List<NewsRecommendationDTO>> recommendHybridNews(@PathVariable int userId) {
-        List<NewsRecommendationDTO> recommendations = recommendationService.recommendHybridNews(userId);
-        if (recommendations.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(recommendations);
-    }
+
 }

@@ -3,6 +3,7 @@ from app.models import UserCategory, News
 from sqlalchemy.orm import Session
 from datetime import datetime
 import numpy as np
+import locale
 
 ##################################### 데이터 처리
 
@@ -50,10 +51,22 @@ def find_similar_users(user_id: int):
 def get_user_categories(user_id: int, db: Session):
     return db.query(UserCategory).filter(UserCategory.user_id == user_id).all()
 
+# ## published_date가 문자열값이므로 적절히 고침
+# # (한글 로케일 설정)
+# locale.setlocale(locale.LC_TIME, 'ko_KR.UTF-8')
+# # (published_date (Varchar(100))을 datetime 객체로 변환)
+# def parse_published_date(date_str: str) -> datetime:
+#     return datetime.strptime(date_str, '%Y. %m. %d. %p %I:%M')
+# # News (MySQL) 가져 오기
+# def get_news_metadata(news_id: int, db: Session):
+#     news = db.query(News).filter(News.news_id == news_id).first()
+#     if news and isinstance(news.published_date, str):
+#         news.published_date = parse_published_date(news.published_date)
+#     return news
+
 # News (MySQL) 가져 오기
 def get_news_metadata(news_id: int, db: Session):
     return db.query(News).filter(News.news_id == news_id).first()
-
 
 ##################################### 협업 필터링 로직
 
@@ -66,7 +79,7 @@ def get_cf_news(user_id: int, db: Session):
 
     # 유사한 유저가 클릭한 뉴스 가져 오기
     recommended_news = {}
-    current_time = datetime.now()
+    # current_time = datetime.now()
 
     for similar_user_id in similar_users:
         similar_user_clicks = get_user_click_log(similar_user_id)
@@ -86,10 +99,10 @@ def get_cf_news(user_id: int, db: Session):
                 # 2) 조회수에 따른 가중치
                 weight += news_metadata.hit / 10  # ex) 조회수를 10으로 나누어 가중치 부여 (가중치가 너무 커질까봐)
 
-                # 3) 작성 시간(최신)에 따른 가중치
-                time_diff = (current_time - news_metadata.published_date).total_seconds() / 3600  # 시간 차이를 시간 단위로 변환
-                if time_diff < 24:  # 24시간 이내의 뉴스에 추가 가중치
-                    weight += 1  # 최신 뉴스에 가중치 1 추가
+                # # 3) 작성 시간(최신)에 따른 가중치
+                # time_diff = (current_time - news_metadata.published_date).total_seconds() / 3600  # 시간 차이를 시간 단위로 변환
+                # if time_diff < 24:  # 24시간 이내의 뉴스에 추가 가중치
+                #     weight += 1  # 최신 뉴스에 가중치 1 추가
 
                 # 가중치에 따른 추천 뉴스 수집
                 recommended_news[click["news_id"]] = recommended_news.get(click["news_id"], 0) + weight

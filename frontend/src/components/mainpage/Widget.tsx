@@ -5,10 +5,14 @@ import CategoryChart from "@components/CategoryChart";
 import RankingWidget from "./RankingWidget";
 import GoalChartDoughnut from "@components/GoalChartDoughnut";
 import MainGoalBar from "@components/mainpage/MainGoalBar";
+import { useNavigate } from "react-router-dom";
 
 const Widget: React.FC<{ variety: string }> = ({ variety }) => {
+  const navigate = useNavigate();
   const goalData = useRecoilValue(goalDataSelector);
-  console.log(goalData);
+  const handleMyStudy = () => {
+    navigate("/mystudy");
+  };
   switch (variety) {
     // 다른 걸로 대체 예정
     case "profile":
@@ -35,8 +39,19 @@ const Widget: React.FC<{ variety: string }> = ({ variety }) => {
       return (
         <WidgetContainer>
           <Descripsion>study goal</Descripsion>
-          <GoalChartDoughnut />
-          <MainGoalBar />
+          {goalData[0].goal && goalData[1].goal && goalData[2].goal ? (
+            <>
+              <GoalChartDoughnut />
+              <MainGoalBar />
+            </>
+          ) : (
+            <>
+              <div>아직 학습 목표가 없습니다.</div>
+              <GoalSetting onClick={handleMyStudy}>
+                학습 목표 설정하기
+              </GoalSetting>
+            </>
+          )}
         </WidgetContainer>
       );
   }
@@ -72,4 +87,13 @@ const Descripsion = styled.div`
   font-size: 0.875rem;
 `;
 
+const GoalSetting = styled.button`
+  padding: 0.75rem;
+  margin-top: 1rem;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  background-color: ${(props) => props.theme.colors.primary};
+  cursor: pointer;
+`;
 export default Widget;

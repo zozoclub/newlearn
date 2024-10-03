@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { UseMutationResult } from "@tanstack/react-query";
+import { UseMutationResult, useQueryClient } from "@tanstack/react-query";
 import { GoalSettingType } from "@services/goalService";
+import { useSetRecoilState } from "recoil";
+import goalState from "@store/goalState";
+import QuestionMark from "@assets/icons/QuestionMark";
 
 type GoalSettingComponentProps = {
   goalMutation: UseMutationResult<GoalSettingType, Error, GoalSettingType>;
@@ -11,28 +14,64 @@ const GoalSetting: React.FC<GoalSettingComponentProps> = ({ goalMutation }) => {
   const [goalReadNewsCount, setGoalReadNewsCount] = useState("");
   const [goalCompleteWord, setGoalCompleteWord] = useState("");
   const [goalPronounceTestScore, setGoalPronounceTestScore] = useState("");
+  const [showTooltip, setShowTooltip] = useState(false);
 
-  const handleSave = () => {
-    const goalData: GoalSettingType = {
-      goalReadNewsCount: parseInt(goalReadNewsCount, 10),
-      goalCompleteWord: parseInt(goalCompleteWord, 10),
-      goalPronounceTestScore: parseInt(goalPronounceTestScore, 10),
+  const queryClient = useQueryClient();
+  const setGoalState = useSetRecoilState(goalState);
+
+  const handleInputChange =
+    (setter: React.Dispatch<React.SetStateAction<string>>) =>
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = e.target.value;
+      if (value === "" || (parseInt(value) >= 1 && !value.includes("."))) {
+        setter(value);
+      }
     };
 
-    goalMutation.mutate(goalData);
+  const handleSave = async () => {
+    const goalData: GoalSettingType = {
+      goalReadNewsCount: parseInt(goalReadNewsCount, 10) || 1,
+      goalCompleteWord: parseInt(goalCompleteWord, 10) || 1,
+      goalPronounceTestScore: parseInt(goalPronounceTestScore, 10) || 1,
+    };
+
+    await goalMutation.mutateAsync(goalData);
+
+    // 쿼리 무효화
+    await queryClient.invalidateQueries({ queryKey: ["getStudyProgress"] });
+    const newData = await queryClient.fetchQuery({
+      queryKey: ["getStudyProgress"],
+    });
+
+    if (newData && typeof newData === "object" && !Array.isArray(newData)) {
+      // Recoil 상태 업데이트
+      setGoalState((prevState) => ({
+        ...prevState,
+        ...newData,
+        isInitialized: true,
+      }));
+
+      console.log("goalState 업데이트 완료");
+    } else {
+      console.error("newData가 객체가 아닙니다:", newData);
+    }
   };
   return (
     <>
       <GoalContainer>
+        <div>
+          {new Date().getMonth() + 1}월 목표는 설정 후 수정할 수 없습니다.
+        </div>
         <GoalItem>
           <GoalTitle>
             <GoalTitleStrong>뉴스</GoalTitleStrong> 읽기
           </GoalTitle>
           <div>
             <GoalInput
-              type="text"
+              type="number"
+              min="1"
               value={goalReadNewsCount}
-              onChange={(e) => setGoalReadNewsCount(e.target.value)}
+              onChange={handleInputChange(setGoalReadNewsCount)}
             />
             개
           </div>
@@ -43,9 +82,10 @@ const GoalSetting: React.FC<GoalSettingComponentProps> = ({ goalMutation }) => {
           </GoalTitle>
           <div>
             <GoalInput
-              type="text"
+              type="number"
+              min="1"
               value={goalCompleteWord}
-              onChange={(e) => setGoalCompleteWord(e.target.value)}
+              onChange={handleInputChange(setGoalCompleteWord)}
             />
             개
           </div>
@@ -53,12 +93,25 @@ const GoalSetting: React.FC<GoalSettingComponentProps> = ({ goalMutation }) => {
         <GoalItem>
           <GoalTitle>
             <GoalTitleStrong>발음</GoalTitleStrong> 연습하기
+            <TooltipContainer>
+              <QuestionMark
+                onMouseEnter={() => setShowTooltip(true)}
+                onMouseLeave={() => setShowTooltip(false)}
+              />
+              {showTooltip && (
+                <Tooltip>
+                  발음 연습하기는 1회 테스트 시 100점 만점으로, 점수 합계를
+                  목표로 설정합니다.
+                </Tooltip>
+              )}
+            </TooltipContainer>
           </GoalTitle>
           <div>
             <GoalInput
-              type="text"
+              type="number"
+              min="1"
               value={goalPronounceTestScore}
-              onChange={(e) => setGoalPronounceTestScore(e.target.value)}
+              onChange={handleInputChange(setGoalPronounceTestScore)}
             />
             점
           </div>
@@ -76,6 +129,7 @@ export default GoalSetting;
 const GoalContainer = styled.div`
   display: flex;
   flex-direction: column;
+  text-align: center;
 `;
 const GoalItem = styled.div`
   display: flex;
@@ -86,6 +140,8 @@ const GoalItem = styled.div`
 `;
 
 const GoalTitle = styled.div`
+  display: flex;
+  gap: 0.5rem;
   font-size: 1.5rem;
   font-weight: bold;
 `;
@@ -131,5 +187,39 @@ const GoalSaveButton = styled.button`
   cursor: pointer;
   &:hover {
     background-color: ${(props) => props.theme.colors.primaryPress};
+  }
+`;
+
+const TooltipContainer = styled.div`
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  margin-left: 0.5rem;
+`;
+
+const Tooltip = styled.div`
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #333;
+  color: white;
+  padding: 0.5rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  width: 200px;
+  text-align: center;
+  z-index: 1000;
+  margin-bottom: 0.5rem;
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #333 transparent transparent transparent;
   }
 `;

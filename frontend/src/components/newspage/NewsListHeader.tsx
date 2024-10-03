@@ -1,7 +1,7 @@
 import { usePageTransition } from "@hooks/usePageTransition";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
-
+import NewsSearch from "@components/newspage/NewsSearch";
 const NewsListHeader: React.FC = () => {
   const categoryList = [
     { name: "전체" },
@@ -17,24 +17,31 @@ const NewsListHeader: React.FC = () => {
   const selectedCategory = Number(category);
 
   return (
-    <Container>
-      <CategoryContainer>
-        {categoryList.map((category, index) => (
-          <CategoryItem
-            key={category.name}
-            onClick={() => {
-              transitionTo(`/news/${index}/1`);
-            }}
-            $isSelected={selectedCategory === index}
-          >
-            {category.name}
-          </CategoryItem>
-        ))}
-      </CategoryContainer>
-    </Container>
+    <HeaderContainer>
+      <Container>
+        <CategoryContainer>
+          {categoryList.map((category, index) => (
+            <CategoryItem
+              key={category.name}
+              onClick={() => {
+                transitionTo(`/news/${index}/1`);
+              }}
+              $isSelected={selectedCategory === index}
+            >
+              {category.name}
+            </CategoryItem>
+          ))}
+          <NewsSearch />
+        </CategoryContainer>
+      </Container>
+    </HeaderContainer>
   );
 };
 
+const HeaderContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;
 const Container = styled.div`
   position: relative;
   width: 100%;
@@ -42,6 +49,7 @@ const Container = styled.div`
 
 const CategoryContainer = styled.div`
   display: flex;
+  align-items: center;
   gap: 5%;
 `;
 
@@ -54,5 +62,4 @@ const CategoryItem = styled.div<{ $isSelected?: boolean }>`
   color: ${(props) =>
     props.$isSelected ? props.theme.colors.primary : props.theme.colors.text};
 `;
-
 export default NewsListHeader;

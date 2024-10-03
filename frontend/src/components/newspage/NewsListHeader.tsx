@@ -1,9 +1,8 @@
+import { usePageTransition } from "@hooks/usePageTransition";
+import { useParams } from "react-router-dom";
 import styled from "styled-components";
 
-const NewsListHeader: React.FC<{
-  selectedCategory: number;
-  setSelectedCategory: React.Dispatch<React.SetStateAction<number>>;
-}> = ({ selectedCategory, setSelectedCategory }) => {
+const NewsListHeader: React.FC = () => {
   const categoryList = [
     { name: "전체" },
     { name: "경제" },
@@ -12,6 +11,9 @@ const NewsListHeader: React.FC<{
     { name: "IT/과학" },
     { name: "몰라" },
   ];
+  const transitionTo = usePageTransition();
+  const { category } = useParams();
+  const selectedCategory = Number(category);
 
   return (
     <Container>
@@ -20,7 +22,7 @@ const NewsListHeader: React.FC<{
           <CategoryItem
             key={category.name}
             onClick={() => {
-              setSelectedCategory(index);
+              transitionTo(`/news/${index}/1`);
             }}
           >
             {category.name}

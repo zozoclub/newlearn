@@ -136,11 +136,7 @@ public class NewsServiceImpl implements NewsService{
                 .map(click -> {
                     News news = newsRepository.findById(click.getNewsId())
                             .orElseThrow(() -> new EntityNotFoundException("News not found with id: " + click.getNewsId()));
-                    return NewsSimpleResponseDTO.makeNewsSimpleResponseDTO(
-                            news,
-                            "kr",
-                            2
-                    );
+                    return NewsSimpleResponseDTO.makeNewsSimpleResponseDTO(news);
                 })
                 .collect(Collectors.toList());
 

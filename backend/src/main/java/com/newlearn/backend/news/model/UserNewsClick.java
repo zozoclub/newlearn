@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Document(collection = "user_news_click")
-@CompoundIndex(name = "user_news_unique", def = "{'userId': 1, 'newsId': 1}", unique = true)
+@CompoundIndex(name = "user_news_unique", def = "{'user_id': 1, 'news_id': 1}", unique = true)
 public class UserNewsClick {
     @Id
     private String id;

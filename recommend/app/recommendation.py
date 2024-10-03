@@ -1,9 +1,34 @@
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from sqlalchemy.orm import Session
+from sqlalchemy import func
+from typing import List
 
 from app.models import News
-from app.models import UserNewsRead
+from app.models import UserNewsRead, UserCategory
+from app.crud import get_user_category
+
+###############################################################################
+# 임시 - 카테고리 추천 (랜덤으로)
+def get_random_articles_by_categories(db: Session, user_categories: List[UserCategory]):
+    news_ids = []
+    for category in user_categories:
+        # 각 카테고리에 대해 news 테이블에서 랜덤으로 5개의 레코드를 선택
+        random_articles = db.query(News.news_id) \
+            .filter(News.category_id == category.category_id) \
+            .order_by(func.random()) \
+            .limit(5) \
+            .all()
+        # 선택된 레코드의 article_id를 article_ids 리스트에 추가
+        news_ids.extend([article.news_id for article in random_articles])
+    # print("랜덤뉴스by카테고리 : " , list(news_ids))
+    return news_ids
+
+def get_news_recomm_by_categories(user_id: int, db: Session):
+    user_categories = get_user_category(db, user_id)
+    news_ids = get_random_articles_by_categories(db, user_categories)
+    return news_ids
+###############################################################################
 
 
 def get_cbf_news(user_id: int, db: Session):
@@ -52,4 +77,5 @@ def get_cbf_news(user_id: int, db: Session):
                     # print(f"Added recommendation: {news.news_id} - {news.title}")
     print(f"Total recommendations: {len(recommended_news)}")
     return list(recommended_news.values())
+
 

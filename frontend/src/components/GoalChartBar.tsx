@@ -30,7 +30,9 @@ const GoalChartBar: React.FC<GoalChartBarProps> = ({
 export default GoalChartBar;
 
 const BarContainer = styled.div`
-  margin: 1.5rem 0rem;
+  margin: 2.5rem 0rem;
+  font-size: 1.25rem;
+  font-weight: bold;
 `;
 
 const GoalItem = styled.div`

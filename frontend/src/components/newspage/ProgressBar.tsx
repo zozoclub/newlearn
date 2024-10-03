@@ -2,6 +2,9 @@ import { DetailNewsType, readNews } from "@services/newsService";
 import { RefObject, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 
+import { useRecoilState } from "recoil";
+import goalState from "@store/goalState";
+
 const ProgressBar: React.FC<{
   engIsLoading: boolean;
   korIsLoading: boolean;
@@ -31,6 +34,7 @@ const ProgressBar: React.FC<{
 }) => {
   const [scrollProgress, setScrollProgress] = useState(0);
   const isLoadingRef = useRef<boolean>(engIsLoading || korIsLoading);
+  const [userProgress, setUserProgress] = useRecoilState(goalState);
 
   useEffect(() => {
     isLoadingRef.current = engIsLoading || korIsLoading;
@@ -107,6 +111,12 @@ const ProgressBar: React.FC<{
         return newState;
       });
       readNews(Number(newsId), difficulty);
+      setUserProgress((prevProgress) => ({
+        ...prevProgress,
+        currentReadNewsCount: prevProgress.currentReadNewsCount + 1,
+      }));
+
+      console.log(userProgress);
     } else {
       setIsReadFinished(false);
     }

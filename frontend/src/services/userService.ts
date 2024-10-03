@@ -136,7 +136,8 @@ import { AvatarType } from "@components/common/Avatar";
 
 export const putExpUp = async (
   experience: number,
-  setExpModal: SetterOrUpdater<ExpType>
+  setExpModal: SetterOrUpdater<ExpType>,
+  action: string
 ): Promise<void> => {
   try {
     console.log(experience);
@@ -148,9 +149,10 @@ export const putExpUp = async (
     setExpModal({
       isOpen: true,
       experience: experience,
-      action: "경험치 상승",
+      action: `${action}`,
     });
-    console.log(response);
+
+    console.log("경험치 api", response);
   } catch (error) {
     console.error(`경험치 상승 오류`, error);
   }

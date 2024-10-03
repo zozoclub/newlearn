@@ -6,6 +6,7 @@ import TopRankingWidget, {
 } from "./TopRankingWidget";
 import GoalChartDoughnut from "@components/GoalChartDoughnut";
 import MainGoalBar from "@components/mainpage/MainGoalBar";
+import { useNavigate } from "react-router-dom";
 import RankingWidget from "./RankingWidget";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -26,7 +27,11 @@ const Widget: React.FC<{ variety: string }> = ({ variety }) => {
     queryKey: ["readRankingList"],
     queryFn: getReadRankingList,
   });
-
+  const navigate = useNavigate();
+  const goalData = useRecoilValue(goalDataSelector);
+  const handleMyStudy = () => {
+    navigate("/mystudy");
+  };
   switch (variety) {
     case "profile":
       return <WidgetContainer></WidgetContainer>;
@@ -61,8 +66,19 @@ const Widget: React.FC<{ variety: string }> = ({ variety }) => {
     case "goal":
       return (
         <WidgetContainer>
-          <GoalChartDoughnut />
-          <MainGoalBar />
+          {goalData[0].goal && goalData[1].goal && goalData[2].goal ? (
+            <>
+              <GoalChartDoughnut />
+              <MainGoalBar />
+            </>
+          ) : (
+            <>
+              <div>아직 학습 목표가 없습니다.</div>
+              <GoalSetting onClick={handleMyStudy}>
+                학습 목표 설정하기
+              </GoalSetting>
+            </>
+          )}
         </WidgetContainer>
       );
   }
@@ -85,4 +101,13 @@ const WidgetContainer = styled.div`
   box-shadow: ${(props) => props.theme.shadows.medium};
 `;
 
+const GoalSetting = styled.button`
+  padding: 0.75rem;
+  margin-top: 1rem;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  background-color: ${(props) => props.theme.colors.primary};
+  cursor: pointer;
+`;
 export default Widget;

@@ -23,6 +23,8 @@ import { getUserInfo } from "@services/userService";
 import { isExpModalState } from "@store/expState";
 import ExperienceModal from "@components/common/ExperienceModal";
 import GoalManager from "./AppGoalManager";
+// import LevelUpModal from "@components/common/LevelUpModal";
+
 const App: React.FC = () => {
   const theme = useRecoilValue(themeState) === "dark" ? darkTheme : lightTheme;
   const isLogin = useRecoilValue(loginState);
@@ -99,6 +101,7 @@ Welcome To NewsLearn!"
       </AppContainer>
       {/* 목표 관련 내용 */}
       <GoalManager isLogin={isLogin} />
+      {/* <LevelUpModal /> */}
     </ThemeProvider>
   );
 };

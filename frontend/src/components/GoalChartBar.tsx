@@ -44,7 +44,7 @@ const GoalItem = styled.div`
 const GoalBarContainer = styled.div`
   width: 100%;
   height: 1.25rem;
-  background-color: ${(props) => props.theme.colors.cancel};
+  background-color: #e0e0e0;
   border-radius: 5px;
   overflow: hidden;
 `;

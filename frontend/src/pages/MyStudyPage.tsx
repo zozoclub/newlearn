@@ -145,7 +145,7 @@ const GoalContainer = styled.div`
   height: 100%;
   min-height: 700px;
 
-  background-color: ${(props) => props.theme.colors.cardBackground + "BF"};
+  background-color: ${(props) => props.theme.colors.cardBackground01};
   box-shadow: ${(props) => props.theme.shadows.medium};
   box-sizing: border-box;
   border-radius: 0.75rem;

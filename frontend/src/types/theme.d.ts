@@ -8,6 +8,8 @@ export type Theme = {
     background: string;
     cardBackground: string;
     cardBackground01: string;
+    newsItemBackground: string;
+    newsItemBackgroundPress: string;
     primary: string;
     primaryPress: string;
     danger: string;
@@ -23,6 +25,7 @@ export type Theme = {
     placeholder: string;
   };
   shadows: {
+    small: string;
     medium: string;
   };
   opacities: {

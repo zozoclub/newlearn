@@ -193,7 +193,7 @@ const MyPageProfile: React.FC = () => {
           {/* 닉네임, 레벨 */}
           <NicknameContainer>
             <LevelContainer>
-              <LevelIcon level={level} />
+              <LevelIcon level={level} size={48} />
               {nickname}
             </LevelContainer>
             <EditIcon onClick={openModal} />

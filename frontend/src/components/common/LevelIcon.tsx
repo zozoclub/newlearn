@@ -4,10 +4,10 @@ import levelIconsImage from "@assets/images/levelIcon.svg";
 
 interface LevelIconProps {
   level: number;
-  size?: number;
+  size: number;
 }
 
-const LevelIcon: React.FC<LevelIconProps> = ({ level, size = 48 }) => {
+const LevelIcon: React.FC<LevelIconProps> = ({ level, size }) => {
   const adjustedLevel = Math.min(Math.max(level - 1, 0), 99);
   const row = Math.floor(adjustedLevel / 10);
   const col = adjustedLevel % 10;

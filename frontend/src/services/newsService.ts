@@ -213,3 +213,27 @@ export const highlightingWord = (
     })
     .then((response) => console.log(response));
 };
+
+export const scrapNews = async (newsId: number, difficulty: number) => {
+  try {
+    const response = await axiosInstance.post(
+      `news/scrap/${newsId}/${difficulty}`
+    );
+    console.log(response);
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const deleteScrapNews = async (newsId: number, difficulty: number) => {
+  try {
+    const response = await axiosInstance.delete(
+      `news/scrap/${newsId}/${difficulty}`
+    );
+    console.log(response);
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};

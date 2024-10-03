@@ -72,3 +72,15 @@ class UserNewsRead(Base):
     # 읽은 뉴스 - 유저 관계
     user = relationship("User", back_populates="news_reads")
     news = relationship("News", back_populates="user_reads")
+
+class UserNewsScrap(Base):
+    __tablename__ = 'user_news_scrap'
+
+    user_news_scrap_id = Column(BigInteger, primary_key=True, index=True)
+    user_id = Column(BigInteger, ForeignKey('users.user_id', ondelete='CASCADE'), nullable=False)
+    news_id = Column(BigInteger, ForeignKey('news.news_id', ondelete='CASCADE'), nullable=False)
+    difficulty = Column(BigInteger)
+    scraped_date = Column(TIMESTAMP, default=TIMESTAMP)
+
+    user = relationship("User", back_populates="scrapped_news")
+    news = relationship("News", back_populates="scrapped_by_users")

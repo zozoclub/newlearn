@@ -113,4 +113,34 @@ def get_cf_news(user_id: int, db: Session):
 ##################################### 콘텐츠 기반 필터링 로직
 
 def get_cbf_news(user_id: int, db: Session):
-    pass
+    user_categories = get_user_categories(user_id, db)  # 유저의 관심 카테고리 가져오기
+    user_category_ids = [uc.category_id for uc in user_categories]
+
+    # 유저 클릭 로그 가져 오기
+    user_clicks = get_user_click_log(user_id)
+
+    recommended_news = {}
+
+    # 유저가 클릭 뉴스 처리
+    for click in user_clicks:
+        news_metadata = get_news_metadata(click["news_id"], db)
+        if news_metadata:
+
+            # 가중치 계산
+            weight = 0
+
+            # 1) 카테고리(관심도)에 따른 가중치
+            if news_metadata.category_id in user_category_ids:
+                weight += 2  # 가중치 2 (관심 카테고리)
+            else:
+                weight += 1  # 가중치 1 (비관심 카테고리)
+
+            # 2) 조회수에 따른 가중치
+            weight += news_metadata.hit / 10  # ex) 조회수를 10으로 나누어 가중치 부여
+
+            # 추천 뉴스 수집
+            recommended_news[click["news_id"]] = recommended_news.get(click["news_id"], 0) + weight
+
+    # 가중치에 따라 추천 뉴스 정렬
+    sorted_news_ids = sorted(recommended_news, key=recommended_news.get, reverse=True)
+    return [get_news_metadata(news_id, db) for news_id in sorted_news_ids]

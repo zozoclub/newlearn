@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from app.models import Base
 from app.database import SessionLocal, engine
 from app.recommendation import get_cbf_news
-from app.hybrid_recommendation import get_cf_news
+from app.hybrid_recommendation import get_cf_news, get_cbf_news
 
 Base.metadata.create_all(bind=engine)
 
@@ -29,6 +29,14 @@ def read_cbf_recommendations(user_id: int, db: Session = Depends(get_db)):
 @app.get("/hybrid-recommendation/cf/{user_id}")
 def recommend_cf_news(user_id: int, db: Session = Depends(get_db)):
     recommended_news = get_cf_news(user_id, db)
+    if not recommended_news:
+        raise HTTPException(status_code=404, detail="No news recommendations available.")
+    return recommended_news
+
+# 콘텐츠 기반 필터링 (CBF) 뉴스 추천
+@app.get("/hybrid-recommendation/cbf/{user_id}")
+def recommend_cf_news(user_id: int, db: Session = Depends(get_db)):
+    recommended_news = get_cbf_news(user_id, db)
     if not recommended_news:
         raise HTTPException(status_code=404, detail="No news recommendations available.")
     return recommended_news

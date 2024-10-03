@@ -108,3 +108,9 @@ def get_cf_news(user_id: int, db: Session):
     # 뉴스 데이터를 통해 뉴스 정보를 반환
     sorted_news_ids = sorted(recommended_news, key=recommended_news.get, reverse=True)
     return [get_news_metadata(news_id, db) for news_id in sorted_news_ids]
+
+
+##################################### 콘텐츠 기반 필터링 로직
+
+def get_cbf_news(user_id: int, db: Session):
+    pass

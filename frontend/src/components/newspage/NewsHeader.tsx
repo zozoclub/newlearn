@@ -1,11 +1,18 @@
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import LoadingDiv from "./LoadingDiv";
 import LoadingBar from "./LoadingBar";
-import { DetailNewsType } from "@services/newsService";
+import {
+  deleteScrapNews,
+  DetailNewsType,
+  scrapNews,
+} from "@services/newsService";
 import { useRecoilValue } from "recoil";
 import languageState from "@store/languageState";
 import LanguageToggleBtn from "./LanguageToggleBtn";
 import DifficultyToggleBtn from "./DifficultyToggleBtn";
+import Bookmark from "./Bookmark";
+import { useParams } from "react-router-dom";
 
 const NewsHeader: React.FC<{
   engIsLoading: boolean;
@@ -25,7 +32,25 @@ const NewsHeader: React.FC<{
   setDifficulty,
   setIsReadFinished,
 }) => {
+  const { newsId } = useParams();
   const languageData = useRecoilValue(languageState);
+  const [isScrapped, setIsScrapped] = useState(false);
+  const handleScrap = async () => {
+    if (isScrapped) {
+      deleteScrapNews(Number(newsId), difficulty).then(() =>
+        setIsScrapped(false)
+      );
+    } else {
+      scrapNews(Number(newsId), difficulty).then(() => setIsScrapped(true));
+    }
+  };
+
+  useEffect(() => {
+    if (engData && engData.isScrapped) {
+      setIsScrapped(true);
+    }
+  }, [engData]);
+
   return (
     <Container>
       <NewsCategory>
@@ -70,6 +95,7 @@ const NewsHeader: React.FC<{
       <div
         style={{
           display: "flex",
+          justifyContent: "space-between",
           alignItems: "center",
           position: "relative",
           gap: "0.5rem",
@@ -83,12 +109,12 @@ const NewsHeader: React.FC<{
             </LoadingDiv>
           </div>
         ) : (
-          <>
-            <PressDiv>{engData?.press}</PressDiv>
+          <SecondaryDiv>
+            <div>{engData?.press}</div>
             <div>|</div>
-            <JournalistDiv>{engData?.journalist}</JournalistDiv>
-            <HitDiv>조회 {engData?.hit}</HitDiv>
-          </>
+            <div>{engData?.journalist}</div>
+            <div>조회 {engData?.hit}</div>
+          </SecondaryDiv>
         )}
         <SettingDiv>
           <LanguageToggleBtn />
@@ -98,6 +124,12 @@ const NewsHeader: React.FC<{
             isRead={engData?.isRead[difficulty - 1]}
             setIsReadFinished={setIsReadFinished}
           />
+          <div
+            style={{ display: "grid", placeItems: "center" }}
+            onClick={handleScrap}
+          >
+            <Bookmark isScrapped={isScrapped} />
+          </div>
         </SettingDiv>
       </div>
     </Container>
@@ -137,18 +169,15 @@ const OriginalUrlButton = styled.button`
   cursor: pointer;
 `;
 
-const PressDiv = styled.div``;
-
-const JournalistDiv = styled.div``;
-
-const HitDiv = styled.div`
+const SecondaryDiv = styled.div`
+  display: flex;
+  gap: 0.5rem;
   color: ${(props) => props.theme.colors.text03};
-  margin-left: 0.5rem;
 `;
 
 const SettingDiv = styled.div`
   display: flex;
+  align-items: center;
   gap: 2.5rem;
-  position: absolute;
   right: 0;
 `;

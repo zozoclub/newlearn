@@ -3,10 +3,12 @@ import styled, { keyframes } from "styled-components";
 import firstRankIcon from "@assets/icons/first-rank.svg";
 import secondRankIcon from "@assets/icons/second-rank.svg";
 import thirdRankIcon from "@assets/icons/third-rank.svg";
-import Avatar from "@components/common/Avatar";
+import Avatar, { AvatarType } from "@components/common/Avatar";
 import { useRecoilState } from "recoil";
 import { selectedRankingState } from "@store/selectedRankingState";
 import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { getUserAvatar } from "@services/userService";
 
 type RankingType = {
   userId: number;
@@ -32,6 +34,7 @@ const TopRankingWidget: React.FC<{
   const [selectedType, setSelectedType] = useRecoilState(selectedRankingState);
   const [animate, setAnimate] = useState(false);
 
+  // 랭킹 유형 변경 시 animation
   useEffect(() => {
     setAnimate(false);
     const timer = setTimeout(() => {
@@ -40,45 +43,96 @@ const TopRankingWidget: React.FC<{
     return () => clearTimeout(timer);
   }, [selectedType]);
 
+  const { isLoading: firstIsLoading, data: firstUserAvatar } =
+    useQuery<AvatarType>({
+      queryKey: ["getFirstUserAvatar", selectedType],
+      queryFn: () =>
+        getUserAvatar(
+          selectedType === "point"
+            ? pointRankingList![0].userId
+            : readRankingList![0].userId
+        ),
+      enabled:
+        selectedType === "point"
+          ? pointRankingList !== undefined && pointRankingList.length > 0
+          : readRankingList !== undefined && readRankingList.length > 0,
+    });
+
+  const { isLoading: secondIsLoading, data: secondUserAvatar } =
+    useQuery<AvatarType>({
+      queryKey: ["getSecondUserAvatar", selectedType],
+      queryFn: () =>
+        getUserAvatar(
+          selectedType === "point"
+            ? pointRankingList![1].userId
+            : readRankingList![1].userId
+        ),
+      enabled:
+        selectedType === "point"
+          ? pointRankingList !== undefined && pointRankingList.length > 0
+          : readRankingList !== undefined && readRankingList.length > 0,
+    });
+
+  const { isLoading: thirdIsLoading, data: thirdUserAvatar } =
+    useQuery<AvatarType>({
+      queryKey: ["getThirdUserAvatar", selectedType],
+      queryFn: () =>
+        getUserAvatar(
+          selectedType === "point"
+            ? pointRankingList![2].userId
+            : readRankingList![2].userId
+        ),
+      enabled:
+        selectedType === "point"
+          ? pointRankingList !== undefined && pointRankingList.length > 2
+          : readRankingList !== undefined && readRankingList.length > 2,
+    });
+
   const renderRankings = (
     rankings: PointRankingType[] | ReadRankingType[] | undefined
   ) => {
     if (!rankings || rankings.length < 3) return null;
     return (
       <>
-        <FirstRank $animate={animate}>
-          <div className="nickname">
-            <div>{rankings[0].nickname}</div>
-          </div>
-          <div className="avatar">
-            <Avatar avatar={{ skin: 0, eyes: 0, mask: 0 }} size={4} />
-          </div>
-          <div className="user-info">
-            <img src={firstRankIcon} alt="first-rank" />
-          </div>
-        </FirstRank>
-        <SecondRank $animate={animate}>
-          <div className="nickname">
-            <div>{rankings[1].nickname}</div>
-          </div>
-          <div className="avatar">
-            <Avatar avatar={{ skin: 0, eyes: 0, mask: 0 }} size={4} />
-          </div>
-          <div className="user-info">
-            <img src={secondRankIcon} alt="second-rank" />
-          </div>
-        </SecondRank>
-        <ThirdRank $animate={animate}>
-          <div className="nickname">
-            <div>{rankings[2].nickname}</div>
-          </div>
-          <div className="avatar">
-            <Avatar avatar={{ skin: 0, eyes: 0, mask: 0 }} size={4} />
-          </div>
-          <div className="user-info">
-            <img src={thirdRankIcon} alt="third-rank" />
-          </div>
-        </ThirdRank>
+        {rankings.length > 0 && !firstIsLoading && (
+          <FirstRank $animate={animate}>
+            <div className="nickname">
+              <div>{rankings[0].nickname}</div>
+            </div>
+            <div className="avatar">
+              <Avatar avatar={firstUserAvatar!} size={4} />
+            </div>
+            <div className="user-info">
+              <img src={firstRankIcon} alt="first-rank" />
+            </div>
+          </FirstRank>
+        )}
+        {rankings.length > 1 && !secondIsLoading && (
+          <SecondRank $animate={animate}>
+            <div className="nickname">
+              <div>{rankings[1].nickname}</div>
+            </div>
+            <div className="avatar">
+              <Avatar avatar={secondUserAvatar!} size={4} />
+            </div>
+            <div className="user-info">
+              <img src={secondRankIcon} alt="second-rank" />
+            </div>
+          </SecondRank>
+        )}
+        {rankings.length > 2 && !thirdIsLoading && (
+          <ThirdRank $animate={animate}>
+            <div className="nickname">
+              <div>{rankings[2].nickname}</div>
+            </div>
+            <div className="avatar">
+              <Avatar avatar={thirdUserAvatar!} size={4} />
+            </div>
+            <div className="user-info">
+              <img src={thirdRankIcon} alt="third-rank" />
+            </div>
+          </ThirdRank>
+        )}
       </>
     );
   };
@@ -283,7 +337,7 @@ const ThirdRank = styled(RankStand)`
   }
 `;
 
-const LoadingDiv = styled.td`
+const LoadingDiv = styled.div`
   position: absolute;
   top: 50%;
   left: 50%;

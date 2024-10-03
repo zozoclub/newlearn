@@ -17,6 +17,9 @@ class User(Base):
     # 유저 - 카테고리
     categories = relationship('UserCategory', back_populates='user')
 
+    # 유저 - 스크랩한 뉴스
+    scrapped_news = relationship("UserNewsScrap", back_populates="user")
+
 class Category(Base):
     __tablename__ = 'category'
 
@@ -55,6 +58,9 @@ class News(Base):
 
     # 뉴스 - 읽은 뉴스 기록
     user_reads = relationship("UserNewsRead", back_populates="news")
+
+    # 뉴스 - 스크랩한 뉴스 기록
+    scrapped_by_users = relationship("UserNewsScrap", back_populates="news")
 
 class UserNewsRead(Base):
     __tablename__ = 'user_news_read'

@@ -29,7 +29,7 @@ def get_user_difficulty(user_id: int, db: Session):
     return user.difficulty if user else None
 
 def get_user_clicks_batch(user_ids: List[int], limit: int = 100) -> Dict[int, Set[int]]:
-    """여러 사용자의 클릭 로그를 한 번에 가져옵니다."""
+    """user_news_click을 한번에 가져오기"""
     clicks = user_news_click.find(
         {"user_id": {"$in": user_ids}},
         {"user_id": 1, "news_id": 1}
@@ -42,7 +42,7 @@ def get_user_clicks_batch(user_ids: List[int], limit: int = 100) -> Dict[int, Se
 
 @lru_cache(maxsize=1)
 def get_popular_news_ids(limit: int = 1000) -> List[int]:
-    """가장 많이 클릭된 뉴스 ID 목록을 가져옵니다."""
+    """조회수 높은 news 일부만 가져오기"""
     pipeline = [
         {"$group": {"_id": "$news_id", "count": {"$sum": 1}}},
         {"$sort": {"count": -1}},
@@ -64,7 +64,7 @@ def vectorize_titles(titles_tuple: Tuple[str, ...]) -> Tuple[np.ndarray, TfidfVe
 # 3. 유사한 유저 찾기
 #####################################
 def find_similar_users(user_id: int, db: Session, limit: int = 100, top_k: int = 20):
-    """최적화된 코사인 유사도를 사용하여 유사한 사용자 찾기"""
+    """코사인 유사도 기반으로 상위 K개의 유사한 사용자를 선택"""
     popular_news_ids = get_popular_news_ids(1000)  # 상위 1000개의 인기 뉴스만 고려
 
     # 대상 사용자와 다른 사용자들의 클릭 로그를 한 번에 가져옵니다
@@ -210,8 +210,10 @@ def collaborative_filtering(user_id: int, db: Session, limit: int = 100) -> List
                 weight = 0
                 # 1) 카테고리(관심도)에 따른 가중치
                 weight += 2 if news_metadata.category_id in user_categories else 1
+
                 # 2) 조회수에 따른 가중치
                 weight += news_metadata.hit / 10
+
                 # 3) 작성 시간(최신)에 따른 가중치
                 if isinstance(news_metadata.published_date, datetime):
                     time_diff = (current_time - news_metadata.published_date).total_seconds() / 3600

@@ -7,6 +7,7 @@ import com.newlearn.backend.news.dto.request.NewsDetailRequestDTO;
 import com.newlearn.backend.news.dto.request.NewsReadRequestDTO;
 import com.newlearn.backend.news.dto.response.NewsDetailResponseDTO;
 import com.newlearn.backend.news.dto.response.NewsResponseDTO;
+import com.newlearn.backend.news.dto.response.NewsSimpleResponseDTO;
 import com.newlearn.backend.news.service.NewsService;
 import com.newlearn.backend.user.model.Users;
 import com.newlearn.backend.user.service.UserService;
@@ -101,6 +102,24 @@ public class NewsController {
             return ApiResponse.createSuccess(newsList, "오늘의 TOP10뉴스 조회 성공");
         } catch (Exception e) {
             log.error("뉴스 TOP10 불러오기 중 실패", e);
+            return ApiResponse.createError(ErrorCode.NEWS_LIST_NOT_FOUND);
+        }
+    }
+
+    // 유저가 최근 본 뉴스들 조회
+    @GetMapping("/recent")
+    public ApiResponse<?> getRecentNews(Authentication authentication) throws Exception {
+        try {
+            Users user = userService.findByEmail(authentication.getName());
+            if (user == null) {
+                return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
+            }
+
+            List<NewsSimpleResponseDTO> newsList = newsService.getRecentNews(user);
+
+            return ApiResponse.createSuccess(newsList, "최근 본 뉴스 목록 조회 성공");
+        } catch (Exception e) {
+            log.error("최근 본 뉴스 목록 불러오기 중 실패", e);
             return ApiResponse.createError(ErrorCode.NEWS_LIST_NOT_FOUND);
         }
     }

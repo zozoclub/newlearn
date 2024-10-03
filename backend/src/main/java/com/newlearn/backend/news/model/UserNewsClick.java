@@ -2,6 +2,7 @@ package com.newlearn.backend.news.model;
 
 import lombok.*;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Document(collection = "user_news_click")
+@CompoundIndex(name = "user_news_unique", def = "{'user_id': 1, 'news_id': 1}", unique = true)
 public class UserNewsClick {
     @Id
     private String id;

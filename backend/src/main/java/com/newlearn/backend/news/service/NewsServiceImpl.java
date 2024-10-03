@@ -6,12 +6,15 @@ import com.newlearn.backend.news.dto.request.NewsReadRequestDTO;
 import com.newlearn.backend.news.dto.response.NewsDetailResponseDTO;
 import com.newlearn.backend.news.dto.response.NewsDetailResponseDTO.WordInfo;
 import com.newlearn.backend.news.dto.response.NewsResponseDTO;
+import com.newlearn.backend.news.dto.response.NewsSimpleResponseDTO;
 import com.newlearn.backend.news.model.*;
 import com.newlearn.backend.news.repository.NewsRepository;
 import com.newlearn.backend.news.repository.UserDailyNewsReadRepository;
 import com.newlearn.backend.news.repository.UserNewsReadRepository;
 import com.newlearn.backend.news.repository.UserNewsScrapRepository;
 import com.newlearn.backend.news.repository.mongo.UserNewsClickRepository;
+import com.newlearn.backend.study.model.Goal;
+import com.newlearn.backend.study.repository.StudyRepository;
 import com.newlearn.backend.user.model.Users;
 import com.newlearn.backend.user.repository.CategoryRepository;
 import com.newlearn.backend.user.repository.UserRepository;
@@ -24,7 +27,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.catalina.User;
 import org.springframework.data.domain.Page;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -48,6 +56,9 @@ public class NewsServiceImpl implements NewsService{
     private final UserNewsScrapRepository userNewsScrapRepository;
     private final WordSentenceRepository wordSentenceRepository;
     private final UserNewsClickRepository userNewsClickRepository;
+    private final StudyRepository studyRepository;
+
+    private final MongoTemplate mongoTemplate;
 
     @Override
     public Page<NewsResponseDTO> getAllNews(Users user, NewsListRequestDTO newsRequestDTO) {
@@ -118,8 +129,23 @@ public class NewsServiceImpl implements NewsService{
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<NewsSimpleResponseDTO> getRecentNews(Users user) {
+        List<UserNewsClick> clickNewsList = userNewsClickRepository.findTop5ByUserIdOrderByCreatedAtDesc(user.getUserId());
+        List<NewsSimpleResponseDTO> recentClickNewsList = clickNewsList.stream()
+                .map(click -> {
+                    News news = newsRepository.findById(click.getNewsId())
+                            .orElseThrow(() -> new EntityNotFoundException("News not found with id: " + click.getNewsId()));
+                    return NewsSimpleResponseDTO.makeNewsSimpleResponseDTO(news);
+                })
+                .collect(Collectors.toList());
+
+        return recentClickNewsList;
+    }
+
 
     @Override
+    @Transactional
     public NewsDetailResponseDTO getNewsDetail(Users user, Long newsId, NewsDetailRequestDTO newsDetailRequestDTO) {
         News news = newsRepository.findById(newsId)
                 .orElseThrow(() -> new EntityNotFoundException("뉴스를 찾을 수 없습니다."));
@@ -153,11 +179,15 @@ public class NewsServiceImpl implements NewsService{
 
         // 뉴스 클릭 +1
         if (newsDetailRequestDTO.getIsFirstView()) {
-            UserNewsClick userNewsClick = userNewsClickRepository.findByUserIdAndNewsId(user.getUserId(), newsId)
-                    .orElse(new UserNewsClick(user.getUserId(), newsId, news.getCategory().getCategoryId()));
-            userNewsClick.setCreatedAt(LocalDateTime.now(ZoneId.of("Asia/Seoul")));
-            // 이미 있으면 created_at 업데이트, 없으면 새로 추가
-            userNewsClickRepository.save(userNewsClick);
+            Query query = new Query(Criteria.where("userId").is(user.getUserId()).and("newsId").is(newsId));
+
+            Update update = new Update()
+                    .setOnInsert("userId", user.getUserId())
+                    .setOnInsert("newsId", newsId)
+                    .setOnInsert("categoryId", news.getCategory().getCategoryId())
+                    .set("createdAt", LocalDateTime.now(ZoneId.of("Asia/Seoul")));
+
+            mongoTemplate.upsert(query, update, UserNewsClick.class);
         }
 
         return NewsDetailResponseDTO.of(news, title, content, isScrapped, userNewsRead, words);
@@ -196,7 +226,7 @@ public class NewsServiceImpl implements NewsService{
         Optional<Goal> optionalGoal = studyRepository.findByUserId(user.getUserId());
         if (optionalGoal.isPresent()) {
             Goal goal = optionalGoal.get();
-            goal.setGoalReadNewsCount(goal.getCurrentReadNewsCount() + 1);
+            goal.setCurrentReadNewsCount(goal.getCurrentReadNewsCount() + 1);
             studyRepository.save(goal);
         }
     }

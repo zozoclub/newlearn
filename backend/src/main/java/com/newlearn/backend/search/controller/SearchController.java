@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.newlearn.backend.common.ApiResponse;
 import com.newlearn.backend.common.ErrorCode;
+import com.newlearn.backend.search.dto.response.SearchNewsDTO;
 import com.newlearn.backend.search.model.SearchNews;
 import com.newlearn.backend.search.service.SearchService;
 
@@ -22,24 +23,31 @@ public class SearchController {
 
 	//영어 한글 혼합에러처리,
 	private final SearchService searchService;
-	//자동완성이랑 // 검색
 
 	@GetMapping
 	public ApiResponse<?> getTitle(@RequestParam String query) {
 		try {
-			List<SearchNews> result = new ArrayList<>();
-			if(query == null || query.isEmpty()) {
+			List<SearchNewsDTO> result = searchService.searchByTitleOrTitleEng(query);
+			if (result.isEmpty()) {
 				return ApiResponse.createSuccess(result, "조회없음");
 			}
-
-			// 한글과 영어가 혼합된 경우 에러 처리
-			if (isKorean(query) && isEnglish(query)) {
-				return ApiResponse.createSuccess(result, "영단어 혼합 불가");
-			}
-
-
-			return ApiResponse.createSuccess(null, "조회성공");
+			return ApiResponse.createSuccess(result, "조회성공");
 		} catch (Exception e) {
+			return ApiResponse.createError(ErrorCode.WORD_CREATE_FAILED);
+		}
+	}
+
+	// 자동완성 검색
+	@GetMapping("/auto")
+	public ApiResponse<?> getAutoComplete(@RequestParam String query) {
+		try {
+			List<SearchNewsDTO> result = searchService.searchAutoCompleteByTitleOrTitleEng(query);
+			if (result.isEmpty()) {
+				return ApiResponse.createSuccess(result, "조회없음");
+			}
+			return ApiResponse.createSuccess(result, "조회성공");
+		} catch (Exception e) {
+			e.printStackTrace();
 			return ApiResponse.createError(ErrorCode.WORD_CREATE_FAILED);
 		}
 	}

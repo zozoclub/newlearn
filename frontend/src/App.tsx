@@ -149,7 +149,7 @@ Welcome To NewsLearn!"
       ];
       console.log("App에서 동작");
       goals.forEach(({ name, current, goal, exp }) => {
-        if (current === goal && !progress.pastAchieved[name]) {
+        if (current === goal && !progress.pastAchieved[name] && exp != 0) {
           // 경험치 업데이트 함수 호출 후 모달 표시
           putExpUp(exp, setExpModal, `${name} 목표 달성`);
         }

@@ -28,17 +28,15 @@ def find_similar_users(user_id: int):
     user_news_set = {click["news_id"] for click in user_clicks}
 
     # 다른 유저 클릭 로그 수집
-    all_users_clicks = user_news_click.find({"user_id": {"$ne": user_id}})
+    all_users_clicks = {user_click["user_id"]: get_user_click_log(user_click["user_id"]) for user_click in user_news_click.find({"user_id": {"$ne": user_id}})}
 
     user_vector_map = {}
-    for other_user_clicks in all_users_clicks:
-        other_user_id = other_user_clicks["user_id"]
+    all_news_ids = user_news_click.distinct("news_id")
 
-        # 클릭 로그를 리스트로 변환하여 news_id 수집
-        other_user_news_set = {click["news_id"] for click in list(user_news_click.find({"user_id": other_user_id}))}
+    for other_user_id, other_user_clicks in all_users_clicks.items():
+        other_user_news_set = {click["news_id"] for click in other_user_clicks}
 
         # 공통 클릭 수 벡터화
-        all_news_ids = user_news_click.distinct("news_id")
         vec1 = [1 if news_id in user_news_set else 0 for news_id in all_news_ids]
         vec2 = [1 if news_id in other_user_news_set else 0 for news_id in all_news_ids]
 

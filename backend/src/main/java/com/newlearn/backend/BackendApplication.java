@@ -2,8 +2,6 @@ package com.newlearn.backend;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
-import org.springframework.data.elasticsearch.repository.config.EnableReactiveElasticsearchRepositories;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
@@ -18,7 +16,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 	"com.newlearn.backend.user.repository",
 	"com.newlearn.backend.word.repository"
 })
-@EnableElasticsearchRepositories( basePackages = "com.newlearn.backend.search.repository")
 @EnableRedisRepositories(basePackages = {"com.newlearn.backend.oauth.repository", "com.newlearn.backend.user.repository.redis"})
 @EnableMongoRepositories(basePackages = "com.newlearn.backend.news.repository.mongo")
 public class BackendApplication {

@@ -4,15 +4,18 @@ import com.newlearn.backend.search.dto.response.SearchNewsDTO;
 import com.newlearn.backend.search.model.SearchNews;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch.indices.RefreshRequest;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.data.elasticsearch.core.suggest.response.Suggest;
 import org.springframework.stereotype.Service;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
 import co.elastic.clients.elasticsearch.core.search.Hit;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -46,31 +49,47 @@ public class SearchService {
 	}
 
 	public List<SearchNewsDTO> searchAutoCompleteByTitleOrTitleEng(String query) throws IOException {
+		System.out.println(query);
 		if (isKorean(query) && isEnglish(query)) {
 			return null;
 		}
+		String analyzer = isKorean(query) ? "title" : "title_eng";
+		elasticsearchClient.indices().refresh(RefreshRequest.of(r -> r.index("news")));
 
-		String analyzer = isKorean(query) ? "title.suggest" : "title_eng.suggest";
 
 		SearchRequest searchRequest = SearchRequest.of(s -> s
 			.index("news")
-			.size(10)  // 자동완성 결과를 10개로 제한
 			.query(q -> q
-				.matchPhrasePrefix(m -> m
-					.field(analyzer)
-					.query(query)
+				.bool(b -> b
+					.should(sh -> sh
+						.match(m -> m
+							.field(analyzer)
+							.query(query)
+							.boost(2.0f)
+						)
+					)
+					.should(sh -> sh
+						.matchPhrasePrefix(m -> m
+							.field(analyzer)
+							.query(query)
+							.boost(1.0f)
+						)
+					)
 				)
 			)
+			.size(10)  // 결과 10개로 제한
+			.requestCache(false)
 		);
 
 		SearchResponse<SearchNews> response = elasticsearchClient.search(searchRequest, SearchNews.class);
+
 		return response.hits().hits().stream()
 			.map(Hit::source)
 			.map(this::toSearchNewsDTO)
 			.collect(Collectors.toList());
 	}
 
-	private boolean isKorean(String text) {
+		private boolean isKorean(String text) {
 		return text.matches(".*[ㄱ-ㅎㅏ-ㅣ가-힣]+.*");
 	}
 

@@ -242,7 +242,7 @@ const WordTestHistory: React.FC = () => {
 
       {/* 고정된 높이 및 스크롤 가능한 영역 */}
       {cardData.length === 0 ? (
-        <EmptyMessage>테스트 진행하면 리스트들이 출력됩니다.</EmptyMessage>
+        <EmptyMessage>테스트를 진행하면 리스트들이 출력됩니다.</EmptyMessage>
       ) : (
         <ScrollableTestHistoryList>
           {cardData.map((data, index) => (
@@ -341,6 +341,11 @@ const ErrorText = styled.div`
 `;
 
 const EmptyMessage = styled.p`
+  display: flex; 
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  height: 100%;
   margin-top: 5rem;
   justify-content: center;
   text-align: center;

@@ -132,7 +132,7 @@ const SmallContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 22rem;
+  height: 22rem;
   margin: 0.75rem 0;
   padding: 0.625rem;
   background-color: ${(props) => props.theme.colors.cardBackground + "BF"};
@@ -148,7 +148,7 @@ const BigContainer = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  min-height: 48rem;
+  height: 48rem;
   margin: 0.75rem 0;
   background-color: ${(props) => props.theme.colors.cardBackground + "BF"};
   backdrop-filter: blur(0.25rem);

@@ -139,9 +139,9 @@ def get_user_time_pattern(user_id: int, db: Session) -> Dict[str, float]:
 
     return time_pattern
 
-##################################### 협업 필터링 로직
+##################################### 추천 로직
 
-def get_cf_news(user_id: int, db: Session):
+def collaborative_filtering(user_id: int, db: Session):
     similar_users = find_similar_users(user_id)
 
     # 유저 관심 카테고리 기반 가중치 추가
@@ -181,10 +181,7 @@ def get_cf_news(user_id: int, db: Session):
     # 가중치 기준으로 추천 뉴스 정렬
     return sorted(recommended_news.items(), key=lambda x: x[1], reverse=True)[:5]
 
-
-##################################### 콘텐츠 기반 필터링 로직
-
-def get_cbf_news(user_id: int, db: Session):
+def content_based_filtering(user_id: int, db: Session):
     user_categories = get_user_categories(user_id, db)
     user_category_ids = [uc.category_id for uc in user_categories]
     user_clicks = get_user_click_log(user_id)
@@ -226,8 +223,8 @@ def get_cbf_news(user_id: int, db: Session):
 
 
 def hybrid_recommendation(user_id: int, db: Session, num_recommendations: int = 10) -> List[News]:
-    cf_recommendations = get_cf_news(user_id, db)
-    cbf_recommendations = get_cbf_news(user_id, db)
+    cf_recommendations = collaborative_filtering(user_id, db)
+    cbf_recommendations = content_based_filtering(user_id, db)
 
     hybrid_scores = defaultdict(float)
 

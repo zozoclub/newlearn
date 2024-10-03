@@ -1,8 +1,8 @@
-# hybrid_recommendation.py
 from app.database import user_news_click
 from app.models import UserCategory, News
 from sqlalchemy.orm import Session
 from datetime import datetime
+import numpy as np
 
 ##################################### 데이터 처리
 
@@ -10,23 +10,41 @@ from datetime import datetime
 def get_user_click_log(user_id: int):
     return list(user_news_click.find({"user_id": user_id}))
 
+# 코사인 유사도 계산
+def cosine_similarity(vec1, vec2):
+    dot_product = np.dot(vec1, vec2)
+    norm_a = np.linalg.norm(vec1)
+    norm_b = np.linalg.norm(vec2)
+    return dot_product / (norm_a * norm_b) if norm_a and norm_b else 0.0
+
 # 다른 유저와 유사한 클릭 패턴 찾기
 def find_similar_users(user_id: int):
     user_clicks = get_user_click_log(user_id)
+    user_news_set = {click["news_id"] for click in user_clicks}
 
-    # MongoDB 내 user_news_click에서
-    # 다른 유저들의 클릭 로그를 가져와 유사한 유저 찾기
+    # 다른 유저 클릭 로그 수집
     all_users_clicks = user_news_click.find({"user_id": {"$ne": user_id}})
-    similar_users = []
 
+    user_vector_map = {}
     for other_user_clicks in all_users_clicks:
-        # 사용자 간 유사도 계산 (공통 뉴스 클릭 수)
-        common_clicks = len(
-            set([click["news_id"] for click in user_clicks]) & set([click["news_id"] for click in other_user_clicks]))
-        if common_clicks > 0:
-            similar_users.append(other_user_clicks["user_id"])
+        other_user_id = other_user_clicks["user_id"]
 
-    return similar_users
+        # 클릭 로그를 리스트로 변환하여 news_id 수집
+        other_user_news_set = {click["news_id"] for click in list(user_news_click.find({"user_id": other_user_id}))}
+
+        # 공통 클릭 수 벡터화
+        all_news_ids = user_news_click.distinct("news_id")
+        vec1 = [1 if news_id in user_news_set else 0 for news_id in all_news_ids]
+        vec2 = [1 if news_id in other_user_news_set else 0 for news_id in all_news_ids]
+
+        # 코사인 유사도 계산
+        similarity = cosine_similarity(vec1, vec2)
+        if similarity > 0:  # 유사도가 0보다 큰 경우만 추가
+            user_vector_map[other_user_id] = similarity
+
+    # 유사도 높은 순으로 정렬
+    similar_users = sorted(user_vector_map.items(), key=lambda x: x[1], reverse=True)
+    return [user[0] for user in similar_users]
 
 # 해당 유저의 UserCategory (MySQL) 가져 오기
 def get_user_categories(user_id: int, db: Session):

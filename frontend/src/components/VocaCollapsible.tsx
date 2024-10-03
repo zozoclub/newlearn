@@ -66,6 +66,15 @@ const VocaCollapsible: React.FC<VocaCollapsibleProps> = ({
       : numberedMeaning;
   };
 
+  const fullProcessMeaning = (meaning: string) => {
+    return meaning.split("//").map((line, index) => (
+      <React.Fragment key={index}>
+        {index + 1}. {line}
+        <br />
+      </React.Fragment>
+    ));
+  };
+
   const highlightWordInSentence = (sentence: string, word: string) => {
     const parts = sentence.split(new RegExp(`(${word})`, 'gi')); // 단어로 split, 대소문자 무시
     return parts.map((part, index) =>
@@ -87,7 +96,7 @@ const VocaCollapsible: React.FC<VocaCollapsibleProps> = ({
           <TitleContent>
             <TitleWord>{title.toLowerCase()}</TitleWord>
           </TitleContent>
-          <TitleMeaning>{processMeaning(meaning)}</TitleMeaning>
+          <TitleProcessMeaning $isExpanded={!expanded}>{processMeaning(meaning)}</TitleProcessMeaning>
           <Arrow $isExpanded={expanded}>▼</Arrow>
           <DeleteButton onClick={openDeleteModal}>&times;</DeleteButton>
         </Title>
@@ -100,9 +109,12 @@ const VocaCollapsible: React.FC<VocaCollapsibleProps> = ({
             <Spinner />
           ) : (
             <Content>
+              <TitleMeaning>{fullProcessMeaning(meaning)}</TitleMeaning>
               {data?.sentences.map((sentence) => (
                 <SentenceContainer key={sentence.newsId}>
-                  <SentenceHeader>
+                  <SentenceText>{highlightWordInSentence(sentence.sentence, title)}</SentenceText>
+                  <SentenceMeaning>{sentence.sentenceMeaning}</SentenceMeaning>
+                  <SentenceFooter>
                     <DifficultyChip $difficulty={sentence.difficulty}>
                       {sentence.difficulty === 1
                         ? "초급"
@@ -117,9 +129,7 @@ const VocaCollapsible: React.FC<VocaCollapsibleProps> = ({
                     >
                       원문 보기
                     </NewsLinkButton>
-                  </SentenceHeader>
-                  <SentenceText>{highlightWordInSentence(sentence.sentence, title)}</SentenceText>
-                  <SentenceMeaning>{sentence.sentenceMeaning}</SentenceMeaning>
+                  </SentenceFooter>
                 </SentenceContainer>
               ))}
             </Content>
@@ -148,6 +158,7 @@ export default VocaCollapsible;
 const ListItem = styled.div`
   border-radius: 0.5rem;
   margin-bottom: 1rem;
+  padding: 0.125rem;
   overflow: hidden;
   transition: all 0.3s ease-in-out;
   background-color:  ${(props) => props.theme.colors.cardBackground01};
@@ -172,6 +183,14 @@ const TitleWord = styled.span`
   color: ${(props) => props.theme.colors.text};
 `;
 
+const TitleProcessMeaning = styled.span<{ $isExpanded: boolean }>`
+  color: ${(props) => props.theme.colors.placeholder};
+  font-size: 1rem;
+  opacity: ${({ $isExpanded }) => ($isExpanded ? 1 : 0)};
+  overflow: hidden;
+  transition: opacity 0.3s ease, max-height 0.3s ease;
+`;
+
 const TitleMeaning = styled.span`
   color: ${(props) => props.theme.colors.placeholder};
   font-size: 1rem;
@@ -194,7 +213,8 @@ const ContentContainer = styled.div<{ $isExpanded: boolean }>`
 `;
 
 const Content = styled.div`
-  padding: 1rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
   background-color: ${(props) => props.theme.shadows.medium};
   color: ${(props) => props.theme.colors.text};
   font-size: 1rem;
@@ -202,14 +222,15 @@ const Content = styled.div`
 `;
 
 const SentenceContainer = styled.div`
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 `;
 
-const SentenceHeader = styled.div`
+const SentenceFooter = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.5rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
 `;
 
 const DifficultyChip = styled.div<{ $difficulty: number }>`
@@ -239,6 +260,7 @@ const NewsLinkButton = styled.button`
 const SentenceText = styled.p`
   font-size: 1.125rem;
   font-weight: 500;
+  margin-top: 1.25rem;
   margin-bottom: 0.5rem;
 `;
 

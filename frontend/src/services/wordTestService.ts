@@ -62,6 +62,19 @@ export const postWordTestResult = async (
   }
 };
 
+// 단어 문장 빈칸 테스트 도중 퇴장
+export const deleteWordTest = async (quizId: number) : Promise<void> => {
+  try {
+    console.log("중도 퇴장 시도");
+    const response = axiosInstance.delete(`study/word/test/exit/${quizId}`)
+    console.log(response);
+    
+  } catch (error) {
+    console.error("테스트 삭제 실패",error);
+    
+  }
+}
+
 // 단어 결과 리스트 Dto
 export type WordTestResultListResponse = {
   quizId: number;

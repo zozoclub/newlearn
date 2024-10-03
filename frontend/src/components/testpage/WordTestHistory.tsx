@@ -224,10 +224,10 @@ const WordTestHistory: React.FC = () => {
                   ) : (
                     <InfoTextEmphasizeRed>{wholeCount}</InfoTextEmphasizeRed>
                   )
-                ) : null}
+                ) : null}개
               </InfoText>
               <StatsHistory>
-                <StatItem>테스트 횟수: {currentCount}회</StatItem>
+                <StatItem>이번 달 테스트 횟수: {currentCount}회</StatItem>
                 <StatItem>맞춘 단어수: {correctCount}개</StatItem>
                 <StatItem>틀린 단어수: {wrongCount}개</StatItem>
               </StatsHistory>

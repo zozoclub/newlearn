@@ -136,7 +136,7 @@ const SpeakingTestHistory: React.FC = () => {
   const correctPercentagePerMonth = monthLabels.map(
     (month) =>
       recentSixMonthsData[month]?.totalScore /
-        recentSixMonthsData[month]?.totalCount || 0 // 데이터가 없으면 0으로 채움
+      recentSixMonthsData[month]?.totalCount || 0 // 데이터가 없으면 0으로 채움
   );
 
   // 현재 월 제외한 이전 5개월의 학습한 단어수(totalCnt) 평균 계산
@@ -225,21 +225,21 @@ const SpeakingTestHistory: React.FC = () => {
                 {monthCurrentScoreAverage ? (
                   monthCurrentScoreAverage >= monthAgoScoreAverage ? (
                     <InfoTextEmphasizeBlue>
-                      {monthCurrentScoreAverage}
+                      {Math.floor(monthCurrentScoreAverage)}
                     </InfoTextEmphasizeBlue>
                   ) : (
                     <InfoTextEmphasizeRed>
-                      {monthCurrentScoreAverage}
+                      {Math.floor(monthCurrentScoreAverage)}
                     </InfoTextEmphasizeRed>
                   )
-                ) : null}
+                ) : null}점
               </InfoText>
               <StatsHistory>
-                <StatItem>테스트 횟수: {currentCount}회</StatItem>
+                <StatItem>이번 달 테스트 횟수: {currentCount}회</StatItem>
                 <StatItem>
-                  이번 달 평균 점수: {monthCurrentScoreAverage}회
+                  이번 달 평균 점수: {Math.floor(monthCurrentScoreAverage)}점
                 </StatItem>
-                <StatItem>이전 평균 점수: {monthAgoScoreAverage}점</StatItem>
+                <StatItem>최근 평균 점수: {Math.floor(monthAgoScoreAverage)}점</StatItem>
               </StatsHistory>
             </InfoContainer>
 

@@ -210,7 +210,7 @@ const SpeakingTestHistory: React.FC = () => {
           <>
             <InfoContainer>
               <TitleText>
-                최근 평균 점수 보다{" "}
+                최근 점수보다{" "}
                 {monthCurrentScoreAverage ? (
                   monthCurrentScoreAverage >= monthAgoScoreAverage ? (
                     <InfoTextEmphasizeBlue>증가</InfoTextEmphasizeBlue>

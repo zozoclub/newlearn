@@ -79,22 +79,21 @@ class NewsContentsRecommender:
 
 ###############################################################################
 # 임시 - 카테고리 추천 (랜덤으로)
-def get_random_articles_by_categories(db: Session, user_categories: List[UserCategory]):
-    news_ids = []
+def get_random_articles_by_categories(db: Session, user_categories: List[UserCategory]) -> List[Tuple[int, str, int, float, datetime, int]]:
+    results = []
     for category in user_categories:
         # 각 카테고리에 대해 news 테이블에서 랜덤으로 5개의 레코드를 선택
-        random_articles = db.query(News.news_id) \
+        random_articles = db.query(News.news_id, News.title, News.category_id, News.published_date, News.hit) \
             .filter(News.category_id == category.category_id) \
             .order_by(func.random()) \
             .limit(5) \
             .all()
-        # 선택된 레코드의 article_id를 article_ids 리스트에 추가
-        news_ids.extend([article.news_id for article in random_articles])
-    # print("랜덤뉴스by카테고리 : " , list(news_ids))
-    return news_ids
+        # 선택된 레코드의 정보를 results 리스트에 추가
+        results.extend([(article.news_id, article.title, article.category_id, 0.0, article.published_date, article.hit) for article in random_articles])
+    return results
 
 def get_news_recomm_by_categories(user_id: int, db: Session):
     user_categories = get_user_category(db, user_id)
-    news_ids = get_random_articles_by_categories(db, user_categories)
-    return news_ids
+    recommended_news  = get_random_articles_by_categories(db, user_categories)
+    return recommended_news
 ###############################################################################

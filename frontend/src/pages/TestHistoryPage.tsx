@@ -92,7 +92,7 @@ const TestHistoryPage: React.FC = () => {
               $isActive={activeTab === "speak"}
               onClick={() => handleTabChange("speak")}
             >
-              스피킹 테스트 기록
+              발음 테스트 기록
             </SpeakTabButton>
           </TabButtons>
 

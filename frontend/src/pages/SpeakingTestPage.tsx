@@ -331,9 +331,9 @@ const SpeakingTestPage: React.FC = () => {
       <MainContainer>
         <MainLayout>
           {isLoading ? (
-            <Spinner /> // 로딩 중일 때 Spinner 표시
+            <Spinner />
           ) : error ? (
-            <ErrorText>에러가 발생했습니다. 다시 시도해 주세요.</ErrorText> // 에러 발생 시 에러 메시지 표시
+            <ErrorText>에러가 발생했습니다. 다시 시도해 주세요.</ErrorText>
           ) : (
             <SpeakingTestReference
               referenceTest={referenceText}
@@ -367,9 +367,9 @@ const SpeakingTestPage: React.FC = () => {
         <SubmitButtonContainer>
           <SubmitButton
             onClick={handleRecordingDataSubmit}
-            disabled={isSubmitDisabled}
+            disabled={isSubmitDisabled || !userRecognizedText}
           >
-            {isSubmitLoading ? "제출중일 경우 문구" : "제출하기"}
+            {isSubmitLoading ? <Spinner></Spinner> : "제출하기"}
           </SubmitButton>
         </SubmitButtonContainer>
         <Modal
@@ -394,7 +394,7 @@ const SpeakingTestPage: React.FC = () => {
 
 const MainContainer = styled.div`
   width: 90%;
-  min-height: 30rem;
+  min-height: 45rem;
   margin: auto;
   margin-bottom: 2rem;
   padding: 1rem;
@@ -406,6 +406,7 @@ const MainContainer = styled.div`
 `;
 
 const MainLayout = styled.div`
+  margin-top: 4rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -456,7 +457,7 @@ const SubmitButton = styled.button<{ disabled: boolean }>`
 
   &:hover {
     background-color: ${(props) =>
-      props.disabled ? "#ccc" : props.theme.colors.primaryPress};
+    props.disabled ? "#ccc" : props.theme.colors.primaryPress};
   }
 `;
 

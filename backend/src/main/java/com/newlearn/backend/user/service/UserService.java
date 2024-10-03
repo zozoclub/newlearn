@@ -5,12 +5,10 @@ import java.util.List;
 import com.newlearn.backend.user.dto.request.NewsPagenationRequestDTO;
 import com.newlearn.backend.user.dto.request.UpdateAvatarDTO;
 import com.newlearn.backend.user.dto.request.SignUpRequestDTO;
-import com.newlearn.backend.user.dto.response.AvatarResponseDTO;
 import com.newlearn.backend.user.dto.response.UserCategoryChartResponseDTO;
 import com.newlearn.backend.user.dto.response.UserGrassResponseDTO;
 import com.newlearn.backend.user.dto.response.UserProfileResponseDTO;
 import com.newlearn.backend.user.dto.response.UserScrapedNewsResponseDTO;
-import com.newlearn.backend.user.model.Avatar;
 import com.newlearn.backend.user.model.Users;
 import org.springframework.data.domain.Page;
 
@@ -20,15 +18,15 @@ public interface UserService {
 
 	void signUp(SignUpRequestDTO signUpRequestDTO);
 
-	void updateAvatar(Users user, UpdateAvatarDTO updateAvatarDTO);
+	void updateAvatar(Long userId, UpdateAvatarDTO updateAvatarDTO);
 
 	boolean checkNickname(String nickname);
 
-	void updateNickname(Users user, String nickname);
+	void updateNickname(Long userId, String nickname);
 
-	void updateDifficulty(Users user, Long difficulty);
+	void updateDifficulty(Long userId, Long difficulty);
 
-	void updateCategory(Users user, List<String> categories);
+	void updateCategory(Long userId, List<String> categories);
 
 	void deleteUser(Long userId);
 
@@ -41,7 +39,4 @@ public interface UserService {
 
 	Long getUserRank(Long userId) throws Exception;
 
-	void updateExperience(Users user, Long experience);
-
-	AvatarResponseDTO getAvartar(Long userId) throws Exception;
 }

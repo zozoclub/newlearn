@@ -1,8 +1,6 @@
 package com.newlearn.backend.study.service;
 
 import com.newlearn.backend.config.S3ObjectStorage;
-import com.newlearn.backend.news.model.News;
-import com.newlearn.backend.news.repository.NewsRepository;
 import com.newlearn.backend.study.dto.request.GoalRequestDTO;
 import com.newlearn.backend.study.dto.request.PronounceRequestDTO;
 import com.newlearn.backend.study.dto.request.WordTestResultRequestDTO;
@@ -16,7 +14,10 @@ import com.newlearn.backend.user.repository.UserRepository;
 import com.newlearn.backend.word.model.*;
 import com.newlearn.backend.study.repository.StudyRepository;
 import com.newlearn.backend.user.model.Users;
-import com.newlearn.backend.word.repository.*;
+import com.newlearn.backend.word.repository.WordQuizAnswerRepository;
+import com.newlearn.backend.word.repository.WordQuizQuestionRepository;
+import com.newlearn.backend.word.repository.WordQuizRepository;
+import com.newlearn.backend.word.repository.WordSentenceRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -24,7 +25,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -35,8 +37,6 @@ public class StudyServiceImpl implements StudyService{
 
     private final UserRepository userRepository;
     private final StudyRepository studyRepository;
-    private final NewsRepository newsRepository;
-    private final WordRepository wordRepository;
     private final WordQuizRepository wordQuizRepository;
     private final WordQuizAnswerRepository wordQuizAnswerRepository;
     private final WordQuizQuestionRepository wordQuizQuestionRepository;
@@ -53,30 +53,30 @@ public class StudyServiceImpl implements StudyService{
     @Override
     public void saveGoal(Long userId, GoalRequestDTO goalRequestDTO) {
         Goal goal = Goal.builder()
-                .userId(userId)
-                .goalReadNewsCount(goalRequestDTO.getGoalReadNewsCount())
-                .goalPronounceTestScore(goalRequestDTO.getGoalPronounceTestScore())
-                .goalCompleteWord(goalRequestDTO.getGoalCompleteWord())
-                .currentReadNewsCount(0L)
-                .currentPronounceTestScore(0L)
-                .currentCompleteWord(0L)
-                .build();
+            .userId(userId)
+            .goalReadNewsCount(goalRequestDTO.getGoalReadNewsCount())
+            .goalPronounceTestScore(goalRequestDTO.getGoalPronounceTestScore())
+            .goalCompleteWord(goalRequestDTO.getGoalCompleteWord())
+            .currentReadNewsCount(0L)
+            .currentPronounceTestScore(0L)
+            .currentCompleteWord(0L)
+            .build();
         studyRepository.save(goal);
     }
 
     @Override
     public StudyProgressDTO getStudyProgress(Long userId) {
         Goal goal = studyRepository.findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("목표가 없습니다."));
+            .orElseThrow(() -> new RuntimeException("목표가 없습니다."));
 
         return StudyProgressDTO.builder()
-                .goalReadNewsCount(goal.getGoalReadNewsCount())
-                .goalPronounceTestScore(goal.getGoalPronounceTestScore())
-                .goalCompleteWord(goal.getGoalCompleteWord())
-                .currentReadNewsCount(goal.getCurrentReadNewsCount())
-                .currentPronounceTestScore(goal.getCurrentPronounceTestScore())
-                .currentCompleteWord(goal.getCurrentCompleteWord())
-                .build();
+            .goalReadNewsCount(goal.getGoalReadNewsCount())
+            .goalPronounceTestScore(goal.getGoalPronounceTestScore())
+            .goalCompleteWord(goal.getGoalCompleteWord())
+            .currentReadNewsCount(goal.getCurrentReadNewsCount())
+            .currentPronounceTestScore(goal.getCurrentPronounceTestScore())
+            .currentCompleteWord(goal.getCurrentCompleteWord())
+            .build();
     }
 
     @Override
@@ -95,7 +95,6 @@ public class StudyServiceImpl implements StudyService{
 
             WordQuizQuestion question = new WordQuizQuestion();
             question.setWordQuiz(newQuiz);
-            question.setWord(word);
             question.setSentence(sentence.getSentence());
             question.setSentenceMeaning(sentence.getSentenceMeaning());
             question.setCorrectAnswer(word.getWord());
@@ -116,13 +115,13 @@ public class StudyServiceImpl implements StudyService{
     }
 
     @Override
-    public void saveWordTestResult(Users user, WordTestResultRequestDTO wordTestResultRequestDTO) {
+    public void saveWordTestResult(Long userId, WordTestResultRequestDTO wordTestResultRequestDTO) {
         // 퀴즈 가져오기
         WordQuiz quiz = wordQuizRepository.findById(wordTestResultRequestDTO.getQuizId())
                 .orElseThrow(() -> new IllegalArgumentException("퀴즈를 찾을 수 없습니다."));
 
         // 정답 개수 초기화
-        long correctCount = 0L;
+        Long correctCount = quiz.getCorrectCount();
 
         for (WordTestResultRequestDTO.WordTestDetail result : wordTestResultRequestDTO.getResults()) {
             // 질문 찾기
@@ -147,26 +146,12 @@ public class StudyServiceImpl implements StudyService{
         // correctCount 갱신
         quiz.setCorrectCount(correctCount);
         wordQuizRepository.save(quiz); // 퀴즈 저장 (정답 수 갱신)
-
-        // 단어 시험 후 경험치 갱신
-        // (정답*2)점
-        user.incrementExperience(correctCount*2);
-        userRepository.save(user);
-
-        // 목표 업데이트
-        long score = correctCount*20;
-        studyRepository.findByUserId(user.getUserId()).ifPresent(userGoal -> {
-            // 현재 단어 테스트 점수 업데이트
-            long updatedScore = userGoal.getCurrentCompleteWord() + score;
-            userGoal.setCurrentCompleteWord(updatedScore);
-            studyRepository.save(userGoal);
-        });
     }
 
     @Override
     public List<WordTestResultResponseDTO> getWordTestResults(Long userId) {
         // 유저와 관련된 모든 시험 가져오기
-        List<WordQuiz> wordQuizzes = wordQuizRepository.findByUserIdOrderByQuizIdDesc(userId);
+        List<WordQuiz> wordQuizzes = wordQuizRepository.findByUserId(userId);
 
         return wordQuizzes.stream().map(quiz -> {
             // 시험에 관련된 답변 가져오기
@@ -185,78 +170,38 @@ public class StudyServiceImpl implements StudyService{
     }
 
     @Override
-    public List<WordTestResultDetailResponseDTO> getWordTestResult(Long userId, Long quizId) {
+    public WordTestResultDetailResponseDTO getWordTestResult(Long userId, Long quizId) {
         // 퀴즈 가져오기
         WordQuiz quiz = wordQuizRepository.findById(quizId)
                 .orElseThrow(() -> new IllegalArgumentException("퀴즈를 찾을 수 없습니다."));
 
         // 퀴즈 질문 가져오기
         List<WordQuizQuestion> questions = wordQuizQuestionRepository.findByWordQuiz(quiz);
+
+        // 결과 리스트는 하나의 질문과 답변만 포함
         if (questions.isEmpty()) {
             throw new IllegalArgumentException("퀴즈 질문이 없습니다.");
         }
 
-        // word_ids 미리 가져오기
-        List<Long> wordIds = questions.stream()
-                .map(q -> q.getWord().getWordId())
-                .collect(Collectors.toList());
+        WordQuizQuestion question = questions.get(0);
 
-        // wordRepository에서 모든 단어를 미리 가져옴
-        Map<Long, Word> wordsMap = wordRepository.findAllById(wordIds).stream()
-                .collect(Collectors.toMap(Word::getWordId, word -> word));
+        // 해당 질문에 대한 답변 찾기
+        List<WordQuizAnswer> answers = wordQuizAnswerRepository.findByWordQuizQuestion_WordQuiz_QuizIdAndWordQuizQuestion_WordQuizQuestionId(quizId, question.getWordQuizQuestionId());
 
-        // wordSentenceRepository에서 모든 문장을 미리 가져옴
-        Map<Long, WordSentence> wordSentencesMap = wordSentenceRepository.findAllById(wordIds).stream()
-                .collect(Collectors.toMap(sentence -> sentence.getWord().getWordId(), sentence -> sentence));
+        // 첫 번째 답변을 기준으로 결과 생성
+        String answer = answers.isEmpty() ? "" : answers.get(0).getAnswer();
+        boolean isCorrect = !answers.isEmpty() && answers.get(0).getIsCorrect();
 
-        // news_id로 newsRepository에서 모든 뉴스를 미리 가져옴
-        Set<Long> newsIds = wordSentencesMap.values().stream()
-                .map(WordSentence::getNewsId)
-                .collect(Collectors.toSet());
-        Map<Long, News> newsMap = newsRepository.findAllById(newsIds).stream()
-                .collect(Collectors.toMap(News::getNewsId, news -> news));
+        WordTestResultDetailResponseDTO resultDetail = WordTestResultDetailResponseDTO.builder()
+                .quizId(question.getWordQuizQuestionId())
+                .answer(answer)
+                .correctAnswer(question.getCorrectAnswer())
+                .isCorrect(isCorrect)
+                .sentence(question.getSentence())
+                .createdAt(quiz.getCreatedAt())
+                .build();
 
-        // 결과 리스트 빌드
-        List<WordTestResultDetailResponseDTO> resultList = new ArrayList<>();
-
-        for (WordQuizQuestion question : questions) {
-            // 답변 가져오기
-            Optional<WordQuizAnswer> answerObj = wordQuizAnswerRepository.findByWordQuizQuestion_WordQuizQuestionId(question.getWordQuizQuestionId());
-            String answer = answerObj.map(WordQuizAnswer::getAnswer).orElse("");
-            boolean isCorrect = answerObj.map(WordQuizAnswer::getIsCorrect).orElse(false);
-
-            // word 가져오기
-            Word word = wordsMap.get(question.getWord().getWordId());
-            if (word == null) {
-                System.out.println("단어를 찾을 수 없습니다. ID: " + question.getWord().getWordId());
-                continue;
-            }
-
-            // wordSentence 가져오기
-            WordSentence wordSentence = wordSentencesMap.get(word.getWordId());
-            if (wordSentence == null) {
-                System.out.println("문장을 찾을 수 없습니다. Word ID: " + word.getWordId());
-                continue;
-            }
-
-            // 뉴스 가져오기 및 URL 설정
-            News news = newsMap.get(wordSentence.getNewsId());
-            String originURL = news != null ? news.getUrl() : null;
-
-            // DTO 빌드 및 결과 리스트에 추가
-            WordTestResultDetailResponseDTO result = WordTestResultDetailResponseDTO.builder()
-                    .questionId(question.getWordQuizQuestionId())
-                    .answer(answer)
-                    .correctAnswer(question.getCorrectAnswer())
-                    .correct(isCorrect)
-                    .sentence(question.getSentence())
-                    .createdAt(quiz.getCreatedAt())
-                    .originURL(originURL)
-                    .build();
-
-            resultList.add(result);
-        }
-        return resultList;
+        return resultDetail;
     }
 
     @Override
@@ -277,23 +222,25 @@ public class StudyServiceImpl implements StudyService{
             WordSentence sentence = wordQuizQuestionRepository.findRandomSentenceByWordId(word.getWordId());
 
             tests.add(PronounceTestResponseDTO.builder()
-                    .sentenceId(sentence.getSentenceId())
-                    .sentence(sentence.getSentence())
-                    .sentenceMeaning(sentence.getSentenceMeaning())
-                    .build());
+                            .sentenceId(sentence.getSentenceId())
+                            .sentence(sentence.getSentence())
+                            .sentenceMeaning(sentence.getSentenceMeaning())
+                            .build());
         }
         return tests;
     }
 
     @Override
-    public CompletableFuture<Long> savePronounceTestResultAsync(Users user, PronounceRequestDTO pronounceRequestDTO,
+    public CompletableFuture<Long> savePronounceTestResultAsync(Long userId, PronounceRequestDTO pronounceRequestDTO,
                                                                 MultipartFile file, List<Long> sentenceIds) {
         // 파일이 비어 있는지 확인
         if (file == null || file.isEmpty()) {
             throw new IllegalArgumentException("발음 테스트를 위한 파일이 제공되지 않았습니다.");
         }
 
-        Long userId = user.getUserId();
+        // 사용자 조회
+        Users user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + userId));
 
         // S3에 파일 업로드
         String fileUrl = s3ObjectStorage.uploadFile(file).join(); // join()을 통해 CompletableFuture 결과 대기
@@ -324,17 +271,13 @@ public class StudyServiceImpl implements StudyService{
         }
 
         // 목표 업데이트
-        studyRepository.findByUserId(userId).ifPresent(userGoal -> {
-            // 현재 발음 테스트 점수 업데이트
-            long updatedScore = userGoal.getCurrentPronounceTestScore() + pronounceRequestDTO.getTotalScore();
-            userGoal.setCurrentPronounceTestScore(updatedScore);
-            studyRepository.save(userGoal);
-        });
+        Goal userGoal = studyRepository.findByUserId(userId)
+                .orElseThrow(() -> new IllegalArgumentException("No study goal found for user with id: " + userId));
 
-        // 발음 시험 후 경험치 갱신
-        // (정답*2)점
-        user.incrementExperience(20L);
-        userRepository.save(user);
+        // 현재 발음 테스트 점수 업데이트
+        long updatedScore = userGoal.getCurrentPronounceTestScore() + pronounceRequestDTO.getTotalScore();
+        userGoal.setCurrentPronounceTestScore(updatedScore);
+        studyRepository.save(userGoal);
 
         log.info("발음 테스트 결과가 성공적으로 저장되었습니다. 사용자 ID: {}, 점수: {}", userId, pronounceRequestDTO.getTotalScore());
 
@@ -344,7 +287,7 @@ public class StudyServiceImpl implements StudyService{
     @Override
     public List<PronounceTestResultResponseDTO> getPronounceTestResults(Long userId) {
         // 사용자 ID로 발음 테스트 결과 조회
-        List<UserAudioFile> audioFiles = userAudioFileRepository.findByUserIdOrderByAudioFileIdDesc(userId);
+        List<UserAudioFile> audioFiles = userAudioFileRepository.findByUserId(userId);
 
         // 결과가 없는 경우 빈 리스트 반환
         if (audioFiles.isEmpty()) {

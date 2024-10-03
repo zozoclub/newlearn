@@ -22,5 +22,4 @@ public interface WordQuizQuestionRepository extends JpaRepository<WordQuizQuesti
 
     @Query("SELECT ws FROM WordSentence ws WHERE ws.word.wordId = :wordId ORDER BY FUNCTION('RAND') LIMIT 1")
     WordSentence findRandomSentenceByWordId(@Param("wordId") Long wordId);
-
 }

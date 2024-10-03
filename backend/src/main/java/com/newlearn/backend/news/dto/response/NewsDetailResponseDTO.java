@@ -1,7 +1,6 @@
 package com.newlearn.backend.news.dto.response;
 
 import com.newlearn.backend.news.model.News;
-import com.newlearn.backend.news.model.UserNewsRead;
 import com.newlearn.backend.user.model.Users;
 import com.newlearn.backend.word.model.Word;
 import com.newlearn.backend.word.model.WordSentence;
@@ -26,7 +25,6 @@ public class NewsDetailResponseDTO {
     private String originalUrl;
     private Long hit;
     private Boolean isScrapped;
-    private boolean[] isRead;
 
     private List<WordInfo> words;
 
@@ -37,7 +35,7 @@ public class NewsDetailResponseDTO {
         private String sentence;
     }
 
-    public static NewsDetailResponseDTO of(News news, String title, String content, boolean isScrapped, UserNewsRead userNewsRead, List<WordInfo> words) {
+    public static NewsDetailResponseDTO of(News news, String title, String content, boolean isScrapped, List<WordInfo> words) {
         return NewsDetailResponseDTO.builder()
                 .newsId(news.getNewsId())
                 .title(title)
@@ -50,7 +48,6 @@ public class NewsDetailResponseDTO {
                 .originalUrl(news.getUrl())
                 .hit(news.getHit())
                 .isScrapped(isScrapped)
-                .isRead(userNewsRead != null ? userNewsRead.getReadStatus() : UserNewsRead.getDefaultReadStatus())
                 .words(words)
                 .build();
     }

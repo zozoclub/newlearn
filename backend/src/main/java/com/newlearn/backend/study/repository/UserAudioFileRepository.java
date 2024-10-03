@@ -7,6 +7,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserAudioFileRepository extends JpaRepository<UserAudioFile, Long> {
-    List<UserAudioFile> findByUserIdOrderByAudioFileIdDesc(Long id);
+    List<UserAudioFile> findByUserId(Long id);
     Optional<UserAudioFile> findById(Long audioFileId);
 }

@@ -29,6 +29,5 @@ public class NewsResponseDTO {
                 .isRead(userNewsRead != null ? userNewsRead.getReadStatus() : UserNewsRead.getDefaultReadStatus())
                 .build();
     }
-    
 
 }

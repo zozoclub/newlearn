@@ -14,7 +14,6 @@ import com.newlearn.backend.news.repository.UserDailyNewsReadRepository;
 import com.newlearn.backend.news.repository.UserNewsReadRepository;
 import com.newlearn.backend.news.repository.UserNewsScrapRepository;
 import com.newlearn.backend.user.dto.request.NewsPagenationRequestDTO;
-import com.newlearn.backend.user.dto.response.AvatarResponseDTO;
 import com.newlearn.backend.user.dto.response.UserCategoryChartResponseDTO;
 import com.newlearn.backend.user.dto.response.UserGrassResponseDTO;
 import com.newlearn.backend.user.dto.response.UserScrapedNewsResponseDTO;
@@ -85,7 +84,9 @@ public class UserServiceImpl implements UserService{
 
 	@Override
 	@Transactional
-	public void updateAvatar(Users user, UpdateAvatarDTO updateAvatarDTO) {
+	public void updateAvatar(Long userId, UpdateAvatarDTO updateAvatarDTO) {
+		Users user = userRepository.findById(userId)
+			.orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다"));
 
 		Avatar avatar = user.getAvatar();
 		if (avatar == null) {
@@ -105,21 +106,26 @@ public class UserServiceImpl implements UserService{
 	}
 
 	@Override
-	public void updateNickname(Users user, String nickname) {
+	public void updateNickname(Long userId, String nickname) {
+
+		Users user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다"));
 
 		user.setNickname(nickname);
 		userRepository.save(user);
 	}
 
 	@Override
-	public void updateDifficulty(Users user, Long difficulty) {
+	public void updateDifficulty(Long userId, Long difficulty) {
+		Users user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다"));
 
 		user.setDifficulty(difficulty);
 		userRepository.save(user);
 	}
 
 	@Override
-	public void updateCategory(Users user, List<String> categories) {
+	public void updateCategory(Long userId, List<String> categories) {
+
+		Users user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다"));
 
 		Set<Category> newCategories = new HashSet<>();
 		for(String categoryName : categories) {
@@ -153,21 +159,6 @@ public class UserServiceImpl implements UserService{
 	public Long getUserRank(Long userId) {
 		int rank = userRepository.findUserRankById(userId);
 		return Long.valueOf(rank);
-	}
-
-	@Override
-	public void updateExperience(Users user, Long experience) {
-		user.incrementExperience(experience);
-		userRepository.save(user);
-	}
-
-	@Override
-	public AvatarResponseDTO getAvartar(Long userId) throws Exception {
-		Users user = userRepository.findById(userId)
-			.orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
-
-		Avatar avatar = avatarRepository.findByUser(user).orElseThrow(() -> new Exception("아바타 없습니다"));
-		return new AvatarResponseDTO(avatar);
 	}
 
 

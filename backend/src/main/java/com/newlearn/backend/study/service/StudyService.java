@@ -4,7 +4,6 @@ import com.newlearn.backend.study.dto.request.GoalRequestDTO;
 import com.newlearn.backend.study.dto.request.PronounceRequestDTO;
 import com.newlearn.backend.study.dto.request.WordTestResultRequestDTO;
 import com.newlearn.backend.study.dto.response.*;
-import com.newlearn.backend.user.model.Users;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -20,17 +19,17 @@ public interface StudyService {
 
     WordTestResponseWithQuizIdDTO getWordTestProblems(Long userId, Long totalCount);
 
-    void saveWordTestResult(Users user, WordTestResultRequestDTO wordTestResultRequestDTO);
+    void saveWordTestResult(Long userId, WordTestResultRequestDTO wordTestResultRequestDTO);
 
     List<WordTestResultResponseDTO> getWordTestResults(Long userId);
 
-    List<WordTestResultDetailResponseDTO> getWordTestResult(Long userId, Long quizId);
+    WordTestResultDetailResponseDTO getWordTestResult(Long userId, Long quizId);
 
     void exitQuiz(Long quizId);
 
     List<PronounceTestResponseDTO> getPronounceTestProblems(Long userId);
 
-    CompletableFuture<Long> savePronounceTestResultAsync(Users user, PronounceRequestDTO pronounceRequestDTO, MultipartFile file, List<Long> sentenceIds);
+    CompletableFuture<Long> savePronounceTestResultAsync(Long userId, PronounceRequestDTO pronounceRequestDTO, MultipartFile file, List<Long> sentenceIds);
 
     List<PronounceTestResultResponseDTO> getPronounceTestResults(Long userId);
 

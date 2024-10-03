@@ -43,6 +43,7 @@ public class WordController {
 			if(user == null) {
 				return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
 			}
+
 			wordService.addWord(wordRequestDto, user);
 			return ApiResponse.createSuccess(null, "성공적으로 단어가 저장되었습니;다");
 		}
@@ -159,7 +160,7 @@ public class WordController {
 			return ApiResponse.createSuccess(null, "성공적 변경");
 
 		} catch (Exception e) {
-			return ApiResponse.createError(ErrorCode.RESTUDY_UPDATE_FAILED);
+			return ApiResponse.createError(ErrorCode.WORD_UPDATE_FAILED);
 		}
 	}
 
@@ -175,7 +176,7 @@ public class WordController {
 			return ApiResponse.createSuccess(null, "성공적 변경");
 
 		} catch (Exception e) {
-			return ApiResponse.createError(ErrorCode.RESTUDY_UPDATE_FAILED);
+			return ApiResponse.createError(ErrorCode.WORD_UPDATE_FAILED);
 		}
 	}
 
@@ -192,7 +193,7 @@ public class WordController {
 			return ApiResponse.createSuccess(null, "단어 처리 성공");
 
 		} catch (Exception e) {
-			return ApiResponse.createError(ErrorCode.RESTUDY_UPDATE_FAILED);
+			return ApiResponse.createError(ErrorCode.WORD_UPDATE_FAILED);
 		}
 	}
 }

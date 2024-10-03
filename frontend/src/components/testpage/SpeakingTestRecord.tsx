@@ -328,6 +328,7 @@ const ModalConfirmButton = styled.button`
 
 // 플레이어 배경 색깔
 const StyledAudioPlayer = styled.div`
-  background-color: ${(props) => props.theme.shadows.medium};
+  background-color: ${(props) => props.theme.colors.cardBackground01};
+  box-shadow: 3px 3px 10px 0 rgba(0, 0, 0, 0.2);
   margin: 0 1rem;
 `;

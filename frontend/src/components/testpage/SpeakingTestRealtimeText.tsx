@@ -12,7 +12,7 @@ const SpeakingTestRealtimeText: React.FC<Props> = ({
   userRecognizingText,
   userRecognizedText,
   isExplainText,
-  status, // status로 녹음 상태를 확인
+  status, // status 녹음 상태
 }) => {
   // userRecognizedText를 '. ' 기준으로 나눔
   const splitRecognizedText = userRecognizedText
@@ -50,7 +50,6 @@ const SpeakingTestRealtimeText: React.FC<Props> = ({
               <Explain>
                 인식된 텍스트는 문장의 완성도 점수에서 확인 가능합니다.
                 <br />
-                <br />
                 문단이 제대로 나누어지지 않아도 점수에는 큰 영향 없습니다.
               </Explain>
               {splitRecognizedText.map((sentence, index) => (
@@ -62,7 +61,12 @@ const SpeakingTestRealtimeText: React.FC<Props> = ({
                 </span>
               ))}
             </FinalText>
-          ) : null}
+          ) : <>
+            <NoText>최종 인식된 텍스트가 없습니다.</NoText>
+            <br />
+            <Explain>녹음된 음성을 들어보고, 소리가 나지 않는다면 마이크 상태를 확인해 주세요.</Explain>
+          </>
+          }
         </div>
       ) : (
         <Instructions>
@@ -120,4 +124,12 @@ const Explain = styled.div`
   margin-bottom: 1rem;
   font-size: 0.875rem;
   color: ${(props) => props.theme.colors.text04};
+`;
+
+const NoText = styled.div`
+  color: ${(props) => props.theme.colors.danger};
+  font-size: 1.25rem;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 1rem;
 `;

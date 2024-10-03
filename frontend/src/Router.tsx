@@ -47,7 +47,7 @@ export const router = createBrowserRouter([
             element: <WordTestResultPage />,
           },
           {
-            path: "news",
+            path: "news/:category/:page",
             element: <NewsPage />,
           },
           {

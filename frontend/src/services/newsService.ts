@@ -10,6 +10,11 @@ export type NewsType = {
   isRead: boolean[];
 };
 
+export type NewsListType = {
+  newsList: NewsType[];
+  totalPages: number;
+};
+
 export type WordType = {
   word: string;
   sentence: string;
@@ -33,7 +38,7 @@ export const getTotalNewsList = async (
   lang: string,
   page: number,
   size: number
-): Promise<NewsType[]> => {
+): Promise<NewsListType> => {
   try {
     const response = await axiosInstance.get(`news`, {
       params: {
@@ -44,7 +49,10 @@ export const getTotalNewsList = async (
       },
     });
     console.log(response);
-    return response.data.data.content;
+    return {
+      newsList: response.data.data.content,
+      totalPages: response.data.data.totalPages,
+    };
   } catch (error) {
     console.error(error);
     throw error;
@@ -57,7 +65,7 @@ export const getCategoryNewsList = async (
   page: number,
   size: number,
   category: number
-): Promise<NewsType[]> => {
+): Promise<NewsListType> => {
   try {
     const response = await axiosInstance.get(`news/${category}`, {
       params: {
@@ -68,7 +76,10 @@ export const getCategoryNewsList = async (
       },
     });
     console.log(response);
-    return response.data.data.content;
+    return {
+      newsList: response.data.data.content,
+      totalPages: response.data.data.totalPages,
+    };
   } catch (error) {
     console.error(error);
     throw error;

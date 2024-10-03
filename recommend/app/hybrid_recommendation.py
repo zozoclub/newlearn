@@ -200,7 +200,6 @@ def collaborative_filtering(user_id: int, db: Session) -> List[tuple]:
     # 가중치 기준으로 추천 뉴스 정렬
     return sorted(recommended_news, key=lambda x: x[2], reverse=True)[:5]
 
-
 def content_based_filtering(user_id: int, db: Session):
     user_categories = get_user_categories(user_id, db)
     user_category_ids = [uc.category_id for uc in user_categories]
@@ -238,7 +237,7 @@ def content_based_filtering(user_id: int, db: Session):
 
             # 4) 난이도 스크랩 수에 따른 가중치
             news_difficulty_popularity = difficulty_based_popularity.get(news.news_id, {})
-            weight += news_difficulty_popularity.get(user_difficulty, 0)
+            weight += news_difficulty_popularity.get(user_difficulty, 0) / 100
 
             # 5) 작성 시간(최신)에 따른 가중치
             if isinstance(news.published_date, datetime):
@@ -252,30 +251,14 @@ def content_based_filtering(user_id: int, db: Session):
     # 가중치 기준으로 추천 뉴스 정렬
     return sorted(recommended_news, key=lambda x: x[2], reverse=True)[:5]
 
-def hybrid_recommendation(user_id: int, db: Session):
+def hybrid_recommendation(user_id: int, db: Session) -> List[tuple]:
     collaborative_recommendations = collaborative_filtering(user_id, db)
-    content_based_recommendations = content_based_filtering(user_id, db)
+    content_recommendations = content_based_filtering(user_id, db)
 
-    combined_recommendations = defaultdict(lambda: {'weight': 0, 'title': '', 'published_date': None, 'hit': 0})
+    combined_recommendations = {news[0]: news for news in collaborative_recommendations}
 
-    for news_id, title, weight, published_date, hit in collaborative_recommendations:
-        combined_recommendations[news_id]['weight'] += weight * 0.5  # 협업 필터링 결과에 가중치 부여
-        combined_recommendations[news_id]['title'] = title
-        combined_recommendations[news_id]['published_date'] = published_date
-        combined_recommendations[news_id]['hit'] = hit
+    for news in content_recommendations:
+        if news[0] not in combined_recommendations:
+            combined_recommendations[news[0]] = news
 
-    for news_id, title, weight, published_date, hit in content_based_recommendations:
-        combined_recommendations[news_id]['weight'] += weight * 0.5  # 콘텐츠 기반 필터링 결과에 가중치 부여
-        if not combined_recommendations[news_id]['title']:  # 이미 추가된 제목이 없는 경우에만
-            combined_recommendations[news_id]['title'] = title
-            combined_recommendations[news_id]['published_date'] = published_date
-            combined_recommendations[news_id]['hit'] = hit
-
-    # 최종 추천 뉴스 목록 생성
-    final_recommendations = [
-        (news_id, data['title'], data['weight'], data['published_date'], data['hit'])
-        for news_id, data in combined_recommendations.items()
-    ]
-
-    # 가중치 기준으로 정렬
-    return sorted(final_recommendations, key=lambda x: x[2], reverse=True)[:5]
+    return sorted(combined_recommendations.values(), key=lambda x: x[2], reverse=True)[:5]

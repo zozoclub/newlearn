@@ -60,7 +60,11 @@ const GoalSetting: React.FC<GoalSettingComponentProps> = ({ goalMutation }) => {
     <>
       <GoalContainer>
         <div>
-          {new Date().getMonth() + 1}월 목표는 설정 후 수정할 수 없습니다.
+          {new Date().getMonth() + 1}월 목표는 설정 후{" "}
+          <u>수정할 수 없습니다.</u>
+        </div>
+        <div>
+          이번 달 목표를 달성하면 <u>추가 경험치</u>를 획득할 수 있어요.
         </div>
         <GoalItem>
           <GoalTitle>
@@ -130,6 +134,7 @@ const GoalContainer = styled.div`
   display: flex;
   flex-direction: column;
   text-align: center;
+  gap: 0.5rem;
 `;
 const GoalItem = styled.div`
   display: flex;

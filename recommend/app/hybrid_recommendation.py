@@ -27,9 +27,9 @@ def get_user_difficulty(user_id: int, db: Session):
     user = db.query(User).filter(User.user_id == user_id).first()
     return user.difficulty if user else None
 
-def get_user_click_log(user_id: int):
-    """해당 유저의 user_news_click (MongoDB) 가져오기"""
-    return list(user_news_click.find({"user_id": user_id}))
+def get_user_click_log(user_id: int, limit: int = 100):
+    """해당 유저의 user_news_click (MongoDB) 가져오기 (부분적 로딩)"""
+    return list(user_news_click.find({"user_id": user_id}).limit(limit))
 
 #####################################
 # 2. 데이터 전처리 및 유사도 계산
@@ -43,14 +43,14 @@ def vectorize_titles(titles_tuple: Tuple[str, ...]) -> Tuple[np.ndarray, TfidfVe
 #####################################
 # 3. 유사한 유저 찾기
 #####################################
-def find_similar_users(user_id: int, db: Session) -> List[int]:
-    """코사인 유사도를 사용하여 유사한 사용자 찾기"""
-    user_clicks = get_user_click_log(user_id)
+def find_similar_users(user_id: int, db: Session, limit: int = 100):
+    """코사인 유사도를 사용하여 유사한 사용자 찾기 (부분적 로딩)"""
+    user_clicks = get_user_click_log(user_id, limit)
     user_news_set = {click["news_id"] for click in user_clicks}
 
     all_users_clicks = {
-        user_click["user_id"]: get_user_click_log(user_click["user_id"])
-        for user_click in user_news_click.find({"user_id": {"$ne": user_id}})
+        user_click["user_id"]: get_user_click_log(user_click["user_id"], limit)
+        for user_click in user_news_click.find({"user_id": {"$ne": user_id}}).limit(limit)
     }
 
     all_news_ids = user_news_click.distinct("news_id")
@@ -103,82 +103,19 @@ def get_news_metadata(news_id: int, db: Session):
         news.published_date = parse_korean_date(news.published_date)
     return news
 
-@lru_cache(maxsize=1)
-def get_time_based_popularity(db: Session) -> Dict[int, Dict[str, int]]:
-    """시간대별 뉴스 인기도 계산하기 (스크랩 기반)"""
-    current_time = datetime.now()
-    one_day_ago = current_time - timedelta(days=1)
-    reads = db.query(UserNewsScrap).filter(UserNewsScrap.scraped_date >= one_day_ago).all()
-
-    time_based_popularity = defaultdict(lambda: {'아침': 0, '오후': 0, '저녁': 0, '밤': 0})
-    for read in reads:
-        hour = read.scraped_date.hour
-        if 6 <= hour < 12:
-            time_period = '아침'
-        elif 12 <= hour < 18:
-            time_period = '오후'
-        elif 18 <= hour < 24:
-            time_period = '저녁'
-        else:
-            time_period = '밤'
-        time_based_popularity[read.news_id][time_period] += 1
-
-    return dict(time_based_popularity)
-
-@lru_cache(maxsize=1)
-def get_difficulty_based_popularity(db: Session) -> Dict[int, Dict[int, int]]:
-    """난이도별 뉴스 인기도(스크랩 수) 계산하기"""
-    difficulty_popularity = defaultdict(lambda: {1: 0, 2: 0, 3: 0})
-    scraps = db.query(UserNewsScrap).all()
-    for scrap in scraps:
-        difficulty_popularity[scrap.news_id][scrap.difficulty] += 1
-    return dict(difficulty_popularity)
-
 #####################################
-# 5. 사용자 뉴스 읽기 패턴 분석
+# 5. 추천 로직 최적화
 #####################################
-@lru_cache(maxsize=1024)
-def get_user_time_pattern(user_id: int, db: Session) -> Dict[str, float]:
-    """사용자의 뉴스 읽기 시간 패턴 분석"""
-    one_week_ago = datetime.now() - timedelta(days=7)
-    user_scraps = db.query(UserNewsScrap).filter(
-        UserNewsScrap.user_id == user_id,
-        UserNewsScrap.scraped_date >= one_week_ago
-    ).all()
-
-    time_pattern = {'아침': 0, '오후': 0, '저녁': 0, '밤': 0}
-    total_scraps = len(user_scraps)
-
-    for scrap in user_scraps:
-        hour = scrap.scraped_date.hour
-        if 6 <= hour < 12:
-            time_pattern['아침'] += 1
-        elif 12 <= hour < 18:
-            time_pattern['오후'] += 1
-        elif 18 <= hour < 24:
-            time_pattern['저녁'] += 1
-        else:
-            time_pattern['밤'] += 1
-
-    if total_scraps > 0:
-        for key in time_pattern:
-            time_pattern[key] /= total_scraps
-
-    return time_pattern
-
-#####################################
-# 추천 로직
-#####################################
-def collaborative_filtering(user_id: int, db: Session) -> List[tuple]:
-    """협업 필터링 기반 추천"""
-    similar_users = find_similar_users(user_id, db)
+def collaborative_filtering(user_id: int, db: Session, limit: int = 100) -> List[tuple]:
+    """협업 필터링 기반 추천 (부분적 로딩)"""
+    similar_users = find_similar_users(user_id, db, limit)
     user_categories = get_user_categories(user_id, db)
     user_category_ids = {uc.category_id for uc in user_categories}
     recommended_news = []
     current_time = datetime.now()
 
     for similar_user_id in similar_users:
-        similar_user_clicks = get_user_click_log(similar_user_id)
+        similar_user_clicks = get_user_click_log(similar_user_id, limit)
         for click in similar_user_clicks:
             if not user_news_click.find_one({"user_id": user_id, "news_id": click["news_id"]}):
                 news_metadata = get_news_metadata(click["news_id"], db)
@@ -210,14 +147,14 @@ def collaborative_filtering(user_id: int, db: Session) -> List[tuple]:
     # 가중치 기준으로 추천 뉴스 정렬
     return sorted(recommended_news, key=lambda x: x[3], reverse=True)[:20]
 
-def content_based_filtering(user_id: int, db: Session) -> List[tuple]:
-    """컨텐츠 기반 필터링 추천"""
+def content_based_filtering(user_id: int, db: Session, limit: int = 100) -> List[tuple]:
+    """컨텐츠 기반 필터링 추천 (부분적 로딩)"""
     user_categories = get_user_categories(user_id, db)
     user_category_ids = {uc.category_id for uc in user_categories}
     recommended_news = []
     current_time = datetime.now()
 
-    all_news = db.query(News).all()
+    all_news = db.query(News).limit(limit).all()
     news_titles = tuple(news.title for news in all_news)
 
     title_vectors, vectorizer = vectorize_titles(news_titles)
@@ -246,6 +183,7 @@ def content_based_filtering(user_id: int, db: Session) -> List[tuple]:
     # 가중치 기준으로 추천 뉴스 정렬
     return sorted(recommended_news, key=lambda x: x[3], reverse=True)[:20]
 
+
 def hybrid_recommendation(user_id: int, db: Session) -> List[tuple]:
     """하이브리드 추천 (협업 필터링 + 컨텐츠 기반 필터링)"""
     collaborative_recommendations = collaborative_filtering(user_id, db)
@@ -254,14 +192,3 @@ def hybrid_recommendation(user_id: int, db: Session) -> List[tuple]:
     all_recommendations = {news[0]: news for news in collaborative_recommendations + content_recommendations}
 
     return sorted(all_recommendations.values(), key=lambda x: x[2], reverse=True)[:20]
-
-@lru_cache(maxsize=128)
-def recommend_news(user_id: int, db: Session) -> List[tuple]:
-    """최종 뉴스 추천 함수"""
-    user_difficulty = get_user_difficulty(user_id, db)
-    if user_difficulty is None:
-        print(f"사용자 ID {user_id}의 난이도 정보를 찾을 수 없습니다.")
-        return []
-
-    recommendations = hybrid_recommendation(user_id, db)
-    return recommendations

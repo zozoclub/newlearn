@@ -73,10 +73,10 @@ const VocaCollapsible: React.FC<VocaCollapsibleProps> = ({
                       {sentence.difficulty === 1
                         ? "초급"
                         : sentence.difficulty === 2
-                        ? "중급"
-                        : sentence.difficulty === 3
-                        ? "고급"
-                        : "알 수 없음"}
+                          ? "중급"
+                          : sentence.difficulty === 3
+                            ? "고급"
+                            : "알 수 없음"}
                     </DifficultyChip>
                     <NewsLinkButton
                       onClick={() => handleNewsLinkClick(sentence.newsId)}
@@ -116,10 +116,10 @@ const ListItem = styled.div`
   margin-bottom: 1rem;
   overflow: hidden;
   transition: all 0.3s ease-in-out;
+  background-color:  ${(props) => props.theme.colors.cardBackground01};
 `;
 
 const Title = styled.div`
-  background-color: ${(props) => props.theme.shadows.medium};
   color: ${(props) => props.theme.colors.text};
   padding: 1rem;
   cursor: pointer;

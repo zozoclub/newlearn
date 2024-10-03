@@ -17,6 +17,12 @@ export const usePWAPrompt = ({ onAccepted, onReject }: OwnProps) => {
   }, []);
 
   useEffect(() => {
+    const rejectedPwaInstall = localStorage.getItem("pwaInstallRejected");
+    if (rejectedPwaInstall === "true") {
+      // 사용자가 이전에 설치 거절했으면 프롬프트를 띄우지 않음
+      return;
+    }
+
     window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
 
     return () => {
@@ -39,8 +45,11 @@ export const usePWAPrompt = ({ onAccepted, onReject }: OwnProps) => {
       deferredPrompt.userChoice.then((choiceResult: { outcome: string }) => {
         if (choiceResult.outcome === "accepted") {
           if (onAccepted) onAccepted();
+          // PWA 설치 성공 시 로컬 스토리지에 저장할 필요는 없음
         } else {
           if (onReject) onReject();
+          // PWA 설치 거절 시 로컬 스토리지에 거절 상태 저장
+          localStorage.setItem("pwaInstallRejected", "true");
         }
         setDeferredPrompt(null);
       });

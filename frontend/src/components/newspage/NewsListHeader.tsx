@@ -1,17 +1,20 @@
+import { usePageTransition } from "@hooks/usePageTransition";
+import { useParams } from "react-router-dom";
 import styled from "styled-components";
 
-const NewsListHeader: React.FC<{
-  selectedCategory: number;
-  setSelectedCategory: React.Dispatch<React.SetStateAction<number>>;
-}> = ({ selectedCategory, setSelectedCategory }) => {
+const NewsListHeader: React.FC = () => {
   const categoryList = [
     { name: "전체" },
+    { name: "정치" },
     { name: "경제" },
     { name: "사회" },
-    { name: "연예" },
+    { name: "생활/문화" },
     { name: "IT/과학" },
-    { name: "몰라" },
+    { name: "세계" },
   ];
+  const transitionTo = usePageTransition();
+  const { category } = useParams();
+  const selectedCategory = Number(category);
 
   return (
     <Container>
@@ -20,49 +23,36 @@ const NewsListHeader: React.FC<{
           <CategoryItem
             key={category.name}
             onClick={() => {
-              setSelectedCategory(index);
+              transitionTo(`/news/${index}/1`);
             }}
+            $isSelected={selectedCategory === index}
           >
             {category.name}
           </CategoryItem>
         ))}
-        <FocusEffect $categoryId={selectedCategory} />
       </CategoryContainer>
     </Container>
   );
 };
 
 const Container = styled.div`
-  display: flex;
+  position: relative;
+  width: 100%;
 `;
 
 const CategoryContainer = styled.div`
   display: flex;
-  position: relative;
-  width: 50%;
+  gap: 5%;
 `;
 
-const CategoryItem = styled.div`
-  width: 16.6666%;
+const CategoryItem = styled.div<{ $isSelected?: boolean }>`
   font-size: 1.25rem;
   font-weight: 600;
   text-align: center;
   cursor: pointer;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: clip;
-`;
-
-const FocusEffect = styled.div<{ $categoryId: number }>`
-  position: absolute;
-  left: ${(props) => (100 / 6) * props.$categoryId}%;
-  bottom: 0;
-  transform: translate(33%, 0);
-  width: 10%;
-  height: 1rem;
-  transition: left 0.3s;
-  border-bottom: 0.175rem ${(props) => props.theme.colors.primary + "AA"};
-  box-shadow: 0 0.75rem 0.25rem -0.25rem ${(props) => props.theme.colors.primary + "AA"};
+  color: ${(props) =>
+    props.$isSelected ? props.theme.colors.primary : props.theme.colors.text};
 `;
 
 export default NewsListHeader;

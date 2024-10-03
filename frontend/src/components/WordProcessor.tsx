@@ -1,5 +1,4 @@
-export const extractWords = (textArray: string[]) => {
-    const text = textArray.join(" ");
+export const extractWords = (text: string) => {
     const words = text.match(/\b\w+\b/g);
     const stopWordsSet = new Set([
         "the",

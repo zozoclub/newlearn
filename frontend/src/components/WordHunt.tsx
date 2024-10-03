@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import {
   extractWords,
@@ -12,16 +12,16 @@ import {
   handleMouseUp,
 } from "@components/WordMouseHandlers";
 
-const WordHunt: React.FC = () => {
-  // 예문
-  const text = [
-    "Facing mounting pressure following a contentious draw against Palestine in their most recent World Cup qualifier, South Korea's national football team has arrived in Oman, their next destination in the arduous quest for a coveted spot in the 2026 FIFA World Cup.",
-    "In a somber press conference upon their arrival in Muscat, Head Coach Hong Myung-bo acknowledged the palpable frustration of the South Korean fan base, acknowledging the criticism directed at both the team's performance and the Korean Football Association's overall direction.",
-    "While expressing empathy for the fans' disillusionment, Hong Myung-bo asserted that he would bear the brunt of the criticism, urging the public to rally behind the players, who he believes are striving to overcome adversity and deliver a strong performance on the pitch.",
-    "Hong Myung-bo's plea for fan support comes amidst mounting controversy surrounding the national team's recent performance, with questions arising regarding the team's tactical approach and player selection.",
-    "The match against Oman, scheduled for October 10th at the Sultan Qaboos Sports Complex, holds significant weight in South Korea's qualification hopes, as a victory would be crucial to maintaining momentum in Group B.",
-    "Hong Myung-bo's words, imbued with a mixture of introspection and determination, reflect the immense pressure facing the South Korean squad as they embark on this critical juncture in their World Cup qualifying journey.",
-  ];
+type EngDataProps = {
+  engData?: string; // 긴 문단 형태로 string
+};
+
+const WordHunt: React.FC<EngDataProps> = ({ engData }) => {
+  // 전달받은 문자열을 text로 설정 (없으면 기본 값)
+  const text = engData ||
+    `Facing mounting pressure following a contentious draw against Palestine in their most recent World Cup qualifier, South Korea's national football team has arrived in Oman, their next destination in the arduous quest for a coveted spot in the 2026 FIFA World Cup. In a somber press conference upon their arrival in Muscat, Head Coach Hong Myung-bo acknowledged the palpable frustration of the South Korean fan base, acknowledging the criticism directed at both the team's performance and the Korean Football Association's overall direction.
+    While expressing empathy for the fans' disillusionment, Hong Myung-bo asserted that he would bear the brunt of the criticism, urging the public to rally behind the players, who he believes are striving to overcome adversity and deliver a strong performance on the pitch. Hong Myung-bo's plea for fan support comes amidst mounting controversy surrounding the national team's recent performance, with questions arising regarding the team's tactical approach and player selection.
+    The match against Oman, scheduled for October 10th at the Sultan Qaboos Sports Complex, holds significant weight in South Korea's qualification hopes, as a victory would be crucial to maintaining momentum in Group B. Hong Myung-bo's words, imbued with a mixture of introspection and determination, reflect the immense pressure facing the South Korean squad as they embark on this critical juncture in their World Cup qualifying journey.`
 
   const [grid, setGrid] = useState<string[][]>([]);
   const [selectedPositions, setSelectedPositions] = useState<
@@ -37,23 +37,32 @@ const WordHunt: React.FC = () => {
   >([]);
   const [showAnswer, setShowAnswer] = useState<boolean>(false);
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // 생성 로직 (현재는 버튼을 통해 생성하지만, 기사에 진입할 때 useEffect를 통해 생성해주어야함)
-  // TODO : 생성 가능한 단어가 10개 이하일 경우 예외 처리
-  const handleExtractWords = () => {
-    const words = extractWords(text);
-    const wordCounts = countWordFrequencies(words);
-    const topWords = getTopWords(wordCounts, 10);
-    const { grid, wordPositions } = createGrid(topWords, 12);
-    setGrid(grid);
-    setPlacedWordPositions(wordPositions);
-    setPlacedWords(topWords);
-  };
+  useEffect(() => {
+    const handleExtractWords = () => {
+      const words = extractWords(text); // 단어 추출
+      const wordCounts = countWordFrequencies(words);
+      const topWords = getTopWords(wordCounts, 10); // 빈도수가 높은 10개 단어 추출
 
-  // 그리드 영역 밖으로 나가면 틀림 이벤트를 발생
+      if (topWords.length < 10) {
+        setErrorMessage("WordHunt 단어가 부족합니다"); // 단어가 부족할 때 처리
+        return;
+      }
+
+      const { grid, wordPositions } = createGrid(topWords, 12); // 그리드 생성
+      setGrid(grid);
+      setPlacedWordPositions(wordPositions);
+      setPlacedWords(topWords);
+      setErrorMessage(null); // 에러 메시지 초기화
+    };
+
+    handleExtractWords(); // 컴포넌트가 마운트될 때 실행
+  }, [text]);
+
   const handleMouseLeaveGrid = () => {
     if (selectedPositions.length > 0) {
-      setIncorrectSelection(true); // 틀린 이벤트 발생
+      setIncorrectSelection(true); // 틀린 선택 처리
       setIsDisabled(true); // 드래그 비활성화
       setTimeout(() => {
         setIncorrectSelection(false);
@@ -63,10 +72,13 @@ const WordHunt: React.FC = () => {
     }
   };
 
+  if (errorMessage) {
+    return <ErrorText>{errorMessage}</ErrorText>;
+  }
+
   return (
     <Container>
       <Title>Word Hunt</Title>
-      <Button onClick={handleExtractWords}>Extract Words</Button>
       <Button onClick={() => setShowAnswer(!showAnswer)}>
         {showAnswer ? "Hide Answer" : "Show Answer"}
       </Button>
@@ -80,7 +92,6 @@ const WordHunt: React.FC = () => {
         </ul>
       </WordList>
       <GridContainer onMouseLeave={handleMouseLeaveGrid}>
-        {/* 마우스가 그리드 밖으로 나가면 처리 */}
         <h2>12x12 Grid:</h2>
         <Grid>
           {grid.map((row, rowIndex) =>
@@ -223,12 +234,12 @@ const Cell = styled.div<{
     props.$isAnswer
       ? props.theme.colors.primary
       : props.$isCorrect
-      ? props.theme.colors.primary
-      : props.$isIncorrect
-      ? props.theme.colors.danger
-      : props.$isSelected
-      ? "yellow"
-      : "white"};
+        ? props.theme.colors.primary
+        : props.$isIncorrect
+          ? props.theme.colors.danger
+          : props.$isSelected
+            ? "yellow"
+            : "white"};
   color: ${(props) =>
     props.$isCorrect || props.$isIncorrect || props.$isAnswer
       ? "white"
@@ -236,4 +247,11 @@ const Cell = styled.div<{
   border: 1px solid ${(props) => props.theme.colors.border};
   border-radius: 0.25rem;
   cursor: pointer;
+`;
+
+const ErrorText = styled.p`
+  font-size: 1.5rem;
+  color: ${(props) => props.theme.colors.danger};
+  text-align: center;
+  margin-top: 2rem;
 `;

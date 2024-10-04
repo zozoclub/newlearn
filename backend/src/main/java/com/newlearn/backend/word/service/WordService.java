@@ -13,7 +13,7 @@ import com.newlearn.backend.word.model.Word;
 
 public interface WordService {
 
-	void addWord(WordRequestDto wordRequestDto, Users user) throws Exception;
+	Long addWord(WordRequestDto wordRequestDto, Users user) throws Exception;
 
 	List<WordResponseDTO> getWords(Users user);
 

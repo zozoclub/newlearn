@@ -38,13 +38,15 @@ const StartWordTestWidget: React.FC<Props> = ({ posibleWords }) => {
   };
 
   const handleGoNewsPage = () => {
-    navigate(`/news`);
+    navigate(`/news/0/1`);
   };
 
   return (
     <WidgetContainer>
       <Title>문장 속 빈칸 단어 맞히기</Title>
-      <Explain>기사 예문 속 빈칸에 알맞은 단어를 넣어 문장을 완성해보세요.</Explain>
+      <Explain>
+        기사 예문 속 빈칸에 알맞은 단어를 넣어 문장을 완성해보세요.
+      </Explain>
       <Explain>
         현재 테스트 가능한 단어 갯수는
         <ExplainNumber>{posibleWords}</ExplainNumber>개 입니다.
@@ -159,7 +161,7 @@ const StartButton = styled.button`
   &:hover {
     background-color: ${(props) => props.theme.colors.primaryPress};
   }
-  `;
+`;
 
 const DisableButton = styled.button`
   background-color: ${(props) => props.theme.colors.cancel};

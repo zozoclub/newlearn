@@ -9,7 +9,7 @@ import com.newlearn.backend.news.dto.response.NewsDetailResponseDTO;
 import com.newlearn.backend.news.dto.response.NewsResponseDTO;
 import com.newlearn.backend.news.dto.response.NewsSimpleResponseDTO;
 import com.newlearn.backend.news.service.NewsService;
-import com.newlearn.backend.search.dto.response.SearchNewsDTO;
+import com.newlearn.backend.search.dto.response.SearchNewsAutoDTO;
 import com.newlearn.backend.user.model.Users;
 import com.newlearn.backend.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -237,7 +237,7 @@ public class NewsController {
     public ApiResponse<?> searchNews(@RequestParam String query) throws IOException {
         // contains 방식으로 검색 수행
         try {
-            List<SearchNewsDTO> dto = newsService.searchByTitleOrTitleEngContains(query);
+            List<SearchNewsAutoDTO> dto = newsService.searchByTitleOrTitleEngContains(query);
             return ApiResponse.createSuccess(dto, "good");
         }catch(Exception e) {
             return ApiResponse.createError(ErrorCode.WORD_CREATE_FAILED);

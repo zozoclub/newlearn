@@ -15,7 +15,7 @@ const Container = styled.div`
   z-index: -1;
 `;
 const LightBackgroundImg = styled.img.attrs({
-  src: "/src/assets/images/background-light.webp",
+  src: "/src/assets/images/background-light.png",
   alt: "",
 })`
   position: fixed;
@@ -29,7 +29,7 @@ const LightBackgroundImg = styled.img.attrs({
 `;
 
 const DarkBackgroundImg = styled.img.attrs({
-  src: "/src/assets/images/background-dark.webp",
+  src: "/src/assets/images/background-dark.png",
   alt: "",
 })`
   position: fixed;

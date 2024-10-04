@@ -26,6 +26,7 @@ const Path = styled.path<{ $isScrapped: boolean }>`
     props.$isScrapped ? props.theme.colors.primary : "transparent"};
   stroke: ${(props) => props.theme.colors.text};
   cursor: pointer;
+  transition: fill 0.3s;
 `;
 
 export default Bookmark;

@@ -3,23 +3,26 @@ import styled from "styled-components";
 import homeIcon from "@assets/icons/homeIcon.png";
 import newsIcon from "@assets/icons/newsIcon.png";
 import wordBookIcon from "@assets/icons/wordBookIcon.png";
+import searchIcon from "@assets/icons/searchIcon.png";
 import testIcon from "@assets/icons/testIcon.png";
-import puzzleIcon from "@assets/icons/puzzleIcon.png";
 import myPageIcon from "@assets/icons/myPageIcon.png";
 import NavbarItem from "@components/common/NavbarItem";
+import { useRecoilValue } from "recoil";
+import locationState from "@store/locationState";
 
 const Navbar = () => {
   const iconList = [
     { src: homeIcon, alt: "메인 홈", link: "/" },
     { src: newsIcon, alt: "뉴스", link: "/news/0/1" },
-    { src: puzzleIcon, alt: "퍼즐", link: "/puzzle" },
     { src: wordBookIcon, alt: "단어장", link: "/voca" },
     { src: testIcon, alt: "스터디", link: "/mystudy" },
+    { src: searchIcon, alt: "검색" },
     { src: myPageIcon, alt: "마이 페이지", link: "/mypage" },
   ];
+  const currentLocationData = useRecoilValue(locationState);
 
   return (
-    <Container>
+    <Container $currentLocationData={currentLocationData}>
       <ExtendArea className="extend-area">
         <div className="triangle-up"></div>
         <ExtendedBar className="extend-bar"></ExtendedBar>
@@ -36,7 +39,7 @@ const Navbar = () => {
   );
 };
 
-const Container = styled.div`
+const Container = styled.div<{ $currentLocationData: string }>`
   display: flex;
   position: relative;
   background-color: ${(props) => props.theme.colors.cardBackground + "AA"};
@@ -45,10 +48,21 @@ const Container = styled.div`
   position: fixed;
   z-index: 1;
   left: 50%;
-  transform: translate(-50%, 7rem);
+  transform: ${(props) =>
+    props.$currentLocationData === "main"
+      ? "translate(-50%, 0)"
+      : "translate(-50%, 7rem)"};
   bottom: 1.5rem;
   box-shadow: ${(props) => props.theme.shadows.medium};
   transition: transform 0.5s, background-color 0.5s, box-shadow 0.5s;
+
+  ${(props) =>
+    props.$currentLocationData === "main" &&
+    `.extend-area,
+  .extend-bar {
+    transform: translate(-50%, 10rem);
+  }`}
+
   &:hover {
     transform: translate(-50%, 0);
     .extend-area,

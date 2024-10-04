@@ -1,23 +1,23 @@
 import React from "react";
-import { useNavigate } from "react-router-dom"; // useNavigate 사용
 import useBackPage from "@hooks/useBackPage";
 import { useTheme } from "styled-components";
+import { usePageTransition } from "@hooks/usePageTransition";
 
 type BackArrowProps = {
   width: number;
   height: number;
-  url?: string; 
+  url?: string;
 };
 
 const BackArrow: React.FC<BackArrowProps> = ({ width, height, url }) => {
   const back = useBackPage();
-  const navigate = useNavigate();
+  const transitionTo = usePageTransition();
   const theme = useTheme();
 
   // 조건을 추가하여 back으로 갈지 원하는 url로 갈지 추가할 수 있음
   const handleClick = () => {
     if (url) {
-      navigate(url);
+      transitionTo(url);
     } else {
       back();
     }

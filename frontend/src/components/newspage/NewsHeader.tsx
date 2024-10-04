@@ -9,7 +9,6 @@ import {
 } from "@services/newsService";
 import { useRecoilValue } from "recoil";
 import languageState from "@store/languageState";
-import LanguageToggleBtn from "./LanguageToggleBtn";
 import DifficultyToggleBtn from "./DifficultyToggleBtn";
 import Bookmark from "./Bookmark";
 import { useParams } from "react-router-dom";
@@ -87,7 +86,7 @@ const NewsHeader: React.FC<NewsHeaderPropsType> = ({
               : korData?.publishedDate}
           </NewsDate>
           <OriginalUrlButton
-            onClick={() => (window.location.href = `${engData?.originalUrl}`)}
+            onClick={() => window.open(`${engData?.originalUrl}`, "_blank")}
           >
             기사원문
           </OriginalUrlButton>
@@ -119,7 +118,6 @@ const NewsHeader: React.FC<NewsHeaderPropsType> = ({
           </SecondaryDiv>
         )}
         <SettingDiv>
-          <LanguageToggleBtn />
           <DifficultyToggleBtn
             difficulty={difficulty}
             setDifficulty={setDifficulty}

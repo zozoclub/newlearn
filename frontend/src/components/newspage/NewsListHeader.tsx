@@ -1,5 +1,4 @@
-import { usePageTransition } from "@hooks/usePageTransition";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 import NewsSearch from "@components/newspage/NewsSearch";
 const NewsListHeader: React.FC = () => {
@@ -12,9 +11,9 @@ const NewsListHeader: React.FC = () => {
     { name: "IT/과학" },
     { name: "세계" },
   ];
-  const transitionTo = usePageTransition();
   const { category } = useParams();
   const selectedCategory = Number(category);
+  const navigate = useNavigate();
 
   return (
     <HeaderContainer>
@@ -24,7 +23,7 @@ const NewsListHeader: React.FC = () => {
             <CategoryItem
               key={category.name}
               onClick={() => {
-                transitionTo(`/news/${index}/1`);
+                navigate(`/news/${index}/1`);
               }}
               $isSelected={selectedCategory === index}
             >

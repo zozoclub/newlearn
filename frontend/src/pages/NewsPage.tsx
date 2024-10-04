@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-import Recommand from "@components/newspage/Recommand";
+import Recommand from "@components/newspage/Recommend";
 import NewsListHeader from "@components/newspage/NewsListHeader";
 import NewsList from "@components/newspage/NewsList";
 import { useParams } from "react-router-dom";
@@ -34,7 +34,6 @@ const Container = styled.div`
   height: 85%;
   margin: 0 5% 10%;
   padding: 2.5% 5%;
-  background-color: ${(props) => props.theme.colors.cardBackground01};
   border-radius: 0.5rem;
 `;
 

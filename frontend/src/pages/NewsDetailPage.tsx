@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { useParams } from "react-router-dom";
@@ -15,8 +15,9 @@ import languageState from "@store/languageState";
 import WordHunt from "@components/WordHunt";
 import lightThumbnailImage from "@assets/images/lightThumbnail.png";
 import darkThumbnailImage from "@assets/images/darkThumbnail.png";
+import BackArrow from "@assets/icons/BackArrow";
 
-const NewsDetailPage: React.FC = () => {
+const NewsDetailPage = () => {
   const userInfoData = useRecoilValue(userInfoState);
   const languageData = useRecoilValue(languageState);
   const [difficulty, setDifficulty] = useState<number>(userInfoData.difficulty);
@@ -31,7 +32,7 @@ const NewsDetailPage: React.FC = () => {
   const { newsId } = useParams();
 
   const { isLoading: engIsLoading, data: engData } = useQuery<DetailNewsType>({
-    queryKey: ["getEngNewsDetail", difficulty, newsId],
+    queryKey: ["getEngNewsDetail", difficulty, Number(newsId)],
     queryFn: () => getNewsDetail(Number(newsId), difficulty, "en", isFirstView),
     staleTime: 0,
   });
@@ -42,17 +43,9 @@ const NewsDetailPage: React.FC = () => {
     staleTime: 0,
   });
 
-  const [selectedKorContent, setSelectedKorContent] = useState<string>("");
-
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [languageData, difficulty]);
-
-  useEffect(() => {
-    if (korData?.content) {
-      setSelectedKorContent(korData.content);
-    }
-  }, [korData]);
 
   useEffect(() => {
     setDifficulty(userInfoData.difficulty);
@@ -83,6 +76,9 @@ const NewsDetailPage: React.FC = () => {
       />
       <Container>
         <News>
+          <div style={{ position: "absolute", top: "1.5rem", left: "1.5rem" }}>
+            <BackArrow height={30} width={30} />
+          </div>
           <NewsContainer ref={newsContainerRef}>
             <NewsHeader
               difficulty={difficulty}
@@ -114,7 +110,6 @@ const NewsDetailPage: React.FC = () => {
                 korData={korData}
                 korIsLoading={korIsLoading}
                 newsId={Number(newsId)}
-                selectedKorContent={selectedKorContent}
               />
             </div>
           </NewsContainer>
@@ -138,6 +133,7 @@ const Container = styled.div`
 `;
 
 const News = styled.div`
+  position: relative;
   background-color: ${(props) => props.theme.colors.cardBackground01};
   border-radius: 0.75rem;
   width: 70%;
@@ -152,7 +148,6 @@ const ThumbnailImageDiv = styled.div`
   position: relative;
   width: 100%;
   min-height: 400px;
-  height: 400px;
   background-color: ${(props) => props.theme.colors.cardBackground + "AA"};
   border-radius: 0.75rem;
   text-align: center;
@@ -161,7 +156,6 @@ const ThumbnailImageDiv = styled.div`
 const ThumbnailImage = styled.img`
   width: 600px;
   min-height: 400px;
-  height: 400px;
   border-radius: 0.75rem;
 `;
 const DarkThumbnailImage = styled(ThumbnailImage)`

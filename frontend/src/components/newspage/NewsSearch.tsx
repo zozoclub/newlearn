@@ -1,43 +1,61 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import searchIcon from "@assets/icons/searchIcon.svg";
-import { searchNews } from "@services/newsService";
+import { searchAutoNews } from "@services/newsService";
 import { usePageTransition } from "@hooks/usePageTransition";
 
-type SearchNews = {
+type SearchAutoNews = {
   newsId: number;
   title: string;
   titleEng: string;
 };
 
-const NewsSearch: React.FC = () => {
+type NewsSearchProps = {
+  initialQuery?: string;
+};
+
+const NewsSearch: React.FC<NewsSearchProps> = ({ initialQuery = "" }) => {
   const transitionTo = usePageTransition();
 
-  const [searchValue, setSearchValue] = useState("");
-  const [searchResults, setSearchResults] = useState<SearchNews[]>([]);
+  const [searchValue, setSearchValue] = useState(initialQuery);
+  const [searchResults, setSearchResults] = useState<SearchAutoNews[]>([]);
   const [isInputFocused, setIsInputFocused] = useState(false);
   const [clickedNewsId, setClickedNewsId] = useState<number | null>(null);
   const clickTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+  // 검색 페이지에서 검색 창에 검색어 나타나게 함
+  useEffect(() => {
+    if (initialQuery) {
+      handleInputChange({
+        target: { value: initialQuery },
+      } as React.ChangeEvent<HTMLInputElement>);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialQuery]);
+
+  // input change를 감지해 api 호출
   const handleInputChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const query = event.target.value;
     setSearchValue(query);
 
+    // 한글 또는 영어가 포함된 경우 요청을 보냄
     if (query && !isMixedLanguage(query)) {
       try {
-        const results = await searchNews(query);
+        const results = await searchAutoNews(query);
         setSearchResults(results);
       } catch (error) {
         console.error("Error fetching search results:", error);
         setSearchResults([]);
       }
     } else {
+      // 입력 값이 없을 경우 검색 결과를 비워줌
       setSearchResults([]);
     }
   };
 
+  // 검색 결과 창 클릭 시 focus out 대신 디테일 페이지로 클릭 가능하도록 함
   const handleResultMouseDown = (newsId: number) => {
     setClickedNewsId(newsId);
   };
@@ -58,13 +76,14 @@ const NewsSearch: React.FC = () => {
   };
 
   const isEnglish = (text: string) => /^[A-Za-z\s]*$/.test(text);
-  const isKorean = (text: string) => /^[가-힣\s]*$/.test(text);
+  const isKorean = (text: string) => /^[가-힣ㄱ-ㅎㅏ-ㅣ\s]*$/.test(text);
   const isMixedLanguage = (text: string) => !isEnglish(text) && !isKorean(text);
 
-  const getAppropriateTitle = (result: SearchNews, searchTerm: string) => {
+  const getAppropriateTitle = (result: SearchAutoNews, searchTerm: string) => {
     return isEnglish(searchTerm) ? result.titleEng : result.title;
   };
 
+  // 검색어 하이라이팅
   const highlightSearchTerm = (text: string, searchTerm: string) => {
     if (!searchTerm) return text;
 
@@ -82,11 +101,28 @@ const NewsSearch: React.FC = () => {
     );
   };
 
+  // 검색 버튼 눌렀을 때 검색 페이지로 이동
+  const executeSearch = () => {
+    if (searchValue.trim()) {
+      transitionTo(`/news/search/${encodeURIComponent(searchValue.trim())}`);
+      setSearchValue("");
+      setSearchResults([]);
+    }
+  };
+
+  const handleSearchIconClick = () => {
+    executeSearch();
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      executeSearch();
+    }
+  };
   return (
     <SearchContainer>
-      <img src={searchIcon} alt="Search Icon" />
       <input
-        placeholder="뉴스를 검색해 보세요."
+        placeholder="검색어를 입력해 주세요."
         value={searchValue}
         onChange={handleInputChange}
         onFocus={() => setIsInputFocused(true)}
@@ -94,7 +130,10 @@ const NewsSearch: React.FC = () => {
           // Delay hiding results to allow click to register
           setTimeout(() => setIsInputFocused(false), 200);
         }}
+        onKeyDown={handleKeyDown}
       />
+      <img src={searchIcon} alt="Search Icon" onClick={handleSearchIconClick} />
+
       {isInputFocused && searchResults.length > 0 && (
         <ResultsContainer>
           {searchResults.map((result) => (
@@ -122,9 +161,10 @@ const SearchContainer = styled.div`
   position: relative;
 
   img {
-    margin-right: 0.5rem;
+    margin-left: 0.5rem;
     width: 2rem;
     height: 2rem;
+    cursor: pointer;
   }
 
   input {
@@ -142,7 +182,7 @@ const SearchContainer = styled.div`
 
   input::placeholder {
     font-weight: 200;
-    color: ${(props) => props.theme.colors.placeholder};
+    color: ${(props) => props.theme.colors.text04};
   }
 `;
 
@@ -154,7 +194,7 @@ const ResultsContainer = styled.div`
   max-height: 400px;
   background-color: ${(props) => props.theme.colors.cardBackground};
   border: 1px solid ${(props) => props.theme.colors.text03};
-  border-radius: 4px;
+  border-radius: 8px;
   z-index: 100;
   overflow-y: auto;
 `;
@@ -162,13 +202,10 @@ const ResultsContainer = styled.div`
 const ResultItem = styled.div`
   padding: 1.5rem;
   transition: background-color 0.3s ease, color 0.3s ease;
-  font-size: 1.25rem;
+  font-size: 1rem;
   cursor: pointer;
   &:hover {
     background-color: ${(props) => props.theme.colors.readonly};
-  }
-  &:not(:last-child) {
-    border-bottom: 1px solid ${(props) => props.theme.colors.text03};
   }
 `;
 

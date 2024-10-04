@@ -31,15 +31,11 @@ const RankingWidget: React.FC<{
     list: PointRankingType[] | ReadRankingType[] | undefined
   ) => {
     return list?.map((ranking, index) => (
-      <Ranking
-        key={`${selectedType}-${index}`}
-        style={{ animationDelay: `${index * 0.1}s` }}
-      >
-        <div className="rank">{index + 1}</div>
+      <Ranking key={index} style={{ animationDelay: `${index * 0.1}s` }}>
         <div className="level">
           <LevelIcon
             level={calculateExperience(ranking.experience).level}
-            size={25}
+            size={28}
           />
         </div>
         <div className="nickname">{ranking.nickname}</div>
@@ -102,14 +98,11 @@ const Ranking = styled.div`
   animation: ${slideIn} 0.5s ease-out forwards;
   opacity: 0;
 
-  .rank {
-    width: 10%;
-  }
   .level {
-    width: 15%;
+    width: 20%;
   }
   .nickname {
-    width: 50%;
+    width: 55%;
     text-align: start;
     overflow: hidden;
   }

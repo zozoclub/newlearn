@@ -23,6 +23,7 @@ import { getUserInfo } from "@services/userService";
 import { isExpModalState } from "@store/expState";
 import ExperienceModal from "@components/common/ExperienceModal";
 import GoalManager from "./AppGoalManager";
+import LanguageToggleBtn from "@components/common/LanguageToggleBtn";
 // import LevelUpModal from "@components/common/LevelUpModal";
 
 const App: React.FC = () => {
@@ -98,6 +99,8 @@ Welcome To NewsLearn!"
           experience={expModalState.experience}
           action={expModalState.action}
         />
+
+        <LanguageToggleBtn />
       </AppContainer>
       {/* 목표 관련 내용 */}
       <GoalManager isLogin={isLogin} />
@@ -112,6 +115,7 @@ const AppContainer = styled.div<{ $isMobile: boolean }>`
     !$isMobile &&
     `
       width: 90vw;
+      min-height: 100vh;
       padding: 0 calc(5vw - 0.1875rem);
   `}
 `;

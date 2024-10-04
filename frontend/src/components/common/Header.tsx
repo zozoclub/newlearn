@@ -10,11 +10,12 @@ import FullLogo from "./FullLogo";
 const Header = () => {
   const currentLocation = useRecoilValue(locationState);
   const transitionTo = usePageTransition();
+  const hiddenPages = ["login", "signUp", "notFound"];
 
   return (
     <HeaderContainer $currentLocation={currentLocation}>
       {/* 페이지 정보 없을 때 Logo 표시 안 함 */}
-      {currentLocation !== "login" && currentLocation !== "notFound" && (
+      {!hiddenPages.includes(currentLocation) && (
         <Logo
           onClick={() => {
             transitionTo("/");
@@ -24,7 +25,7 @@ const Header = () => {
         </Logo>
       )}
       <div className="right-side">
-        {currentLocation !== "login" && currentLocation !== "notFound" && (
+        {!hiddenPages.includes(currentLocation) && (
           <>
             {/* 페이지 정보 없을 때 유저 프로필 표시 안 함 */}
             <UserProfile />
@@ -49,7 +50,6 @@ const HeaderContainer = styled.div<{ $currentLocation: string }>`
   .right-side {
     display: flex;
     align-items: center;
-    padding-right: 2.5%;
   }
   @media (max-width: ${(props) => props.theme.size.mobile}) {
     display: none;

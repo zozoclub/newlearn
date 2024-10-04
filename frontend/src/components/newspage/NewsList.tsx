@@ -24,7 +24,7 @@ const NewsList: React.FC<{
   const userDifficulty = userInfoData.difficulty;
 
   const { data: totalNewsList } = useQuery<NewsListType>({
-    queryKey: ["totalNewsList", selectedCategory, selectedPage],
+    queryKey: ["totalNewsList", selectedCategory, selectedPage, languageData],
     queryFn: () =>
       getTotalNewsList(userDifficulty, languageData, selectedPage, 10),
     enabled: selectedCategory === 0,

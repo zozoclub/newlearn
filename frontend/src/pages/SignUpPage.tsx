@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import styled from "styled-components";
 
 import Button from "@components/Button";
@@ -13,10 +13,13 @@ import { usePageTransition } from "@hooks/usePageTransition";
 import {
   checkNicknameDup,
   getOAuthInformation,
+  kakaoLogin,
+  naverLogin,
   signUp,
 } from "@services/userService";
 import signupState from "@store/signupState";
 import AvatarSetting from "@components/signuppage/AvatarSetting";
+import locationState from "@store/locationState";
 
 export type SignUpType = {
   email: string;
@@ -49,6 +52,7 @@ const SignUpPage = () => {
   const [token, setToken] = useState<string | null>(null);
   const query = useQuery();
   const transitionTo = usePageTransition();
+  const setCurrentLocation = useSetRecoilState(locationState);
 
   function handleNicknameChange(newNickname: string) {
     if (newNickname.length <= 8) {
@@ -80,7 +84,11 @@ const SignUpPage = () => {
       console.log(isNicknameAvailable);
       if (!isNicknameAvailable) {
         await signUp(signupData);
-        transitionTo("/login");
+        if (signupData.provider === "kakao") {
+          kakaoLogin();
+        } else {
+          naverLogin();
+        }
       } else {
         setPageNum(1);
         setIsNicknameDuplicated(true);
@@ -89,6 +97,14 @@ const SignUpPage = () => {
       console.log(error);
     }
   }
+
+  useEffect(() => {
+    setCurrentLocation("signUp");
+    return () => {
+      setCurrentLocation("");
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // 주소로부터 토큰 획득
   useEffect(() => {

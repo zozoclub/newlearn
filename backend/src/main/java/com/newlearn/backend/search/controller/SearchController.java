@@ -2,14 +2,18 @@ package com.newlearn.backend.search.controller;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.newlearn.backend.common.ApiResponse;
 import com.newlearn.backend.common.ErrorCode;
+import com.newlearn.backend.news.dto.response.NewsResponseDTO;
+import com.newlearn.backend.search.dto.request.SearchListRequestDTO;
 import com.newlearn.backend.search.dto.response.SearchNewsAutoDTO;
 import com.newlearn.backend.search.dto.response.SearchNewsDTO;
 import com.newlearn.backend.search.service.SearchService;
@@ -28,13 +32,13 @@ public class SearchController {
 	private final UserService userService;
 
 	@GetMapping
-	public ApiResponse<?> getTitle(Authentication authentication, @RequestParam String query) {
+	public ApiResponse<?> getTitle(Authentication authentication, @RequestBody SearchListRequestDTO searchListRequestDTO) {
 		try {
 			Users user = userService.findByEmail(authentication.getName());
 			if (user == null) {
 				return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
 			}
-			List<SearchNewsDTO> result = searchService.searchByTitleOrTitleEng(query, user);
+			Page<NewsResponseDTO> result = searchService.searchByTitleOrTitleEng(searchListRequestDTO, user);
 			if (result.isEmpty()) {
 				return ApiResponse.createSuccess(result, "조회없음");
 			}

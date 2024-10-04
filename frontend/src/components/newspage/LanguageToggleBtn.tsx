@@ -4,9 +4,12 @@ import styled from "styled-components";
 
 const LanguageToggleBtn = () => {
   const [languageData, setLanguageData] = useRecoilState(languageState);
+
   return (
     <Container
-      onClick={() => setLanguageData(languageData === "kr" ? "en" : "kr")}
+      onClick={() => {
+        setLanguageData(languageData === "kr" ? "en" : "kr");
+      }}
     >
       <EngDiv>A</EngDiv>
       <KorDiv>한</KorDiv>

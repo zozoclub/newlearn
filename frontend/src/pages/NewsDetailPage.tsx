@@ -11,9 +11,12 @@ import Spinner from "@components/Spinner";
 import { DetailNewsType, getNewsDetail } from "@services/newsService";
 import userInfoState from "@store/userInfoState";
 import newsWordState from "@store/newsWordState";
+import languageState from "@store/languageState";
+import WordHunt from "@components/WordHunt";
 
 const NewsDetailPage: React.FC = () => {
   const userInfoData = useRecoilValue(userInfoState);
+  const languageData = useRecoilValue(languageState);
   const [difficulty, setDifficulty] = useState<number>(userInfoData.difficulty);
   const newsContainerRef = useRef<HTMLDivElement>(null);
   const [isReadFinished, setIsReadFinished] = useState<boolean>(false);
@@ -40,6 +43,10 @@ const NewsDetailPage: React.FC = () => {
   const [selectedKorContent, setSelectedKorContent] = useState<string>("");
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [languageData, difficulty]);
+
+  useEffect(() => {
     if (korData?.content) {
       setSelectedKorContent(korData.content);
     }
@@ -53,6 +60,7 @@ const NewsDetailPage: React.FC = () => {
   useEffect(() => {
     if (engData) {
       setNewsWordState(engData.words);
+      setIsRead(engData.isRead);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [engData]);
@@ -63,45 +71,53 @@ const NewsDetailPage: React.FC = () => {
         engIsLoading={engIsLoading}
         korIsLoading={korIsLoading}
         difficulty={difficulty}
-        engData={engData}
         isFirstView={isFirstView}
         isRead={isRead}
         isReadFinished={isReadFinished}
         newsContainerRef={newsContainerRef}
-        newsId={Number(newsId)}
         setIsFirstView={setIsFirstView}
         setIsRead={setIsRead}
         setIsReadFinished={setIsReadFinished}
       />
       <Container>
-        <NewsContainer ref={newsContainerRef}>
-          <NewsHeader
-            difficulty={difficulty}
-            engData={engData}
-            engIsLoading={engIsLoading}
-            isRead={isRead}
-            korData={korData}
-            korIsLoading={korIsLoading}
-            setDifficulty={setDifficulty}
-            setIsReadFinished={setIsReadFinished}
-          />
-          <ThumbnailImageDiv>
-            {korIsLoading || engIsLoading ? (
-              <Spinner />
-            ) : (
-              <ThumbnailImage src={engData?.thumbnailImageUrl} alt="noImage" />
-            )}
-          </ThumbnailImageDiv>
-          <NewsDetailContent
-            difficulty={difficulty}
-            engData={engData}
-            engIsLoading={engIsLoading}
-            korData={korData}
-            korIsLoading={korIsLoading}
-            newsId={Number(newsId)}
-            selectedKorContent={selectedKorContent}
-          />
-        </NewsContainer>
+        <News>
+          <NewsContainer ref={newsContainerRef}>
+            <NewsHeader
+              difficulty={difficulty}
+              engData={engData}
+              engIsLoading={engIsLoading}
+              isRead={isRead}
+              korData={korData}
+              korIsLoading={korIsLoading}
+              setDifficulty={setDifficulty}
+              setIsReadFinished={setIsReadFinished}
+            />
+            <ThumbnailImageDiv>
+              {korIsLoading || engIsLoading ? (
+                <Spinner />
+              ) : (
+                <ThumbnailImage
+                  src={engData?.thumbnailImageUrl}
+                  alt="noImage"
+                />
+              )}
+            </ThumbnailImageDiv>
+            <div ref={newsContainerRef}>
+              <NewsDetailContent
+                difficulty={difficulty}
+                engData={engData}
+                engIsLoading={engIsLoading}
+                korData={korData}
+                korIsLoading={korIsLoading}
+                newsId={Number(newsId)}
+                selectedKorContent={selectedKorContent}
+              />
+            </div>
+          </NewsContainer>
+          <div>
+            <WordHunt engData={engData?.content} />
+          </div>
+        </News>
         <RecommandContainer>추천 컨테이너</RecommandContainer>
       </Container>
     </>
@@ -117,12 +133,16 @@ const Container = styled.div`
   border-radius: 0.75rem;
 `;
 
-const NewsContainer = styled.div`
+const News = styled.div`
   background-color: ${(props) => props.theme.colors.cardBackground01};
   border-radius: 0.75rem;
   width: 70%;
   padding: 5%;
+  letter-spacing: 0.5px;
+  word-spacing: 0.5px;
 `;
+
+const NewsContainer = styled.div``;
 
 const ThumbnailImageDiv = styled.div`
   width: 100%;

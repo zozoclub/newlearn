@@ -11,7 +11,6 @@ const DifficultyToggleBtn: React.FC<{
     <Container>
       <HighDiv
         onClick={() => {
-          window.scrollTo(0, 0); // Scroll to top when component mounts
           setDifficulty(3);
           if (isRead) {
             setIsReadFinished(isRead);

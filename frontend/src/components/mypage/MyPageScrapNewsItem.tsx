@@ -3,10 +3,13 @@ import styled from "styled-components";
 import goldMedal from "@assets/images/gold-medal.png";
 import silverMedal from "@assets/images/silver-medal.png";
 import bronzeMedal from "@assets/images/bronze-medal.png";
+import { usePageTransition } from "@hooks/usePageTransition";
 
 const NewsListItem: React.FC<{ news: ScrapNewsType }> = ({ news }) => {
+  const transitionTo = usePageTransition();
+
   return (
-    <Container>
+    <Container onClick={() => transitionTo(`/news/detail/${news.newsId}`)}>
       <ThumbnailImage>
         <img src={news.thumbnailImageUrl} alt="noThumbnail" />
       </ThumbnailImage>

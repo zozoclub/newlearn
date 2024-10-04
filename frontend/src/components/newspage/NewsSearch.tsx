@@ -154,7 +154,7 @@ const ResultsContainer = styled.div`
   max-height: 400px;
   background-color: ${(props) => props.theme.colors.cardBackground};
   border: 1px solid ${(props) => props.theme.colors.text03};
-  border-radius: 4px;
+  border-radius: 8px;
   z-index: 100;
   overflow-y: auto;
 `;
@@ -162,13 +162,10 @@ const ResultsContainer = styled.div`
 const ResultItem = styled.div`
   padding: 1.5rem;
   transition: background-color 0.3s ease, color 0.3s ease;
-  font-size: 1.25rem;
+  font-size: 1rem;
   cursor: pointer;
   &:hover {
     background-color: ${(props) => props.theme.colors.readonly};
-  }
-  &:not(:last-child) {
-    border-bottom: 1px solid ${(props) => props.theme.colors.text03};
   }
 `;
 

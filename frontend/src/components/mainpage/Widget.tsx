@@ -4,7 +4,6 @@ import TopRankingWidget, {
   PointRankingType,
   ReadRankingType,
 } from "./TopRankingWidget";
-import GoalChartDoughnut from "@components/GoalChartDoughnut";
 import MainGoalBar from "@components/mainpage/MainGoalBar";
 import { useNavigate } from "react-router-dom";
 import RankingWidget from "./RankingWidget";
@@ -70,7 +69,6 @@ const Widget: React.FC<{ variety: string }> = ({ variety }) => {
         <WidgetContainer>
           {goalData[0].goal && goalData[1].goal && goalData[2].goal ? (
             <>
-              <GoalChartDoughnut />
               <MainGoalBar />
             </>
           ) : (

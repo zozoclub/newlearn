@@ -148,7 +148,6 @@ const ThumbnailImageDiv = styled.div`
   position: relative;
   width: 100%;
   min-height: 400px;
-  height: 400px;
   background-color: ${(props) => props.theme.colors.cardBackground + "AA"};
   border-radius: 0.75rem;
   text-align: center;
@@ -157,7 +156,6 @@ const ThumbnailImageDiv = styled.div`
 const ThumbnailImage = styled.img`
   width: 600px;
   min-height: 400px;
-  height: 400px;
   border-radius: 0.75rem;
 `;
 const DarkThumbnailImage = styled(ThumbnailImage)`

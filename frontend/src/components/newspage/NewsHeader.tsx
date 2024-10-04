@@ -9,7 +9,6 @@ import {
 } from "@services/newsService";
 import { useRecoilValue } from "recoil";
 import languageState from "@store/languageState";
-import LanguageToggleBtn from "./LanguageToggleBtn";
 import DifficultyToggleBtn from "./DifficultyToggleBtn";
 import Bookmark from "./Bookmark";
 import { useParams } from "react-router-dom";
@@ -119,7 +118,6 @@ const NewsHeader: React.FC<NewsHeaderPropsType> = ({
           </SecondaryDiv>
         )}
         <SettingDiv>
-          <LanguageToggleBtn />
           <DifficultyToggleBtn
             difficulty={difficulty}
             setDifficulty={setDifficulty}

@@ -50,7 +50,6 @@ const HeaderContainer = styled.div<{ $currentLocation: string }>`
   .right-side {
     display: flex;
     align-items: center;
-    padding-right: 2.5%;
   }
   @media (max-width: ${(props) => props.theme.size.mobile}) {
     display: none;

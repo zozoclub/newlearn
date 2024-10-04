@@ -4,6 +4,7 @@ import DailyNews from "@components/mainpage/DailyNews";
 import Widget from "@components/mainpage/Widget";
 import locationState from "@store/locationState";
 import { useEffect } from "react";
+import { useMediaQuery } from "react-responsive";
 import { useSetRecoilState } from "recoil";
 // import NewsSearch from "@components/newspage/NewsSearch";
 import styled from "styled-components";
@@ -16,6 +17,7 @@ const MainPage = () => {
     { variety: "ranking" },
   ];
   const setCurrentLocationData = useSetRecoilState(locationState);
+  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
 
   useEffect(() => {
     setCurrentLocationData("main");
@@ -26,7 +28,7 @@ const MainPage = () => {
   }, []);
 
   const MobileRender = () => {
-    <Container>안녕하세요</Container>;
+    return <Container>안녕하세요</Container>;
   };
 
   const DesktopRender = () => {
@@ -46,7 +48,11 @@ const MainPage = () => {
     );
   };
 
-  return <DesktopRender />;
+  if (isMobile) {
+    return <MobileRender />;
+  } else {
+    return <DesktopRender />;
+  }
 };
 
 export default MainPage;

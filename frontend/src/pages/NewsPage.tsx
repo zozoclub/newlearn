@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-import Recommand from "@components/newspage/Recommand";
+import Recommand from "@components/newspage/Recommend";
 import NewsListHeader from "@components/newspage/NewsListHeader";
 import NewsList from "@components/newspage/NewsList";
 import { useParams } from "react-router-dom";

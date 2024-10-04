@@ -266,3 +266,15 @@ export const searchNews = async (query: string) => {
     throw error;
   }
 };
+
+export const getHybridNews = async (): Promise<NewsType[]> => {
+  try {
+    const response = await axiosInstance.get(`recommend/hybrid`);
+    console.log(response);
+
+    return response.data.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};

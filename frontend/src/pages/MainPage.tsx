@@ -76,8 +76,9 @@ const WidgetContainer = styled.div`
   display: grid;
   position: absolute;
   z-index: 1;
+  top: 1rem;
   right: 0;
   grid-template-columns: calc(50% - 1rem) calc(50% - 1rem);
   grid-gap: 2rem;
-  width: 35rem;
+  width: 40rem;
 `;

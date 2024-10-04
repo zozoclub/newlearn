@@ -4,15 +4,24 @@ import goldMedal from "@assets/images/gold-medal.png";
 import silverMedal from "@assets/images/silver-medal.png";
 import bronzeMedal from "@assets/images/bronze-medal.png";
 import { usePageTransition } from "@hooks/usePageTransition";
+import lightThumbnailImage from "@assets/images/lightThumbnail.png";
+import darkThumbnailImage from "@assets/images/darkThumbnail.png";
 
 const NewsListItem: React.FC<{ news: NewsType }> = ({ news }) => {
   const transitionTo = usePageTransition();
 
   return (
     <Container onClick={() => transitionTo(`/news/detail/${news.newsId}`)}>
-      <ThumbnailImage>
-        <img src={news.thumbnailImageUrl} alt="noThumbnail" />
-      </ThumbnailImage>
+      <ThumbnailImageDiv>
+        {news.thumbnailImageUrl ? (
+          <ThumbnailImage src={news.thumbnailImageUrl} />
+        ) : (
+          <>
+            <ThumbnailImage src={lightThumbnailImage} />
+            <DarkThumbnailImage src={darkThumbnailImage} />
+          </>
+        )}
+      </ThumbnailImageDiv>
       <div style={{ position: "relative" }}>
         <Title>{news.title}</Title>
         <Content>{news.content}</Content>
@@ -43,16 +52,26 @@ const Container = styled.div`
   }
 `;
 
-const ThumbnailImage = styled.div`
+const ThumbnailImageDiv = styled.div`
+  position: relative;
   min-width: 20rem;
   height: 13rem;
   margin-right: 2.5rem;
-  img {
-    width: 20rem;
-    height: 13rem;
-    border-radius: 1rem;
-    object-fit: fill;
-  }
+`;
+
+const ThumbnailImage = styled.img`
+  width: 20rem;
+  height: 13rem;
+  border-radius: 1rem;
+  object-fit: fill;
+`;
+
+const DarkThumbnailImage = styled(ThumbnailImage)`
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: ${(props) => (props.theme.mode === "dark" ? 1 : 0)};
+  transition: opacity 0.3s;
 `;
 
 const Title = styled.div`

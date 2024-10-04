@@ -35,7 +35,7 @@ const MyPageScrapNews = () => {
   const totalElements = scrapNewsData?.totalElements;
 
   const handleGoToNews = () => {
-    navigate("/news");
+    navigate("/news/0/1");
   };
 
   const handlePageChange = (newPage: number) => {

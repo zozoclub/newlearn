@@ -11,6 +11,7 @@ import MyPage from "@pages/MyPage";
 import MyStudyPage from "@pages/MyStudyPage";
 import VocabularyPage from "@pages/VocabularyPage";
 import TestHistoryPage from "@pages/TestHistoryPage";
+import NewsSearchPage from "@pages/NewsSearchPage";
 import LoginPage from "@pages/LoginPage";
 import SignUpPage from "@pages/SignUpPage";
 import LandingPage from "@pages/LandingPage";
@@ -69,6 +70,13 @@ export const router = createBrowserRouter([
           {
             path: "voca",
             element: <VocabularyPage />,
+          },
+          {
+            path: "news/search",
+            children: [
+              { index: true, element: <NewsSearchPage /> },
+              { path: ":query", element: <NewsSearchPage /> },
+            ],
           },
         ],
       },

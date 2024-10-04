@@ -100,7 +100,7 @@ const ProgressBar: React.FC<ProgressBarPropsType> = ({
       const scrolledPastContainer = Math.max(0, -containerTop);
 
       // 총 이동할 수 있는 스크롤 길이
-      const totalScrollableDistance = containerHeight - windowHeight;
+      const totalScrollableDistance = containerHeight - initialVisibleHeight;
 
       // Calculate overall progress
       let progress;

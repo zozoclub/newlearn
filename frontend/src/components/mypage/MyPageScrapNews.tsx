@@ -1,20 +1,21 @@
 import styled from "styled-components";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { getScrapNewsList, ScrapNewsListType } from "@services/mypageService";
 import MyPageScrapNewsItem from "@components/mypage/MyPageScrapNewsItem";
 import MyPagePagination from "@components/mypage/MyPagePagination";
 import Spinner from "@components/Spinner";
+import { usePageTransition } from "@hooks/usePageTransition";
 
 const MyPageScrapNews = () => {
-  const navigate = useNavigate();
+  const transitionTo = usePageTransition();
 
   const [selectedDifficulty, setSelectedDifficulty] = useState(1);
   const difficultyList = [{ name: "초급" }, { name: "중급" }, { name: "고급" }];
 
   const { page } = useParams();
-  const [selectedPage, setSelectedPage] = useState(Number(page) || 0); // 상태로 페이지 관리
+  const [selectedPage, setSelectedPage] = useState(Number(page) || 0);
 
   const {
     data: scrapNewsData,
@@ -34,7 +35,7 @@ const MyPageScrapNews = () => {
   const totalElements = scrapNewsData?.totalElements;
 
   const handleGoToNews = () => {
-    navigate("/news/0/1");
+    transitionTo("/news/0/1");
   };
 
   const handlePageChange = (newPage: number) => {

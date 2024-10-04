@@ -131,23 +131,24 @@ const SearchContainer = styled.div`
     width: 100%;
     height: 40px;
     padding: 0.5rem 1rem;
-    background-color: ${(props) => props.theme.colors.cardBackground};
+    background-color: transparent;
     color: ${(props) => props.theme.colors.text};
     border: none;
-    border-bottom: 3px solid ${(props) => props.theme.colors.text04};
+    border-bottom: 2px solid ${(props) => props.theme.colors.text04};
     border-radius: 4px 4px 0 0;
     outline: none;
     font-size: 1.25rem;
   }
 
   input::placeholder {
+    font-weight: 200;
     color: ${(props) => props.theme.colors.placeholder};
   }
 `;
 
 const ResultsContainer = styled.div`
   position: absolute;
-  top: calc(100% + 0.5rem);
+  top: calc(100%);
   left: 0;
   right: 0;
   max-height: 400px;

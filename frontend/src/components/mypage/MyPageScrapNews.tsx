@@ -25,7 +25,6 @@ const MyPageScrapNews = () => {
     queryFn: () => getScrapNewsList(selectedDifficulty, selectedPage, 3),
   });
 
-  console.log(scrapNewsData);
   if (isLoading)
     <div>
       <Spinner />

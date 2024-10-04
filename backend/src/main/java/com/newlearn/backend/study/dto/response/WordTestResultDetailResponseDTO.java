@@ -15,5 +15,4 @@ public class WordTestResultDetailResponseDTO {
     private boolean correct;
     private String sentence;
     private LocalDateTime createdAt;
-    private String originURL;
 }

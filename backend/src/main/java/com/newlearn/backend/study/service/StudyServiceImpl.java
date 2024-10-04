@@ -241,7 +241,6 @@ public class StudyServiceImpl implements StudyService{
 
             // 뉴스 가져오기 및 URL 설정
             News news = newsMap.get(wordSentence.getNewsId());
-            String originURL = news != null ? news.getUrl() : null;
 
             // DTO 빌드 및 결과 리스트에 추가
             WordTestResultDetailResponseDTO result = WordTestResultDetailResponseDTO.builder()
@@ -251,7 +250,6 @@ public class StudyServiceImpl implements StudyService{
                     .correct(isCorrect)
                     .sentence(question.getSentence())
                     .createdAt(quiz.getCreatedAt())
-                    .originURL(originURL)
                     .build();
 
             resultList.add(result);

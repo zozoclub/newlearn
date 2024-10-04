@@ -25,7 +25,6 @@ const MyPageScrapNews = () => {
     queryFn: () => getScrapNewsList(selectedDifficulty, selectedPage, 3),
   });
 
-  console.log(scrapNewsData);
   if (isLoading)
     <div>
       <Spinner />
@@ -35,7 +34,7 @@ const MyPageScrapNews = () => {
   const totalElements = scrapNewsData?.totalElements;
 
   const handleGoToNews = () => {
-    navigate("/news");
+    navigate("/news/0/1");
   };
 
   const handlePageChange = (newPage: number) => {

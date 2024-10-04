@@ -62,11 +62,14 @@ const Icon = styled.img`
 const IconDesc = styled.div`
   position: absolute;
   left: 50%;
-  top: -10px;
+  top: -1rem;
   transform: translate(-50%, 0);
   opacity: 0;
   transition: opacity 0.5s;
   white-space: nowrap;
+  background-color: ${(props) => props.theme.colors.cardBackground01};
+  border-radius: 0.75rem;
+  padding: 0.25rem 0.5rem;
 `;
 
 export default NavbarItem;

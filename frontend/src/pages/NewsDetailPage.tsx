@@ -15,6 +15,7 @@ import languageState from "@store/languageState";
 import WordHunt from "@components/WordHunt";
 import lightThumbnailImage from "@assets/images/lightThumbnail.png";
 import darkThumbnailImage from "@assets/images/darkThumbnail.png";
+import BackArrow from "@assets/icons/BackArrow";
 
 const NewsDetailPage = () => {
   const userInfoData = useRecoilValue(userInfoState);
@@ -75,6 +76,9 @@ const NewsDetailPage = () => {
       />
       <Container>
         <News>
+          <div style={{ position: "absolute", top: "1.5rem", left: "1.5rem" }}>
+            <BackArrow height={30} width={30} />
+          </div>
           <NewsContainer ref={newsContainerRef}>
             <NewsHeader
               difficulty={difficulty}
@@ -129,6 +133,7 @@ const Container = styled.div`
 `;
 
 const News = styled.div`
+  position: relative;
   background-color: ${(props) => props.theme.colors.cardBackground01};
   border-radius: 0.75rem;
   width: 70%;

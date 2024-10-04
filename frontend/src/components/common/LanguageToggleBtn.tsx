@@ -50,6 +50,7 @@ const Container = styled.div<{
   width: 3rem;
   height: 3rem;
   border-radius: 100%;
+  color: #ffffff;
   background-color: ${(props) => props.theme.colors.primary};
   transform: rotateY(
     ${(props) => (props.$selectedLanguage === "kr" ? "180deg" : 0)}

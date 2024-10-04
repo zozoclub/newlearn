@@ -86,7 +86,7 @@ const NewsHeader: React.FC<NewsHeaderPropsType> = ({
               : korData?.publishedDate}
           </NewsDate>
           <OriginalUrlButton
-            onClick={() => (window.location.href = `${engData?.originalUrl}`)}
+            onClick={() => window.open(`${engData?.originalUrl}`, "_blank")}
           >
             기사원문
           </OriginalUrlButton>

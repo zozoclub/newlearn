@@ -16,12 +16,7 @@ const MainPage = () => {
   return (
     <Container>
       <NewsContainer>
-        {/* <Header> */}
         <Clock />
-        {/* <News>
-            <NewsSearch />
-          </News> */}
-        {/* </Header> */}
         <DailyNews />
       </NewsContainer>
       <WidgetContainer>
@@ -42,17 +37,6 @@ const Container = styled.div`
   height: 35rem;
   padding: 5rem 0;
 `;
-
-// const Header = styled.div`
-//   display: flex;
-//   align-items: center;
-//   margin: 0 2rem;
-//   gap: 2rem;
-// `;
-
-// const News = styled.div`
-//   width: 800px;
-// `;
 
 const NewsContainer = styled.div`
   position: relative;

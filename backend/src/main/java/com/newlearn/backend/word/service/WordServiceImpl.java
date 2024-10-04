@@ -69,9 +69,11 @@ public class WordServiceImpl implements WordService {
 		List<WordResponseDTO> response = new ArrayList<>();
 
 		for(Word word : findAllWords) {
-			WordResponseDTO wordResponseDTO = new WordResponseDTO(word.getWordId(), word.getWord(),
+			if(!word.isDelete()) {
+				WordResponseDTO wordResponseDTO = new WordResponseDTO(word.getWordId(), word.getWord(),
 					word.getWordMeaning(), word.isComplete());
-			response.add(wordResponseDTO);
+				response.add(wordResponseDTO);
+			}
 		}
 
 		return response;
@@ -85,9 +87,11 @@ public class WordServiceImpl implements WordService {
 		List<WordResponseDTO> response = new ArrayList<>();
 
 		for(Word word : findAllWords) {
-			WordResponseDTO wordResponseDTO = new WordResponseDTO(word.getWordId(), word.getWord(),
+			if(!word.isComplete()) {
+				WordResponseDTO wordResponseDTO = new WordResponseDTO(word.getWordId(), word.getWord(),
 					word.getWordMeaning(), word.isComplete());
-			response.add(wordResponseDTO);
+				response.add(wordResponseDTO);
+			}
 		}
 
 		return response;
@@ -98,13 +102,8 @@ public class WordServiceImpl implements WordService {
 		Word word = wordRepository.findById(wordId)
 				.orElseThrow(() -> new IllegalArgumentException("단어로 찾을 수 없습니다. " + wordId));
 
-		// 연관된 사용자로부터 단어 제거
-		Users user = word.getUser();
-		if (user != null) {
-			user.removeWord(word);
-		}
-
-		wordRepository.delete(word);
+		word.delete();
+		wordRepository.save(word);
 	}
 
 	@Override

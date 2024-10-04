@@ -4,6 +4,9 @@ FROM python:3.12.3-slim
 # 작업 디렉토리를 설정합니다.
 WORKDIR /app
 
+# requirements.txt 파일을 컨테이너에 복사
+COPY requirements.txt .
+
 # 의존성을 설치합니다.
 RUN apt-get update
 RUN pip install --no-cache-dir -r requirements.txt

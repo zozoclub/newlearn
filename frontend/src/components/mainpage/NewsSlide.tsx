@@ -58,7 +58,7 @@ const NewsContent = styled.div`
   h1 {
     margin-bottom: 0.5rem;
     font-size: 1.25rem;
-    font-weight: 800;
+    font-weight: 700;
     line-height: 1.5rem;
     height: 1.5rem;
     overflow: hidden;

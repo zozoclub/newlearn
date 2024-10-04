@@ -69,7 +69,8 @@ const Container = styled.div`
 const NewsContainer = styled.div`
   position: relative;
   z-index: 1;
-  width: 100%;
+  width: 90%;
+  padding: 0 5%;
 `;
 
 const WidgetContainer = styled.div`

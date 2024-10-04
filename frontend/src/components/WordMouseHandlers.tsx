@@ -25,7 +25,7 @@ export const handleMouseOver = (
     React.SetStateAction<[number, number][]>
   >,
   isDisabled: boolean,
-  grid: string[][] // 추가된 grid 파라미터
+  grid: string[][], // 추가된 grid 파라미터
 ) => {
   if (isDisabled || selectedPositions.length === 0) return;
 
@@ -58,7 +58,8 @@ export const handleMouseUp = (
   setSelectedPositions: React.Dispatch<
     React.SetStateAction<[number, number][]>
   >,
-  setIsDisabled: React.Dispatch<React.SetStateAction<boolean>>
+  setIsDisabled: React.Dispatch<React.SetStateAction<boolean>>,
+  updateCorrectWord: (word: string) => void
 ) => {
   if (selectedPositions.length === 0) return;
 
@@ -87,6 +88,7 @@ export const handleMouseUp = (
   // 정답일 경우
   if (isCorrect) {
     setCorrectSelections((prev) => [...prev, ...selectedPositions]); // 정답이면 파란색 유지
+    updateCorrectWord(selectedWord); // 정답 단어 업데이트
     // 추가해야할 api 통신
     setSelectedPositions([]); // 선택된 셀 초기화
   } else {

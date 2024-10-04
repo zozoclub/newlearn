@@ -32,6 +32,7 @@ db = create_engine(f'mysql+mysqlconnector://{settings.MYSQL_USER}:{settings.MYSQ
 class Command(BaseCommand):
     help = 'MongoDB와 Redis에 중복 여부를 확인하는 코드'
 
+
     def handle(self, *args, **options):
         #csv 파일 바로 mysql로 옮길때
         #csv_file_path = 'path/to/your/final.csv'  # 실제 CSV 파일 경로로 변경하세요

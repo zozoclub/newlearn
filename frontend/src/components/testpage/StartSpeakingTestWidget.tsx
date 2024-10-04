@@ -25,9 +25,11 @@ const StartSpeakingTestWidget: React.FC<Props> = ({ posibleWords }) => {
       <Title>문장 발음 테스트</Title>
       <Explain>제시되는 기사 예문을 읽고 내 발음 점수를 확인 해보세요.</Explain>
       <Explain>
-        테스트 진행하는 문장 갯수는 총
+        테스트 진행하는 문장 갯수는
         <ExplainNumber>3</ExplainNumber>문항 입니다.
       </Explain>
+      <Tip>단어장에 저장된 단어의 예문이 출제됩니다.</Tip>
+      <Tip>저장된 단어가 3개 미만일 경우에 문항수가 제한됩니다.</Tip>
       <StartButton onClick={handleStartTest}>테스트 하러가기</StartButton>
       <Modal isOpen={isWarningModal} onClose={closewarningModal} title="알림">
         <p>단어장보다 테스트 개수가 많을 수 없습니다.</p>
@@ -104,3 +106,10 @@ const ModalConfirmButton = styled.button`
     background-color: ${(props) => props.theme.colors.primaryPress};
   }
 `;
+
+const Tip = styled.p`
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  text-align: center;
+  color: ${(props) => props.theme.colors.placeholder}
+`

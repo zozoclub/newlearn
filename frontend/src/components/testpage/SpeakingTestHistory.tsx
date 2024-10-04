@@ -336,7 +336,7 @@ const ScrollableTestHistoryList = styled.div`
   display: flex;
   flex-wrap: wrap;
   justify-content: space-around;
-  max-height: 300px;
+  max-height: 350px;
   width: 100%;
   overflow-y: auto; /* 세로 스크롤 가능 */
   overflow-x: hidden; /* 좌우 스크롤 제거 */

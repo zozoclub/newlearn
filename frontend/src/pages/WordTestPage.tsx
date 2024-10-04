@@ -204,23 +204,37 @@ const WordTestPage: React.FC = () => {
         inputRefs.current[index] = [];
         return (
           <QuizContainer key={index}>
-            <Question>
-              {indexOfFirstQuestion + index + 1}.{" "}
-              {q.question.split("_".repeat(q.answer.length))[0]}
-              {q.answer.split("").map((_, i) => (
-                <BlankInput
-                  key={i}
-                  type="text"
-                  ref={(el) => (inputRefs.current[index][i] = el)} // 각 input의 ref 설정
-                  value={userAnswers[indexOfFirstQuestion + index]?.[i] || ""}
-                  onChange={(e) => handleInputChange(index, i, e.target.value)}
-                  onKeyDown={(e) => handleKeyDown(e, index, i)} // Backspace 처리
-                  maxLength={1} // 한 글자씩만 입력
-                />
-              ))}
-              {q.question.split("_".repeat(q.answer.length))[1]}
-            </Question>
-            <Translation>{q.translation}</Translation>
+            <QuestionBox>
+              <Index>{indexOfFirstQuestion + index + 1}. </Index>
+              <Question>
+                <div>
+                  <BeforeText>
+                    {q.question.split("_".repeat(q.answer.length))[0]}
+                  </BeforeText>
+                  <BlankInputContainer>
+                    {q.answer.split("").map((_, i) => (
+                      <BlankInput
+                        key={i}
+                        type="text"
+                        ref={(el) => (inputRefs.current[index][i] = el)} // 각 input의 ref 설정
+                        value={
+                          userAnswers[indexOfFirstQuestion + index]?.[i] || ""
+                        }
+                        onChange={(e) =>
+                          handleInputChange(index, i, e.target.value)
+                        }
+                        onKeyDown={(e) => handleKeyDown(e, index, i)} // Backspace 처리
+                        maxLength={1} // 한 글자씩만 입력
+                      />
+                    ))}
+                  </BlankInputContainer>
+                  <AfterText>
+                    {q.question.split("_".repeat(q.answer.length))[1]}
+                  </AfterText>
+                </div>
+                <Translation>{q.translation}</Translation>
+              </Question>
+            </QuestionBox>
           </QuizContainer>
         );
       })}
@@ -292,9 +306,9 @@ const QuizContainer = styled.div`
 `;
 
 const Question = styled.div`
+  display: flex;
   font-size: 1.375rem;
   font-weight: bold;
-  display: flex;
   align-items: center;
   flex-wrap: wrap; /* 줄 바꿈 */
 `;
@@ -304,13 +318,13 @@ const Translation = styled.div`
   margin-top: 0.75rem;
   margin-bottom: 0.5rem;
   margin-left: 1.375rem;
-  color: ${(props) => props.theme.colors.placeholder};
+  color: ${(props) => props.theme.colors.text04};
 `;
 
 const BlankInput = styled.input`
   width: 0.875rem;
-  padding: 0.25rem;
-  margin: 0 0.125rem;
+  padding: 0.5rem 0.25rem 0 0.25rem;
+  margin: 0 0.125rem 0.125rem 0.125rem;
   border: 1px solid ${(props) => props.theme.colors.primary};
   border-radius: 0.25rem;
   text-align: center;
@@ -403,3 +417,27 @@ const ErrorText = styled.div`
   font-size: 1.25rem;
   text-align: center;
 `;
+
+const BlankInputContainer = styled.span`
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+  margin-bottom: 1rem;
+`;
+
+const BeforeText = styled.span`
+  line-height: 1.5;
+`;
+const AfterText = styled.span`
+  line-height: 1.5;
+`;
+
+const QuestionBox = styled.div`
+  display: flex;
+`;
+
+const Index = styled.div`
+margin-top: 0.375rem;
+margin-right: 0.25rem;
+  font-size: 1.5rem;
+  font-weight: 500;
+`

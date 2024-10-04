@@ -41,6 +41,7 @@ const WordHunt: React.FC<EngDataProps> = ({ engData }) => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isCheckModal, setIsCheckModal] = useState<boolean>(false);
   const [correctWords, setCorrectWords] = useState<string[]>([]);
+  const [correctWordsCount, setCorrectWordsCount] = useState<number>(0);
 
   useEffect(() => {
     const handleExtractWords = () => {
@@ -173,7 +174,8 @@ const WordHunt: React.FC<EngDataProps> = ({ engData }) => {
                           setIncorrectSelection,
                           setSelectedPositions,
                           setIsDisabled,
-                          updateCorrectWord
+                          updateCorrectWord,
+                          setCorrectWordsCount
                         )
                       }
                     >
@@ -186,8 +188,8 @@ const WordHunt: React.FC<EngDataProps> = ({ engData }) => {
           </GridContainer>
         </WordHuntLayout>
         <ButtonLayout>
-          <Button onClick={handleShowAnswerClick}>
-            {showAnswer ? "Hide Answer" : "Show Answer"}
+          <Button onClick={handleShowAnswerClick} disabled={showAnswer}>
+            {showAnswer ? `You Got ${correctWordsCount} Words` : "Show Answer"}
           </Button>
         </ButtonLayout>
         <Modal
@@ -230,14 +232,14 @@ const ButtonLayout = styled.div`
   justify-content: center;
 `;
 
-const Button = styled.button`
+const Button = styled.button<{ disabled: boolean }>`
   background-color: ${(props) => props.theme.colors.primary};
   color: white;
   padding: 0.75rem 1.5rem;
   font-size: 1rem;
   border: none;
   border-radius: 0.5rem;
-  cursor: pointer;
+  cursor: ${({ disabled }) => (disabled ? "not-allowed" : "pointer")};
   margin: 0.5rem;
   transition: background-color 0.3s;
 

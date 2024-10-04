@@ -2,14 +2,16 @@ import styled from "styled-components";
 import { usePageTransition } from "@hooks/usePageTransition";
 import { useCallback, useRef } from "react";
 
-const NavbarItem: React.FC<{ src: string; alt: string; link: string }> = (
+const NavbarItem: React.FC<{ src: string; alt: string; link?: string }> = (
   icon
 ) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const transitionTo = usePageTransition(); // 커스텀 훅 사용
 
   const handleClick = () => {
-    transitionTo(icon.link);
+    if (icon.link) {
+      transitionTo(icon.link);
+    }
   };
 
   const handleMouseEnter = useCallback(() => {

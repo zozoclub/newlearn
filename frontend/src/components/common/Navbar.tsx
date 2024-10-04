@@ -3,8 +3,8 @@ import styled from "styled-components";
 import homeIcon from "@assets/icons/homeIcon.png";
 import newsIcon from "@assets/icons/newsIcon.png";
 import wordBookIcon from "@assets/icons/wordBookIcon.png";
+import searchIcon from "@assets/icons/searchIcon.png";
 import testIcon from "@assets/icons/testIcon.png";
-import puzzleIcon from "@assets/icons/puzzleIcon.png";
 import myPageIcon from "@assets/icons/myPageIcon.png";
 import NavbarItem from "@components/common/NavbarItem";
 import { useRecoilValue } from "recoil";
@@ -14,9 +14,9 @@ const Navbar = () => {
   const iconList = [
     { src: homeIcon, alt: "메인 홈", link: "/" },
     { src: newsIcon, alt: "뉴스", link: "/news/0/1" },
-    { src: puzzleIcon, alt: "퍼즐", link: "/puzzle" },
     { src: wordBookIcon, alt: "단어장", link: "/voca" },
     { src: testIcon, alt: "스터디", link: "/mystudy" },
+    { src: searchIcon, alt: "검색" },
     { src: myPageIcon, alt: "마이 페이지", link: "/mypage" },
   ];
   const currentLocationData = useRecoilValue(locationState);

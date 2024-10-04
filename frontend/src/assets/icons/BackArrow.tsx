@@ -1,5 +1,4 @@
 import React from "react";
-import { useNavigate } from "react-router-dom"; // useNavigate 사용
 import useBackPage from "@hooks/useBackPage";
 import { useTheme } from "styled-components";
 import { usePageTransition } from "@hooks/usePageTransition";

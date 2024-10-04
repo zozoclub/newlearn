@@ -13,18 +13,19 @@ import {
 import Spinner from "@components/Spinner";
 
 const WordTestResultDetailModalMobilePage: React.FC = () => {
-  const { quizId } = useParams<{ quizId: string }>(); 
+  const { quizId } = useParams<{ quizId: string }>();
   const setCurrentLocation = useSetRecoilState(locationState);
 
   useEffect(() => {
-    setCurrentLocation("Word Test Result Page");
+    setCurrentLocation("Word Test Page");
   }, [setCurrentLocation]);
 
+  // 서버에서 데이터를 가져오기
   const {
     data: testDetail,
     isLoading,
     error,
-  } = useQuery<WordTestResultDetailResponseDto[]>({
+  } = useQuery<WordTestResultDetailResponseDto>({
     queryKey: ["wordTestDetail", quizId],
     queryFn: () => getWordTestResultDetail(Number(quizId)),
   });
@@ -40,12 +41,12 @@ const WordTestResultDetailModalMobilePage: React.FC = () => {
   if (error)
     return <ErrorText>데이터를 불러오는 중 오류가 발생했습니다. 다시 시도해 주세요.</ErrorText>;
 
-  if (!testDetail || testDetail.length === 0)
+  if (!testDetail)
     return <ErrorText>결과 데이터가 없습니다.</ErrorText>;
 
   return (
     <MobileMainContainer>
-      {testDetail.map((test, index) => (
+      {testDetail.result.map((test, index) => (
         <WordTestCollapsible
           key={index}
           title={test.correctAnswer}

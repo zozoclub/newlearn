@@ -130,7 +130,7 @@ const SearchContainer = styled.div`
   input {
     width: 100%;
     height: 40px;
-    padding: 0.5rem;
+    padding: 0.5rem 1rem;
     background-color: ${(props) => props.theme.colors.cardBackground};
     color: ${(props) => props.theme.colors.text};
     border: none;
@@ -141,7 +141,6 @@ const SearchContainer = styled.div`
   }
 
   input::placeholder {
-    padding: 0 0.5rem;
     color: ${(props) => props.theme.colors.placeholder};
   }
 `;

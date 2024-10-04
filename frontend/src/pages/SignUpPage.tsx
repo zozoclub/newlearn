@@ -13,6 +13,8 @@ import { usePageTransition } from "@hooks/usePageTransition";
 import {
   checkNicknameDup,
   getOAuthInformation,
+  kakaoLogin,
+  naverLogin,
   signUp,
 } from "@services/userService";
 import signupState from "@store/signupState";
@@ -82,7 +84,11 @@ const SignUpPage = () => {
       console.log(isNicknameAvailable);
       if (!isNicknameAvailable) {
         await signUp(signupData);
-        transitionTo("/login");
+        if (signupData.provider === "kakao") {
+          kakaoLogin();
+        } else {
+          naverLogin();
+        }
       } else {
         setPageNum(1);
         setIsNicknameDuplicated(true);

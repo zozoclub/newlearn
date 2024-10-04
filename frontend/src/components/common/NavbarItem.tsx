@@ -2,14 +2,16 @@ import styled from "styled-components";
 import { usePageTransition } from "@hooks/usePageTransition";
 import { useCallback, useRef } from "react";
 
-const NavbarItem: React.FC<{ src: string; alt: string; link: string }> = (
+const NavbarItem: React.FC<{ src: string; alt: string; link?: string }> = (
   icon
 ) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const transitionTo = usePageTransition(); // 커스텀 훅 사용
 
   const handleClick = () => {
-    transitionTo(icon.link);
+    if (icon.link) {
+      transitionTo(icon.link);
+    }
   };
 
   const handleMouseEnter = useCallback(() => {
@@ -60,11 +62,14 @@ const Icon = styled.img`
 const IconDesc = styled.div`
   position: absolute;
   left: 50%;
-  top: -10px;
+  top: -1rem;
   transform: translate(-50%, 0);
   opacity: 0;
   transition: opacity 0.5s;
   white-space: nowrap;
+  background-color: ${(props) => props.theme.colors.cardBackground01};
+  border-radius: 0.75rem;
+  padding: 0.25rem 0.5rem;
 `;
 
 export default NavbarItem;

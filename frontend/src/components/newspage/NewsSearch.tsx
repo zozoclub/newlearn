@@ -25,9 +25,14 @@ const NewsSearch: React.FC = () => {
     const query = event.target.value;
     setSearchValue(query);
 
-    if (query) {
-      const results = await searchNews(query);
-      setSearchResults(results);
+    if (query && !isMixedLanguage(query)) {
+      try {
+        const results = await searchNews(query);
+        setSearchResults(results);
+      } catch (error) {
+        console.error("Error fetching search results:", error);
+        setSearchResults([]);
+      }
     } else {
       setSearchResults([]);
     }
@@ -50,6 +55,14 @@ const NewsSearch: React.FC = () => {
         setClickedNewsId(null);
       }
     }, 50);
+  };
+
+  const isEnglish = (text: string) => /^[A-Za-z\s]*$/.test(text);
+  const isKorean = (text: string) => /^[가-힣\s]*$/.test(text);
+  const isMixedLanguage = (text: string) => !isEnglish(text) && !isKorean(text);
+
+  const getAppropriateTitle = (result: SearchNews, searchTerm: string) => {
+    return isEnglish(searchTerm) ? result.titleEng : result.title;
   };
 
   const highlightSearchTerm = (text: string, searchTerm: string) => {
@@ -90,7 +103,10 @@ const NewsSearch: React.FC = () => {
               onMouseDown={() => handleResultMouseDown(result.newsId)}
               onClick={() => handleResultClick(result.newsId)}
             >
-              {highlightSearchTerm(result.titleEng, searchValue)}
+              {highlightSearchTerm(
+                getAppropriateTitle(result, searchValue),
+                searchValue
+              )}
             </ResultItem>
           ))}
         </ResultsContainer>
@@ -118,7 +134,7 @@ const SearchContainer = styled.div`
     color: ${(props) => props.theme.colors.text};
     border: none;
     border-bottom: 2px solid ${(props) => props.theme.colors.text04};
-    border-radius: 4px;
+    border-radius: 4px 4px 0 0;
     outline: none;
     font-size: 1.25rem;
   }

@@ -1,6 +1,5 @@
 import styled from "styled-components";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 import locationState from "@store/locationState";
 import goalState from "@store/goalState";
@@ -19,9 +18,11 @@ import {
   goalSetting,
   getStudyProgress,
 } from "@services/goalService.ts";
+import { usePageTransition } from "@hooks/usePageTransition";
 
 const MyStudyPage = () => {
-  const navigate = useNavigate();
+  const transitionTo = usePageTransition();
+
   const [studyProgress, setStudyProgress] = useRecoilState(goalState);
 
   // 페이지 헤더
@@ -32,11 +33,11 @@ const MyStudyPage = () => {
 
   // 페이지 이동
   const handleVocaClick = () => {
-    navigate("/voca");
+    transitionTo("/voca");
   };
 
   const handleTestClick = () => {
-    navigate("/testhistory");
+    transitionTo("/testhistory");
   };
 
   // 모달 설정

@@ -1,10 +1,5 @@
 import axiosInstance from "./axiosInstance";
 
-export type ScrapNewsResponseType = {
-  content: ScrapNewsType[];
-  totalElements: number;
-};
-
 export type ScrapNewsType = {
   newsId: number;
   title: string;
@@ -14,6 +9,17 @@ export type ScrapNewsType = {
   publishedDate: string;
   isRead: boolean[];
   scrapedDate: string;
+};
+
+export type ScrapNewsListType = {
+  scrapNewsList: ScrapNewsType[];
+  totalPages: number;
+  totalElements: number;
+};
+
+export type WordType = {
+  word: string;
+  sentence: string;
 };
 
 export type GrassType = {
@@ -53,9 +59,9 @@ export const getLabelFromKey = (key: CategoryCountKey): string => {
 
 export const getScrapNewsList = async (
   difficulty: number,
-  size: number,
-  page: number
-): Promise<ScrapNewsResponseType> => {
+  page: number,
+  size: number
+): Promise<ScrapNewsListType> => {
   try {
     const response = await axiosInstance.get(`mypage/news/${difficulty}`, {
       params: {
@@ -64,7 +70,12 @@ export const getScrapNewsList = async (
         size: size,
       },
     });
-    return response.data.data;
+    console.log(response.data.data);
+    return {
+      scrapNewsList: response.data.data.content,
+      totalPages: response.data.data.totalPages,
+      totalElements: response.data.data.totalElements,
+    };
   } catch (error) {
     console.error("get scrap news Failed", error);
     throw error;

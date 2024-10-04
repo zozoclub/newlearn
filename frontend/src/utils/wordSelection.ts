@@ -39,8 +39,8 @@ const extractSentences = (
     const engSentence = engMatch[0].trim();
 
     // 영어와 한글 문장을 구두점까지 포함해서 나눔
-    const korSentences = korData.match(/[^.!?]*[.!?]/g); // 한글 문장을 구두점 포함해서 나눔
-    const engSentences = engText.match(/[^.!?]*[.!?]/g); // 영어 문장을 구두점 포함해서 나눔
+    const korSentences = korData.match(/[^.]*[.]/g); // 한글 문장을 구두점 포함해서 나눔
+    const engSentences = engText.match(/[^.]*[.]/g); // 영어 문장을 구두점 포함해서 나눔
 
     if (engSentences && korSentences) {
       // 영어 문장에서 매칭된 문장의 인덱스를 찾음

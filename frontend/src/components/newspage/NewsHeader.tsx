@@ -14,7 +14,7 @@ import DifficultyToggleBtn from "./DifficultyToggleBtn";
 import Bookmark from "./Bookmark";
 import { useParams } from "react-router-dom";
 
-const NewsHeader: React.FC<{
+type NewsHeaderPropsType = {
   engIsLoading: boolean;
   korIsLoading: boolean;
   engData: DetailNewsType | undefined;
@@ -23,7 +23,9 @@ const NewsHeader: React.FC<{
   setDifficulty: React.Dispatch<React.SetStateAction<number>>;
   isRead: boolean[] | undefined;
   setIsReadFinished: React.Dispatch<React.SetStateAction<boolean>>;
-}> = ({
+};
+
+const NewsHeader: React.FC<NewsHeaderPropsType> = ({
   engIsLoading,
   korIsLoading,
   engData,

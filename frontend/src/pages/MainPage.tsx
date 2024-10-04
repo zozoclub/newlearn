@@ -2,6 +2,7 @@ import { PWAInstallPrompt } from "@components/PWAInstallPrompt";
 import Clock from "@components/mainpage/Clock";
 import DailyNews from "@components/mainpage/DailyNews";
 import Widget from "@components/mainpage/Widget";
+// import NewsSearch from "@components/newspage/NewsSearch";
 import styled from "styled-components";
 
 const MainPage = () => {

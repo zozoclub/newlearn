@@ -252,3 +252,17 @@ export const deleteScrapNews = async (newsId: number, difficulty: number) => {
     throw error;
   }
 };
+
+export const searchNews = async (query: string) => {
+  try {
+    const response = await axiosInstance.get("search/auto", {
+      params: {
+        query: query,
+      },
+    });
+    return response.data.data;
+  } catch (error) {
+    console.error("뉴스 검색 실패", error);
+    throw error;
+  }
+};

@@ -23,6 +23,7 @@ export type Theme = {
     text04: string;
     readonly: string;
     placeholder: string;
+    highliting: string;
   };
   shadows: {
     small: string;

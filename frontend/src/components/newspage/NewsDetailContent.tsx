@@ -2,12 +2,25 @@ import styled from "styled-components";
 import LoadingDiv from "./LoadingDiv";
 import LoadingBar from "./LoadingBar";
 import { useWordSelection } from "@utils/wordSelection";
-import { searchDaumDictionary, SearchResult } from "@services/newsService";
+import {
+  DetailNewsType,
+  searchDaumDictionary,
+  SearchResult,
+} from "@services/newsService";
 import { useRecoilValue } from "recoil";
 import languageState from "@store/languageState";
 import WordModal from "./WordModal";
 import { useEffect, useRef, useState } from "react";
-import { NewsDetailContentType } from "types/news";
+
+type NewsDetailContentType = {
+  engIsLoading: boolean;
+  korIsLoading: boolean;
+  selectedKorContent: string;
+  engData: DetailNewsType | undefined;
+  korData: DetailNewsType | undefined;
+  newsId: number;
+  difficulty: number;
+};
 
 const NewsDetailContent: React.FC<NewsDetailContentType> = ({
   engIsLoading,

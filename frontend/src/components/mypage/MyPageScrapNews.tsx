@@ -1,12 +1,10 @@
 import styled from "styled-components";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
-import {
-  getScrapNewsList,
-  ScrapNewsResponseType,
-} from "@services/mypageService";
+import { useParams, useNavigate } from "react-router-dom";
+import { getScrapNewsList, ScrapNewsListType } from "@services/mypageService";
 import MyPageScrapNewsItem from "@components/mypage/MyPageScrapNewsItem";
+import MyPagePagination from "@components/mypage/MyPagePagination";
 import Spinner from "@components/Spinner";
 
 const MyPageScrapNews = () => {
@@ -15,19 +13,41 @@ const MyPageScrapNews = () => {
   const [selectedDifficulty, setSelectedDifficulty] = useState(1);
   const difficultyList = [{ name: "초급" }, { name: "중급" }, { name: "고급" }];
 
-  const { data: scrapNewsData, isLoading } = useQuery<ScrapNewsResponseType>({
-    queryKey: ["scrapNewsData", selectedDifficulty],
-    queryFn: () => getScrapNewsList(selectedDifficulty, 20, 0),
+  const { page } = useParams();
+  const [selectedPage, setSelectedPage] = useState(Number(page) || 0); // 상태로 페이지 관리
+
+  const {
+    data: scrapNewsData,
+    isLoading,
+    refetch,
+  } = useQuery<ScrapNewsListType>({
+    queryKey: ["scrapNewsData", selectedDifficulty, selectedPage],
+    queryFn: () => getScrapNewsList(selectedDifficulty, selectedPage, 3),
   });
 
   if (isLoading)
     <div>
       <Spinner />
     </div>;
-  const scrapNewsContent = scrapNewsData ? scrapNewsData.content : [];
-  const scrapNewsCount = scrapNewsData ? scrapNewsData.totalElements : 0;
+  const scrapNewsList = scrapNewsData?.scrapNewsList || [];
+  const totalPages = scrapNewsData?.totalPages || 0;
+  const totalElements = scrapNewsData?.totalElements;
+
   const handleGoToNews = () => {
-    navigate("/news");
+    navigate("/news/0/1");
+  };
+
+  const handlePageChange = (newPage: number) => {
+    if (newPage < 1 || newPage > totalPages) return; // 유효한 페이지인지 확인
+    setSelectedPage(newPage - 1); // 상태 업데이트, 0부터 시작하는 값으로 조정
+    refetch(); // 데이터 재요청
+  };
+
+  const handleNextPage = () => {
+    if (selectedPage + 1 < totalPages) {
+      setSelectedPage((prevPage) => prevPage + 1); // 다음 페이지로 이동
+      refetch(); // 데이터 재요청
+    }
   };
 
   return (
@@ -35,7 +55,7 @@ const MyPageScrapNews = () => {
       <HeaderContainer>
         <ScrapNewsTitle>
           내가 스크랩한 뉴스
-          <ScrapNewsCount>{scrapNewsCount}</ScrapNewsCount>
+          <ScrapNewsCount>{totalElements}</ScrapNewsCount>
         </ScrapNewsTitle>
         <DifficultyContainer>
           {difficultyList.map((difficulty, index) => (
@@ -43,6 +63,8 @@ const MyPageScrapNews = () => {
               key={difficulty.name}
               onClick={() => {
                 setSelectedDifficulty(index + 1);
+                setSelectedPage(0); // 난이도 변경 시 1페이지로 초기화
+                refetch(); // 데이터 재요청
               }}
             >
               {difficulty.name}
@@ -54,8 +76,8 @@ const MyPageScrapNews = () => {
       <NewsListContainer>
         {isLoading ? (
           <Spinner />
-        ) : scrapNewsContent.length > 0 ? (
-          scrapNewsContent.map((news) => (
+        ) : scrapNewsList.length > 0 ? (
+          scrapNewsList.map((news) => (
             <MyPageScrapNewsItem key={news.newsId} news={news} />
           ))
         ) : (
@@ -65,6 +87,14 @@ const MyPageScrapNews = () => {
           </NoNewsContainer>
         )}
       </NewsListContainer>
+      {scrapNewsList.length > 0 && (
+        <MyPagePagination
+          currentPage={selectedPage + 1} // 사용자에게 보여줄 페이지 번호
+          totalPages={totalPages}
+          onPageChange={handlePageChange} // 페이지 변경 핸들러 전달
+          onNextPage={handleNextPage} // 다음 페이지 핸들러 전달
+        />
+      )}
     </div>
   );
 };

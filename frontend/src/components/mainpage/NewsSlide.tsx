@@ -1,5 +1,7 @@
 import React from "react";
 import styled from "styled-components";
+import lightThumbnailImage from "@assets/images/lightThumbnail.png";
+import darkThumbnailImage from "@assets/images/darkThumbnail.png";
 
 interface NewsSlideProps {
   image: string;
@@ -10,7 +12,14 @@ interface NewsSlideProps {
 const NewsSlide: React.FC<NewsSlideProps> = React.memo(
   ({ image, title, content }) => (
     <>
-      <StyledImage loading="lazy" src={image} alt="news" />
+      {image ? (
+        <ThumbnailImage loading="lazy" src={image} alt="news" />
+      ) : (
+        <>
+          <ThumbnailImage src={lightThumbnailImage} />
+          <DarkThumbnailImage src={darkThumbnailImage} />
+        </>
+      )}
       <NewsContent className="news-content">
         <h1>{title}</h1>
         <div>{content}</div>
@@ -19,12 +28,19 @@ const NewsSlide: React.FC<NewsSlideProps> = React.memo(
   )
 );
 
-const StyledImage = styled.img`
+const ThumbnailImage = styled.img`
   width: 580px;
   height: 340px;
   border-radius: 0.5rem;
   opacity: 0.9;
   object-fit: cover; // 이미지 비율 유지
+`;
+const DarkThumbnailImage = styled(ThumbnailImage)`
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: ${(props) => (props.theme.mode === "dark" ? 1 : 0)};
+  transition: opacity 0.3s;
 `;
 
 const NewsContent = styled.div`

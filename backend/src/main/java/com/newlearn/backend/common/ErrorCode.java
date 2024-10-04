@@ -82,6 +82,11 @@ public enum ErrorCode {
 	NEWS_SCRAP_FAILED("N004", HttpStatus.BAD_REQUEST, "뉴스 스크랩 처리에 실패하였습니다."),
 	NEWS_SCRAP_CANCEL_FAILED("N005", HttpStatus.BAD_REQUEST, "뉴스 스크랩 삭제에 실패하였습니다."),
 
+	// Recommend Error
+	NEWS_RECOMM_CONTENTS_FAILED("R001", HttpStatus.NOT_FOUND, "뉴스 컨텐츠기반 필터링 추천 불러오기에 실패하였습니다."),
+	NEWS_RECOMM_CATEGORY_FAILED("R002", HttpStatus.NOT_FOUND, "뉴스 카테고리 추천 불러오기에 실패하였습니다."),
+	NEWS_RECOMM_HYBRID_FAILED("R003", HttpStatus.NOT_FOUND, "뉴스 하이브리드 추천 불러오기에 실패하였습니다."),
+
 	// Search
 	SEARCH_NOT_FOUND("S011", HttpStatus.BAD_REQUEST, "검색한 게 없습니다.")
 	;

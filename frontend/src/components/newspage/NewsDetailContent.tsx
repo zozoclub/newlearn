@@ -15,37 +15,64 @@ import { useEffect, useRef, useState } from "react";
 type NewsDetailContentType = {
   engIsLoading: boolean;
   korIsLoading: boolean;
-  selectedKorContent: string;
   engData: DetailNewsType | undefined;
   korData: DetailNewsType | undefined;
   newsId: number;
   difficulty: number;
 };
 
+type PositionType = {
+  x: number;
+  y: number;
+};
+
+type SelectedType = {
+  word: string;
+  engSentence: string;
+  korSentence: string;
+};
+
 const NewsDetailContent: React.FC<NewsDetailContentType> = ({
   engIsLoading,
   korIsLoading,
-  selectedKorContent,
   engData,
   korData,
   newsId,
   difficulty,
 }) => {
-  const { handleSelectionChange } = useWordSelection(selectedKorContent);
+  const [engContent, setEngContent] = useState<string>("");
+  const [korContent, setKorContent] = useState<string>("");
+  const { handleSelectionChange } = useWordSelection(engContent, korContent);
   const languageData = useRecoilValue(languageState);
   const [searchResult, setSearchResult] =
     useState<[SearchResult[], string[], string[]]>();
-  const [wordModalPosition, setWordModalPosition] = useState<{
-    x: number;
-    y: number;
-  }>({ x: 0, y: 0 });
-  const [selected, setSelected] = useState<{
-    word: string;
-    engSentence: string;
-    korSentence: string;
-  }>({ word: "", engSentence: "", korSentence: "" });
-
+  const [wordModalPosition, setWordModalPosition] = useState<PositionType>({
+    x: 0,
+    y: 0,
+  });
+  const [selected, setSelected] = useState<SelectedType>({
+    word: "",
+    engSentence: "",
+    korSentence: "",
+  });
   const wordModalRef = useRef<HTMLDivElement>(null);
+  const [slicedContent, setSlicedContent] = useState<
+    { sentence: string; words: string[] }[]
+  >([]);
+
+  useEffect(() => {
+    if (engData) {
+      setEngContent(engData.content);
+    }
+  }, [engData]);
+
+  useEffect(() => {
+    if (korData) {
+      setKorContent(korData.content);
+    }
+  }, [korData]);
+
+  // wordModal 외의 영역을 클릭했을 때 modal이 닫히는 event 추가
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -62,6 +89,19 @@ const NewsDetailContent: React.FC<NewsDetailContentType> = ({
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // 영어 Content를 단어 별로 찢음
+  useEffect(() => {
+    if (engData) {
+      const slice: { sentence: string; words: string[] }[] = [];
+      const engSentences = engData.content.match(/[^.]*[.]/g);
+      engSentences?.forEach((sentence) => {
+        const words = sentence.split(" ");
+        slice.push({ sentence, words });
+      });
+      setSlicedContent(slice);
+    }
+  }, [engData]);
 
   return (
     <Container>
@@ -85,6 +125,12 @@ const NewsDetailContent: React.FC<NewsDetailContentType> = ({
         </div>
       ) : (
         <div
+          style={{
+            display: "flex",
+            gap: "0.25rem",
+            maxWidth: "100%",
+            flexWrap: "wrap",
+          }}
           onMouseUp={(event) => {
             const result = handleSelectionChange();
             if (result) {
@@ -113,7 +159,24 @@ const NewsDetailContent: React.FC<NewsDetailContentType> = ({
             }
           }}
         >
-          {languageData === "en" ? engData?.content : korData?.content}
+          {languageData === "en"
+            ? slicedContent.map((slice) =>
+                slice.words.map((word, index) => (
+                  <div
+                    key={index}
+                    style={{
+                      color: `${
+                        engData?.words.some((engWord) => engWord.word === word)
+                          ? "red"
+                          : ""
+                      }`,
+                    }}
+                  >
+                    {word}
+                  </div>
+                ))
+              )
+            : korData?.content}
           {searchResult && selected.word && (
             <WordModal
               difficulty={difficulty}

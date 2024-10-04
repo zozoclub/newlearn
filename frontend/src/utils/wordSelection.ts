@@ -61,7 +61,7 @@ const extractSentences = (
 };
 
 // 단어 선택과 문장 추출을 처리하는 커스텀 훅
-export const useWordSelection = (korData: string) => {
+export const useWordSelection = (engData: string, korData: string) => {
   const handleSelectionChange = useCallback(() => {
     const selection = window.getSelection();
     if (!selection || selection.rangeCount === 0) return null;
@@ -77,10 +77,8 @@ export const useWordSelection = (korData: string) => {
       return null;
     }
 
-    const engText = range.startContainer.textContent || "";
-
     // 문장을 추출
-    const sentences = extractSentences(engText, korData, word);
+    const sentences = extractSentences(engData, korData, word);
 
     if (sentences.engSentence && sentences.korSentence) {
       const result: SelectionResult = {
@@ -93,7 +91,7 @@ export const useWordSelection = (korData: string) => {
     }
 
     return null;
-  }, [korData]);
+  }, [engData, korData]);
 
   return { handleSelectionChange };
 };

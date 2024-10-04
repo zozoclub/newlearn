@@ -17,11 +17,14 @@ public class WordDetailResponseDTO {
 	@Data
 	@AllArgsConstructor
 	public static class SentenceResponseDTO {
-
 		private Long newsId;
 		private Long difficulty;
 		private String sentence;
 		private String sentenceMeaning;
 		private String url;
+		private String pronounceUs;
+		private String pronounceUk;
+		private String audioUs;
+		private String audioUk;
 	}
 }

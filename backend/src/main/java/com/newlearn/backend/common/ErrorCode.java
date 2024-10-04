@@ -29,6 +29,7 @@ public enum ErrorCode {
 	NICKNAME_NOT_FOUND("U013", HttpStatus.BAD_REQUEST, "닉네임 조회에 실패했습니다."),
 	USER_GRASS_FAILED("U014", HttpStatus.BAD_REQUEST, "유저 잔디 조회에 실패했습니다."),
 	USER_NEWS_CHART_FAILED("U015", HttpStatus.BAD_REQUEST, "유저 카테고리 차트 조회에 실패했습니다."),
+	AVATAR_NOT_FOUND("U016", HttpStatus.BAD_REQUEST, "아바타 조회에 실패했습니다"),
 
 	// Unauthorized
 	AUTHENTICATION_FAILED("A001", HttpStatus.UNAUTHORIZED, "인증에 실패했습니다."),
@@ -67,6 +68,7 @@ public enum ErrorCode {
 	WORD_FIND_FAILED("W002", HttpStatus.BAD_REQUEST, "단어 목록을 찾을 수 없습니다"),
 	WORD_DELETE_FAILED("W003", HttpStatus.BAD_REQUEST, "단어를 삭제할 수 없습니다"),
 	WORD_UPDATE_FAILED("W004", HttpStatus.BAD_REQUEST, "단어 외움 변경을 할 수 없습니다."),
+	RESTUDY_UPDATE_FAILED("W005", HttpStatus.BAD_REQUEST, "망각곡선 단어 업데이트 실패했습니다"),
 
 	// Rank Error
 	POINT_RANK_NOT_FOUND("R001", HttpStatus.NOT_FOUND, "포인트 랭킹 조회 성공"),
@@ -84,6 +86,9 @@ public enum ErrorCode {
 	NEWS_RECOMM_CONTENTS_FAILED("R001", HttpStatus.NOT_FOUND, "뉴스 컨텐츠기반 필터링 추천 불러오기에 실패하였습니다."),
 	NEWS_RECOMM_CATEGORY_FAILED("R002", HttpStatus.NOT_FOUND, "뉴스 카테고리 추천 불러오기에 실패하였습니다."),
 	NEWS_RECOMM_HYBRID_FAILED("R003", HttpStatus.NOT_FOUND, "뉴스 하이브리드 추천 불러오기에 실패하였습니다."),
+
+	// Search
+	SEARCH_NOT_FOUND("S011", HttpStatus.BAD_REQUEST, "검색한 게 없습니다.")
 	;
 
 	private final String code;

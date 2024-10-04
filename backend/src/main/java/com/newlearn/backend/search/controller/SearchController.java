@@ -33,7 +33,7 @@ public class SearchController {
 			}
 			return ApiResponse.createSuccess(result, "조회성공");
 		} catch (Exception e) {
-			return ApiResponse.createError(ErrorCode.WORD_CREATE_FAILED);
+			return ApiResponse.createError(ErrorCode.SEARCH_NOT_FOUND);
 		}
 	}
 
@@ -48,7 +48,7 @@ public class SearchController {
 			return ApiResponse.createSuccess(result, "조회성공");
 		} catch (Exception e) {
 			e.printStackTrace();
-			return ApiResponse.createError(ErrorCode.WORD_CREATE_FAILED);
+			return ApiResponse.createError(ErrorCode.SEARCH_NOT_FOUND);
 		}
 	}
 

@@ -14,6 +14,7 @@ import com.newlearn.backend.news.repository.UserDailyNewsReadRepository;
 import com.newlearn.backend.news.repository.UserNewsReadRepository;
 import com.newlearn.backend.news.repository.UserNewsScrapRepository;
 import com.newlearn.backend.user.dto.request.NewsPagenationRequestDTO;
+import com.newlearn.backend.user.dto.response.AvatarResponseDTO;
 import com.newlearn.backend.user.dto.response.UserCategoryChartResponseDTO;
 import com.newlearn.backend.user.dto.response.UserGrassResponseDTO;
 import com.newlearn.backend.user.dto.response.UserScrapedNewsResponseDTO;
@@ -158,6 +159,15 @@ public class UserServiceImpl implements UserService{
 	public void updateExperience(Users user, Long experience) {
 		user.incrementExperience(experience);
 		userRepository.save(user);
+	}
+
+	@Override
+	public AvatarResponseDTO getAvartar(Long userId) throws Exception {
+		Users user = userRepository.findById(userId)
+			.orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
+
+		Avatar avatar = avatarRepository.findByUser(user).orElseThrow(() -> new Exception("아바타 없습니다"));
+		return new AvatarResponseDTO(avatar);
 	}
 
 

@@ -22,9 +22,11 @@ import com.newlearn.backend.user.dto.request.UpdateCategoryRequestDTO;
 import com.newlearn.backend.user.dto.request.UpdateDifficultyRequestDTO;
 import com.newlearn.backend.user.dto.request.UpdateExperienceRequestDTO;
 import com.newlearn.backend.user.dto.request.UpdateNicknameRequestDto;
+import com.newlearn.backend.user.dto.response.AvatarResponseDTO;
 import com.newlearn.backend.user.dto.response.LoginResponseDTO;
 import com.newlearn.backend.user.dto.response.RefreshTokenResponseDTO;
 import com.newlearn.backend.user.dto.response.UserProfileResponseDTO;
+import com.newlearn.backend.user.model.Avatar;
 import com.newlearn.backend.user.model.Users;
 import com.newlearn.backend.user.service.TokenService;
 import com.newlearn.backend.user.service.UserService;
@@ -72,6 +74,20 @@ public class UserController {
 			return ApiResponse.createSuccess(null, "성공적으로 아바타 업데이트");
 		} catch (Exception e) {
 			return ApiResponse.createError(ErrorCode.USER_UPDATE_FAILED);
+		}
+	}
+
+	@GetMapping("/avatar/{userId}")
+	public ApiResponse<?> getAvatar(Authentication authentication, @PathVariable Long userId) {
+		try {
+			Users user = userService.findByEmail(authentication.getName());
+			if(user == null) {
+				return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
+			}
+			AvatarResponseDTO result = userService.getAvartar(userId);
+			return ApiResponse.createSuccess(result, "아바타 조회 성공");
+		} catch (Exception e) {
+			return ApiResponse.createError(ErrorCode.AVATAR_NOT_FOUND);
 		}
 	}
 

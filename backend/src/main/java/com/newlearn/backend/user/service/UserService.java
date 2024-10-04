@@ -5,10 +5,12 @@ import java.util.List;
 import com.newlearn.backend.user.dto.request.NewsPagenationRequestDTO;
 import com.newlearn.backend.user.dto.request.UpdateAvatarDTO;
 import com.newlearn.backend.user.dto.request.SignUpRequestDTO;
+import com.newlearn.backend.user.dto.response.AvatarResponseDTO;
 import com.newlearn.backend.user.dto.response.UserCategoryChartResponseDTO;
 import com.newlearn.backend.user.dto.response.UserGrassResponseDTO;
 import com.newlearn.backend.user.dto.response.UserProfileResponseDTO;
 import com.newlearn.backend.user.dto.response.UserScrapedNewsResponseDTO;
+import com.newlearn.backend.user.model.Avatar;
 import com.newlearn.backend.user.model.Users;
 import org.springframework.data.domain.Page;
 
@@ -40,4 +42,6 @@ public interface UserService {
 	Long getUserRank(Long userId) throws Exception;
 
 	void updateExperience(Users user, Long experience);
+
+	AvatarResponseDTO getAvartar(Long userId) throws Exception;
 }

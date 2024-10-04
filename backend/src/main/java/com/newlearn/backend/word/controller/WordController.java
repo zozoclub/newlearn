@@ -159,7 +159,7 @@ public class WordController {
 			return ApiResponse.createSuccess(null, "성공적 변경");
 
 		} catch (Exception e) {
-			return ApiResponse.createError(ErrorCode.WORD_UPDATE_FAILED);
+			return ApiResponse.createError(ErrorCode.RESTUDY_UPDATE_FAILED);
 		}
 	}
 
@@ -175,7 +175,7 @@ public class WordController {
 			return ApiResponse.createSuccess(null, "성공적 변경");
 
 		} catch (Exception e) {
-			return ApiResponse.createError(ErrorCode.WORD_UPDATE_FAILED);
+			return ApiResponse.createError(ErrorCode.RESTUDY_UPDATE_FAILED);
 		}
 	}
 
@@ -192,7 +192,7 @@ public class WordController {
 			return ApiResponse.createSuccess(null, "단어 처리 성공");
 
 		} catch (Exception e) {
-			return ApiResponse.createError(ErrorCode.WORD_UPDATE_FAILED);
+			return ApiResponse.createError(ErrorCode.RESTUDY_UPDATE_FAILED);
 		}
 	}
 }

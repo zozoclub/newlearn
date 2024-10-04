@@ -13,20 +13,28 @@ const MainPage = () => {
     { variety: "ranking" },
   ];
 
-  return (
-    <Container>
-      <NewsContainer>
-        <Clock />
-        <DailyNews />
-      </NewsContainer>
-      <WidgetContainer>
-        {widgetList.map((widget, index) => (
-          <Widget key={index} variety={widget.variety} />
-        ))}
-      </WidgetContainer>
-      <PWAInstallPrompt />
-    </Container>
-  );
+  const MobileRender = () => {
+    <Container>안녕하세요</Container>;
+  };
+
+  const DesktopRender = () => {
+    return (
+      <Container>
+        <NewsContainer>
+          <Clock />
+          <DailyNews />
+        </NewsContainer>
+        <WidgetContainer>
+          {widgetList.map((widget, index) => (
+            <Widget key={index} variety={widget.variety} />
+          ))}
+        </WidgetContainer>
+        <PWAInstallPrompt />
+      </Container>
+    );
+  };
+
+  return <DesktopRender />;
 };
 
 export default MainPage;
@@ -36,6 +44,8 @@ const Container = styled.div`
   position: relative;
   height: 35rem;
   padding: 5rem 0;
+  @media (min-width: 768px) {
+  }
 `;
 
 const NewsContainer = styled.div`

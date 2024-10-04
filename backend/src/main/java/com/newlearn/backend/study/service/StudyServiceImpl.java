@@ -185,7 +185,7 @@ public class StudyServiceImpl implements StudyService{
     }
 
     @Override
-    public List<WordTestResultDetailResponseDTO> getWordTestResult(Long userId, Long quizId) {
+    public WordTestResultDetailDTO getWordTestResult(Long userId, Long quizId) {
         // 퀴즈 가져오기
         WordQuiz quiz = wordQuizRepository.findById(quizId)
                 .orElseThrow(() -> new IllegalArgumentException("퀴즈를 찾을 수 없습니다."));
@@ -244,17 +244,24 @@ public class StudyServiceImpl implements StudyService{
 
             // DTO 빌드 및 결과 리스트에 추가
             WordTestResultDetailResponseDTO result = WordTestResultDetailResponseDTO.builder()
+                    .newsId(wordSentence.getNewsId())
                     .questionId(question.getWordQuizQuestionId())
                     .answer(answer)
                     .correctAnswer(question.getCorrectAnswer())
-                    .correct(isCorrect)
                     .sentence(question.getSentence())
-                    .createdAt(quiz.getCreatedAt())
+                    .sentenceMeaning(question.getSentenceMeaning())
+                    .correct(isCorrect)
                     .build();
 
             resultList.add(result);
         }
-        return resultList;
+
+        WordTestResultDetailDTO data = WordTestResultDetailDTO.builder()
+                .createAt(LocalDateTime.now())
+                .result(resultList)
+                .build();
+
+        return data;
     }
 
     @Override

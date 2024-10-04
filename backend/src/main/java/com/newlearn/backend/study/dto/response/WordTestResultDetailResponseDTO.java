@@ -9,10 +9,11 @@ import java.time.LocalDateTime;
 @Builder
 public class WordTestResultDetailResponseDTO {
 
+    private long newsId;
     private long questionId;
     private String answer;
     private String correctAnswer;
-    private boolean correct;
     private String sentence;
-    private LocalDateTime createdAt;
+    private String sentenceMeaning;
+    private boolean correct;
 }

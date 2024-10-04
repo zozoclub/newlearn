@@ -42,9 +42,7 @@ public class SearchController {
 	public ApiResponse<?> getAutoComplete(@RequestParam String query) {
 		try {
 			List<SearchNewsDTO> result = searchService.searchAutoCompleteByTitleOrTitleEng(query);
-			if (result.isEmpty()) {
-				return ApiResponse.createSuccess(result, "조회없음");
-			}
+
 			return ApiResponse.createSuccess(result, "조회성공");
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -53,6 +53,9 @@ public class Word {
 	@Column(name = "audio_uk")
 	private String audioUk;
 
+	@Column(name = "is_delete")
+	private boolean isDelete = false;
+
 	@Column(name = "created_at")
 	private LocalDateTime createdAt;
 
@@ -102,6 +105,10 @@ public class Word {
 	private void resetLevel() {
 		this.restudyLevel = 1L;
 		this.nextRestudyDate = LocalDateTime.now().plusDays(1);
+	}
+
+	public void delete() {
+		this.isDelete = true;
 	}
 
 	private Long getNextReviewInterval() {

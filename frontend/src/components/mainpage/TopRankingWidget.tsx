@@ -116,7 +116,7 @@ const TopRankingWidget: React.FC<{
               <Avatar avatar={secondUserAvatar!} size={4} />
             </div>
             <div className="user-info">
-              <img src={secondRankIcon} alt="second-rank" />
+              <img src={secondRankIcon} width={48} />
             </div>
           </SecondRank>
         )}
@@ -129,7 +129,7 @@ const TopRankingWidget: React.FC<{
               <Avatar avatar={thirdUserAvatar!} size={4} />
             </div>
             <div className="user-info">
-              <img src={thirdRankIcon} alt="third-rank" />
+              <img src={thirdRankIcon} width={48} />
             </div>
           </ThirdRank>
         )}

@@ -2,6 +2,9 @@ import { PWAInstallPrompt } from "@components/PWAInstallPrompt";
 import Clock from "@components/mainpage/Clock";
 import DailyNews from "@components/mainpage/DailyNews";
 import Widget from "@components/mainpage/Widget";
+import locationState from "@store/locationState";
+import { useEffect } from "react";
+import { useSetRecoilState } from "recoil";
 // import NewsSearch from "@components/newspage/NewsSearch";
 import styled from "styled-components";
 
@@ -12,6 +15,15 @@ const MainPage = () => {
     { variety: "topRanking" },
     { variety: "ranking" },
   ];
+  const setCurrentLocationData = useSetRecoilState(locationState);
+
+  useEffect(() => {
+    setCurrentLocationData("main");
+    return () => {
+      setCurrentLocationData("");
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const MobileRender = () => {
     <Container>안녕하세요</Container>;

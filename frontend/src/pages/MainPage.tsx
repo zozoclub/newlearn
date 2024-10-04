@@ -2,6 +2,7 @@ import { PWAInstallPrompt } from "@components/PWAInstallPrompt";
 import Clock from "@components/mainpage/Clock";
 import DailyNews from "@components/mainpage/DailyNews";
 import Widget from "@components/mainpage/Widget";
+// import NewsSearch from "@components/newspage/NewsSearch";
 import styled from "styled-components";
 
 const MainPage = () => {
@@ -15,7 +16,12 @@ const MainPage = () => {
   return (
     <Container>
       <NewsContainer>
+        {/* <Header> */}
         <Clock />
+        {/* <News>
+            <NewsSearch />
+          </News> */}
+        {/* </Header> */}
         <DailyNews />
       </NewsContainer>
       <WidgetContainer>
@@ -36,6 +42,17 @@ const Container = styled.div`
   height: 35rem;
   padding: 5rem 0;
 `;
+
+// const Header = styled.div`
+//   display: flex;
+//   align-items: center;
+//   margin: 0 2rem;
+//   gap: 2rem;
+// `;
+
+// const News = styled.div`
+//   width: 800px;
+// `;
 
 const NewsContainer = styled.div`
   position: relative;

@@ -129,17 +129,19 @@ const SearchContainer = styled.div`
 
   input {
     width: 100%;
+    height: 40px;
     padding: 0.5rem;
     background-color: ${(props) => props.theme.colors.cardBackground};
     color: ${(props) => props.theme.colors.text};
     border: none;
-    border-bottom: 2px solid ${(props) => props.theme.colors.text04};
+    border-bottom: 3px solid ${(props) => props.theme.colors.text04};
     border-radius: 4px 4px 0 0;
     outline: none;
     font-size: 1.25rem;
   }
 
   input::placeholder {
+    padding: 0 0.5rem;
     color: ${(props) => props.theme.colors.placeholder};
   }
 `;
@@ -160,7 +162,7 @@ const ResultsContainer = styled.div`
 const ResultItem = styled.div`
   padding: 1.5rem;
   transition: background-color 0.3s ease, color 0.3s ease;
-
+  font-size: 1.25rem;
   cursor: pointer;
   &:hover {
     background-color: ${(props) => props.theme.colors.readonly};

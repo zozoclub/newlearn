@@ -28,9 +28,9 @@ const NewsListItem: React.FC<{ news: NewsType }> = ({ news }) => {
         <Category>
           <CategoryButton>{news.category}</CategoryButton>
         </Category>
-        {news.isRead[0] && <GoldMedal src={goldMedal} alt="" />}
-        {news.isRead[1] && <SilverMedal src={silverMedal} alt="" />}
         {news.isRead[2] && <BronzeMedal src={bronzeMedal} alt="" />}
+        {news.isRead[1] && <SilverMedal src={silverMedal} alt="" />}
+        {news.isRead[0] && <GoldMedal src={goldMedal} alt="" />}
       </div>
     </Container>
   );
@@ -121,13 +121,13 @@ const Medal = styled.img`
 `;
 
 const GoldMedal = styled(Medal)`
-  right: 8rem;
+  right: 0rem;
 `;
 const SilverMedal = styled(Medal)`
   right: 3.75rem;
 `;
 const BronzeMedal = styled(Medal)`
-  right: 0rem;
+  right: 8rem;
 `;
 
 export default NewsListItem;

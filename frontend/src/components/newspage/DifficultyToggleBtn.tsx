@@ -9,16 +9,16 @@ const DifficultyToggleBtn: React.FC<{
 }> = ({ difficulty, setDifficulty, isRead, setIsReadFinished }) => {
   return (
     <Container>
-      <HighDiv
+      <LowDiv
         onClick={() => {
-          setDifficulty(3);
+          setDifficulty(1);
           if (isRead) {
             setIsReadFinished(isRead);
           }
         }}
       >
-        고급
-      </HighDiv>
+        초급
+      </LowDiv>
       <MidDiv
         onClick={() => {
           window.scrollTo(0, 0);
@@ -30,17 +30,17 @@ const DifficultyToggleBtn: React.FC<{
       >
         중급
       </MidDiv>
-      <LowDiv
+      <HighDiv
         onClick={() => {
           window.scrollTo(0, 0);
-          setDifficulty(1);
+          setDifficulty(3);
           if (isRead) {
             setIsReadFinished(isRead);
           }
         }}
       >
-        초급
-      </LowDiv>
+        고급
+      </HighDiv>
       <SelectedDiv $difficulty={difficulty} />
     </Container>
   );
@@ -52,6 +52,7 @@ const Container = styled.div`
   height: 2rem;
   background-color: ${(props) => props.theme.colors.readonly};
   border-radius: 0.75rem;
+  cursor: pointer;
 `;
 
 const ToggleItem = styled.div`
@@ -63,7 +64,7 @@ const ToggleItem = styled.div`
   text-align: center;
 `;
 
-const HighDiv = styled(ToggleItem)`
+const LowDiv = styled(ToggleItem)`
   left: 0;
 `;
 
@@ -71,14 +72,14 @@ const MidDiv = styled(ToggleItem)`
   left: 3.5rem;
 `;
 
-const LowDiv = styled(ToggleItem)`
+const HighDiv = styled(ToggleItem)`
   left: 7rem;
 `;
 
 const SelectedDiv = styled.div<{ $difficulty: number }>`
   position: absolute;
   z-index: 1;
-  transform: translateX(${(props) => 10.5 - 3.5 * props.$difficulty}rem);
+  transform: translateX(${(props) => props.$difficulty * 3.5 - 3.5}rem);
   width: 3.5rem;
   height: 2rem;
   transition: transform 0.5s;

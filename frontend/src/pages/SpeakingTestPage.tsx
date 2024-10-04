@@ -398,7 +398,7 @@ const MainContainer = styled.div`
   margin: auto;
   margin-bottom: 2rem;
   padding: 1rem;
-  background-color: ${(props) => props.theme.colors.cardBackground + "BF"};
+  background-color: ${(props) => props.theme.colors.cardBackground + "5A"};
   backdrop-filter: blur(0.25rem);
   border-radius: 0.75rem;
   box-shadow: ${(props) => props.theme.shadows.medium};
@@ -424,10 +424,10 @@ const SubContainer = styled.div`
   align-items: center;
   justify-content: center;
   width: 90%;
-  min-height: 15rem;
+  min-height: 20rem;
   margin: 0.75rem 0;
   padding: 0.625rem;
-  background-color: ${(props) => props.theme.colors.cardBackground + "BF"};
+  background-color: ${(props) => props.theme.colors.cardBackground + "5A"};
   backdrop-filter: blur(0.25rem);
   border-radius: 0.75rem;
   box-shadow: ${(props) => props.theme.shadows.medium};
@@ -443,6 +443,7 @@ const SubmitButtonContainer = styled.div`
 
 const SubmitButton = styled.button<{ disabled: boolean }>`
   padding: 1rem 2rem;
+  margin-bottom: 1rem;
   background-color: ${(props) =>
     props.disabled
       ? props.theme.colors.placeholder

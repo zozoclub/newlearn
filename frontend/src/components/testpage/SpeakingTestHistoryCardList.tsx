@@ -60,10 +60,10 @@ const MainContainer = styled.div`
   min-height: 12rem;
   margin: 0.625rem;
   padding: 0.625rem;
-  background-color: ${(props) => props.theme.colors.cardBackground + "BF"};
+  background-color: ${(props) => props.theme.colors.cardBackground + "5A"};
   backdrop-filter: blur(0.25rem);
   border-radius: 0.75rem;
-  box-shadow: ${(props) => props.theme.shadows.medium};
+  box-shadow: ${(props) => props.theme.shadows.small};
   transition: box-shadow 0.5s;
 `;
 

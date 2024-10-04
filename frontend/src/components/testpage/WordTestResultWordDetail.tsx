@@ -1,21 +1,29 @@
 import React from "react";
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 
 type Props = {
+  newsId: number;
   answerWord: string;
   userAnswer: string;
   sentence: string;
-  articleId?: number;
+  sentenceMeaning: string;
   isCorrect: boolean;
 };
 
 const WordTestResultWordDetail: React.FC<Props> = ({
+  newsId,
   answerWord,
   userAnswer,
   sentence,
-  articleId,
+  sentenceMeaning,
   isCorrect
 }) => {
+  const navigate = useNavigate();
+
+  const toNewsDetailHandler = () => {
+    navigate(`/news/detail/${newsId}`);
+  };
 
   const highlightWordInSentence = (sentence: string, word: string) => {
     const parts = sentence.split(new RegExp(`(${word})`, 'gi')); // 단어로 split, 대소문자 무시
@@ -32,27 +40,31 @@ const WordTestResultWordDetail: React.FC<Props> = ({
 
   return (
     <DetailLayout>
+      <Section>
+        <AnswerTitle>Quiz Sentence</AnswerTitle>
+        <br />
+        <AnswerContent>{highlightWordInSentence(sentence, answerWord)}</AnswerContent>
+        <br />
+        <SentenceMeaning>{sentenceMeaning}</SentenceMeaning>
+      </Section>
       <br />
-      <AnswerTitle>Quiz Sentence</AnswerTitle>
-      <br />
-      <br />
-      <AnswerContent>{highlightWordInSentence(sentence, answerWord)}</AnswerContent>
-      <br />
-      <br />
-      <AnswerTitle>Quiz Answer</AnswerTitle>
-      <br />
-      <br />
-      <ProblemAnswer>{answerWord}</ProblemAnswer>
-      <br />
-      <br />
-      <br />
-      <AnswerTitle>My Answer</AnswerTitle>
-      <br />
-      <br />
-      <UserAnswer>{userAnswer}</UserAnswer>
-      <br />
-      <br />
-      <ArticleLink>기사로 이동하기{articleId}</ArticleLink>
+      <Section>
+        <AnswerTitle>Quiz Answer</AnswerTitle>
+        <br />
+        <ProblemAnswer>{answerWord}</ProblemAnswer>
+        <br />
+      </Section>
+
+      <Section>
+        <AnswerTitle>My Answer</AnswerTitle>
+        <br />
+        <UserAnswer $isCorrect={isCorrect}>{userAnswer ? userAnswer : "No Answer"}</UserAnswer>
+        <br />
+      </Section>
+
+      <NewsLinkButton onClick={toNewsDetailHandler}>
+        원문 보기
+      </NewsLinkButton>
     </DetailLayout>
   );
 };
@@ -61,29 +73,59 @@ export default WordTestResultWordDetail;
 
 const DetailLayout = styled.div`
   margin: 1.5rem;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  transition: all 0.3s ease-in-out;
   text-align: start;
 `;
 
+const Section = styled.div`
+  margin-bottom: 2rem;
+  line-height: 1.5rem;
+`;
+
 const AnswerTitle = styled.div`
-  font-size: 2rem;
+  font-size: 1.75rem;
   font-weight: 600;
+  color: ${(props) => props.theme.colors.text};
 `;
 
 const AnswerContent = styled.div`
   font-size: 1.25rem;
+  color: ${(props) => props.theme.colors.text};
+`;
+
+const SentenceMeaning = styled.div`
+  font-size: 1rem;
+  color: ${(props) => props.theme.colors.text04};
+  margin-top: 0.75rem;
 `;
 
 const ProblemAnswer = styled.div`
-  font-size: 1.25rem;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: ${(props) => props.theme.colors.primary};
 `;
 
-const UserAnswer = styled.div`
-  font-size: 1.25rem;
+const UserAnswer = styled.div<{ $isCorrect: boolean }>`
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: ${(props) => (props.$isCorrect ? props.theme.colors.primary : props.theme.colors.danger)};
 `;
 
-const ArticleLink = styled.div`
+const NewsLinkButton = styled.button`
+  background-color: ${(props) => props.theme.colors.primary};
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 0.5rem;
   font-size: 1rem;
-  color: gray;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: ${(props) => props.theme.colors.primaryPress};
+  }
 `;
 
 const HighlightedWord = styled.span<{ $isCorrect: boolean }>`

@@ -119,8 +119,10 @@ const SpeakingTestResultReference: React.FC<Props> = ({
             <SpeakerClickIcon />
           </SpeakerIcon>
           <TextBlock>
-            <EnglishSentence>{sentence}.</EnglishSentence>
-            <br />
+            <EnglishSentence>
+              {sentence}
+              {index !== englishSentences.length - 1 && "."}
+            </EnglishSentence>
             <KoreanSentence>{koreanSentences[index]}</KoreanSentence>
             <br />
             <br />
@@ -148,12 +150,17 @@ const TextBlock = styled.div`
 const EnglishSentence = styled.div`
   font-size: 1.375rem;
   font-weight: 300;
+  letter-spacing: 0.01rem; 
+  line-height: 1.5;
 `;
 
 const KoreanSentence = styled.div`
   font-size: 1.25rem;
-  color: ${(props) => props.theme.colors.primary};
+  color: ${(props) => props.theme.colors.text04};
+  font-weight: 400;
   margin-top: 0.5rem;
+  letter-spacing: 0.01rem; 
+  line-height: 1.5;
 `;
 
 const SentenceBlock = styled.div`

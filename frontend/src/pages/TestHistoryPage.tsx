@@ -136,10 +136,10 @@ const SmallContainer = styled.div`
   height: 22rem;
   margin: 0.75rem 0;
   padding: 0.625rem;
-  background-color: ${(props) => props.theme.colors.cardBackground + "BF"};
+  background-color: ${(props) => props.theme.colors.cardBackground01};
   backdrop-filter: blur(0.25rem);
   border-radius: 0.75rem;
-  box-shadow: ${(props) => props.theme.shadows.medium};
+  box-shadow: ${(props) => props.theme.shadows.small};
   transition: box-shadow 0.5s;
   width: 100%;
 `;
@@ -151,10 +151,10 @@ const BigContainer = styled.div`
   justify-content: flex-start;
   height: 48rem;
   margin: 0.75rem 0;
-  background-color: ${(props) => props.theme.colors.cardBackground + "BF"};
+  background-color: ${(props) => props.theme.colors.cardBackground01};
   backdrop-filter: blur(0.25rem);
   border-radius: 0.75rem;
-  box-shadow: ${(props) => props.theme.shadows.medium};
+  box-shadow: ${(props) => props.theme.shadows.small};
   transition: box-shadow 0.5s;
   width: 100%;
 `;
@@ -180,7 +180,7 @@ const WordTabButton = styled.button<TabButtonProps>`
   cursor: pointer;
   transition: background-color 0.3s, color 0.3s;
   font-weight: 600;
-  font-size: 1rem;
+  font-size: 1.25rem;
 `;
 
 const SpeakTabButton = styled.button<TabButtonProps>`
@@ -194,7 +194,7 @@ const SpeakTabButton = styled.button<TabButtonProps>`
   cursor: pointer;
   transition: background-color 0.3s, color 0.3s;
   font-weight: 600;
-  font-size: 1rem;
+  font-size: 1.25rem;
 `;
 
 const Nav = styled.div`

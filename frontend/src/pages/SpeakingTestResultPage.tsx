@@ -95,7 +95,7 @@ const SpeakingTestResultPage: React.FC = () => {
           <SpeakingTestResultInfoWidget
             title="CompletenessScore"
             estimate={getCompletenessFeedback(results.completenessScore)}
-            content="입력 참조 텍스트에 대한 발음 단어의 비율로 계산된 음성의 완전성입니다."
+            content="텍스트에 대한 단어 완전성입니다."
           />
         </GridContainer>
       </MainContainer>
@@ -122,8 +122,8 @@ const MainContainer = styled.div`
   min-height: 50rem;
   margin: 0 0.5rem;
   padding: 0.5rem;
-  background-color: ${(props) => props.theme.colors.cardBackground + "BF"};
-  box-shadow: ${(props) => props.theme.shadows.medium};
+  background-color: ${(props) => props.theme.colors.cardBackground + "5A"};
+  box-shadow: ${(props) => props.theme.shadows.small};
   border-radius: 0.75rem;
   transition: box-shadow 0.5s;
   backdrop-filter: blur(0.25rem);

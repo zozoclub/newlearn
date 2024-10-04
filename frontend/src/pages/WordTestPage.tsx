@@ -3,7 +3,6 @@ import { useSetRecoilState } from "recoil";
 import locationState from "@store/locationState";
 import styled from "styled-components";
 import { useMediaQuery } from "react-responsive"; // 모바일 여부 감지
-
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import {
@@ -11,13 +10,11 @@ import {
   postWordTestResult,
   WordTestListResponseDto,
   WordTestRequestDto,
+  deleteWordTest
 } from "@services/wordTestService";
-
 import Spinner from "@components/Spinner";
 import Modal from "@components/Modal";
 import { isExpModalState } from "@store/expState";
-
-// 모바일
 import WordTestMobilePage from "./mobile/WordTestMobilePage";
 
 const WordTestPage: React.FC = () => {
@@ -25,9 +22,9 @@ const WordTestPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const totalCount = searchParams.get("totalCount");
   const setExpModal = useSetRecoilState(isExpModalState);
-
   const navigate = useNavigate();
-
+  const [isSubmit, setIsSubmit] = useState(false);
+  const [isExitModalOpen, setIsExitModalOpen] = useState(false);
   const mutation = useMutation({
     mutationFn: (wordTestResultDataSet: WordTestRequestDto) =>
       postWordTestResult(wordTestResultDataSet),
@@ -41,32 +38,29 @@ const WordTestPage: React.FC = () => {
     setCurrentLocation("Word Test Page");
   }, [setCurrentLocation]);
 
-  const { isLoading, error, data } = useQuery<WordTestListResponseDto>({
+  const { isLoading, error: dataError, data } = useQuery<WordTestListResponseDto>({
     queryKey: ["wordTestData", Number(totalCount)],
     queryFn: () => getWordTestList(Number(totalCount)),
     refetchOnWindowFocus: false,
   });
-
-  // 퀴즈 형식으로 변환
-  const generateQuizFromData = (data: WordTestListResponseDto) => {
-    return data.tests.map((item) => ({
-      // 단어의 길이만큼 빈칸을 생성
-      question: item.sentence.replace(item.word, "_".repeat(item.word.length)),
-      translation: item.sentenceMeaning,
-      answer: item.word,
-    }));
-  };
+  const quizId = data?.quizId
+  console.log("퀴즈 아이디", quizId);
 
   const [userAnswers, setUserAnswers] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1); // 현재 페이지
   const [quiz, setQuiz] = useState<
     { question: string; translation: string; answer: string }[]
   >([]);
+  const [error, setError] = useState(false);
 
   // 데이터가 있을 때 퀴즈 생성
   useEffect(() => {
     if (data) {
-      const processedQuiz = generateQuizFromData(data);
+      const processedQuiz = data.tests.map((item) => ({
+        question: item.sentence.replace(item.word, "_".repeat(item.word.length)),
+        translation: item.sentenceMeaning,
+        answer: item.word,
+      }));
       setQuiz(processedQuiz);
       setUserAnswers(Array(processedQuiz.length).fill(""));
     }
@@ -79,34 +73,29 @@ const WordTestPage: React.FC = () => {
   const questionsPerPage = 5;
   const indexOfLastQuestion = currentPage * questionsPerPage;
   const indexOfFirstQuestion = indexOfLastQuestion - questionsPerPage;
-  const currentQuestions = quiz.slice(
-    indexOfFirstQuestion,
-    indexOfLastQuestion
-  );
+  const currentQuestions = quiz.slice(indexOfFirstQuestion, indexOfLastQuestion);
 
   const handleInputChange = (
     index: number,
     subIndex: number,
     value: string
   ) => {
-    // 영어 알파벳만 허용하는 정규식
     const englishOnly = /^[a-zA-Z]*$/;
-
-    // 입력된 값이 영어가 아닐 경우 무시
     if (!englishOnly.test(value)) {
-      return;
+      setError(true);
+      return
+
+    } else {
+      setError(false);
     }
 
     const newAnswers = [...userAnswers];
     const currentAnswer = userAnswers[indexOfFirstQuestion + index] || "";
-
-    // 입력한 문자의 위치에만 해당 값을 대체
     const updatedAnswer = currentAnswer.split("");
     updatedAnswer[subIndex] = value;
     newAnswers[indexOfFirstQuestion + index] = updatedAnswer.join("");
     setUserAnswers(newAnswers);
 
-    // 다음 빈칸으로 자동으로 포커스 이동
     if (value.length === 1 && inputRefs.current[index]?.[subIndex + 1]) {
       inputRefs.current[index][subIndex + 1]?.focus();
     }
@@ -121,14 +110,12 @@ const WordTestPage: React.FC = () => {
       event.key === "Backspace" &&
       !userAnswers[indexOfFirstQuestion + index]?.[subIndex]
     ) {
-      // 현재 칸이 비어 있고, Backspace를 누르면 이전 칸으로 포커스 이동
       if (inputRefs.current[index]?.[subIndex - 1]) {
         inputRefs.current[index][subIndex - 1]?.focus();
       }
     }
   };
 
-  // 페이지 이동
   const handleNextPage = () => {
     setCurrentPage((prevPage) => prevPage + 1);
   };
@@ -141,8 +128,38 @@ const WordTestPage: React.FC = () => {
   const submitModal = () => setIsSubmitModal(true);
   const closeSubmitModal = () => setIsSubmitModal(false);
   const handleWordDataSubmit = () => {
+    setIsSubmit(true);
     submitModal();
   };
+
+  const handleExitTest = async () => {
+    if (quizId) {
+      try {
+        await deleteWordTest(quizId); // 중간에 퇴장 시 테스트 삭제
+        navigate("/testhistory"); // 퇴장 후 홈으로 이동
+      } catch (error) {
+        console.error("테스트 삭제 실패:", error);
+      }
+    }
+  };
+
+  // 뒤로 가기 방지 + 모달 로직
+  useEffect(() => {
+    const handlePopState = (event: PopStateEvent) => {
+      if (!isSubmit) { // 제출된 상태가 아닐 때만 뒤로 가기 방지
+        event.preventDefault();
+        setIsExitModalOpen(true); // 뒤로 가기 시 모달 띄우기
+        window.history.pushState(null, "", window.location.href); // 현재 페이지로 다시 푸시
+      }
+    };
+
+    window.history.pushState(null, "", window.location.href); // 페이지 진입 시 히스토리 상태 추가
+    window.addEventListener("popstate", handlePopState); // 뒤로 가기 방지
+
+    return () => {
+      window.removeEventListener("popstate", handlePopState); // 컴포넌트 언마운트 시 이벤트 제거
+    };
+  }, [isSubmit]);
 
   const handleSubmit = () => {
     closeSubmitModal();
@@ -153,7 +170,6 @@ const WordTestPage: React.FC = () => {
       const correctAnswer = data?.tests[index].word;
       const answer = userAnswers[index]?.toLowerCase().replace(/\s+/g, "");
       const isCorrect = correctAnswer === answer;
-
       if (isCorrect) correctAnswerCount += 1;
 
       const wordTestData = {
@@ -166,7 +182,6 @@ const WordTestPage: React.FC = () => {
     });
 
     const experience = correctAnswerCount * 2;
-
     const wordTestResultDataSet: WordTestRequestDto = {
       quizId: data!.quizId,
       results: results,
@@ -184,85 +199,96 @@ const WordTestPage: React.FC = () => {
     });
   };
 
+  const answeredWordsCount = userAnswers.filter((ans) => ans.trim() !== "").length;
+
   // 로딩 상태 처리
   if (isLoading) return <Spinner />;
 
   // 에러 상태 처리
-  if (error)
+  if (dataError)
     return <ErrorText>에러가 발생했습니다. 다시 시도해 주세요.</ErrorText>;
 
   if (isMobile) return <WordTestMobilePage />;
 
   return (
     <MainContainer>
-      {/* 페이지 표시 */}
-      <PageInfo>
-        {currentPage} / {Math.ceil(quiz.length / questionsPerPage)}
-      </PageInfo>
+      {/* 테스트 퇴장 모달 */}
+      <Modal isOpen={isExitModalOpen} onClose={() => setIsExitModalOpen(false)} title="테스트 퇴장">
+        <p>테스트를 중단하고 나가시겠습니까?</p>
+        <ModalButtonContainer>
+          <ModalCancelButton onClick={() => setIsExitModalOpen(false)}>취소</ModalCancelButton>
+          <ModalConfirmButton onClick={handleExitTest}>확인</ModalConfirmButton>
+        </ModalButtonContainer>
+      </Modal>
+      <WordCount>
+        입력된 단어수 {answeredWordsCount < quiz.length ? <InfoTextEmphasizeRed>{answeredWordsCount}</InfoTextEmphasizeRed> : <InfoTextEmphasizeBlue>{answeredWordsCount}</InfoTextEmphasizeBlue>}개, 전체 문제 수 <InfoTextNormal>{quiz.length}</InfoTextNormal>개
+      </WordCount>
+
       {/* 문제 랜더링 */}
-      {currentQuestions.map((q, index) => {
-        inputRefs.current[index] = [];
-        return (
-          <QuizContainer key={index}>
-            <QuestionBox>
-              <Index>{indexOfFirstQuestion + index + 1}. </Index>
-              <Question>
-                <div>
-                  <BeforeText>
-                    {q.question.split("_".repeat(q.answer.length))[0]}
-                  </BeforeText>
-                  <BlankInputContainer>
-                    {q.answer.split("").map((_, i) => (
-                      <BlankInput
-                        key={i}
-                        type="text"
-                        ref={(el) => (inputRefs.current[index][i] = el)} // 각 input의 ref 설정
-                        value={
-                          userAnswers[indexOfFirstQuestion + index]?.[i] || ""
-                        }
-                        onChange={(e) =>
-                          handleInputChange(index, i, e.target.value)
-                        }
-                        onKeyDown={(e) => handleKeyDown(e, index, i)} // Backspace 처리
-                        maxLength={1} // 한 글자씩만 입력
-                      />
-                    ))}
-                  </BlankInputContainer>
-                  <AfterText>
-                    {q.question.split("_".repeat(q.answer.length))[1]}
-                  </AfterText>
-                </div>
-                <Translation>{q.translation}</Translation>
-              </Question>
-            </QuestionBox>
-          </QuizContainer>
-        );
-      })}
+      <QuizLayout>
+        {currentQuestions.map((q, index) => {
+          inputRefs.current[index] = [];
+          return (
+            <QuizContainer key={index}>
+              <QuestionBox>
+                <Index>{indexOfFirstQuestion + index + 1}. </Index>
+                <Question>
+                  <div>
+                    <BeforeText>
+                      {q.question.split("_".repeat(q.answer.length))[0]}
+                    </BeforeText>
+                    <BlankInputContainer>
+                      {q.answer.split("").map((_, i) => (
+                        <BlankInput
+                          key={i}
+                          type="text"
+                          ref={(el) => (inputRefs.current[index][i] = el)}
+                          value={userAnswers[indexOfFirstQuestion + index]?.[i] || ""}
+                          onChange={(e) =>
+                            handleInputChange(index, i, e.target.value)
+                          }
+                          onKeyDown={(e) => handleKeyDown(e, index, i)}
+                          maxLength={1}
+                        />
+                      ))}
+                    </BlankInputContainer>
+                    <AfterText>
+                      {q.question.split("_".repeat(q.answer.length))[1]}
+                    </AfterText>
+                  </div>
+                  <Translation>{q.translation}</Translation>
+                </Question>
+              </QuestionBox>
+            </QuizContainer>
+          );
+        })}
+      </QuizLayout>
 
-      {/* 이전, 다음 버튼 */}
-      <ButtonContainer>
-        <PageButton onClick={handlePrevPage} disabled={currentPage === 1}>
-          이전
-        </PageButton>
-        <PageButton
-          onClick={handleNextPage}
-          disabled={currentPage === Math.ceil(quiz.length / questionsPerPage)}
-        >
-          다음
-        </PageButton>
-      </ButtonContainer>
-
-      {/* 제출 버튼 */}
-      {currentPage === Math.ceil(quiz.length / questionsPerPage) && (
+      <BottomContainer>
+        {quiz.length > questionsPerPage && (
+          <ButtonContainer>
+            <PageButton onClick={handlePrevPage} disabled={currentPage === 1}>
+              이전
+            </PageButton>
+            <PageInfo>
+              {currentPage} / {Math.ceil(quiz.length / questionsPerPage)}
+            </PageInfo>
+            <PageButton
+              onClick={handleNextPage}
+              disabled={currentPage === Math.ceil(quiz.length / questionsPerPage)}
+            >
+              다음
+            </PageButton>
+          </ButtonContainer>
+        )}
+        {error && <ErrorMessage>영어만 입력 가능합니다</ErrorMessage>}
         <SubmitButtonContainer>
-          <SubmitButton onClick={handleWordDataSubmit}>제출</SubmitButton>
+          {currentPage === Math.ceil(quiz.length / questionsPerPage) ? (
+            <SubmitButton onClick={handleWordDataSubmit}>제출</SubmitButton>
+          ) : <Empty />}
         </SubmitButtonContainer>
-      )}
-      <Modal
-        isOpen={isSubmitModal}
-        onClose={closeSubmitModal}
-        title="Speaking Test"
-      >
+      </BottomContainer>
+      <Modal isOpen={isSubmitModal} onClose={closeSubmitModal} title="Speaking Test">
         <p>정말로 제출하시겠습니까?</p>
         <ModalButtonContainer>
           <ModalCancelButton onClick={closeSubmitModal}>취소</ModalCancelButton>
@@ -284,23 +310,26 @@ const MainContainer = styled.div`
   min-height: 50rem;
   margin: auto;
   padding: 0.625rem;
-  background-color: ${(props) => props.theme.colors.cardBackground + "BF"};
+  background-color: ${(props) => props.theme.colors.cardBackground + "5A"};
   backdrop-filter: blur(0.25rem);
   border-radius: 0.75rem;
   box-shadow: ${(props) => props.theme.shadows.medium};
   transition: box-shadow 0.5s;
 `;
 
-const PageInfo = styled.div`
+const WordCount = styled.div`
   position: absolute;
-  top: 1rem;
-  right: 2rem;
+  top: 3rem;
+  left: 3rem;
   font-size: 1.2rem;
-  font-weight: bold;
 `;
 
-const QuizContainer = styled.div`
+const QuizLayout = styled.div`
   width: 95%;
+  margin-top: 8rem;
+`
+
+const QuizContainer = styled.div`
   margin-bottom: 1.5rem;
   text-align: left;
 `;
@@ -310,15 +339,16 @@ const Question = styled.div`
   font-size: 1.375rem;
   font-weight: bold;
   align-items: center;
-  flex-wrap: wrap; /* 줄 바꿈 */
+  flex-wrap: wrap;
 `;
 
 const Translation = styled.div`
   font-size: 1.125rem;
+  font-weight: 400;
   margin-top: 0.75rem;
   margin-bottom: 0.5rem;
-  margin-left: 1.375rem;
   color: ${(props) => props.theme.colors.text04};
+  flex-basis: 100%;
 `;
 
 const BlankInput = styled.input`
@@ -344,9 +374,10 @@ const BlankInput = styled.input`
 
 const ButtonContainer = styled.div`
   display: flex;
-  justify-content: space-evenly;
+  justify-content: space-around;
+  align-items: center;
   width: 100%;
-  margin-top: 2rem;
+  margin-bottom: 2rem;
 `;
 
 const PageButton = styled.button`
@@ -371,7 +402,7 @@ const SubmitButtonContainer = styled.div`
   display: flex;
   justify-content: center;
   width: 100%;
-  margin-top: 2rem;
+  margin-bottom: 1rem;
 `;
 
 const SubmitButton = styled(PageButton)`
@@ -380,6 +411,10 @@ const SubmitButton = styled(PageButton)`
     background-color: ${(props) => props.theme.colors.primaryPress};
   }
 `;
+
+const Empty = styled.div`
+  margin-top:3rem;
+`
 
 const ModalButtonContainer = styled.div`
   display: flex;
@@ -399,6 +434,7 @@ const ModalCancelButton = styled.button`
     background-color: ${(props) => props.theme.colors.danger};
   }
 `;
+
 const ModalConfirmButton = styled.button`
   padding: 0.5rem 1.5rem;
   background-color: ${(props) => props.theme.colors.primary};
@@ -419,14 +455,15 @@ const ErrorText = styled.div`
 `;
 
 const BlankInputContainer = styled.span`
-  margin-left: 0.5rem;
-  margin-right: 0.5rem;
+  margin-left: 0.25rem;
+  margin-right: 0.25rem;
   margin-bottom: 1rem;
 `;
 
 const BeforeText = styled.span`
   line-height: 1.5;
 `;
+
 const AfterText = styled.span`
   line-height: 1.5;
 `;
@@ -436,8 +473,48 @@ const QuestionBox = styled.div`
 `;
 
 const Index = styled.div`
-margin-top: 0.375rem;
-margin-right: 0.25rem;
+  margin-top: 0.375rem;
+  margin-right: 0.25rem;
   font-size: 1.5rem;
   font-weight: 500;
-`
+`;
+
+const PageInfo = styled.div`
+  font-size: 1.2rem;
+  font-weight: bold;
+`;
+
+const BottomContainer = styled.div`
+  width: 100%;
+  margin-top: 2rem;
+`;
+
+const ErrorMessage = styled.span`
+  color: ${(props) => props.theme.colors.danger};
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+`;
+
+const InfoTextEmphasizeRed = styled.span`
+  margin-left: 0.25rem;
+  margin-right: 0.25rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: ${(props) => props.theme.colors.danger};
+  `;
+
+const InfoTextEmphasizeBlue = styled.span`
+  margin-right: 0.25rem;
+  margin-left: 0.25rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: ${(props) => props.theme.colors.primary};
+`;
+
+const InfoTextNormal = styled.span`
+  margin-right: 0.25rem;
+  margin-left: 0.25rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: ${(props) => props.theme.colors.text};
+`;

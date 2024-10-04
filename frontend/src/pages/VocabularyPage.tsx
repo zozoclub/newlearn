@@ -227,7 +227,7 @@ const MainLayout = styled.div`
 const MainContainer = styled.div`
   width: 46%;
   padding: 1rem;
-  background-color: ${(props) => `${props.theme.colors.cardBackground}BF`};
+  background-color: ${(props) => `${props.theme.colors.cardBackground01}`};
   border-radius: 0.75rem;
   min-height: 800px;
   max-height: 800px;

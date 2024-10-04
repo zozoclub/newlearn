@@ -161,7 +161,7 @@ const ListItem = styled.div`
   padding: 0.125rem;
   overflow: hidden;
   transition: all 0.3s ease-in-out;
-  background-color:  ${(props) => props.theme.colors.cardBackground01};
+  background-color:  ${(props) => props.theme.colors.newsItemBackground};
 `;
 
 const Title = styled.div`
@@ -184,7 +184,8 @@ const TitleWord = styled.span`
 `;
 
 const TitleProcessMeaning = styled.span<{ $isExpanded: boolean }>`
-  color: ${(props) => props.theme.colors.placeholder};
+  color: ${(props) => props.theme.colors.text04};
+  font-weight: 400;
   font-size: 1rem;
   opacity: ${({ $isExpanded }) => ($isExpanded ? 1 : 0)};
   overflow: hidden;
@@ -192,7 +193,7 @@ const TitleProcessMeaning = styled.span<{ $isExpanded: boolean }>`
 `;
 
 const TitleMeaning = styled.span`
-  color: ${(props) => props.theme.colors.placeholder};
+  color: ${(props) => props.theme.colors.text04};
   font-size: 1rem;
 `;
 

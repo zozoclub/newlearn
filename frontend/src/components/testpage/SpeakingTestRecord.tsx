@@ -145,17 +145,17 @@ const SpeakingTestRecord: React.FC<Props> = ({
       {/* 녹음이 완료된 상태 */}
       {!isRecording && isRecorded && (
         <>
-          <CompletionText>녹음이 완료되었습니다!</CompletionText>
           {audioUrl && (
             <StyledAudioPlayer
-              ref={audioPlayerRef}
-              className="green-audio-player"
+            ref={audioPlayerRef}
+            className="green-audio-player"
             >
               <audio controls style={{ display: "none" }}>
                 <source src={audioUrl} type="audio/mpeg" />
               </audio>
             </StyledAudioPlayer>
           )}
+          <CompletionText>녹음이 완료되었습니다!</CompletionText>
           <RestartRecordingContainer>
             <RestartText>다시 녹음하기</RestartText>
             <RestartRecordingIconStyled onClick={reStartRecordingModal} />
@@ -257,8 +257,8 @@ const RecordingStatus = styled.div`
 const CompletionText = styled.p`
   color: ${(props) => props.theme.colors.text};
   font-size: 1.25rem;
-  font-weight: bold;
-  margin-bottom: 1rem;
+  font-weight: 400;
+  margin-top: 2rem;
 `;
 
 const RestartRecordingContainer = styled.div`

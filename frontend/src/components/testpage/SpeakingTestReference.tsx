@@ -28,7 +28,6 @@ const SpeakingTestReference: React.FC<Props> = ({
               {index !== englishSentences.length && "."}
               <br />
             </EnglishSentence>
-            <br />
             <KoreanSentence>
               {koreanSentences[index]}
               {index !== koreanSentences.length && "."}
@@ -55,9 +54,15 @@ const SentenceArea = styled.div`
 const EnglishSentence = styled.div`
   font-size: 1.375rem;
   font-weight: 300;
+  letter-spacing: 0.002rem; 
+  line-height: 1.5;
 `;
 
 const KoreanSentence = styled.div`
-  color: ${(props) => props.theme.colors.primary};
   font-size: 1.25rem;
+  color: ${(props) => props.theme.colors.text04};
+  font-weight: 400;
+  margin-top: 0.5rem;
+  letter-spacing: 0.002rem; 
+  line-height: 1.5;
 `;

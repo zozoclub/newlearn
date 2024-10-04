@@ -40,7 +40,7 @@ const WordTestResultWordList: React.FC<Props> = ({
 export default WordTestResultWordList;
 
 const ListLayout = styled.div`
-  width: 85%;
+  width: 80%;
   display: flex;
   justify-content: center;
   align-items: center;

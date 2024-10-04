@@ -13,7 +13,7 @@ import com.newlearn.backend.news.repository.UserDailyNewsReadRepository;
 import com.newlearn.backend.news.repository.UserNewsReadRepository;
 import com.newlearn.backend.news.repository.UserNewsScrapRepository;
 import com.newlearn.backend.news.repository.mongo.UserNewsClickRepository;
-import com.newlearn.backend.search.dto.response.SearchNewsDTO;
+import com.newlearn.backend.search.dto.response.SearchNewsAutoDTO;
 import com.newlearn.backend.study.model.Goal;
 import com.newlearn.backend.study.repository.StudyRepository;
 import com.newlearn.backend.user.model.Users;
@@ -21,12 +21,11 @@ import com.newlearn.backend.user.repository.CategoryRepository;
 import com.newlearn.backend.user.repository.UserRepository;
 import com.newlearn.backend.word.model.Word;
 import com.newlearn.backend.word.model.WordSentence;
-import com.newlearn.backend.word.repository.WordRepository;
 import com.newlearn.backend.word.repository.WordSentenceRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.User;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -283,7 +282,7 @@ public class NewsServiceImpl implements NewsService{
         userRepository.save(user);
     }
 
-    public List<SearchNewsDTO> searchByTitleOrTitleEngContains(String query) {
+    public List<SearchNewsAutoDTO> searchByTitleOrTitleEngContains(String query) {
         boolean isKorean = isKorean(query);
         boolean isEnglish = isEnglish(query);
 
@@ -299,7 +298,7 @@ public class NewsServiceImpl implements NewsService{
         }
 
         return newsList.stream()
-            .map(news -> new SearchNewsDTO(news.getNewsId(), news.getTitle(), news.getTitleEng()))
+            .map(news -> new SearchNewsAutoDTO(news.getNewsId(), news.getTitle(), news.getTitleEng()))
             .collect(Collectors.toList());
     }
 

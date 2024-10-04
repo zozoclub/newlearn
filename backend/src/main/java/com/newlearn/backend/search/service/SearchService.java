@@ -1,21 +1,28 @@
 package com.newlearn.backend.search.service;
 
+import com.newlearn.backend.news.model.News;
+import com.newlearn.backend.news.model.UserNewsRead;
+import com.newlearn.backend.news.repository.NewsRepository;
+import com.newlearn.backend.news.repository.UserNewsReadRepository;
+import com.newlearn.backend.search.dto.response.SearchNewsAutoDTO;
 import com.newlearn.backend.search.dto.response.SearchNewsDTO;
 import com.newlearn.backend.search.model.SearchNews;
+import com.newlearn.backend.user.model.Users;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch.indices.RefreshRequest;
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.data.elasticsearch.core.suggest.response.Suggest;
 import org.springframework.stereotype.Service;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
 import co.elastic.clients.elasticsearch.core.search.Hit;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,8 +30,10 @@ import java.util.stream.Collectors;
 public class SearchService {
 
 	private final ElasticsearchClient elasticsearchClient;
+	private final NewsRepository newsRepository;
+	private final UserNewsReadRepository readRepository;
 
-	public List<SearchNewsDTO> searchByTitleOrTitleEng(String query) throws IOException {
+	public List<SearchNewsDTO> searchByTitleOrTitleEng(String query, Users user) throws IOException {
 		if (isKorean(query) && isEnglish(query)) {
 			return null;
 		}
@@ -44,13 +53,42 @@ public class SearchService {
 		);
 
 		SearchResponse<SearchNews> response = elasticsearchClient.search(searchRequest, SearchNews.class);
-		return response.hits().hits().stream()
+
+		List<Long> newsIds = response.hits().hits().stream()
 			.map(Hit::source)
-			.map(this::toSearchNewsDTO)
+			.map(SearchNews::getNewsId)
+			.collect(Collectors.toList());
+
+		List<News> newsList = newsRepository.findAllById(newsIds);
+
+		List<UserNewsRead> userNewsReads = readRepository.findAllByUserAndNewsIn(user, newsList);
+
+		Map<Long, UserNewsRead> userNewsReadMap = userNewsReads.stream()
+			.collect(Collectors.toMap(read -> read.getNews().getNewsId(), read -> read));
+
+		return newsList.stream()
+			.map(news -> buildSearchNewsDTO(user, news, userNewsReadMap.get(news.getNewsId())))
 			.collect(Collectors.toList());
 	}
 
-	public List<SearchNewsDTO> searchAutoCompleteByTitleOrTitleEng(String query) throws IOException {
+	private SearchNewsDTO buildSearchNewsDTO(Users user, News news, UserNewsRead userNewsRead) {
+		List<Boolean> isReadList = (userNewsRead != null)
+			? Arrays.asList(userNewsRead.getReadStatus()[0], userNewsRead.getReadStatus()[1], userNewsRead.getReadStatus()[2])
+			: Arrays.asList(false, false, false);
+
+		return new SearchNewsDTO(
+			news.getNewsId(),
+			news.getTitle(),
+			news.getContent(),
+			news.getThumbnailImageUrl(),
+			news.getCategory().getCategoryName(),
+			news.getPublishedDate(),
+			isReadList
+		);
+	}
+
+
+	public List<SearchNewsAutoDTO> searchAutoCompleteByTitleOrTitleEng(String query) throws IOException {
 		System.out.println(query);
 		if (isKorean(query) && isEnglish(query)) {
 			return null;
@@ -99,10 +137,10 @@ public class SearchService {
 		return text.matches(".*[a-zA-Z]+.*");
 	}
 
-	private SearchNewsDTO toSearchNewsDTO(SearchNews news) {
+	private SearchNewsAutoDTO toSearchNewsDTO(SearchNews news) {
 		String cleanTitle = news.getTitle() != null ? news.getTitle().replaceAll("\"", "") : null;
 		String cleanTitleEng = news.getTitleEng() != null ? news.getTitleEng().replaceAll("\"", "") : null;
-		return new SearchNewsDTO(news.getNewsId(), cleanTitle, cleanTitleEng);
+		return new SearchNewsAutoDTO(news.getNewsId(), cleanTitle, cleanTitleEng);
 	}
 
 }

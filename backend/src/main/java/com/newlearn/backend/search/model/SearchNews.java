@@ -5,7 +5,6 @@ import org.springframework.data.elasticsearch.annotations.Document;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.newlearn.backend.search.dto.response.SearchNewsDTO;
 
 import lombok.Getter;
 

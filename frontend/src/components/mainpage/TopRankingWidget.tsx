@@ -1,8 +1,8 @@
 import Spinner from "@components/Spinner";
 import styled, { keyframes } from "styled-components";
-import firstRankIcon from "@assets/icons/first-rank.svg";
-import secondRankIcon from "@assets/icons/second-rank.svg";
-import thirdRankIcon from "@assets/icons/third-rank.svg";
+import firstRankIcon from "@assets/icons/firstIcon.png";
+import secondRankIcon from "@assets/icons/secondIcon.png";
+import thirdRankIcon from "@assets/icons/thirdIcon.png";
 import Avatar, { AvatarType } from "@components/common/Avatar";
 import { useRecoilState } from "recoil";
 import { selectedRankingState } from "@store/selectedRankingState";
@@ -103,7 +103,7 @@ const TopRankingWidget: React.FC<{
               <Avatar avatar={firstUserAvatar!} size={4} />
             </div>
             <div className="user-info">
-              <img src={firstRankIcon} alt="first-rank" />
+              <img src={firstRankIcon} width={48} />
             </div>
           </FirstRank>
         )}
@@ -116,7 +116,7 @@ const TopRankingWidget: React.FC<{
               <Avatar avatar={secondUserAvatar!} size={4} />
             </div>
             <div className="user-info">
-              <img src={secondRankIcon} alt="second-rank" />
+              <img src={secondRankIcon} width={48} />
             </div>
           </SecondRank>
         )}
@@ -129,7 +129,7 @@ const TopRankingWidget: React.FC<{
               <Avatar avatar={thirdUserAvatar!} size={4} />
             </div>
             <div className="user-info">
-              <img src={thirdRankIcon} alt="third-rank" />
+              <img src={thirdRankIcon} width={48} />
             </div>
           </ThirdRank>
         )}

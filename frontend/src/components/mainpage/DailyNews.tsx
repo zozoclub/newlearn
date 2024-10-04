@@ -79,7 +79,7 @@ const Container = styled.div`
   position: absolute;
   top: 10rem;
   left: -35vw;
-  width: 130vw;
+  width: calc(130vw - 0.375rem);
   overflow: hidden;
 
   .swiper {

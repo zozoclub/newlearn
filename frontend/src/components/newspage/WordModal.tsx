@@ -1,28 +1,29 @@
-import { highlightingWord, SearchResult } from "@services/newsService";
-import newsWordState from "@store/newsWordState";
+import {
+  DetailNewsType,
+  highlightingWord,
+  SearchResult,
+} from "@services/newsService";
+import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { useRecoilState } from "recoil";
 import styled, { keyframes, css } from "styled-components";
 
-const WordModal: React.FC<{
+type SelectedType = {
+  word: string;
+  engSentence: string;
+  korSentence: string;
+};
+
+type WordModalPropsType = {
   wordModalPosition: { x: number; y: number };
   wordModalRef: React.RefObject<HTMLDivElement>;
-  selected: {
-    word: string;
-    engSentence: string;
-    korSentence: string;
-  };
-  setSelected: React.Dispatch<
-    React.SetStateAction<{
-      word: string;
-      engSentence: string;
-      korSentence: string;
-    }>
-  >;
+  selected: SelectedType;
+  setSelected: React.Dispatch<React.SetStateAction<SelectedType>>;
   searchResult: [SearchResult[], string[], string[]];
   newsId: number;
   difficulty: number;
-}> = ({
+};
+
+const WordModal: React.FC<WordModalPropsType> = ({
   wordModalPosition,
   wordModalRef,
   selected,
@@ -39,19 +40,26 @@ const WordModal: React.FC<{
     const audio = new Audio(url); // Audio 객체 생성
     audio.play(); // 음성 파일 재생
   };
-  const [newsWordData, setNewsWordData] = useRecoilState(newsWordState);
   const [isSaved, setIsSaved] = useState<boolean>(false);
   const [isJustSaved, setIsJustSaved] = useState<boolean>(false); // 저장 애니메이션을 위한 추가 상태
+  const queryClient = useQueryClient();
+  const engData: DetailNewsType | undefined = queryClient.getQueryData([
+    "getEngNewsDetail",
+    difficulty,
+    newsId,
+  ]);
 
   useEffect(() => {
     // 배열 내에 selected와 동일한 word와 sentence가 있는지 확인
-    const isWordSaved = newsWordData.some(
+    const isWordSaved: boolean = engData?.words.some(
       (data) =>
         data.word === selected.word && data.sentence === selected.engSentence
-    );
+    )
+      ? true
+      : false;
 
     setIsSaved(isWordSaved);
-  }, [newsWordData, selected.word, selected.engSentence]);
+  }, [selected.word, selected.engSentence, engData]);
 
   const handleSave = () => {
     if (!isSaved) {
@@ -70,10 +78,20 @@ const WordModal: React.FC<{
         searchResult[2][0],
         searchResult[2][1]
       ).then(() => {
-        setNewsWordData([
-          ...newsWordData,
-          { word: selected.word, sentence: selected.engSentence },
-        ]);
+        queryClient.setQueryData<DetailNewsType>(
+          ["getEngNewsDetail", difficulty, newsId],
+          (oldData) => {
+            if (!oldData) return oldData;
+
+            return {
+              ...oldData,
+              words: [
+                ...oldData.words,
+                { sentence: selected.engSentence, word: selected.word },
+              ],
+            };
+          }
+        );
         setIsJustSaved(true); // 저장됨 애니메이션 트리거
         setTimeout(() => setIsJustSaved(false), 2000); // 애니메이션 2초 후 원래 상태로 복귀
       });
@@ -153,8 +171,8 @@ const WordModal: React.FC<{
           ))}
         </WordMeaning>
         <SaveButton
-          isSaved={isSaved}
-          isJustSaved={isJustSaved}
+          $isSaved={isSaved}
+          $isJustSaved={isJustSaved}
           onClick={handleSave}
         >
           {isSaved ? "저장됨" : "저장하기"}
@@ -172,7 +190,7 @@ const fadeInOut = keyframes`
   100% { opacity: 1; transform: scale(1); }
 `;
 
-const SaveButton = styled.div<{ isSaved: boolean; isJustSaved: boolean }>`
+const SaveButton = styled.div<{ $isSaved: boolean; $isJustSaved: boolean }>`
   align-self: flex-end;
   width: 5rem;
   height: 2rem;
@@ -180,13 +198,13 @@ const SaveButton = styled.div<{ isSaved: boolean; isJustSaved: boolean }>`
   text-align: center;
   line-height: 2rem;
   cursor: pointer;
-  background-color: ${(props) => (props.isSaved ? "#4caf50" : "#f0f0f0")};
-  color: ${(props) => (props.isSaved ? "white" : "black")};
+  background-color: ${(props) => (props.$isSaved ? "#4caf50" : "#f0f0f0")};
+  color: ${(props) => (props.$isSaved ? "white" : "black")};
   border-radius: 0.5rem;
   transition: background-color 0.3s ease, color 0.3s ease;
 
   ${(props) =>
-    props.isJustSaved &&
+    props.$isJustSaved &&
     css`
       animation: ${fadeInOut} 2s ease;
     `}

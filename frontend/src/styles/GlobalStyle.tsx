@@ -8,6 +8,7 @@ export const GlobalStyle = createGlobalStyle`
     padding: 0;
     color: ${(props) => props.theme.colors.text};
     font-family: 'Pretendard', sans-serif;
+    font-weight: 200;
     box-sizing: border-box;
   }
   /* 스크롤바 커스터마이징 */

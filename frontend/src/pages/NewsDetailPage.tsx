@@ -16,7 +16,7 @@ import WordHunt from "@components/WordHunt";
 import lightThumbnailImage from "@assets/images/lightThumbnail.png";
 import darkThumbnailImage from "@assets/images/darkThumbnail.png";
 
-const NewsDetailPage: React.FC = () => {
+const NewsDetailPage = () => {
   const userInfoData = useRecoilValue(userInfoState);
   const languageData = useRecoilValue(languageState);
   const [difficulty, setDifficulty] = useState<number>(userInfoData.difficulty);
@@ -31,7 +31,7 @@ const NewsDetailPage: React.FC = () => {
   const { newsId } = useParams();
 
   const { isLoading: engIsLoading, data: engData } = useQuery<DetailNewsType>({
-    queryKey: ["getEngNewsDetail", difficulty, newsId],
+    queryKey: ["getEngNewsDetail", difficulty, Number(newsId)],
     queryFn: () => getNewsDetail(Number(newsId), difficulty, "en", isFirstView),
     staleTime: 0,
   });
@@ -42,17 +42,9 @@ const NewsDetailPage: React.FC = () => {
     staleTime: 0,
   });
 
-  const [selectedKorContent, setSelectedKorContent] = useState<string>("");
-
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [languageData, difficulty]);
-
-  useEffect(() => {
-    if (korData?.content) {
-      setSelectedKorContent(korData.content);
-    }
-  }, [korData]);
 
   useEffect(() => {
     setDifficulty(userInfoData.difficulty);
@@ -114,7 +106,6 @@ const NewsDetailPage: React.FC = () => {
                 korData={korData}
                 korIsLoading={korIsLoading}
                 newsId={Number(newsId)}
-                selectedKorContent={selectedKorContent}
               />
             </div>
           </NewsContainer>

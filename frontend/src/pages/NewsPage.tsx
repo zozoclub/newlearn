@@ -34,7 +34,6 @@ const Container = styled.div`
   height: 85%;
   margin: 0 5% 10%;
   padding: 2.5% 5%;
-  background-color: ${(props) => props.theme.colors.cardBackground01};
   border-radius: 0.5rem;
 `;
 

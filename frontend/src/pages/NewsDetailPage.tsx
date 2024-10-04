@@ -13,6 +13,8 @@ import userInfoState from "@store/userInfoState";
 import newsWordState from "@store/newsWordState";
 import languageState from "@store/languageState";
 import WordHunt from "@components/WordHunt";
+import lightThumbnailImage from "@assets/images/lightThumbnail.png";
+import darkThumbnailImage from "@assets/images/darkThumbnail.png";
 
 const NewsDetailPage: React.FC = () => {
   const userInfoData = useRecoilValue(userInfoState);
@@ -95,11 +97,13 @@ const NewsDetailPage: React.FC = () => {
             <ThumbnailImageDiv>
               {korIsLoading || engIsLoading ? (
                 <Spinner />
+              ) : engData?.thumbnailImageUrl ? (
+                <ThumbnailImage src={engData?.thumbnailImageUrl} alt="" />
               ) : (
-                <ThumbnailImage
-                  src={engData?.thumbnailImageUrl}
-                  alt="noImage"
-                />
+                <>
+                  <ThumbnailImage src={lightThumbnailImage} />
+                  <DarkThumbnailImage src={darkThumbnailImage} />
+                </>
               )}
             </ThumbnailImageDiv>
             <div ref={newsContainerRef}>
@@ -145,6 +149,7 @@ const News = styled.div`
 const NewsContainer = styled.div``;
 
 const ThumbnailImageDiv = styled.div`
+  position: relative;
   width: 100%;
   min-height: 400px;
   height: 400px;
@@ -158,6 +163,13 @@ const ThumbnailImage = styled.img`
   min-height: 400px;
   height: 400px;
   border-radius: 0.75rem;
+`;
+const DarkThumbnailImage = styled(ThumbnailImage)`
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: ${(props) => (props.theme.mode === "dark" ? 1 : 0)};
+  transition: opacity 0.3s;
 `;
 
 const RecommandContainer = styled.div`

@@ -33,19 +33,28 @@ const MainGoalBar: React.FC = () => {
 
   return (
     <ChartContainer>
-      {goalData.map((item: GoalData, index: number) => {
-        const percentage = calculatePercentage(item.current, item.goal);
-        const englishTitle = titleMapping[item.title] || item.title;
-
-        return (
-          <BarItem key={index}>
-            <BarLabel>{englishTitle}</BarLabel>
-            <BarContainer>
-              <BarFill $percentage={percentage} />
-            </BarContainer>
-          </BarItem>
-        );
-      })}
+      <TitleContainer>학습 현황</TitleContainer>
+      <BarItemsContainer>
+        {goalData.map((item: GoalData, index: number) => {
+          const percentage = calculatePercentage(item.current, item.goal);
+          const englishTitle = titleMapping[item.title] || item.title;
+          const current = item.current;
+          const goal = item.goal;
+          return (
+            <BarItem key={index}>
+              <BarTitle>
+                <BarLabel>{englishTitle}</BarLabel>
+                <BarNumber>
+                  {current}/{goal}
+                </BarNumber>
+              </BarTitle>
+              <BarContainer>
+                <BarFill $percentage={percentage} />
+              </BarContainer>
+            </BarItem>
+          );
+        })}
+      </BarItemsContainer>
     </ChartContainer>
   );
 };
@@ -53,20 +62,43 @@ const MainGoalBar: React.FC = () => {
 export default MainGoalBar;
 
 const ChartContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   width: 90%;
 `;
 
-const BarItem = styled.div`
+const TitleContainer = styled.div`
   display: flex;
   align-items: center;
-  margin: 0.75rem 0;
   gap: 0.5rem;
+  margin-bottom: 1rem;
+  font-size: 1.25rem;
+  font-weight: bold;
 `;
 
-const BarLabel = styled.div`
+const BarItemsContainer = styled.div`
+  width: 100%;
+`;
+
+const BarTitle = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin: 0 0.25rem;
+`;
+
+const BarContent = styled.div`
   width: 4rem;
+  margin: 0.5rem 0;
   font-weight: bold;
-  text-align: center;
+`;
+
+const BarLabel = styled(BarContent)`
+  text-align: left;
+`;
+
+const BarNumber = styled(BarContent)`
+  text-align: right;
 `;
 
 const BarContainer = styled.div`
@@ -76,7 +108,10 @@ const BarContainer = styled.div`
   border-radius: 8px;
   overflow: hidden;
 `;
-
+const BarItem = styled.div`
+  margin: 0.5rem 0.25rem;
+  gap: 0.5rem;
+`;
 const BarFill = styled.div<{ $percentage: number }>`
   width: ${(props) => props.$percentage}%;
   height: 100%;

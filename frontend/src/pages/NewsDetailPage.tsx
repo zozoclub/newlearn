@@ -11,9 +11,11 @@ import Spinner from "@components/Spinner";
 import { DetailNewsType, getNewsDetail } from "@services/newsService";
 import userInfoState from "@store/userInfoState";
 import newsWordState from "@store/newsWordState";
+import languageState from "@store/languageState";
 
 const NewsDetailPage: React.FC = () => {
   const userInfoData = useRecoilValue(userInfoState);
+  const languageData = useRecoilValue(languageState);
   const [difficulty, setDifficulty] = useState<number>(userInfoData.difficulty);
   const newsContainerRef = useRef<HTMLDivElement>(null);
   const [isReadFinished, setIsReadFinished] = useState<boolean>(false);
@@ -40,6 +42,10 @@ const NewsDetailPage: React.FC = () => {
   const [selectedKorContent, setSelectedKorContent] = useState<string>("");
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [languageData, difficulty]);
+
+  useEffect(() => {
     if (korData?.content) {
       setSelectedKorContent(korData.content);
     }
@@ -53,6 +59,7 @@ const NewsDetailPage: React.FC = () => {
   useEffect(() => {
     if (engData) {
       setNewsWordState(engData.words);
+      setIsRead(engData.isRead);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [engData]);
@@ -63,12 +70,10 @@ const NewsDetailPage: React.FC = () => {
         engIsLoading={engIsLoading}
         korIsLoading={korIsLoading}
         difficulty={difficulty}
-        engData={engData}
         isFirstView={isFirstView}
         isRead={isRead}
         isReadFinished={isReadFinished}
         newsContainerRef={newsContainerRef}
-        newsId={Number(newsId)}
         setIsFirstView={setIsFirstView}
         setIsRead={setIsRead}
         setIsReadFinished={setIsReadFinished}

@@ -1,48 +1,91 @@
-import { DetailNewsType, readNews } from "@services/newsService";
+import { readNews } from "@services/newsService";
 import { RefObject, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import goalState from "@store/goalState";
+import { useParams } from "react-router-dom";
+import languageState from "@store/languageState";
 
-const ProgressBar: React.FC<{
+type ProgressBarPropsType = {
   engIsLoading: boolean;
   korIsLoading: boolean;
   isFirstView: boolean;
   setIsFirstView: React.Dispatch<React.SetStateAction<boolean>>;
   isRead: boolean[] | undefined;
   setIsRead: React.Dispatch<React.SetStateAction<boolean[] | undefined>>;
-  engData: DetailNewsType | undefined;
   difficulty: number;
   isReadFinished: boolean;
   setIsReadFinished: React.Dispatch<React.SetStateAction<boolean>>;
-  newsId: number;
   newsContainerRef: RefObject<HTMLDivElement>;
-}> = ({
+};
+
+const ProgressBar: React.FC<ProgressBarPropsType> = ({
   engIsLoading,
   korIsLoading,
   isFirstView,
   setIsFirstView,
   isRead,
   setIsRead,
-  engData,
   difficulty,
   isReadFinished,
   setIsReadFinished,
-  newsId,
   newsContainerRef,
 }) => {
   const [scrollProgress, setScrollProgress] = useState(0);
-  const isLoadingRef = useRef<boolean>(engIsLoading || korIsLoading);
   const [userProgress, setUserProgress] = useRecoilState(goalState);
+  const languageData = useRecoilValue(languageState);
+  const { newsId } = useParams();
+  const isLoadingRef = useRef<boolean>(engIsLoading || korIsLoading);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const isActiveRef = useRef<boolean>(false);
 
+  // 현재 Loading 상태
   useEffect(() => {
     isLoadingRef.current = engIsLoading || korIsLoading;
   }, [engIsLoading, korIsLoading]);
 
+  // 상세 페이지에 들어오고 15초 동안은 읽음 처리를 하지 않음 + 한글일 때는 읽음 처리를 하지 않음
+  useEffect(() => {
+    isActiveRef.current = false;
+    let leftTime = 15;
+    setScrollProgress(0);
+
+    const startTimer = () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+      }
+
+      timerRef.current = setInterval(() => {
+        leftTime--;
+
+        if (leftTime <= 0) {
+          if (timerRef.current) {
+            clearInterval(timerRef.current);
+          }
+          if (languageData === "en") {
+            isActiveRef.current = true;
+            calculateProgress();
+          }
+        }
+      }, 1000);
+    };
+
+    startTimer();
+
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [difficulty, languageData]);
+
   const calculateProgress = () => {
+    if (!isActiveRef.current) {
+      return 0;
+    }
     // 데이터 fetching이 됐을 때만 calculate
-    if (newsContainerRef.current && !isLoadingRef?.current) {
+    else if (newsContainerRef.current && !isLoadingRef?.current) {
       const containerRect = newsContainerRef.current.getBoundingClientRect();
       const containerTop = containerRect.top;
       const containerHeight = containerRect.height;
@@ -76,32 +119,16 @@ const ProgressBar: React.FC<{
     }
   };
 
-  // 데이터 fetching이 끝나면 progress 계산
   useEffect(() => {
-    if (!engIsLoading && !korIsLoading) {
-      // 조회수가 여러 번 올라가는 것을 막음
-      if (isFirstView) {
-        setIsFirstView(false);
-      }
-      setIsRead(engData?.isRead);
-      if (!isRead![difficulty - 1]) {
-        calculateProgress();
-      }
+    // 조회수가 여러 번 올라가는 것을 막음
+    if (isFirstView) {
+      setIsFirstView(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [engIsLoading, korIsLoading]);
-
-  // 난이도가 바뀌면 progress 다시 계산
-  useEffect(() => {
-    calculateProgress();
-    if (isRead && !isRead![3 - difficulty]) {
-      setIsReadFinished(false);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [difficulty, isRead, setIsReadFinished]);
+  }, [engIsLoading]);
 
   useEffect(() => {
-    if (isRead && isRead[3 - difficulty] && !engIsLoading && !korIsLoading) {
+    if (isRead && isRead[3 - difficulty]) {
       setIsReadFinished(true);
     } else if (scrollProgress === 100) {
       setIsReadFinished(true);
@@ -121,7 +148,7 @@ const ProgressBar: React.FC<{
       setIsReadFinished(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [scrollProgress]);
+  }, [scrollProgress, isRead]);
 
   // 스크롤, 드래그 이벤트 추가
   useEffect(() => {

@@ -29,7 +29,7 @@ const WordTestResultPage: React.FC = () => {
     data: testDetail,
     isLoading,
     error,
-  } = useQuery<WordTestResultDetailResponseDto[]>({
+  } = useQuery<WordTestResultDetailResponseDto>({
     queryKey: ["wordTestDetail", quizId],
     queryFn: () => getWordTestResultDetail(Number(quizId)),
   });
@@ -40,8 +40,14 @@ const WordTestResultPage: React.FC = () => {
 
   const wordExplainDetailHandler = (index: number) => {
     setCurrentWordIndex(index);
-    setCurrentWord(testDetail![index].correctAnswer);
+    setCurrentWord(testDetail!.result[index].correctAnswer);
   };
+
+  useEffect(() => {
+    if (testDetail) {
+      setCurrentWord(testDetail.result[0].correctAnswer); // 첫 번째 단어 선택
+    }
+  }, [testDetail]);
 
   // 로딩 상태 처리
   if (isLoading) return <Spinner />;
@@ -51,7 +57,7 @@ const WordTestResultPage: React.FC = () => {
     return <ErrorText>에러가 발생했습니다. 다시 시도해 주세요.</ErrorText>;
 
   // testDetail이 null일 때
-  if (!testDetail || testDetail.length === 0)
+  if (!testDetail)
     return <ErrorText>데이터가 없습니다.</ErrorText>;
 
   // 모바일
@@ -67,7 +73,7 @@ const WordTestResultPage: React.FC = () => {
           </BackHeaderText>
         </BackHeader>
         <WordListLayout>
-          {testDetail.map((item, index) => {
+          {testDetail.result.map((item, index) => {
             return (
               <WordTestResultWordList
                 word={item.correctAnswer}
@@ -85,15 +91,22 @@ const WordTestResultPage: React.FC = () => {
         <WordExplainContainer>
           {currentWord ? (
             <WordTestResultWordDetail
-              answerWord={testDetail[currentWordIndex].correctAnswer}
-              userAnswer={testDetail[currentWordIndex].answer}
-              sentence={testDetail[currentWordIndex].sentence}
-              isCorrect={testDetail[currentWordIndex].correct}
+              newsId={testDetail.result[currentWordIndex].newsId}
+              answerWord={testDetail.result[currentWordIndex].correctAnswer}
+              userAnswer={testDetail.result[currentWordIndex].answer}
+              sentence={testDetail.result[currentWordIndex].sentence}
+              sentenceMeaning={testDetail.result[currentWordIndex].sentenceMeaning}
+              isCorrect={testDetail.result[currentWordIndex].correct}
             />
           ) : (
-            <Explain>
-              단어를 클릭하면 테스트 상세 정보를 확인할 수 있습니다.
-            </Explain>
+            <WordTestResultWordDetail
+              newsId={testDetail.result[0].newsId}
+              answerWord={testDetail.result[0].correctAnswer}
+              userAnswer={testDetail.result[0].answer}
+              sentence={testDetail.result[0].sentence}
+              sentenceMeaning={testDetail.result[0].sentenceMeaning}
+              isCorrect={testDetail.result[0].correct}
+            />
           )}
         </WordExplainContainer>
       </MainContainer>
@@ -107,13 +120,13 @@ const MainContainer = styled.div`
   display: flex;
   align-items: center;
   flex-direction: column;
-  width: 90%;
+  width: 45%;
   min-height: 45rem;
   max-height: 45rem;
   margin: 0 0.5rem;
   padding: 0.5rem;
-  background-color: ${(props) => props.theme.colors.cardBackground + "BF"};
-  box-shadow: ${(props) => props.theme.shadows.medium};
+  background-color: ${(props) => props.theme.colors.cardBackground01};
+  box-shadow: ${(props) => props.theme.shadows.small};
   border-radius: 0.75rem;
   transition: box-shadow 0.5s;
   backdrop-filter: blur(0.25rem);
@@ -121,7 +134,7 @@ const MainContainer = styled.div`
 
 const BackHeader = styled.div`
   display: flex;
-  width: 100%;
+  margin-right: auto;
   align-items: center;
   padding-top : 0.5rem;
   padding-left: 2rem;
@@ -131,17 +144,17 @@ const BackHeader = styled.div`
 
 const MainLayout = styled.div`
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-`;
-
-const WordListLayout = styled.div`
-  display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
   width: 100%;
-  padding-top: 12rem;
+`;
+
+const WordListLayout = styled.div`
+  justify-content: flex-start;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
   overflow-y: auto;
   overflow-x: hidden;
 `;
@@ -164,11 +177,3 @@ const ErrorText = styled.div`
 const BackHeaderText = styled.span`
 margin-left: 1rem;
 `
-
-const Explain = styled.p`
-  display: flex;
-  font-size: 1.125rem;
-  color: ${(props) => props.theme.colors.placeholder};
-  margin-top: 25%;
-  justify-content: center;
-`;

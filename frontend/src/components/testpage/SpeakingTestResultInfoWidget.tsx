@@ -30,29 +30,31 @@ const SubContainer = styled.div`
   display: flex;
   flex-direction: column;
 
-  min-height: 12rem;
+  min-height: 11rem;
 
   margin: 0.25rem;
   padding: 1.5rem;
 
-  background-color: #${"62B7FF" + "2F"};
+  background-color: ${(props) => props.theme.colors.newsItemBackground};
 
   border-radius: 0.75rem;
 `;
 
 const Title = styled.div`
   color: ${(props) => props.theme.colors.primary};
-  font-size: 1.25rem;
-  font-weight: 900;
+  font-size: 1.5rem;
+  font-weight: 700;
+`;
+
+const Explain = styled.div`
+  font-size: 1rem;
+  color: ${(props) => props.theme.colors.text04};
+  font-weight: 300;
 `;
 
 const Estimate = styled.div`
   font-size: 1.125rem;
   font-weight: 400;
+  line-height: 1.5;
 `;
 
-const Explain = styled.div`
-  font-size: 1rem;
-  color: ${(props) => props.theme.colors.placeholder};
-  font-weight: 300;
-`;

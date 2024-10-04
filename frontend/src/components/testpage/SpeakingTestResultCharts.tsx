@@ -179,10 +179,10 @@ const SpeakingTestResultCharts: React.FC<Props> = ({ results }) => {
   return (
     <ChartContainer>
       <DoughnutChartContainer>
-        <canvas ref={doughnutChartRef}></canvas>
+        <StyledCanvas ref={doughnutChartRef}></StyledCanvas>
       </DoughnutChartContainer>
       <BarChartContainer>
-        <canvas ref={barChartRef}></canvas>
+        <StyledCanvas ref={barChartRef}></StyledCanvas>
       </BarChartContainer>
     </ChartContainer>
   );
@@ -195,18 +195,26 @@ const ChartContainer = styled.div`
   justify-content: center;
   align-items: center;
   width: 95%;
+  margin: 0.5rem 0;
 `;
 
 const DoughnutChartContainer = styled.div`
   display: flex;
   justify-content: center;
   height: 12rem;
+  margin-left: 15%;
   margin-bottom: 1rem;
-`;
+  `;
 
 const BarChartContainer = styled.div`
   display: flex;
   justify-content: center;
-  height: 10rem;
+  width: 24rem;
+  margin: auto;
   margin-bottom: 1rem;
+  `;
+
+const StyledCanvas = styled.canvas`
+  width: 100% !important; 
+  height: auto !important;
 `;

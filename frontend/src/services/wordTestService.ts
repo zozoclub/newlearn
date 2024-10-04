@@ -100,19 +100,22 @@ export const getWordTestResultList = async (): Promise<
 
 // 단어 문장 빈칸 테스트 결과 상세 조회 Dto
 export type WordTestResultDetailResponseDto = {
-  questionId: number;
-  answer: string;
-  correctAnswer: string;
-  correct: boolean;
-  sentence: string;
-  createdAt: string;
-  originURL: string;
+  createAt: string;
+  result: Array<{
+    newsId: number;
+    questionId: number;
+    answer: string;
+    correctAnswer: string;
+    sentence: string;
+    sentenceMeaning: string;
+    correct: boolean;
+  }>
 };
 
 // 단어 문장 빈칸 테스트 결과 상세 조회
 export const getWordTestResultDetail = async (
   quizId: number
-): Promise<WordTestResultDetailResponseDto[]> => {
+): Promise<WordTestResultDetailResponseDto> => {
   try {
     console.log(quizId);
 

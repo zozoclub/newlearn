@@ -55,7 +55,11 @@ const Container = styled.div<{
   transform: rotateY(
     ${(props) => (props.$selectedLanguage === "kr" ? "180deg" : 0)}
   );
-  transition: transform 0.5s, background-color 0.5s;
+  box-shadow: ${(props) =>
+    props.$selectedLanguage === "kr"
+      ? "-0.25rem 0.25rem 0.25rem #000000BD"
+      : "0.25rem 0.25rem 0.25rem #000000BD"};
+  transition: box-shadow 0.5s, transform 0.5s, background-color 0.5s;
   cursor: pointer;
 
   &:hover {

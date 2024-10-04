@@ -9,6 +9,8 @@ import { selectedRankingState } from "@store/selectedRankingState";
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getUserAvatar } from "@services/userService";
+import LevelIcon from "@components/common/LevelIcon";
+import { calculateExperience } from "@utils/calculateExperience";
 
 type RankingType = {
   userId: number;
@@ -97,6 +99,12 @@ const TopRankingWidget: React.FC<{
         {rankings.length > 0 && !firstIsLoading && (
           <FirstRank $animate={animate}>
             <div className="nickname">
+              <div style={{ display: "flex", justifyContent: "center" }}>
+                <LevelIcon
+                  level={calculateExperience(rankings[0].experience).level}
+                  size={32}
+                />
+              </div>
               <div>{rankings[0].nickname}</div>
             </div>
             <div className="avatar">
@@ -110,6 +118,12 @@ const TopRankingWidget: React.FC<{
         {rankings.length > 1 && !secondIsLoading && (
           <SecondRank $animate={animate}>
             <div className="nickname">
+              <div style={{ display: "flex", justifyContent: "center" }}>
+                <LevelIcon
+                  level={calculateExperience(rankings[1].experience).level}
+                  size={32}
+                />
+              </div>
               <div>{rankings[1].nickname}</div>
             </div>
             <div className="avatar">
@@ -123,6 +137,12 @@ const TopRankingWidget: React.FC<{
         {rankings.length > 2 && !thirdIsLoading && (
           <ThirdRank $animate={animate}>
             <div className="nickname">
+              <div style={{ display: "flex", justifyContent: "center" }}>
+                <LevelIcon
+                  level={calculateExperience(rankings[2].experience).level}
+                  size={32}
+                />
+              </div>
               <div>{rankings[2].nickname}</div>
             </div>
             <div className="avatar">
@@ -249,6 +269,8 @@ const TopRanking = styled.div`
 `;
 
 const RankStand = styled.div<{ $animate: boolean }>`
+  text-align: center;
+  top: 1rem;
   position: absolute;
   width: 33%;
   height: 100%;
@@ -269,11 +291,40 @@ const FirstRank = styled(RankStand)`
   left: 50%;
   transform: translateX(-50%);
   .nickname {
-    display: flex;
     position: absolute;
-    justify-content: center;
-    width: 100%;
+    left: 50%;
+    transform: translateX(-50%);
     bottom: 80%;
+    width: 120%;
+    text-align: center;
+    white-space: nowrap;
+    overflow: visible;
+  }
+  .avatar {
+    bottom: calc(50% - 2rem);
+  }
+  .user-info {
+    display: grid;
+    place-items: center;
+    position: absolute;
+    width: 100%;
+    height: 50%;
+    bottom: 0;
+    border: solid 1px;
+    border-bottom: 0px;
+  }
+`;
+
+const SecondRank = styled(RankStand)`
+  .nickname {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 70%;
+    width: 120%;
+    text-align: center;
+    white-space: nowrap;
+    overflow: visible;
   }
   .avatar {
     bottom: calc(40% - 2rem);
@@ -290,47 +341,27 @@ const FirstRank = styled(RankStand)`
   }
 `;
 
-const SecondRank = styled(RankStand)`
-  .nickname {
-    position: absolute;
-    display: flex;
-    justify-content: center;
-    width: 100%;
-    bottom: 70%;
-  }
-  .avatar {
-    bottom: calc(30% - 2rem);
-  }
-  .user-info {
-    display: grid;
-    place-items: center;
-    position: absolute;
-    width: 100%;
-    height: 30%;
-    bottom: 0;
-    border: solid 1px;
-    border-bottom: 0px;
-  }
-`;
-
 const ThirdRank = styled(RankStand)`
   left: 67%;
   .nickname {
     position: absolute;
-    display: flex;
-    justify-content: center;
-    width: 100%;
+    left: 50%;
+    transform: translateX(-50%);
     bottom: 65%;
+    width: 120%;
+    text-align: center;
+    white-space: nowrap;
+    overflow: visible;
   }
   .avatar {
-    bottom: calc(25% - 2rem);
+    bottom: calc(35% - 2rem);
   }
   .user-info {
     display: grid;
     place-items: center;
     position: absolute;
     width: 100%;
-    height: 25%;
+    height: 35%;
     bottom: 0;
     border: solid 1px;
     border-bottom: 0px;

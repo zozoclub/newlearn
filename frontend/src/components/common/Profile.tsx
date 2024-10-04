@@ -4,6 +4,8 @@ import userInfoState from "@store/userInfoState";
 import Avatar, { AvatarType } from "./Avatar";
 import { calculateExperience } from "@utils/calculateExperience";
 import Spinner from "@components/Spinner";
+import { usePageTransition } from "@hooks/usePageTransition";
+import LevelIcon from "./LevelIcon";
 
 const Profile = () => {
   const userInfo = useRecoilValue(userInfoState);
@@ -14,6 +16,7 @@ const Profile = () => {
   };
   const isInitialized = userInfo.isInitialized;
   const calculatedExperience = calculateExperience(userInfo.experience);
+  const transitionTo = usePageTransition();
 
   if (!isInitialized)
     return (
@@ -25,22 +28,34 @@ const Profile = () => {
   return (
     <>
       <AvatarContainer>
-        <svg viewBox="0 0 36 36" className="circular-chart">
-          <path
-            className="circle"
-            strokeDasharray={`${calculatedExperience.percentage}, 100`}
-            d="M18 2.0845
+        <div
+          style={{ opacity: `${calculatedExperience.percentage > 0 ? 1 : 0}` }}
+        >
+          <svg viewBox="0 0 36 36" className="circular-chart">
+            <path
+              className="circle"
+              strokeDasharray={`${calculatedExperience.percentage}, 100`}
+              d="M18 2.0845
               a 15.9155 15.9155 0 0 1 0 31.831
               a 15.9155 15.9155 0 0 1 0 -31.831"
-          />
-        </svg>
-        <div className="center-circle">
+            />
+          </svg>
+        </div>
+        <div
+          style={{
+            cursor: "pointer",
+          }}
+          className="center-circle"
+          onClick={() => {
+            transitionTo("/mypage");
+          }}
+        >
           <Avatar avatar={avatar} size={6} />
         </div>
       </AvatarContainer>
       <NameDiv>
-        Lv
-        {calculatedExperience.level} {userInfo.nickname}
+        <LevelIcon level={calculatedExperience.level} size={36} />
+        {userInfo.nickname}
       </NameDiv>
       <ReadStatus>
         <div>
@@ -106,6 +121,10 @@ const AvatarContainer = styled.div`
 `;
 
 const NameDiv = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.25rem;
   margin-top: 1rem;
 `;
 

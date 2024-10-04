@@ -42,7 +42,7 @@ public class WordServiceImpl implements WordService {
 
 	@Transactional
 	@Override
-	public void addWord(WordRequestDto wordRequestDto, Users user) throws Exception {
+	public Long addWord(WordRequestDto wordRequestDto, Users user) throws Exception {
 
 		List<Word> words = wordRepository.findAllByWordAndUser(wordRequestDto.getWord(), user);
 		for(Word word : words) {
@@ -59,6 +59,8 @@ public class WordServiceImpl implements WordService {
 
 		WordSentence addWordSentence = wordRequestDto.toSentenceEntity(savedWord);
 		wordSentenceRepository.save(addWordSentence);
+
+		return savedWord.getWordId();
 	}
 
 	@Override

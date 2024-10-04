@@ -1,9 +1,11 @@
 package com.newlearn.backend.search.service;
 
+import com.newlearn.backend.news.dto.response.NewsResponseDTO;
 import com.newlearn.backend.news.model.News;
 import com.newlearn.backend.news.model.UserNewsRead;
 import com.newlearn.backend.news.repository.NewsRepository;
 import com.newlearn.backend.news.repository.UserNewsReadRepository;
+import com.newlearn.backend.search.dto.request.SearchListRequestDTO;
 import com.newlearn.backend.search.dto.response.SearchNewsAutoDTO;
 import com.newlearn.backend.search.dto.response.SearchNewsDTO;
 import com.newlearn.backend.search.model.SearchNews;
@@ -13,6 +15,7 @@ import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch.indices.RefreshRequest;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
@@ -23,6 +26,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,14 +37,15 @@ public class SearchService {
 	private final NewsRepository newsRepository;
 	private final UserNewsReadRepository readRepository;
 
-	public List<SearchNewsDTO> searchByTitleOrTitleEng(String query, Users user) throws IOException {
+	public Page<NewsResponseDTO> searchByTitleOrTitleEng(SearchListRequestDTO searchListRequestDTO, Users user) throws IOException {
+		String query = searchListRequestDTO.getQuery();
 		if (isKorean(query) && isEnglish(query)) {
 			return null;
 		}
 		elasticsearchClient.indices().refresh(RefreshRequest.of(r -> r.index("news")));
 
 		String analyzer = isKorean(query) ? "title" : "title_eng";
-
+		searchListRequestDTO.setLang(isKorean(query) ? "ko" : "en");
 		SearchRequest searchRequest = SearchRequest.of(s -> s
 			.index("news")
 			.size(200)
@@ -59,32 +64,18 @@ public class SearchService {
 			.map(SearchNews::getNewsId)
 			.collect(Collectors.toList());
 
-		List<News> newsList = newsRepository.findAllById(newsIds);
+		Page<News> newsList = newsRepository.findAllByOrderByNewsIdDesc(searchListRequestDTO.getPageable());
 
-		List<UserNewsRead> userNewsReads = readRepository.findAllByUserAndNewsIn(user, newsList);
 
+		List<UserNewsRead> userNewsReads = readRepository.findAllByUser(user);
 		Map<Long, UserNewsRead> userNewsReadMap = userNewsReads.stream()
-			.collect(Collectors.toMap(read -> read.getNews().getNewsId(), read -> read));
+			.collect(Collectors.toMap(unr -> unr.getNews().getNewsId(), Function.identity()));
 
-		return newsList.stream()
-			.map(news -> buildSearchNewsDTO(user, news, userNewsReadMap.get(news.getNewsId())))
-			.collect(Collectors.toList());
-	}
 
-	private SearchNewsDTO buildSearchNewsDTO(Users user, News news, UserNewsRead userNewsRead) {
-		List<Boolean> isReadList = (userNewsRead != null)
-			? Arrays.asList(userNewsRead.getReadStatus()[0], userNewsRead.getReadStatus()[1], userNewsRead.getReadStatus()[2])
-			: Arrays.asList(false, false, false);
-
-		return new SearchNewsDTO(
-			news.getNewsId(),
-			news.getTitle(),
-			news.getContent(),
-			news.getThumbnailImageUrl(),
-			news.getCategory().getCategoryName(),
-			news.getPublishedDate(),
-			isReadList
-		);
+		return newsList.map(news -> NewsResponseDTO.makeNewsResponseDTO(news,
+			searchListRequestDTO.getLang(),
+			searchListRequestDTO.getDifficulty(),
+			userNewsReadMap.get(news.getNewsId())));
 	}
 
 

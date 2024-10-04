@@ -28,11 +28,13 @@ public class SearchService {
 		if (isKorean(query) && isEnglish(query)) {
 			return null;
 		}
+		elasticsearchClient.indices().refresh(RefreshRequest.of(r -> r.index("news")));
 
 		String analyzer = isKorean(query) ? "title" : "title_eng";
 
 		SearchRequest searchRequest = SearchRequest.of(s -> s
 			.index("news")
+			.size(200)
 			.query(q -> q
 				.multiMatch(m -> m
 					.query(query)

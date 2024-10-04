@@ -1,5 +1,5 @@
-from app.database import user_news_click
-from app.models import UserCategory, News, User, UserNewsScrap
+from database import user_news_click
+from models import UserCategory, News, User, UserNewsScrap
 from sqlalchemy.orm import Session
 import numpy as np
 from typing import Dict, List, Tuple, Set

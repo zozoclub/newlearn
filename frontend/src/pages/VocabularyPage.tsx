@@ -221,10 +221,11 @@ const MainLayout = styled.div`
   align-items: flex-start;
   justify-content: space-between;
   gap: 1rem;
+  margin: 0 4rem;
 `;
 
 const MainContainer = styled.div`
-  width: 47%;
+  width: 46%;
   padding: 1rem;
   background-color: ${(props) => `${props.theme.colors.cardBackground}BF`};
   border-radius: 0.75rem;

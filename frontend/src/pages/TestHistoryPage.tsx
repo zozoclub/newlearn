@@ -111,7 +111,7 @@ export default TestHistoryPage;
 
 const Layout = styled.div`
   display: flex;
-  width: 95%;
+  width: 90%;
   margin: 0 auto;
   justify-content: space-between;
 `;

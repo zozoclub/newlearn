@@ -1,9 +1,6 @@
-import {
-  DetailNewsType,
-  highlightingWord,
-  SearchResult,
-} from "@services/newsService";
+import { highlightingWord, SearchResult } from "@services/newsService";
 import { useQueryClient } from "@tanstack/react-query";
+import { DetailNewsType } from "types/newsType";
 import { useEffect, useState } from "react";
 import styled, { keyframes, css } from "styled-components";
 

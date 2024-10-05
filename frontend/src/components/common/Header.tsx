@@ -7,21 +7,24 @@ import { usePageTransition } from "@hooks/usePageTransition";
 import UserProfile from "@components/common/UserProfile";
 import FullLogo from "./FullLogo";
 import { useEffect, useState } from "react";
+import NewsListHeader from "@components/newspage/NewsListHeader";
 
 const Header = () => {
   const currentLocation = useRecoilValue(locationState);
   const [isVisible, setIsVisible] = useState<boolean>(true);
+  const [isNewsPage, setIsNewspage] = useState<boolean>(false);
   const transitionTo = usePageTransition();
   const hiddenPages = ["login", "signUp", "notFound"];
 
   useEffect(() => {
     const isPublicPage = hiddenPages.includes(currentLocation);
     setIsVisible(!isPublicPage);
+    setIsNewspage(currentLocation === "newsList");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentLocation]);
 
   return (
-    <HeaderContainer $isVisible={isVisible}>
+    <HeaderContainer $isVisible={isVisible} $isNewsPage={isNewsPage}>
       {/* 페이지 정보 없을 때 Logo 표시 안 함 */}
       {isVisible && (
         <Logo
@@ -32,6 +35,7 @@ const Header = () => {
           <FullLogo width={280} height={60} />
         </Logo>
       )}
+      {isNewsPage && <NewsListHeader />}
       <div className="right-side">
         {isVisible && (
           <>
@@ -45,7 +49,10 @@ const Header = () => {
   );
 };
 
-const HeaderContainer = styled.div<{ $isVisible: boolean }>`
+const HeaderContainer = styled.div<{
+  $isVisible: boolean;
+  $isNewsPage: boolean;
+}>`
   display: flex;
   position: relative;
   justify-content: ${(props) => (props.$isVisible ? "space-between" : "end")};
@@ -58,6 +65,9 @@ const HeaderContainer = styled.div<{ $isVisible: boolean }>`
   }
   @media (max-width: ${(props) => props.theme.size.mobile}) {
     display: none;
+  }
+  @media (max-width: 1279px) {
+    margin-bottom: ${(props) => (props.$isNewsPage ? "5rem" : "0")};
   }
 `;
 

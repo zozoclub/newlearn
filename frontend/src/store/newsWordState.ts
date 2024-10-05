@@ -1,4 +1,4 @@
-import { WordType } from "@services/newsService";
+import { WordType } from "types/wordType";
 import { atom } from "recoil";
 
 const newsWordState = atom<WordType[]>({

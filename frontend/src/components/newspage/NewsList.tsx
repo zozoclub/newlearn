@@ -3,15 +3,12 @@ import styled from "styled-components";
 
 import NewsListItem from "@components/newspage/NewsListItem";
 import { useQuery } from "@tanstack/react-query";
-import {
-  getCategoryNewsList,
-  getTotalNewsList,
-  NewsListType,
-} from "@services/newsService";
+import { getCategoryNewsList, getTotalNewsList } from "@services/newsService";
 import { useRecoilValue } from "recoil";
 import languageState from "@store/languageState";
 import { useParams } from "react-router-dom";
 import userInfoState from "@store/userInfoState";
+import { NewsListType } from "types/newsType";
 
 const NewsList: React.FC<{
   setTotalPages: React.Dispatch<React.SetStateAction<number>>;

@@ -1,6 +1,5 @@
 import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
-import NewsSearch from "@components/newspage/NewsSearch";
 const NewsListHeader: React.FC = () => {
   const categoryList = [
     { name: "전체" },
@@ -30,7 +29,7 @@ const NewsListHeader: React.FC = () => {
               {category.name}
             </CategoryItem>
           ))}
-          <NewsSearch />
+          {/* <NewsSearch /> */}
         </CategoryContainer>
       </Container>
     </HeaderContainer>
@@ -40,6 +39,13 @@ const NewsListHeader: React.FC = () => {
 const HeaderContainer = styled.div`
   display: flex;
   justify-content: space-between;
+  width: 50vw;
+  @media (max-width: 1279px) {
+    position: absolute;
+    top: 10.5rem;
+    left: 5%;
+    width: 80vw;
+  }
 `;
 const Container = styled.div`
   position: relative;
@@ -48,8 +54,8 @@ const Container = styled.div`
 
 const CategoryContainer = styled.div`
   display: flex;
+  justify-content: space-evenly;
   align-items: center;
-  gap: 5%;
 `;
 
 const CategoryItem = styled.div<{ $isSelected?: boolean }>`

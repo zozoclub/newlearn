@@ -1,33 +1,5 @@
+import { DetailNewsType, NewsListType, NewsType } from "types/newsType";
 import axiosInstance from "./axiosInstance";
-
-export type NewsType = {
-  newsId: number;
-  title: string;
-  content: string;
-  thumbnailImageUrl: string;
-  category: string;
-  publishedDate: string;
-  isRead: boolean[];
-};
-
-export type NewsListType = {
-  newsList: NewsType[];
-  totalPages: number;
-};
-
-export type WordType = {
-  word: string;
-  sentence: string;
-};
-
-export type DetailNewsType = NewsType & {
-  journalist: string;
-  press: string;
-  originalUrl: string;
-  hit: number;
-  isScrapped: boolean; //유저가 이 난이도로 스크랩했는지 여부
-  words: WordType[];
-};
 
 export type SearchResult = {
   text: string;
@@ -297,6 +269,18 @@ export const searchNews = async (
 export const getHybridNews = async (): Promise<NewsType[]> => {
   try {
     const response = await axiosInstance.get(`recommend/hybrid`);
+    console.log(response);
+
+    return response.data.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const getCategoryRecommandNewsList = async (): Promise<NewsType[]> => {
+  try {
+    const response = await axiosInstance.get(`recommend/category`);
     console.log(response);
 
     return response.data.data;

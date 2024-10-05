@@ -45,10 +45,10 @@ const SignUpPage = () => {
         type: CheckAction.SET_NICKNAME_DUPLICATED,
         payload: isNicknameDuplicated,
       });
-      if (checkState.isNicknameDuplicated) {
+      if (isNicknameDuplicated) {
         setPageNum(1);
       } else {
-        signUp(signUpState);
+        await signUp(signUpState);
         if (signUpState.provider === "kakao") {
           kakaoLogin();
         } else {
@@ -110,7 +110,6 @@ const SignUpPage = () => {
   }, [token]);
 
   useEffect(() => {
-    console.log(checkState);
     setActiveButton(
       checkState.isCategoriesSelected &&
         checkState.isDifficultySelected &&
@@ -118,8 +117,6 @@ const SignUpPage = () => {
         !checkState.isNicknameDuplicated
     );
   }, [checkState]);
-
-  console.log(signUpState);
 
   return (
     <Container $pageNum={pageNum}>

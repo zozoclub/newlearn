@@ -80,10 +80,8 @@ export const getOAuthInformation = async (token: string): Promise<UserInfo> => {
 };
 
 export const checkNicknameDup = async (nickname: string): Promise<boolean> => {
-  console.log(nickname);
   try {
     const response = await axios.get(`user/check/${nickname}`);
-    console.log("api", response.data.data);
     return response.data.data;
   } catch (error) {
     console.error(error);

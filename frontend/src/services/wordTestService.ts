@@ -105,6 +105,7 @@ export type WordTestResultDetailResponseDto = {
     newsId: number;
     questionId: number;
     answer: string;
+    difficulty: number;
     correctAnswer: string;
     sentence: string;
     sentenceMeaning: string;

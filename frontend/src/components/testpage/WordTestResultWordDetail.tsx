@@ -8,6 +8,7 @@ type Props = {
   userAnswer: string;
   sentence: string;
   sentenceMeaning: string;
+  difficulty: number;
   isCorrect: boolean;
 };
 
@@ -17,6 +18,7 @@ const WordTestResultWordDetail: React.FC<Props> = ({
   userAnswer,
   sentence,
   sentenceMeaning,
+  difficulty,
   isCorrect
 }) => {
   const navigate = useNavigate();
@@ -41,10 +43,18 @@ const WordTestResultWordDetail: React.FC<Props> = ({
   return (
     <DetailLayout>
       <Section>
+      <DifficultyChip $difficulty={difficulty}>
+        {difficulty === 1
+          ? "초급"
+          : difficulty === 2
+            ? "중급"
+            : difficulty === 3
+              ? "고급"
+              : "알 수 없음"}
+      </DifficultyChip>
         <AnswerTitle>Quiz Sentence</AnswerTitle>
         <br />
         <AnswerContent>{highlightWordInSentence(sentence, answerWord)}</AnswerContent>
-        <br />
         <SentenceMeaning>{sentenceMeaning}</SentenceMeaning>
       </Section>
       <br />
@@ -102,13 +112,13 @@ const SentenceMeaning = styled.div`
 `;
 
 const ProblemAnswer = styled.div`
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   font-weight: bold;
   color: ${(props) => props.theme.colors.primary};
 `;
 
 const UserAnswer = styled.div<{ $isCorrect: boolean }>`
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   font-weight: bold;
   color: ${(props) => (props.$isCorrect ? props.theme.colors.primary : props.theme.colors.danger)};
 `;
@@ -132,4 +142,17 @@ const HighlightedWord = styled.span<{ $isCorrect: boolean }>`
   color: ${(props) =>
     props.$isCorrect ? props.theme.colors.primary : props.theme.colors.danger};
   font-weight: bold;
+`;
+
+const DifficultyChip = styled.div<{ $difficulty: number }>`
+background-color: ${({ $difficulty }) =>
+    $difficulty === 1 ? "#4caf50" : $difficulty === 2 ? "#ff9800" : "#f44336"};
+color: white;
+width: 2rem;
+text-align: center;
+margin-bottom: 1rem;
+padding: 0.25rem 0.5rem;
+border-radius: 0.5rem;
+font-size: 0.875rem;
+font-weight: bold;
 `;

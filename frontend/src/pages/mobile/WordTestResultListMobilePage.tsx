@@ -122,7 +122,7 @@ const WordTestResultListMobilePage: React.FC = () => {
         </InfoText>
         <StatsHistory>
           <StatItem>테스트 횟수: 5회</StatItem>
-          <StatItem>맞춘 단어수: 80개</StatItem>
+          <StatItem>맞힌 단어수: 80개</StatItem>
           <StatItem>틀린 단어수: 10개</StatItem>
         </StatsHistory>
       </InfoContainer>

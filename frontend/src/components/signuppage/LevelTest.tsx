@@ -1,7 +1,12 @@
-import { useEffect, useState } from "react";
+import { Dispatch, useEffect, useState } from "react";
 import styled from "styled-components";
-import signupState from "@store/signupState";
-import { useRecoilState } from "recoil";
+import {
+  CheckAction,
+  CheckActionObject,
+  SignUpAction,
+  SignUpActionObject,
+  SignUpStateType,
+} from "types/signUpType";
 
 type WordType = {
   [key: string]: string;
@@ -171,13 +176,20 @@ const score: { [key: string]: number } = {
 
 type LevelTestProps = {
   setPageNum: (pageNum: number) => void;
+  signUpState: SignUpStateType;
+  signUpDispatch: Dispatch<SignUpActionObject>;
+  checkDispatch: Dispatch<CheckActionObject>;
 };
-const LevelTestPage: React.FC<LevelTestProps> = ({ setPageNum }) => {
+const LevelTestPage: React.FC<LevelTestProps> = ({
+  setPageNum,
+  signUpState,
+  signUpDispatch,
+  checkDispatch,
+}) => {
   const [words, setWords] = useState<WordWithLevel[]>([]);
   const [selectedWords, setSelectedWords] = useState<Set<string>>(new Set());
   const [totalScore, setTotalScore] = useState<number>(0);
   const [isTestComplete, setIsTestComplete] = useState<boolean>(false);
-  const [signupData, setSignupData] = useRecoilState(signupState);
   const [difficulty, setDifficulty] = useState<number>(1);
 
   useEffect(() => {
@@ -219,8 +231,19 @@ const LevelTestPage: React.FC<LevelTestProps> = ({ setPageNum }) => {
 
   const handleCompleteTest = (difficulty: number) => {
     setIsTestComplete(true);
-    setSignupData({ ...signupData, difficulty });
+    signUpDispatch({
+      type: SignUpAction.CHANGE_DIFFICULTY,
+      payload: difficulty,
+    });
   };
+
+  useEffect(() => {
+    checkDispatch({
+      type: CheckAction.CHECK_DIFFICULTY,
+      payload: signUpState.difficulty,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [signUpState.difficulty]);
 
   return (
     <PageContainer>
@@ -232,7 +255,7 @@ const LevelTestPage: React.FC<LevelTestProps> = ({ setPageNum }) => {
           return (
             <WordButton
               key={index}
-              isSelected={selectedWords.has(item.word)}
+              $isSelected={selectedWords.has(item.word)}
               onClick={() => toggleWordSelection(item.word, item.level)}
               disabled={isTestComplete}
             >
@@ -242,7 +265,7 @@ const LevelTestPage: React.FC<LevelTestProps> = ({ setPageNum }) => {
         })}
       </WordGrid>
       {isTestComplete ? (
-        <ResultContainer isVisible={isTestComplete}>
+        <ResultContainer $isVisible={isTestComplete}>
           테스트 결과 <Difficulty>{calDifficulty().level}</Difficulty> 수준
           입니다.
           <ButtonContainer>
@@ -254,7 +277,7 @@ const LevelTestPage: React.FC<LevelTestProps> = ({ setPageNum }) => {
         </ResultContainer>
       ) : (
         <CompleteTestButton
-          isVisible={!isTestComplete}
+          $isVisible={!isTestComplete}
           onClick={() => handleCompleteTest(difficulty)}
         >
           선택 완료
@@ -287,7 +310,7 @@ const WordGrid = styled.div`
   max-width: 40rem; // 최대 너비 설정 (필요에 따라 조정)
 `;
 
-const WordButton = styled.button<{ isSelected: boolean }>`
+const WordButton = styled.button<{ $isSelected: boolean }>`
   width: 185px;
   font-weight: bold;
   padding: 0.75rem 1rem;
@@ -295,16 +318,16 @@ const WordButton = styled.button<{ isSelected: boolean }>`
   border: none;
   border-radius: 0.5rem;
   background-color: ${(props) =>
-    props.isSelected
+    props.$isSelected
       ? props.theme.colors.primary
       : props.theme.colors.readonly};
-  color: ${(props) => (props.isSelected ? "white" : props.theme.colors.text)};
+  color: ${(props) => (props.$isSelected ? "white" : props.theme.colors.text)};
   cursor: pointer;
   transition: all 0.3s;
 
   &:hover {
     background-color: ${(props) =>
-      props.isSelected ? props.theme.colors.primaryPress : "#e0e0e0"};
+      props.$isSelected ? props.theme.colors.primaryPress : "#e0e0e0"};
   }
 `;
 
@@ -360,23 +383,23 @@ const AgainButton = styled(Button)`
   }
 `;
 
-const ResultContainer = styled.div<{ isVisible: boolean }>`
+const ResultContainer = styled.div<{ $isVisible: boolean }>`
   margin-top: 1.5rem;
   color: gray;
   font-size: 1.25rem;
-  opacity: ${(props) => (props.isVisible ? 1 : 0)};
-  transform: ${(props) => (props.isVisible ? "scale(1)" : "scale(0.5)")};
-  height: ${(props) => (props.isVisible ? "auto" : "0")};
+  opacity: ${(props) => (props.$isVisible ? 1 : 0)};
+  transform: ${(props) => (props.$isVisible ? "scale(1)" : "scale(0.5)")};
+  height: ${(props) => (props.$isVisible ? "auto" : "0")};
   overflow: hidden;
   transition: opacity 0.5s ease, transform 0.5s ease, height 0.5s ease;
 `;
 
-const CompleteTestButton = styled(Button)<{ isVisible: boolean }>`
+const CompleteTestButton = styled(Button)<{ $isVisible: boolean }>`
   margin-top: 3rem;
   background-color: ${(props) => props.theme.colors.primary};
-  opacity: ${(props) => (props.isVisible ? 1 : 0)};
-  transform: ${(props) => (props.isVisible ? "scale(1)" : "scale(0.95)")};
-  height: ${(props) => (props.isVisible ? "auto" : "0")};
+  opacity: ${(props) => (props.$isVisible ? 1 : 0)};
+  transform: ${(props) => (props.$isVisible ? "scale(1)" : "scale(0.95)")};
+  height: ${(props) => (props.$isVisible ? "auto" : "0")};
   overflow: hidden;
   transition: opacity 0.5s ease, transform 0.5s ease, height 0.5s ease;
   &:hover {

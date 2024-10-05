@@ -28,44 +28,42 @@ import LanguageToggleBtn from "@components/common/LanguageToggleBtn";
 
 const App: React.FC = () => {
   const theme = useRecoilValue(themeState) === "dark" ? darkTheme : lightTheme;
+  const expModalState = useRecoilValue(isExpModalState);
   const isLogin = useRecoilValue(loginState);
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
-  const expModalState = useRecoilValue(isExpModalState);
 
   useEffect(() => {
     console.log(
       " _   _                       _                               \n\
-| \\ | |                     | |                              \n\
-|  \\| |  ___ __      __ ___ | |      ___   __ _  _ __  _ __  \n\
-| . ` | / _ \\\\ \\ /\\ / // __|| |     / _ \\ / _` || '__|| '_ \\ \n\
-| |\\  ||  __/ \\ V  V / \\__ \\| |____|  __/| (_| || |   | | | |\n\
-\\_| \\_/ \\___|  \\_/\\_/  |___/\\_____/ \\___| \\__,_||_|   |_| |_\n\
-                                                             \n\
-Welcome To NewsLearn!"
+      | \\ | |                     | |                              \n\
+      |  \\| |  ___ __      __ ___ | |      ___   __ _  _ __  _ __  \n\
+      | . ` | / _ \\\\ \\ /\\ / // __|| |     / _ \\ / _` || '__|| '_ \\ \n\
+      | |\\  ||  __/ \\ V  V / \\__ \\| |____|  __/| (_| || |   | | | |\n\
+      \\_| \\_/ \\___|  \\_/\\_/  |___/\\_____/ \\___| \\__,_||_|   |_| |_\n\
+      \n\
+      Welcome To NewsLearn!"
     );
-  }, []);
 
-  const requestPermission = async () => {
-    try {
-      const permission = await Notification.requestPermission();
-      if (permission === "granted") {
-        console.log("알림 권한이 허용되었습니다.");
-        const token = await getToken(messaging, {
-          vapidKey: import.meta.env.VITE_FIREBASE_VAPIDKEY, // Firebase Console에서 제공하는 VAPID Key
-        });
-        if (token) {
-          console.log("토큰을 얻었습니다:", token);
+    // 알림 권한 설정
+    const requestPermission = async () => {
+      try {
+        const permission = await Notification.requestPermission();
+        if (permission === "granted") {
+          console.log("알림 권한이 허용되었습니다.");
+          const token = await getToken(messaging, {
+            vapidKey: import.meta.env.VITE_FIREBASE_VAPIDKEY, // Firebase Console에서 제공하는 VAPID Key
+          });
+          if (token) {
+            console.log("토큰을 얻었습니다:", token);
+          }
+        } else {
+          console.log("알림 권한이 거부되었습니다.");
         }
-      } else {
-        console.log("알림 권한이 거부되었습니다.");
+      } catch (error) {
+        console.error("알림 권한 요청 중 오류 발생:", error);
       }
-    } catch (error) {
-      console.error("알림 권한 요청 중 오류 발생:", error);
-    }
-  };
+    };
 
-  // 알림 권한 설정
-  useEffect(() => {
     requestPermission();
   }, []);
 
@@ -79,7 +77,7 @@ Welcome To NewsLearn!"
 
   useEffect(() => {
     if (userInfoData) {
-      setUserInfo({ ...userInfoData, isInitialized: true }); // 데이터가 로드되면 Recoil state 업데이트
+      setUserInfo({ ...userInfoData, isInitialized: true });
     }
   }, [userInfoData, setUserInfo]);
 
@@ -87,19 +85,19 @@ Welcome To NewsLearn!"
     <ThemeProvider theme={theme}>
       <GlobalStyle />
       <Background />
-      <AppContainer $isMobile={isMobile}>
+      <AppContainer>
         {!isMobile && <Header />}
         <TransitionContent>
           <Outlet />
         </TransitionContent>
         {isLogin && (isMobile ? <MobileNavbar /> : <Navbar />)}
-        {/* ExperienceModal 컴포넌트 렌더링 */}
+        {/* 경험치 모달 */}
         <ExperienceModal
           isOpen={expModalState.isOpen}
           experience={expModalState.experience}
           action={expModalState.action}
         />
-
+        {/* 언어 토글 버튼 */}
         <LanguageToggleBtn />
       </AppContainer>
       {/* 목표 관련 내용 */}
@@ -109,15 +107,13 @@ Welcome To NewsLearn!"
   );
 };
 
-const AppContainer = styled.div<{ $isMobile: boolean }>`
+const AppContainer = styled.div`
   position: relative;
-  ${({ $isMobile }) =>
-    !$isMobile &&
-    `
-      width: 90vw;
-      min-height: 100vh;
-      padding: 0 calc(5vw - 0.1875rem);
-  `}
+  @media (min-width: 768px) {
+    width: 90vw;
+    min-height: 100vh;
+    padding: 0 calc(5vw - 0.1875rem);
+  }
 `;
 
 export default App;

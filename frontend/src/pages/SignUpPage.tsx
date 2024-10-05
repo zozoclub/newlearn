@@ -1,12 +1,10 @@
-import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useEffect, useReducer, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import styled from "styled-components";
 
 import Button from "@components/Button";
 import NicknameInput from "@components/signuppage/NicknameInput";
 import SelectCategory from "@components/signuppage/SelectCategory";
-// import SelectDifficulty from "@components/signuppage/SelectDifficulty";
 import SignupHeader from "@components/signuppage/SignupHeader";
 import LevelTest from "@components/signuppage/LevelTest";
 import { usePageTransition } from "@hooks/usePageTransition";
@@ -17,220 +15,171 @@ import {
   naverLogin,
   signUp,
 } from "@services/userService";
-import signupState from "@store/signupState";
 import AvatarSetting from "@components/signuppage/AvatarSetting";
 import locationState from "@store/locationState";
-
-export type SignUpType = {
-  email: string;
-  name: string;
-  provider: string;
-  providerId: string;
-  nickname: string;
-  difficulty: number;
-  categories: string[];
-  skin: number;
-  eyes: number;
-  mask: number;
-};
-
-const useQuery = () => {
-  return new URLSearchParams(useLocation().search);
-};
+import { useSetRecoilState } from "recoil";
+import { CheckAction, SignUpAction } from "types/signUpType";
+import { initialSignUpState, signUpReducer } from "@reducers/signUpReducer";
+import { initialCheckState, checkReducer } from "@reducers/checkReducer";
 
 const SignUpPage = () => {
-  const [signupData, setSignupData] = useRecoilState(signupState);
-  const nickname = signupData.nickname;
-  const categories = signupData.categories;
-  const difficulty = signupData.difficulty;
+  const [signUpState, signUpDispatch] = useReducer(
+    signUpReducer,
+    initialSignUpState
+  );
+  const [checkState, checkDispatch] = useReducer(
+    checkReducer,
+    initialCheckState
+  );
   const [pageNum, setPageNum] = useState(1);
-
-  const [isNicknameAvailable, setIsNicknameAvailable] = useState<boolean>(true);
-  const [isNicknameDuplicated, setIsNicknameDuplicated] =
-    useState<boolean>(false);
   const [activeButton, setActiveButton] = useState(false);
-  const [token, setToken] = useState<string | null>(null);
-  const query = useQuery();
   const transitionTo = usePageTransition();
   const setCurrentLocation = useSetRecoilState(locationState);
+  const [searchParams] = useSearchParams();
+  const token = searchParams.get("token");
 
-  function handleNicknameChange(newNickname: string) {
-    if (newNickname.length <= 8) {
-      setSignupData({ ...signupData, nickname: newNickname });
-      setIsNicknameDuplicated(false); // 닉네임이 변경되면 중복 상태를 초기화
-      setIsNicknameAvailable(checkNickname(newNickname));
-    }
-  }
-
-  function checkNickname(nickname: string): boolean {
-    if (nickname.length < 3) {
-      return false;
-    }
-    return /^[가-힣ㄱ-ㅎㅏ-ㅣ]+$/.test(nickname);
-  }
-
-  function checkInterest(): boolean {
-    return categories.length === 3;
-  }
-
-  function checkDifficulty(): boolean {
-    return difficulty !== 0;
-  }
-
-  async function handleSubmitButton() {
+  const handleSubmitButton = async () => {
     try {
-      // true 이면 중복된 닉네임이 있는 것
-      const isNicknameAvailable = await checkNicknameDup(nickname);
-      console.log(isNicknameAvailable);
-      if (!isNicknameAvailable) {
-        await signUp(signupData);
-        if (signupData.provider === "kakao") {
+      const isNicknameDuplicated = await checkNicknameDup(signUpState.nickname);
+      checkDispatch({
+        type: CheckAction.SET_NICKNAME_DUPLICATED,
+        payload: isNicknameDuplicated,
+      });
+      if (isNicknameDuplicated) {
+        setPageNum(1);
+      } else {
+        await signUp(signUpState);
+        if (signUpState.provider === "kakao") {
           kakaoLogin();
         } else {
           naverLogin();
         }
-      } else {
-        setPageNum(1);
-        setIsNicknameDuplicated(true);
       }
     } catch (error) {
       console.log(error);
     }
-  }
+  };
+
+  const handleNextButton = () => {
+    if (
+      checkState.isNicknameAvailable &&
+      !checkState.isNicknameDuplicated &&
+      signUpState.nickname.length !== 0
+    ) {
+      setPageNum(2);
+    }
+  };
 
   useEffect(() => {
     setCurrentLocation("signUp");
+    const accessToken = sessionStorage.getItem("accessToken");
+    // 로그인이 되어있는 상태라면 메인으로 이동
+    if (accessToken) {
+      transitionTo("/");
+    }
     return () => {
       setCurrentLocation("");
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // 주소로부터 토큰 획득
-  useEffect(() => {
-    const token = query.get("token");
-    // 소셜 로그인이 아닌 접근 방지
-    if (token === null) {
-      transitionTo("login");
-    }
-    setToken(token);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query]);
-
   // 토큰으로 유저 정보(이메일, 이름, 제공자) 가져오기
   useEffect(() => {
-    const getOAuth = async () => {
+    const getOAuth = async (token: string) => {
       try {
-        if (token !== null) {
-          const response = await getOAuthInformation(token);
-          setSignupData({
-            ...signupData,
+        const response = await getOAuthInformation(token);
+        signUpDispatch({
+          type: SignUpAction.SET_OAUTH_INFORMATION,
+          payload: {
             email: response.email,
             name: response.name,
             provider: response.provider,
             providerId: response.providerId,
-          });
-        }
+          },
+        });
       } catch (error) {
         console.error(error);
       }
     };
-    getOAuth();
+    if (token) {
+      getOAuth(token);
+    } else {
+      transitionTo("login");
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
-  // 유효성 검사
   useEffect(() => {
-    if (nickname.length > 0 && !checkNickname(nickname)) {
-      console.log("닉네임 체크");
-      setIsNicknameAvailable(false);
-      setActiveButton(false);
-    } else if (!checkInterest()) {
-      console.log("관심 카테고리 체크");
-      setIsNicknameAvailable(true);
-      setActiveButton(false);
-    } else if (!checkDifficulty()) {
-      console.log("난이도 체크");
-      setIsNicknameAvailable(true);
-      setActiveButton(false);
-    } else {
-      setIsNicknameAvailable(true);
-      if (!isNicknameDuplicated) {
-        setActiveButton(true);
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [nickname, categories, difficulty]);
-
-  // 로그인이 되어있는 상태라면 메인으로 이동
-  const isLogin = sessionStorage.getItem("accessToken");
-  useEffect(() => {
-    if (isLogin) {
-      transitionTo("/");
-    }
-  }, [isLogin, transitionTo]);
+    setActiveButton(
+      checkState.isCategoriesSelected &&
+        checkState.isDifficultySelected &&
+        checkState.isNicknameAvailable &&
+        !checkState.isNicknameDuplicated
+    );
+  }, [checkState]);
 
   return (
     <Container $pageNum={pageNum}>
       <SignupHeader pageNum={pageNum} setPageNum={setPageNum} />
       <form onSubmit={(event) => event.preventDefault()}>
-        <FirstPage $pageNum={pageNum}>
-          {/* 아바타 */}
-          <div className="desc">아바타</div>
-          <AvatarSetting />
-          {/* 닉네임 */}
-          <NicknameInput
-            isNicknameAvailable={isNicknameAvailable}
-            isNicknameDuplicated={isNicknameDuplicated}
-            onNicknameChange={handleNicknameChange}
-          />
-          <div>
+        <PageContainer>
+          <Page $pageNum={pageNum}>
+            {/* 아바타 */}
+            <div className="desc">아바타</div>
+            <AvatarSetting
+              signUpState={signUpState}
+              signUpDispatch={signUpDispatch}
+            />
+            {/* 닉네임 */}
+            <NicknameInput
+              signUpState={signUpState}
+              checkState={checkState}
+              signUpDispatch={signUpDispatch}
+              checkDispatch={checkDispatch}
+            />
             <Button
               $varient={
-                isNicknameAvailable &&
-                !isNicknameDuplicated &&
-                nickname.length !== 0
+                checkState.isNicknameAvailable &&
+                !checkState.isNicknameDuplicated &&
+                signUpState.nickname.length !== 0
                   ? "primary"
                   : "cancel"
               }
               size="large"
-              onClick={() => {
-                if (
-                  isNicknameAvailable &&
-                  !isNicknameDuplicated &&
-                  nickname.length !== 0
-                ) {
-                  setPageNum(2);
-                }
-              }}
+              onClick={handleNextButton}
             >
               다음
             </Button>
-          </div>
-        </FirstPage>
-        <SecondPage $pageNum={pageNum}>
-          <LevelTest setPageNum={setPageNum} />
-        </SecondPage>
-        <ThirdPage $pageNum={pageNum}>
-          {/* 관심 카테고리 */}
-          <SelectCategory />
-          {/* 영어 실력 */}
-          {/* <SelectDifficulty /> */}
-          {/* 입력 완료 버튼 */}
-          <div>
+          </Page>
+          <Page $pageNum={pageNum}>
+            <LevelTest
+              setPageNum={setPageNum}
+              signUpState={signUpState}
+              signUpDispatch={signUpDispatch}
+              checkDispatch={checkDispatch}
+            />
+          </Page>
+          <Page $pageNum={pageNum}>
+            {/* 관심 카테고리 */}
+            <SelectCategory
+              signUpDispatch={signUpDispatch}
+              signUpState={signUpState}
+              checkDispatch={checkDispatch}
+            />
+            {/* 입력 완료 버튼 */}
             <Button
               $varient={activeButton ? "primary" : "cancel"}
               size="large"
-              onClick={async () => {
+              onClick={() => {
                 if (activeButton) {
-                  await handleSubmitButton();
+                  handleSubmitButton();
                 }
               }}
             >
               입력 완료
             </Button>
-          </div>
-        </ThirdPage>
+          </Page>
+        </PageContainer>
       </form>
     </Container>
   );
@@ -256,13 +205,12 @@ const Container = styled.div<{ $pageNum: number }>`
         return "38rem";
     }
   }};
-  padding: 2rem 2rem 2rem 2rem;
+  padding: 2rem;
   border-radius: 0.5rem;
   background-color: ${(props) => props.theme.colors.cardBackground + "7F"};
-  transition: box-shadow 0.5s;
   backdrop-filter: blur(4px);
   box-shadow: ${(props) => props.theme.shadows.medium};
-  transition: all 0.3s ease, height 0.3s ease;
+  transition: all 0.3s ease;
   overflow: hidden;
   ::placeholder {
     font-weight: 600;
@@ -285,55 +233,15 @@ const Container = styled.div<{ $pageNum: number }>`
   }
 `;
 
-const FirstPage = styled.div<{ $pageNum: number }>`
-  position: absolute;
-  left: 3rem;
-  transform: ${(props) => {
-    switch (props.$pageNum) {
-      case 1:
-        return "translateX(0)";
-      case 2:
-        return "translateX(-31.25rem)";
-      case 3:
-        return "translateX(-62.5rem)";
-      default:
-        return "translateX(0)";
-    }
-  }};
-  transition: transform 0.5s;
+const PageContainer = styled.div`
+  display: flex;
 `;
-const SecondPage = styled.div<{ $pageNum: number }>`
-  position: absolute;
-  left: 3rem;
-  transform: ${(props) => {
-    switch (props.$pageNum) {
-      case 1:
-        return "translateX(31.25rem)";
-      case 2:
-        return "translateX(0)";
-      case 3:
-        return "translateX(-31.25rem)";
-      default:
-        return "translateX(31.25rem)";
-    }
-  }};
-  transition: transform 0.5s;
-`;
-const ThirdPage = styled.div<{ $pageNum: number }>`
-  position: absolute;
-  left: 3rem;
-  transform: ${(props) => {
-    switch (props.$pageNum) {
-      case 1:
-        return "translateX(62.5rem)";
-      case 2:
-        return "translateX(31.25rem)";
-      case 3:
-        return "translateX(0)";
-      default:
-        return "translateX(62.5rem)";
-    }
-  }};
+
+const Page = styled.div<{ $pageNum: number }>`
+  position: relative;
+  width: 25.25rem;
+  padding: 0 3rem;
+  transform: translateX(${(props) => -31.25 * (props.$pageNum - 2)}rem);
   transition: transform 0.5s;
 `;
 export default SignUpPage;

@@ -192,7 +192,7 @@ const WordTestPage: React.FC = () => {
         setExpModal({
           isOpen: true,
           experience: experience,
-          action: "문장 속 빈칸 맞히기 ",
+          action: "빈칸 단어 넣기",
         });
         navigate(`/word/result/${data!.quizId}`);
       },

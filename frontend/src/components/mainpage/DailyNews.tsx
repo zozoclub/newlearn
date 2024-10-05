@@ -78,7 +78,17 @@ const Container = styled.div`
   .swiper {
     padding-bottom: 70px;
   }
+  .swiper-pagination-bullet {
+    background-color: ${(props) =>
+      props.theme.colors.placeholder}; // 기본 도트 색상
+    opacity: 0.6; // 도트의 투명도
+  }
 
+  .swiper-pagination-bullet-active {
+    background-color: ${(props) =>
+      props.theme.colors.primary}; // 활성화된 도트 색상
+    opacity: 1; // 활성화된 도트의 투명도
+  }
   .swiper-slide {
     display: flex;
     justify-content: center;

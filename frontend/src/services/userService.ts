@@ -1,6 +1,9 @@
-import { SignUpType } from "@pages/SignUpPage";
 import axios from "axios";
 import axiosInstance from "./axiosInstance";
+import { SetterOrUpdater } from "recoil";
+import { ExpType } from "@store/expState";
+import { AvatarType } from "@components/common/Avatar";
+import { SignUpStateType } from "types/signUpType";
 import { userInfoType } from "@store/userInfoState";
 
 type UserInfo = {
@@ -88,7 +91,7 @@ export const checkNicknameDup = async (nickname: string): Promise<boolean> => {
   }
 };
 
-export const signUp = async (signUpForm: SignUpType) => {
+export const signUp = async (signUpForm: SignUpStateType) => {
   console.log(signUpForm);
   try {
     const response = await axios.post(`user/sign-up`, {
@@ -129,10 +132,6 @@ export const getUserInfo = async (): Promise<userInfoType> => {
     throw error;
   }
 };
-
-import { SetterOrUpdater } from "recoil";
-import { ExpType } from "@store/expState";
-import { AvatarType } from "@components/common/Avatar";
 
 export const putExpUp = async (
   experience: number,

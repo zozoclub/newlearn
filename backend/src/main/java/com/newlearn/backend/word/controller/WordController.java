@@ -131,7 +131,7 @@ public class WordController {
 	}
 
 	//로그인하면 오늘의 망각곡선 단어들 가져오기
-	@GetMapping("/restudy")
+	@GetMapping("/restudy/check")
 	public ApiResponse<?> getRestudyWords(Authentication authentication) {
 		try {
 			Users user = userService.findByEmail(authentication.getName());

@@ -104,9 +104,8 @@ const NewsSearch: React.FC<NewsSearchProps> = ({ initialQuery = "" }) => {
   // 검색 버튼 눌렀을 때 검색 페이지로 이동
   const executeSearch = () => {
     if (searchValue.trim()) {
-      transitionTo(`/news/search/${encodeURIComponent(searchValue.trim())}`);
-      setSearchValue("");
-      setSearchResults([]);
+      const encodedQuery = encodeURIComponent(searchValue.trim());
+      transitionTo(`/news/search/${encodedQuery}`);
     }
   };
 

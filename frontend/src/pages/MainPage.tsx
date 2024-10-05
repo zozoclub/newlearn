@@ -8,6 +8,7 @@ import { useMediaQuery } from "react-responsive";
 import { useSetRecoilState } from "recoil";
 // import NewsSearch from "@components/newspage/NewsSearch";
 import styled from "styled-components";
+import RestudyQuiz from "@components/RestudyQuiz";
 
 const MainPage = () => {
   const widgetList = [
@@ -43,6 +44,7 @@ const MainPage = () => {
             <Widget key={index} variety={widget.variety} />
           ))}
         </WidgetContainer>
+        <RestudyQuiz />
         <PWAInstallPrompt />
       </Container>
     );

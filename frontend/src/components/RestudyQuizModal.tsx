@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import styled, { keyframes, css } from "styled-components";
+import Modal from "@components/Modal"; // 확인용 모달을 사용
 
 type ModalProps = {
   isOpen: boolean;
@@ -11,6 +12,7 @@ type ModalProps = {
 
 const RestudyQuizModal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
   const [isAnimating, setIsAnimating] = useState(false);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false); // 종료 확인 모달 상태 추가
 
   useEffect(() => {
     if (isOpen) {
@@ -23,21 +25,41 @@ const RestudyQuizModal: React.FC<ModalProps> = ({ isOpen, onClose, title, childr
 
   const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target === e.currentTarget) {
-      onClose();
+      setIsConfirmModalOpen(true); // 바깥 클릭 시 종료 확인 모달 열기
     }
+  };
+
+  const handleConfirmClose = () => {
+    setIsConfirmModalOpen(false); // 종료 확인 모달 닫기
+    onClose(); // 모달 닫기
+  };
+
+  const handleCancelClose = () => {
+    setIsConfirmModalOpen(false); // 종료 취소
   };
 
   if (!isOpen && !isAnimating) return null;
 
   return ReactDOM.createPortal(
-    <ModalOverlay $isOpen={isOpen} onClick={handleOverlayClick}>
-      <ModalContent $isOpen={isOpen}>
-        <ModalHeader>
-          {title && <ModalTitle>{title}</ModalTitle>}
-        </ModalHeader>
-        <ModalBody>{children}</ModalBody>
-      </ModalContent>
-    </ModalOverlay>,
+    <>
+      <ModalOverlay $isOpen={isOpen} onClick={handleOverlayClick}>
+        <ModalContent $isOpen={isOpen}>
+          <ModalHeader>
+            {title && <ModalTitle>{title}</ModalTitle>}
+          </ModalHeader>
+          <ModalBody>{children}</ModalBody>
+        </ModalContent>
+      </ModalOverlay>
+
+      {/* 종료 확인 모달 */}
+      <Modal isOpen={isConfirmModalOpen} onClose={handleCancelClose} title="확인">
+        <p>정말 종료하시겠습니까?</p>
+        <ModalButtonContainer>
+          <ModalCancelButton onClick={handleCancelClose}>취소</ModalCancelButton>
+          <ModalConfirmButton onClick={handleConfirmClose}>확인</ModalConfirmButton>
+        </ModalButtonContainer>
+      </Modal>
+    </>,
     document.body
   );
 };
@@ -110,4 +132,36 @@ const ModalTitle = styled.div`
 
 const ModalBody = styled.div`
   padding-top: 1rem;
+`;
+
+const ModalButtonContainer = styled.div`
+  display: flex;
+  justify-content: space-around;
+  margin-top: 2rem;
+`;
+
+const ModalCancelButton = styled.button`
+  padding: 0.5rem 1.5rem;
+  background-color: ${(props) => props.theme.colors.placeholder};
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+
+  &:hover {
+    background-color: ${(props) => props.theme.colors.danger};
+  }
+`;
+
+const ModalConfirmButton = styled.button`
+  padding: 0.5rem 1.5rem;
+  background-color: ${(props) => props.theme.colors.primary};
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+
+  &:hover {
+    background-color: ${(props) => props.theme.colors.primaryPress};
+  }
 `;

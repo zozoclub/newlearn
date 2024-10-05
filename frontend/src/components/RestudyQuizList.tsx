@@ -1,44 +1,58 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
-    ForgettingCurveWordListResponseDto,
-    getForgettingCurveWordList,
     postSaveForgettingCurveWord,
     SaveForgettingCurveWordRequestDto,
-    postSkipCurveWord
+    ForgettingCurveWordListResponseDto,
 } from "@services/forgettingCurve";
 import { words } from "@utils/words";
 
-const RestudyQuizList: React.FC = () => {
+interface RestudyQuizListProps {
+    onClose: () => void;
+    questions?: ForgettingCurveWordListResponseDto[]; // 부모에서 전달받은 데이터
+}
+
+const RestudyQuizList: React.FC<RestudyQuizListProps> = ({ onClose, questions }) => {
     const queryClient = useQueryClient();
     const [currentPage, setCurrentPage] = useState(0);
     const [score, setScore] = useState(0);
     const [selectedAnswers, setSelectedAnswers] = useState<string[]>([]);
-    const [results, setResults] = useState<SaveForgettingCurveWordRequestDto[]>([]); // 결과를 저장하는 state
+    const [results, setResults] = useState<SaveForgettingCurveWordRequestDto[]>([]);
 
-    const { data: questions, isLoading, error } = useQuery<ForgettingCurveWordListResponseDto[]>({
-        queryKey: ["forgettingCurveQuestions"],
-        queryFn: getForgettingCurveWordList,
-    });
+    // 정답 및 오답을 랜덤으로 생성하는 함수
+    const generateOptions = (correctAnswer: string) => {
+        const incorrectAnswers = words
+            .filter((word) => word.word !== correctAnswer)
+            .map((word) => word.word)
+            .sort(() => 0.5 - Math.random())
+            .slice(0, 3);
+        return [...incorrectAnswers, correctAnswer].sort(() => 0.5 - Math.random());
+    };
 
     // 최종 결과 제출 Mutation
     const submitResultsMutation = useMutation({
-        mutationKey: ["saveCurveWordResults"],
         mutationFn: (saveData: SaveForgettingCurveWordRequestDto[]) => postSaveForgettingCurveWord(saveData),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["forgettingCurveQuestions"] });
         },
     });
 
-    // 문제 스킵 Mutation
-    const skipMutation = useMutation({
-        mutationKey: ["skipCurveWord"],
-        mutationFn: (wordId: number) => postSkipCurveWord(wordId),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["forgettingCurveQuestions"] });
-        },
-    });
+    // 모두 스킵 버튼 클릭 시 호출되는 함수
+    const handleSkipAll = () => {
+        const remainingQuestions = questions!.slice(currentPage).map((question) => ({
+            wordId: question.wordId,
+            isDoing: false,
+            isCorrect: false,
+        }));
+
+        const finalResults = [...results, ...remainingQuestions];
+        submitResultsMutation.mutate(finalResults, {
+            onSuccess: () => {
+                onClose();
+            },
+        });
+    };
 
     // 정답 선택 시 호출되는 함수
     const handleAnswerSelection = (selectedAnswer: string, question: ForgettingCurveWordListResponseDto) => {
@@ -46,13 +60,48 @@ const RestudyQuizList: React.FC = () => {
         if (isCorrect) setScore((prevScore) => prevScore + 1);
 
         setSelectedAnswers((prevAnswers) => [...prevAnswers, isCorrect ? "정답" : "오답"]);
-        // 현재 문제 결과 저장
+
+        // 마지막 문제 처리
+        if (currentPage === questions!.length - 1) {
+            const updatedResults = [
+                ...results,
+                {
+                    wordId: question.wordId,
+                    isDoing: true,
+                    isCorrect: isCorrect,
+                },
+            ];
+            setResults(updatedResults);
+            setTimeout(() => {
+                submitResultsMutation.mutate(updatedResults, {
+                    onSuccess: () => {
+                        setCurrentPage(questions!.length);
+                    },
+                });
+            }, 0);
+        } else {
+            // 일반적인 문제 처리
+            setResults((prevResults) => [
+                ...prevResults,
+                {
+                    wordId: question.wordId,
+                    isDoing: true,
+                    isCorrect: isCorrect,
+                },
+            ]);
+            setCurrentPage((prevPage) => prevPage + 1);
+        }
+    };
+
+
+    // 문제 스킵 시 호출되는 함수
+    const handleSkip = (question: ForgettingCurveWordListResponseDto) => {
         setResults((prevResults) => [
             ...prevResults,
             {
                 wordId: question.wordId,
-                isDoing: true, 
-                isCorrect: isCorrect,
+                isDoing: false,
+                isCorrect: false,
             },
         ]);
 
@@ -60,58 +109,22 @@ const RestudyQuizList: React.FC = () => {
             setCurrentPage((prevPage) => prevPage + 1);
         } else {
             setCurrentPage(questions!.length);
+            submitResultsMutation.mutate(results);
         }
     };
 
-    // 문제 스킵 시 호출되는 함수
-    const handleSkip = (question: ForgettingCurveWordListResponseDto) => {
-        skipMutation.mutate(question.wordId, {
-            onSuccess: () => {
-                // 스킵 요청 성공 시, 결과 배열에서 해당 문제를 제거
-                setResults((prevResults) =>
-                    prevResults.filter((result) => result.wordId !== question.wordId)
-                );
-                if (currentPage < questions!.length - 1) {
-                    setCurrentPage((prevPage) => prevPage + 1);
-                } else {
-                    setCurrentPage(questions!.length);
-                }
-            },
-        });
-    };
-
-    // 모달을 닫을 때 처리하는 함수: 풀지 않은 문제를 모두 틀린 것으로 기록
     const handleQuizExit = () => {
-        const remainingQuestions = questions!.slice(currentPage);
-
-        const remainingResults = remainingQuestions.map((question) => ({
-            wordId: question.wordId,
-            isDoing: false,
-            isCorrect: false,
-        }));
-
-        // 남은 문제를 틀린 것으로 간주하여 결과에 추가
-        const finalResults = [...results, ...remainingResults];
-
-        // 결과 제출
-        submitResultsMutation.mutate(finalResults);
+        onClose();
     };
 
-    useEffect(() => {
-        // 모달이 닫힐 때 자동으로 퀴즈 종료 처리
-        return () => {
-            handleQuizExit();
-        };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
-    if (isLoading) return <LoadingText>로딩 중...</LoadingText>;
-    if (error) return <ErrorText>문제를 불러오는 데 실패했습니다.</ErrorText>;
+    if (!questions || questions.length === 0) return <ErrorText>문제를 불러오는 데 실패했습니다.</ErrorText>;
 
     return (
         <Container>
+            <SkipAllButton onClick={handleSkipAll}>All Skip</SkipAllButton>
+
             <QuizContainer $currentPage={currentPage}>
-                {questions!.map((question, index) => (
+                {questions.map((question, index) => (
                     <QuestionWrapper key={index} $currentPage={currentPage} $index={index}>
                         <QuizWrapper>
                             <QuestionText>{question.sentence.replace("_____", "______")}</QuestionText>
@@ -120,23 +133,19 @@ const RestudyQuizList: React.FC = () => {
                             <WordMeaning>{`단어 뜻: ${question.wordMeaning}`}</WordMeaning>
                             <OptionsWrapper>
                                 {generateOptions(question.word).map((option, idx) => (
-                                    <OptionButton
-                                        key={idx}
-                                        onClick={() => handleAnswerSelection(option, question)}
-                                    >
+                                    <OptionButton key={idx} onClick={() => handleAnswerSelection(option, question)}>
                                         {option}
                                     </OptionButton>
                                 ))}
                             </OptionsWrapper>
-                            <ActionButton onClick={() => handleSkip(question)}>스킵하기</ActionButton>
+                            <ActionButton onClick={() => handleSkip(question)}>Skip</ActionButton>
                         </QuizWrapper>
                     </QuestionWrapper>
                 ))}
 
-                {/* 결과 페이지 */}
-                <QuestionWrapper $currentPage={currentPage} $index={questions!.length}>
+                <QuestionWrapper $currentPage={currentPage} $index={questions.length}>
                     <ResultPage>
-                        <ResultText>{`퀴즈 완료! ${questions!.length}문제 중 ${score}문제를 맞추셨습니다.`}</ResultText>
+                        <ResultText>{`퀴즈 완료! ${questions.length}문제 중 ${score}문제를 맞추셨습니다.`}</ResultText>
                         {selectedAnswers.map((answer, index) => (
                             <AnswerReview key={index}>{`문제 ${index + 1}: ${answer}`}</AnswerReview>
                         ))}
@@ -148,19 +157,19 @@ const RestudyQuizList: React.FC = () => {
     );
 };
 
-// 정답 및 오답을 랜덤으로 생성하는 함수
-const generateOptions = (correctAnswer: string) => {
-    const incorrectAnswers = words
-        .filter((word) => word.word !== correctAnswer)
-        .map((word) => word.word)
-        .sort(() => 0.5 - Math.random())
-        .slice(0, 3); // 오답 3개 추출
-    return [...incorrectAnswers, correctAnswer].sort(() => 0.5 - Math.random()); // 정답+오답 랜덤 정렬
-};
-
 export default RestudyQuizList;
 
-
+const SkipAllButton = styled.button`
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: red;
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 0.3rem;
+  cursor: pointer;
+`;
 
 const SentenceMeaning = styled.p`
   font-size: 1rem;
@@ -190,12 +199,6 @@ const ActionButton = styled.button`
   color: white;
   border-radius: 0.5rem;
   cursor: pointer;
-`;
-
-const LoadingText = styled.p`
-  font-size: 1.5rem;
-  text-align: center;
-  margin-top: 2rem;
 `;
 
 const ErrorText = styled.p`

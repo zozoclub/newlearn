@@ -72,8 +72,8 @@ const TopRankingWidget: React.FC<{
         ),
       enabled:
         selectedType === "point"
-          ? pointRankingList !== undefined && pointRankingList.length > 0
-          : readRankingList !== undefined && readRankingList.length > 0,
+          ? pointRankingList !== undefined && pointRankingList.length > 1
+          : readRankingList !== undefined && readRankingList.length > 1,
     });
 
   const { isLoading: thirdIsLoading, data: thirdUserAvatar } =
@@ -224,16 +224,21 @@ const popIn = keyframes`
 `;
 
 const Container = styled.div`
-  width: 90%;
-  height: 90%;
-  padding: 5%;
   display: flex;
+  position: relative;
+  width: 90%;
+  min-height: 95%;
+  height: 95%;
+  padding: 5%;
   flex-direction: column;
   align-items: center;
 `;
 
 const RankingKindContainer = styled.div<{ $type: "point" | "read" }>`
   position: absolute;
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
   width: 10rem;
   height: 1rem;
   margin: 0 auto;
@@ -246,11 +251,11 @@ const RankingKindContainer = styled.div<{ $type: "point" | "read" }>`
   &::after {
     content: "";
     position: absolute;
+    top: 0;
+    left: 0;
     transform: ${(props) =>
       props.$type === "point" ? "translateX(0)" : "translateX(6rem)"};
     transition: transform 0.5s;
-    top: 0;
-    left: 0;
     border-radius: 1rem;
     background-color: ${(props) => props.theme.colors.primary};
     width: 4.5rem;

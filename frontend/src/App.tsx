@@ -109,7 +109,7 @@ const App: React.FC = () => {
 
 const AppContainer = styled.div`
   position: relative;
-  @media (max-width: 768px) {
+  @media (min-width: 768px) {
     width: 90vw;
     min-height: 100vh;
     padding: 0 calc(5vw - 0.1875rem);

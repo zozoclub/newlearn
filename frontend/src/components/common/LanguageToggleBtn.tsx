@@ -1,12 +1,14 @@
 import languageState from "@store/languageState";
+import locationState from "@store/locationState";
 import { useEffect, useState } from "react";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import styled, { css, keyframes } from "styled-components";
 
 const LanguageToggleBtn = () => {
   const [languageData, setLanguageData] = useRecoilState(languageState);
   const [isAnimate, setIsAnimate] = useState<boolean>(false);
   const [selectedLang, setSelectedLang] = useState<string>(languageData);
+  const currentLocationData = useRecoilValue(locationState);
 
   useEffect(() => {
     setIsAnimate(true);
@@ -16,8 +18,14 @@ const LanguageToggleBtn = () => {
     setTimeout(() => {
       setIsAnimate(false);
     }, 500);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [languageData]);
+
+  if (
+    currentLocationData === "login" ||
+    currentLocationData === "signUp" ||
+    currentLocationData === "notFound"
+  )
+    return null;
 
   return (
     <Container

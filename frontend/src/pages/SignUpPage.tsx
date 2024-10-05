@@ -119,6 +119,8 @@ const SignUpPage = () => {
     );
   }, [checkState]);
 
+  console.log(signUpState);
+
   return (
     <Container $pageNum={pageNum}>
       <SignupHeader pageNum={pageNum} setPageNum={setPageNum} />
@@ -171,9 +173,9 @@ const SignUpPage = () => {
             <Button
               $varient={activeButton ? "primary" : "cancel"}
               size="large"
-              onClick={async () => {
+              onClick={() => {
                 if (activeButton) {
-                  await handleSubmitButton();
+                  handleSubmitButton();
                 }
               }}
             >

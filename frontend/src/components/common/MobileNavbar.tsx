@@ -2,18 +2,17 @@ import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 
 import NewsIcon from "@assets/icons/mobile/newsIcon";
-import WordTestIcon from "@assets/icons/mobile/wordtestIcon";
-import SpeakingTestIcon from "@assets/icons/mobile/speakingtestIcon";
+import StudyIcon from "@assets/icons/mobile/studyIcon";
 import VocaIcon from "@assets/icons/mobile/vocaIcon";
 import MyPageIcon from "@assets/icons/mobile/profileIcon";
-
+import HomeIcon from "@assets/icons/mobile/homeIcon";
 const MobileNavbar = () => {
   const navigate = useNavigate();
 
   const iconList = [
-    { Component: NewsIcon, alt: "뉴스", link: "/m" },
-    { Component: WordTestIcon, alt: "단어테스트", link: "/m/wordintro" },
-    { Component: SpeakingTestIcon, alt: "발음테스트", link: "/m/speakingintro" },
+    { Component: HomeIcon, alt: "홈", link: "/m" },
+    { Component: NewsIcon, alt: "뉴스", link: "/m/news" },
+    { Component: StudyIcon, alt: "스터디", link: "/m/study" },
     { Component: VocaIcon, alt: "단어장", link: "/m/voca" },
     { Component: MyPageIcon, alt: "마이페이지", link: "/m/mypage" },
   ];

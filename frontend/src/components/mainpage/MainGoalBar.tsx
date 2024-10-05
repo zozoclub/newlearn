@@ -19,7 +19,6 @@ const titleMapping: { [key: string]: string } = {
 const MainGoalBar: React.FC = () => {
   const isInitialized = useRecoilValue(goalState).isInitialized;
   const goalData = useRecoilValue(goalDataSelector);
-
   const calculatePercentage = (current: number, goal: number): number => {
     return Math.min(Math.round((current / goal) * 100), 100);
   };
@@ -33,7 +32,7 @@ const MainGoalBar: React.FC = () => {
 
   return (
     <ChartContainer>
-      <TitleContainer>학습 현황</TitleContainer>
+      <TitleContainer>{new Date().getMonth() + 1}월 학습 현황</TitleContainer>
       <BarItemsContainer>
         {goalData.map((item: GoalData, index: number) => {
           const percentage = calculatePercentage(item.current, item.goal);
@@ -45,7 +44,7 @@ const MainGoalBar: React.FC = () => {
               <BarTitle>
                 <BarLabel>{englishTitle}</BarLabel>
                 <BarNumber>
-                  {current}/{goal}
+                  {current} / {goal}
                 </BarNumber>
               </BarTitle>
               <BarContainer>
@@ -89,7 +88,7 @@ const BarTitle = styled.div`
 
 const BarContent = styled.div`
   width: 4rem;
-  margin: 0.5rem 0;
+  margin: 0.875rem 0;
   font-weight: bold;
 `;
 

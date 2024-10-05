@@ -5,6 +5,7 @@ import Modal from "./Modal";
 import { deleteMemorizeWord, getWordDetail, WordDetailResponseDto } from "@services/wordMemorize";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Spinner from "./Spinner";
+import SpeakerIcon from "@assets/icons/SpeakerIcon";
 
 type VocaCollapsibleProps = {
   id: string;
@@ -86,6 +87,18 @@ const VocaCollapsible: React.FC<VocaCollapsibleProps> = ({
     );
   };
 
+  const handlePlayPronounceAudio = (audioUrl: string) => {
+    const newAudioPlayer = new Audio(audioUrl);
+
+    newAudioPlayer.play()
+      .then(() => {
+        console.log("Audio playback started.");
+      })
+      .catch((error) => {
+        console.error("Error during audio playback:", error);
+      });
+
+  }
 
   const currentHeight = expanded ? contentRef.current?.scrollHeight : 0;
 
@@ -109,6 +122,20 @@ const VocaCollapsible: React.FC<VocaCollapsibleProps> = ({
             <Spinner />
           ) : (
             <Content>
+              <AudioLayout>
+                <AudioContainer>
+                  <PronounceText>
+                    US : {data?.sentences[0].pronounceUs ? data?.sentences[0].pronounceUs : "None"}
+                  </PronounceText>
+                  <SpeakerIcon onClick={() => handlePlayPronounceAudio(data!.sentences[0].audioUs)} width="20px" height="20px" />
+                </AudioContainer>
+                <AudioContainer>
+                  <PronounceText>
+                    UK : {data?.sentences[0].pronounceUk ? data?.sentences[0].pronounceUk : "None"}
+                  </PronounceText>
+                  <SpeakerIcon onClick={() => handlePlayPronounceAudio(data!.sentences[0].audioUk)} width="20px" height="20px" />
+                </AudioContainer>
+              </AudioLayout>
               <TitleMeaning>{fullProcessMeaning(meaning)}</TitleMeaning>
               {data?.sentences.map((sentence) => (
                 <SentenceContainer key={sentence.newsId}>
@@ -309,3 +336,18 @@ const HighlightedWord = styled.span`
   color: ${(props) => props.theme.colors.primary};
   font-weight: bold;
 `;
+
+const AudioLayout = styled.div`
+  display: flex;
+`
+
+const AudioContainer = styled.div`
+display: flex;
+align-items: center;
+margin-right: 0.5rem;
+letter-spacing: 0.02rem;
+`
+
+const PronounceText = styled.p`
+  margin-right: 1rem;
+`

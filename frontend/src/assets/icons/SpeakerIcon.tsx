@@ -3,15 +3,17 @@ import { useTheme } from "styled-components";
 
 type Props = {
   onClick?: () => void;
+  width?: string; // width를 외부에서 전달
+  height?: string; // height를 외부에서 전달
 };
 
-const SpeakerIcon: React.FC<Props> = ({ onClick }) => {
+const SpeakerIcon: React.FC<Props> = ({ onClick, width = "30px", height = "30px" }) => {
   const theme = useTheme();
 
   return (
     <svg
-      width="30"
-      height="30"
+      width={width}
+      height={height}
       viewBox="0 0 40 40"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

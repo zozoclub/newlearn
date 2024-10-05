@@ -55,6 +55,10 @@ export type WordDetailResponseDto = {
     sentence: string;
     sentenceMeaning: string;
     url: string;
+    pronounceUs: string
+    pronounceUk: string
+    audioUs: string
+    audioUk: string
   }>;
 };
 

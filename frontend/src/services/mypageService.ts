@@ -17,11 +17,6 @@ export type ScrapNewsListType = {
   totalElements: number;
 };
 
-export type WordType = {
-  word: string;
-  sentence: string;
-};
-
 export type GrassType = {
   date: string;
   count: number;

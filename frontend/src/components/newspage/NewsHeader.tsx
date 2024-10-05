@@ -2,16 +2,13 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import LoadingDiv from "./LoadingDiv";
 import LoadingBar from "./LoadingBar";
-import {
-  deleteScrapNews,
-  DetailNewsType,
-  scrapNews,
-} from "@services/newsService";
+import { deleteScrapNews, scrapNews } from "@services/newsService";
 import { useRecoilValue } from "recoil";
 import languageState from "@store/languageState";
 import DifficultyToggleBtn from "./DifficultyToggleBtn";
 import Bookmark from "./Bookmark";
 import { useParams } from "react-router-dom";
+import { DetailNewsType } from "types/newsType";
 
 type NewsHeaderPropsType = {
   engIsLoading: boolean;

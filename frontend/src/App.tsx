@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import styled, { ThemeProvider } from "styled-components";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilValue, useResetRecoilState, useSetRecoilState } from "recoil";
 import { Outlet } from "react-router-dom";
 import { useEffect } from "react";
 import { useMediaQuery } from "react-responsive"; // 모바일 여부 감지
@@ -69,17 +69,22 @@ const App: React.FC = () => {
 
   // 로그인이 되면 회원 정보를 저장
   const setUserInfo = useSetRecoilState(userInfoState);
+  const resetUserInfo = useResetRecoilState(userInfoState);
   const { data: userInfoData } = useQuery<userInfoType>({
     queryKey: ["getUserInfo"],
     queryFn: getUserInfo,
     enabled: isLogin, // isLogin이 true일 때만 쿼리 실행
+    staleTime: 15 * 60 * 1000,
   });
 
   useEffect(() => {
     if (userInfoData) {
       setUserInfo({ ...userInfoData, isInitialized: true });
+    } else {
+      resetUserInfo();
     }
-  }, [userInfoData, setUserInfo]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userInfoData]);
 
   return (
     <ThemeProvider theme={theme}>

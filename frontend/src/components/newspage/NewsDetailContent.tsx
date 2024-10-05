@@ -2,15 +2,12 @@ import styled from "styled-components";
 import LoadingDiv from "./LoadingDiv";
 import LoadingBar from "./LoadingBar";
 import { useWordSelection } from "@utils/wordSelection";
-import {
-  DetailNewsType,
-  searchDaumDictionary,
-  SearchResult,
-} from "@services/newsService";
+import { searchDaumDictionary, SearchResult } from "@services/newsService";
 import { useRecoilValue } from "recoil";
 import languageState from "@store/languageState";
 import WordModal from "./WordModal";
 import { useEffect, useRef, useState } from "react";
+import { DetailNewsType } from "types/newsType";
 
 type NewsDetailContentType = {
   engIsLoading: boolean;
@@ -62,13 +59,13 @@ const NewsDetailContent: React.FC<NewsDetailContentType> = ({
 
   useEffect(() => {
     if (engData) {
-      setEngContent(engData.content);
+      setEngContent(engData.content!);
     }
   }, [engData]);
 
   useEffect(() => {
     if (korData) {
-      setKorContent(korData.content);
+      setKorContent(korData.content!);
     }
   }, [korData]);
 
@@ -94,7 +91,7 @@ const NewsDetailContent: React.FC<NewsDetailContentType> = ({
   useEffect(() => {
     if (engData) {
       const slice: { sentence: string; words: string[] }[] = [];
-      const engSentences = engData.content.match(/[^.]*[.]/g);
+      const engSentences = engData.content!.match(/[^.]*[.]/g);
       engSentences?.forEach((sentence) => {
         const words = sentence.split(" ");
         slice.push({ sentence, words });

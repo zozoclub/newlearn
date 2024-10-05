@@ -46,8 +46,8 @@ const NewsContent = styled.div`
   bottom: 0rem;
   left: 0;
   width: 90%;
-  margin: 1rem;
-  padding: 1rem 1rem;
+  margin: 2.5%;
+  padding: 1rem 2.5%;
   border-radius: 0.5rem;
   background-color: ${(props) => props.theme.colors.cardBackground01};
   color: ${(props) => props.theme.colors.text};

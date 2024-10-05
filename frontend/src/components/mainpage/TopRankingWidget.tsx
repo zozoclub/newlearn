@@ -11,6 +11,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getUserAvatar } from "@services/userService";
 import LevelIcon from "@components/common/LevelIcon";
 import { calculateExperience } from "@utils/calculateExperience";
+import RankingWidget from "./RankingWidget";
 
 type RankingType = {
   userId: number;
@@ -175,23 +176,35 @@ const TopRankingWidget: React.FC<{
           다독왕
         </RankingKind>
       </RankingKindContainer>
-      <TopRanking>
-        {selectedType === "point" ? (
-          pointIsLoading ? (
-            <LoadingDiv>
-              <Spinner />
-            </LoadingDiv>
-          ) : (
-            renderRankings(pointRankingList)
-          )
-        ) : readIsLoading ? (
-          <LoadingDiv>
-            <Spinner />
-          </LoadingDiv>
-        ) : (
-          renderRankings(readRankingList)
-        )}
-      </TopRanking>
+      <HorizontalLayout>
+        <TopRankingWrapper>
+          <TopRanking>
+            {selectedType === "point" ? (
+              pointIsLoading ? (
+                <LoadingDiv>
+                  <Spinner />
+                </LoadingDiv>
+              ) : (
+                renderRankings(pointRankingList)
+              )
+            ) : readIsLoading ? (
+              <LoadingDiv>
+                <Spinner />
+              </LoadingDiv>
+            ) : (
+              renderRankings(readRankingList)
+            )}
+          </TopRanking>
+        </TopRankingWrapper>
+        <RankingWidgetWrapper>
+          <RankingWidget
+            pointIsLoading={pointIsLoading}
+            pointRankingList={pointRankingList}
+            readIsLoading={readIsLoading}
+            readRankingList={readRankingList}
+          />
+        </RankingWidgetWrapper>
+      </HorizontalLayout>
     </Container>
   );
 };
@@ -214,18 +227,21 @@ const Container = styled.div`
   width: 90%;
   height: 90%;
   padding: 5%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `;
 
 const RankingKindContainer = styled.div<{ $type: "point" | "read" }>`
-  position: relative;
-  width: 9rem;
-  height: 0.875rem;
-  margin: auto;
-  padding: 0.5rem 2rem;
+  position: absolute;
+  width: 10rem;
+  height: 1rem;
+  margin: 0 auto;
+  padding: 0.5rem 1rem;
   color: white;
   border-radius: 1rem;
-  box-shadow: gray 0px 0px 2px 2px inset;
   background-color: white;
+  font-weight: 500;
   cursor: pointer;
   &::after {
     content: "";
@@ -237,8 +253,8 @@ const RankingKindContainer = styled.div<{ $type: "point" | "read" }>`
     left: 0;
     border-radius: 1rem;
     background-color: ${(props) => props.theme.colors.primary};
-    width: 5rem;
-    height: 0.875rem;
+    width: 4.5rem;
+    height: 1rem;
     padding: 0.5rem 1rem;
   }
 `;
@@ -250,14 +266,12 @@ const RankingKind = styled.div<{
   position: absolute;
   z-index: 1;
   width: 5rem;
-  height: 0.875rem;
-  padding: 0.5rem 1rem;
-  transform: translate(0, -50%);
+  height: 1rem;
+  padding: 0 0.75rem;
   color: ${(props) => (props.$isSelected ? "white" : "black")};
   transition: color 0.5s;
-  font-size: 0.875rem;
+  font-size: 1.125rem;
   text-align: center;
-  top: 50%;
   left: ${(props) => (props.$type === "point" ? 0 : "6rem")};
 `;
 
@@ -310,7 +324,7 @@ const FirstRank = styled(RankStand)`
     width: 100%;
     height: 50%;
     bottom: 0;
-    border: solid 1px;
+    border: solid 2px;
     border-bottom: 0px;
   }
 `;
@@ -336,8 +350,9 @@ const SecondRank = styled(RankStand)`
     width: 100%;
     height: 40%;
     bottom: 0;
-    border: solid 1px;
+    border: solid 2px;
     border-bottom: 0px;
+    border-right: 0px;
   }
 `;
 
@@ -363,8 +378,9 @@ const ThirdRank = styled(RankStand)`
     width: 100%;
     height: 35%;
     bottom: 0;
-    border: solid 1px;
+    border: solid 2px;
     border-bottom: 0px;
+    border-left: 0px;
   }
 `;
 
@@ -373,6 +389,24 @@ const LoadingDiv = styled.div`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+`;
+
+const HorizontalLayout = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+  margin-top: 1.75rem;
+`;
+
+const TopRankingWrapper = styled.div`
+  width: 50%; // 필요에 따라 조정
+`;
+
+const RankingWidgetWrapper = styled.div`
+  width: 45%; // 필요에 따라 조정
+  margin-top: 1rem;
 `;
 
 export default TopRankingWidget;

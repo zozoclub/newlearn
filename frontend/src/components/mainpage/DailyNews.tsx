@@ -1,7 +1,7 @@
 import React, { useMemo, Suspense } from "react";
 import styled from "styled-components";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Mousewheel, EffectCoverflow, Pagination } from "swiper/modules";
+import { Mousewheel, Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/parallax";
 import "swiper/css/effect-coverflow";
@@ -33,21 +33,15 @@ const DailyNews: React.FC = () => {
     return (
       <Swiper
         loop={true}
-        effect={"coverflow"}
+        effect={"slide"} // coverflow 대신 기본 slide 효과 사용
         grabCursor={true}
         centeredSlides={true}
-        slidesPerView={"auto"}
+        slidesPerView={1.5} // 한 번에 1.5개의 슬라이드가 보이도록 설정
+        spaceBetween={-50} // 음수 값을 주어 슬라이드가 겹치도록 설정
         speed={500}
         mousewheel={true}
-        coverflowEffect={{
-          rotate: 50,
-          stretch: 0,
-          depth: 100,
-          modifier: 0.75,
-          scale: 0.75,
-        }}
         pagination={true}
-        modules={[EffectCoverflow, Pagination, Mousewheel]}
+        modules={[Pagination, Mousewheel]} // EffectCoverflow 제거
         className="mySwiper"
       >
         {dailyNewsList.map((news) => (
@@ -78,26 +72,26 @@ const Container = styled.div`
   justify-content: flex-start;
   position: absolute;
   top: 10rem;
-  left: -35vw;
-  width: calc(130vw - 0.375rem);
+  width: 50vw;
   overflow: hidden;
 
   .swiper {
-    padding-top: 50px;
-    padding-bottom: 50px;
+    padding-bottom: 70px;
   }
 
   .swiper-slide {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 600px;
-    height: 360px;
+    width: 580px;
+    height: 440px;
     background-color: ${(props) => props.theme.colors.cardBackground + "BF"};
     border-radius: 0.5rem;
     backdrop-filter: blur(4px);
-    box-shadow: ${(props) => props.theme.shadows.medium};
+    box-shadow: ${(props) => props.theme.shadows.small};
     transition: all 0.3s ease;
+    opacity: 0.5; // 기본적으로 모든 슬라이드를 연하게 설정
+    transform: scale(0.9); // 기본적으로 모든 슬라이드를 약간 축소
   }
 
   .swiper .swiper-slide::after {
@@ -114,19 +108,23 @@ const Container = styled.div`
   }
 
   .swiper .swiper-slide:hover {
-    background: linear-gradient(
-      135deg,
-      rgba(0, 153, 255, 0.2),
-      rgba(0, 153, 255, 0.4),
-      rgba(0, 153, 255, 0.6),
-      rgba(0, 153, 255, 0.8),
-      #0099ff
-    );
+    background: ${(props) => props.theme.colors.text04};
   }
 
   .swiper .swiper-slide:hover::after {
     width: 170px;
     height: 170px;
+  }
+
+  .swiper-slide-active {
+    opacity: 1;
+    transform: scale(1);
+    z-index: 2;
+  }
+
+  .swiper-slide-prev,
+  .swiper-slide-next {
+    z-index: 1;
   }
 `;
 

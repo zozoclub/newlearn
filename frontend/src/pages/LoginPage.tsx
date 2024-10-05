@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import styled from "styled-components";
 
-import NavarButton from "@assets/images/naverButton.png";
-import KakaoButton from "@assets/images/kakaoButton.png";
+import NavarButton from "@assets/icons/naverLogin.svg";
+import KakaoButton from "@assets/icons/kakaoLogin.svg";
 import FullLogo from "@components/common/FullLogo";
 import { kakaoLogin, naverLogin } from "@services/userService";
 import { usePageTransition } from "@hooks/usePageTransition";
@@ -82,7 +82,7 @@ const Container = styled.div`
   border-radius: 0.5rem;
   background-color: ${(props) => props.theme.colors.cardBackground + "AA"};
   :nth-child(2) {
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
     cursor: pointer;
   }
   :nth-child(3) {

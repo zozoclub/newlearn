@@ -30,7 +30,7 @@ const RankingWidget: React.FC<{
   const renderRankingList = (
     list: PointRankingType[] | ReadRankingType[] | undefined
   ) => {
-    return list?.map((ranking, index) => (
+    return list?.slice(0, 5).map((ranking, index) => (
       <Ranking key={index} style={{ animationDelay: `${index * 0.1}s` }}>
         <div className="level">
           <LevelIcon
@@ -95,6 +95,9 @@ const Ranking = styled.div`
   justify-items: center;
   align-items: center;
   text-align: center;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  font-size: 1.125rem;
   animation: ${slideIn} 0.5s ease-out forwards;
   opacity: 0;
 
@@ -108,7 +111,7 @@ const Ranking = styled.div`
   }
   .point {
     width: 25%;
-    text-align: start;
+    text-align: center;
   }
 `;
 

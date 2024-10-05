@@ -22,7 +22,7 @@ const RestudyQuiz: React.FC = () => {
   return (
     <>
       {/* 모달 컴포넌트 */}
-      <RestudyQuizModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="퀴즈">
+      <RestudyQuizModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="오늘의 단어 퀴즈">
         {/* props로 questions 데이터를 전달 */}
         <RestudyQuizList onClose={() => setIsModalOpen(false)} questions={questions} />
       </RestudyQuizModal>

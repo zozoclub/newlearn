@@ -12,6 +12,9 @@ import {
   handleMouseUp,
 } from "@components/WordMouseHandlers";
 import Modal from "./Modal";
+import { isExpModalState } from "@store/expState";
+import { putExpUp } from "@services/userService";
+import { useSetRecoilState } from "recoil";
 
 type EngDataProps = {
   engData?: string; // 긴 문단 형태로 string
@@ -24,6 +27,7 @@ const WordHunt: React.FC<EngDataProps> = ({ engData }) => {
     While expressing empathy for the fans' disillusionment, Hong Myung-bo asserted that he would bear the brunt of the criticism, urging the public to rally behind the players, who he believes are striving to overcome adversity and deliver a strong performance on the pitch. Hong Myung-bo's plea for fan support comes amidst mounting controversy surrounding the national team's recent performance, with questions arising regarding the team's tactical approach and player selection.
     The match against Oman, scheduled for October 10th at the Sultan Qaboos Sports Complex, holds significant weight in South Korea's qualification hopes, as a victory would be crucial to maintaining momentum in Group B. Hong Myung-bo's words, imbued with a mixture of introspection and determination, reflect the immense pressure facing the South Korean squad as they embark on this critical juncture in their World Cup qualifying journey.`;
 
+  const setExpModal = useSetRecoilState(isExpModalState);
   const [grid, setGrid] = useState<string[][]>([]);
   const [selectedPositions, setSelectedPositions] = useState<
     [number, number][]
@@ -42,7 +46,6 @@ const WordHunt: React.FC<EngDataProps> = ({ engData }) => {
   const [isCheckModal, setIsCheckModal] = useState<boolean>(false);
   const [correctWords, setCorrectWords] = useState<string[]>([]);
   const [correctWordsCount, setCorrectWordsCount] = useState<number>(0);
-
   useEffect(() => {
     const handleExtractWords = () => {
       const words = extractWords(text); // 단어 추출
@@ -62,6 +65,19 @@ const WordHunt: React.FC<EngDataProps> = ({ engData }) => {
 
     handleExtractWords(); // 컴포넌트가 마운트될 때 실행
   }, [text]);
+
+  useEffect(() => {
+
+    if (correctWordsCount > 0) {
+
+      const exp = {
+        isOpen: true,
+        experience: 2,
+        action: "Word Hunt"
+      }
+      putExpUp(2, setExpModal, exp.action)
+    }
+  }, [correctWordsCount, setExpModal]);
 
   const handleMouseLeaveGrid = () => {
     if (selectedPositions.length > 0) {
@@ -297,12 +313,12 @@ const Cell = styled.div<{
     props.$isAnswer
       ? props.theme.colors.primary
       : props.$isCorrect
-      ? props.theme.colors.primary
-      : props.$isIncorrect
-      ? props.theme.colors.danger
-      : props.$isSelected
-      ? "yellow"
-      : props.theme.colors.cardBackground01};
+        ? props.theme.colors.primary
+        : props.$isIncorrect
+          ? props.theme.colors.danger
+          : props.$isSelected
+            ? "yellow"
+            : props.theme.colors.cardBackground01};
   color: ${(props) =>
     props.$isCorrect || props.$isIncorrect || props.$isAnswer
       ? "white"

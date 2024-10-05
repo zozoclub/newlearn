@@ -65,7 +65,7 @@ const NewsSearchPage = () => {
             <NewsListItem key={news.newsId} news={news} />
           ))
         ) : (
-          <div>검색 결과가 없습니다.</div>
+          <NoResult>검색 결과가 없습니다.</NoResult>
         )}
       </NewsListContainer>
       {searchResultList.length > 0 && (
@@ -95,4 +95,11 @@ const NewsListContainer = styled.div`
   padding: 0 12rem;
 `;
 
+const NoResult = styled.div`
+  text-align: center;
+  padding: 2rem 0;
+  color: gray;
+  font-weight: bold;
+  font-size: 2rem;
+`;
 export default NewsSearchPage;

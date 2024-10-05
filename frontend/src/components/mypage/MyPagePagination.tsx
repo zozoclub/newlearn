@@ -3,6 +3,7 @@ import styled from "styled-components";
 interface PaginationProps {
   totalPages: number;
   currentPage: number;
+  showElement: number;
   onPageChange: (page: number) => void; // 페이지 변경 함수 추가
   onNextPage: () => void; // 다음 페이지 변경 함수 추가
 }
@@ -10,12 +11,15 @@ interface PaginationProps {
 const MyPagePagination: React.FC<PaginationProps> = ({
   totalPages,
   currentPage,
+  showElement,
   onPageChange,
   onNextPage, // props로 추가된 다음 페이지 변경 함수
 }) => {
-  const pageGroup = Math.ceil(currentPage / 3);
-  const lastPage = pageGroup * 3 > totalPages ? totalPages : pageGroup * 3;
-  const firstPage = lastPage - 2 <= 0 ? 1 : lastPage - 2;
+  const pageGroup = Math.ceil(currentPage / showElement);
+  const lastPage =
+    pageGroup * showElement > totalPages ? totalPages : pageGroup * showElement;
+  const firstPage =
+    lastPage - (showElement - 1) <= 0 ? 1 : lastPage - (showElement - 1);
 
   const firstButtonHandle = () => onPageChange(1);
   const prevButtonHandle = () => onPageChange(currentPage - 1);

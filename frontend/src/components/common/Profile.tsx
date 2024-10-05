@@ -85,6 +85,7 @@ const AvatarContainer = styled.div`
   position: relative;
   width: 9rem;
   height: 9rem;
+  margin-top: 0.5rem;
 
   .circular-chart {
     display: block;
@@ -126,6 +127,8 @@ const NameDiv = styled.div`
   align-items: center;
   gap: 0.25rem;
   margin-top: 1rem;
+  font-size: 1.125rem;
+  font-weight: bold;
 `;
 
 const ReadStatus = styled.div`
@@ -144,6 +147,8 @@ const ReadStatus = styled.div`
 const ReadStatusTag = styled.div`
   margin: 0.75rem 0 0.75rem 0;
   text-align: center;
+  font-size: 1.125rem;
+  font-weight: 500;
 `;
 
 const ReadStatusNum = styled.div`

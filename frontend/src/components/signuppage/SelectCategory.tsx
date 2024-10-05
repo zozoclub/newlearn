@@ -1,6 +1,12 @@
 import Button from "@components/Button";
-import signupState from "@store/signupState";
-import { useRecoilState } from "recoil";
+import {
+  CheckAction,
+  CheckActionObject,
+  SignUpAction,
+  SignUpActionObject,
+  SignUpStateType,
+} from "types/signUpType";
+import { Dispatch, useEffect } from "react";
 import styled from "styled-components";
 
 const categories = [
@@ -12,33 +18,46 @@ const categories = [
   { name: "IT/과학" },
 ];
 
-const SelectCategory = () => {
-  const [signupData, setSignupData] = useRecoilState(signupState);
-  const selectedCategories = signupData.categories;
+type SelectCategoryProps = {
+  signUpState: SignUpStateType;
+  signUpDispatch: Dispatch<SignUpActionObject>;
+  checkDispatch: Dispatch<CheckActionObject>;
+};
 
+const SelectCategory: React.FC<SelectCategoryProps> = ({
+  signUpState,
+  signUpDispatch,
+  checkDispatch,
+}) => {
   const handleCategoryClick = (categoryName: string) => {
-    setSignupData((prevState) => ({
-      ...prevState,
-      categories: prevState.categories.includes(categoryName)
-        ? prevState.categories.filter((name) => name !== categoryName)
-        : prevState.categories.length < 3
-        ? [...prevState.categories, categoryName]
-        : prevState.categories,
-    }));
+    signUpDispatch({
+      type: SignUpAction.CHANGE_CATEGORIES,
+      payload: categoryName,
+    });
   };
+
+  useEffect(() => {
+    checkDispatch({
+      type: CheckAction.CHECK_CATEGORIES,
+      payload: signUpState.categories,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [signUpState.categories]);
 
   return (
     <div className="category">
       <div className="desc">
         관심 카테고리
-        <CategoryCount>{selectedCategories.length}/3</CategoryCount>
+        <CategoryCount>{signUpState.categories.length}/3</CategoryCount>
       </div>
       <div className="buttons">
         {categories.map((category) => (
           <Button
             key={category.name}
             $varient={
-              selectedCategories.includes(category.name) ? "primary" : "cancel"
+              signUpState.categories.includes(category.name)
+                ? "primary"
+                : "cancel"
             }
             size={"medium"}
             onClick={() => {

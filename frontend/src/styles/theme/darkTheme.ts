@@ -28,6 +28,7 @@ export const darkTheme: Theme = {
     highliting: "#78AFF0",
   },
   shadows: {
+    xsmall: "0.125rem 0.125rem 0.125rem #000000BD",
     small: "0.25rem 0.25rem 0.25rem #000000BD",
     medium: "0.5rem 0.5rem 0.25rem #000000BD",
   },

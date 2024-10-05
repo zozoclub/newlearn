@@ -36,7 +36,9 @@ const MainPage = () => {
     return (
       <Container>
         <NewsContainer>
-          <Clock />
+          <div style={{ paddingLeft: "1rem", paddingTop: "1rem" }}>
+            <Clock />
+          </div>
           <DailyNews />
         </NewsContainer>
         <WidgetContainer>
@@ -63,16 +65,15 @@ const Container = styled.div`
   display: flex;
   position: relative;
   height: 35rem;
-  padding: 5rem 0;
+  padding: 0;
   @media (min-width: 768px) {
   }
 `;
 
 const NewsContainer = styled.div`
   position: relative;
-  z-index: 1;
-  width: 90%;
-  padding: 0 5%;
+  width: 50%;
+  padding: 0 3%;
 `;
 
 const WidgetContainer = styled.div`

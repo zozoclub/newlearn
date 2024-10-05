@@ -1,7 +1,7 @@
-import React, { useMemo, Suspense } from "react";
+import React from "react";
 import styled from "styled-components";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Mousewheel, EffectCoverflow, Pagination } from "swiper/modules";
+import { Mousewheel, Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/parallax";
 import "swiper/css/effect-coverflow";
@@ -12,13 +12,12 @@ import { useRecoilValue } from "recoil";
 import userInfoState from "@store/userInfoState";
 import languageState from "@store/languageState";
 import { usePageTransition } from "@hooks/usePageTransition";
-
-const NewsSlide = React.lazy(() => import("./NewsSlide"));
+import NewsSlide from "./NewsSlide";
 
 const DailyNews: React.FC = () => {
   const userInfoData = useRecoilValue(userInfoState);
-  const difficulty = userInfoData.difficulty;
   const languageData = useRecoilValue(languageState);
+  const difficulty = userInfoData.difficulty;
   const transitionTo = usePageTransition();
 
   const { data: dailyNewsList, isLoading } = useQuery({
@@ -27,77 +26,64 @@ const DailyNews: React.FC = () => {
     staleTime: 5 * 60 * 1000, // 5분 동안 데이터를 신선한 상태로 유지
   });
 
-  const memoizedSwiper = useMemo(() => {
-    if (isLoading || !dailyNewsList) return null;
+  if (isLoading) return <div>Loading news...</div>;
 
-    return (
+  return (
+    <Container>
       <Swiper
         loop={true}
-        effect={"coverflow"}
+        effect={"slide"} // coverflow 대신 기본 slide 효과 사용
         grabCursor={true}
         centeredSlides={true}
-        slidesPerView={"auto"}
+        slidesPerView={1.5} // 한 번에 1.5개의 슬라이드가 보이도록 설정
+        spaceBetween={-50} // 음수 값을 주어 슬라이드가 겹치도록 설정
         speed={500}
         mousewheel={true}
-        coverflowEffect={{
-          rotate: 50,
-          stretch: 0,
-          depth: 100,
-          modifier: 0.75,
-          scale: 0.75,
-        }}
         pagination={true}
-        modules={[EffectCoverflow, Pagination, Mousewheel]}
+        modules={[Pagination, Mousewheel]} // EffectCoverflow 제거
         className="mySwiper"
       >
-        {dailyNewsList.map((news) => (
+        {dailyNewsList?.map((news) => (
           <SwiperSlide
             key={news.newsId}
             onClick={() => transitionTo(`/news/detail/${news.newsId}`)}
           >
-            <Suspense fallback={<div>Loading...</div>}>
-              <NewsSlide
-                image={news.thumbnailImageUrl}
-                title={news.title}
-                content={news.content}
-              />
-            </Suspense>
+            <NewsSlide
+              image={news.thumbnailImageUrl}
+              title={news.title}
+              content={news.content}
+            />
           </SwiperSlide>
         ))}
       </Swiper>
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dailyNewsList, isLoading]);
-
-  if (isLoading) return <div>Loading news...</div>;
-
-  return <Container>{memoizedSwiper}</Container>;
+    </Container>
+  );
 };
 
 const Container = styled.div`
   justify-content: flex-start;
   position: absolute;
   top: 10rem;
-  left: -35vw;
-  width: calc(130vw - 0.375rem);
+  width: 50vw;
   overflow: hidden;
 
   .swiper {
-    padding-top: 50px;
-    padding-bottom: 50px;
+    padding-bottom: 70px;
   }
 
   .swiper-slide {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 600px;
-    height: 360px;
+    width: 580px;
+    height: 440px;
     background-color: ${(props) => props.theme.colors.cardBackground + "BF"};
     border-radius: 0.5rem;
     backdrop-filter: blur(4px);
-    box-shadow: ${(props) => props.theme.shadows.medium};
+    box-shadow: ${(props) => props.theme.shadows.small};
     transition: all 0.3s ease;
+    opacity: 0.5; // 기본적으로 모든 슬라이드를 연하게 설정
+    transform: scale(0.9); // 기본적으로 모든 슬라이드를 약간 축소
   }
 
   .swiper .swiper-slide::after {
@@ -114,20 +100,24 @@ const Container = styled.div`
   }
 
   .swiper .swiper-slide:hover {
-    background: linear-gradient(
-      135deg,
-      rgba(0, 153, 255, 0.2),
-      rgba(0, 153, 255, 0.4),
-      rgba(0, 153, 255, 0.6),
-      rgba(0, 153, 255, 0.8),
-      #0099ff
-    );
+    background: ${(props) => props.theme.colors.text04};
   }
 
   .swiper .swiper-slide:hover::after {
     width: 170px;
     height: 170px;
   }
+
+  .swiper-slide-active {
+    opacity: 1;
+    transform: scale(1);
+    z-index: 2;
+  }
+
+  .swiper-slide-prev,
+  .swiper-slide-next {
+    z-index: 1;
+  }
 `;
 
-export default React.memo(DailyNews);
+export default DailyNews;

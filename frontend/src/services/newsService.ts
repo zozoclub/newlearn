@@ -271,7 +271,6 @@ export const searchAutoNews = async (query: string) => {
 export const searchNews = async (
   query: string,
   difficulty: number,
-  lang: string,
   page: number,
   size: number
 ) => {
@@ -280,13 +279,15 @@ export const searchNews = async (
       params: {
         query: query,
         difficulty: difficulty,
-        lang: lang,
         page: page,
         size: size,
       },
     });
     console.log(response.data.data);
-    return response.data.data;
+    return {
+      searchResult: response.data.data.content,
+      totalPages: response.data.data.totalPages,
+    };
   } catch (error) {
     console.log("뉴스 검색 실패", error);
     throw error;

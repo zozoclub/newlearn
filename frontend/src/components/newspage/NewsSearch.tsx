@@ -16,6 +16,7 @@ type NewsSearchProps = {
 
 const NewsSearch: React.FC<NewsSearchProps> = ({ initialQuery = "" }) => {
   const transitionTo = usePageTransition();
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const [searchValue, setSearchValue] = useState(initialQuery);
   const [searchResults, setSearchResults] = useState<SearchAutoNews[]>([]);
@@ -104,9 +105,9 @@ const NewsSearch: React.FC<NewsSearchProps> = ({ initialQuery = "" }) => {
   // 검색 버튼 눌렀을 때 검색 페이지로 이동
   const executeSearch = () => {
     if (searchValue.trim()) {
-      transitionTo(`/news/search/${encodeURIComponent(searchValue.trim())}`);
-      setSearchValue("");
-      setSearchResults([]);
+      const encodedQuery = encodeURIComponent(searchValue.trim());
+      transitionTo(`/news/search/${encodedQuery}`);
+      inputRef.current?.blur();
     }
   };
 
@@ -122,6 +123,7 @@ const NewsSearch: React.FC<NewsSearchProps> = ({ initialQuery = "" }) => {
   return (
     <SearchContainer>
       <input
+        ref={inputRef}
         placeholder="검색어를 입력해 주세요."
         value={searchValue}
         onChange={handleInputChange}

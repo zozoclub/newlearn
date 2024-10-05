@@ -92,6 +92,7 @@ const MyPageScrapNews = () => {
         <MyPagePagination
           currentPage={selectedPage + 1} // 사용자에게 보여줄 페이지 번호
           totalPages={totalPages}
+          showElement={3}
           onPageChange={handlePageChange} // 페이지 변경 핸들러 전달
           onNextPage={handleNextPage} // 다음 페이지 핸들러 전달
         />

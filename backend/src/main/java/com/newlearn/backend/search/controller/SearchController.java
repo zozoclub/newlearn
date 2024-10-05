@@ -33,7 +33,7 @@ public class SearchController {
 
 	@GetMapping
 	public ApiResponse<?> getTitle(Authentication authentication, @RequestParam("difficulty") int difficulty,
-		@RequestParam("lang") String query,
+		@RequestParam("query") String query,
 		@RequestParam(defaultValue = "0") int page,
 		@RequestParam(defaultValue = "10") int size) {
 		try {

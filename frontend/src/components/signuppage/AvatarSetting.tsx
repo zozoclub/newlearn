@@ -1,33 +1,43 @@
 import styled from "styled-components";
-import { useRecoilState } from "recoil";
-
-import signupState from "@store/signupState";
 import Avatar, { AvatarType } from "@components/common/Avatar";
+import {
+  SignUpAction,
+  SignUpActionObject,
+  SignUpStateType,
+} from "types/signUpType";
+import { Dispatch } from "react";
 
 type AvatarPartType = "skin" | "eyes" | "mask";
 type DirectionType = "prev" | "next";
 
-const AvatarSetting = () => {
+type AvatarSettingProps = {
+  signUpState: SignUpStateType;
+  signUpDispatch: Dispatch<SignUpActionObject>;
+};
+
+const AvatarSetting: React.FC<AvatarSettingProps> = ({
+  signUpState,
+  signUpDispatch,
+}) => {
   const skinCount = 10;
   const eyesCount = 9;
   const maskCount = 14;
-  const [signupData, setSignupData] = useRecoilState(signupState);
   const avatar: AvatarType = {
-    skin: signupData.skin,
-    eyes: signupData.eyes,
-    mask: signupData.mask,
+    skin: signUpState.skin,
+    eyes: signUpState.eyes,
+    mask: signUpState.mask,
   };
 
   const updateAvatarPart = (part: AvatarPartType, value: number) => {
-    setSignupData((prev) => ({
-      ...prev,
-      [part]: value,
-    }));
+    signUpDispatch({
+      type: SignUpAction.CHANGE_AVATAR,
+      payload: { ...avatar, [part]: value },
+    });
   };
 
   const handleChange = (part: AvatarPartType, direction: DirectionType) => {
     const counts = { skin: skinCount, eyes: eyesCount, mask: maskCount };
-    const currentValue = signupData[part];
+    const currentValue = signUpState[part];
     let newValue;
 
     if (direction === "prev") {

@@ -1,7 +1,12 @@
-import { useEffect, useState } from "react";
+import { Dispatch, useEffect, useState } from "react";
 import styled from "styled-components";
-import signupState from "@store/signupState";
-import { useRecoilState } from "recoil";
+import {
+  CheckAction,
+  CheckActionObject,
+  SignUpAction,
+  SignUpActionObject,
+  SignUpStateType,
+} from "types/signUpType";
 
 type WordType = {
   [key: string]: string;
@@ -171,13 +176,20 @@ const score: { [key: string]: number } = {
 
 type LevelTestProps = {
   setPageNum: (pageNum: number) => void;
+  signUpState: SignUpStateType;
+  signUpDispatch: Dispatch<SignUpActionObject>;
+  checkDispatch: Dispatch<CheckActionObject>;
 };
-const LevelTestPage: React.FC<LevelTestProps> = ({ setPageNum }) => {
+const LevelTestPage: React.FC<LevelTestProps> = ({
+  setPageNum,
+  signUpState,
+  signUpDispatch,
+  checkDispatch,
+}) => {
   const [words, setWords] = useState<WordWithLevel[]>([]);
   const [selectedWords, setSelectedWords] = useState<Set<string>>(new Set());
   const [totalScore, setTotalScore] = useState<number>(0);
   const [isTestComplete, setIsTestComplete] = useState<boolean>(false);
-  const [signupData, setSignupData] = useRecoilState(signupState);
   const [difficulty, setDifficulty] = useState<number>(1);
 
   useEffect(() => {
@@ -219,8 +231,19 @@ const LevelTestPage: React.FC<LevelTestProps> = ({ setPageNum }) => {
 
   const handleCompleteTest = (difficulty: number) => {
     setIsTestComplete(true);
-    setSignupData({ ...signupData, difficulty });
+    signUpDispatch({
+      type: SignUpAction.CHANGE_DIFFICULTY,
+      payload: difficulty,
+    });
   };
+
+  useEffect(() => {
+    checkDispatch({
+      type: CheckAction.CHECK_DIFFICULTY,
+      payload: signUpState.difficulty,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [signUpState.difficulty]);
 
   return (
     <PageContainer>

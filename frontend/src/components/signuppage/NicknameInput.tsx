@@ -1,36 +1,58 @@
-import signupState from "@store/signupState";
-import { useRecoilState } from "recoil";
+import {
+  CheckAction,
+  CheckActionObject,
+  CheckStateType,
+  SignUpAction,
+  SignUpActionObject,
+  SignUpStateType,
+} from "types/signUpType";
 import styled from "styled-components";
+import { Dispatch, useEffect } from "react";
 
-const NicknameInput: React.FC<{
-  isNicknameAvailable: boolean;
-  isNicknameDuplicated: boolean;
-  onNicknameChange: (nickname: string) => void;
-}> = ({ isNicknameAvailable, isNicknameDuplicated, onNicknameChange }) => {
-  const [signupData, setSignupData] = useRecoilState(signupState);
-  const nickname = signupData.nickname;
+type NicknameInputProps = {
+  signUpState: SignUpStateType;
+  checkState: CheckStateType;
+  signUpDispatch: Dispatch<SignUpActionObject>;
+  checkDispatch: Dispatch<CheckActionObject>;
+};
 
-  function handleNicknameChange(nickname: string) {
-    if (nickname.length <= 8) {
-      onNicknameChange(nickname);
-      setSignupData({ ...signupData, nickname });
+const NicknameInput: React.FC<NicknameInputProps> = ({
+  signUpState,
+  checkState,
+  signUpDispatch,
+  checkDispatch,
+}) => {
+  const handleNicknameChange = (newNickname: string) => {
+    if (newNickname.length <= 8) {
+      signUpDispatch({
+        type: SignUpAction.CHANGE_NICKNAME,
+        payload: newNickname,
+      });
     }
-  }
+  };
+
+  useEffect(() => {
+    checkDispatch({
+      type: CheckAction.CHECK_NICKNAME_AVAILABLE,
+      payload: signUpState.nickname, // 새 닉네임으로 검사
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [signUpState.nickname]);
 
   return (
     <Container>
       <div className="desc">닉네임</div>
       <Input
-        $isNicknameAvailable={isNicknameAvailable}
-        $isNicknameDuplicated={isNicknameDuplicated}
+        $isNicknameAvailable={checkState.isNicknameAvailable}
+        $isNicknameDuplicated={checkState.isNicknameDuplicated}
         placeholder="닉네임 (최소 3자에서 최대 8자의 한글)"
-        value={nickname}
+        value={signUpState.nickname}
         onChange={(event) => handleNicknameChange(event.target.value)}
       />
-      <AvailableDiv $isNicknameAvailable={isNicknameAvailable}>
+      <AvailableDiv $isNicknameAvailable={checkState.isNicknameAvailable}>
         닉네임은 3~8자의 한글이어야 합니다.
       </AvailableDiv>
-      <DuplicatedDiv $isNicknameDuplicated={isNicknameDuplicated}>
+      <DuplicatedDiv $isNicknameDuplicated={checkState.isNicknameDuplicated}>
         중복된 닉네임입니다.
       </DuplicatedDiv>
     </Container>

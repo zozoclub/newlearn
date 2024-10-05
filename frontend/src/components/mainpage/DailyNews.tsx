@@ -1,4 +1,4 @@
-import React, { useMemo, Suspense } from "react";
+import React from "react";
 import styled from "styled-components";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Mousewheel, EffectCoverflow, Pagination } from "swiper/modules";
@@ -12,13 +12,12 @@ import { useRecoilValue } from "recoil";
 import userInfoState from "@store/userInfoState";
 import languageState from "@store/languageState";
 import { usePageTransition } from "@hooks/usePageTransition";
-
-const NewsSlide = React.lazy(() => import("./NewsSlide"));
+import NewsSlide from "./NewsSlide";
 
 const DailyNews: React.FC = () => {
   const userInfoData = useRecoilValue(userInfoState);
-  const difficulty = userInfoData.difficulty;
   const languageData = useRecoilValue(languageState);
+  const difficulty = userInfoData.difficulty;
   const transitionTo = usePageTransition();
 
   const { data: dailyNewsList, isLoading } = useQuery({
@@ -27,10 +26,10 @@ const DailyNews: React.FC = () => {
     staleTime: 5 * 60 * 1000, // 5분 동안 데이터를 신선한 상태로 유지
   });
 
-  const memoizedSwiper = useMemo(() => {
-    if (isLoading || !dailyNewsList) return null;
+  if (isLoading) return <div>Loading news...</div>;
 
-    return (
+  return (
+    <Container>
       <Swiper
         loop={true}
         effect={"coverflow"}
@@ -50,28 +49,21 @@ const DailyNews: React.FC = () => {
         modules={[EffectCoverflow, Pagination, Mousewheel]}
         className="mySwiper"
       >
-        {dailyNewsList.map((news) => (
+        {dailyNewsList?.map((news) => (
           <SwiperSlide
             key={news.newsId}
             onClick={() => transitionTo(`/news/detail/${news.newsId}`)}
           >
-            <Suspense fallback={<div>Loading...</div>}>
-              <NewsSlide
-                image={news.thumbnailImageUrl}
-                title={news.title}
-                content={news.content}
-              />
-            </Suspense>
+            <NewsSlide
+              image={news.thumbnailImageUrl}
+              title={news.title}
+              content={news.content}
+            />
           </SwiperSlide>
         ))}
       </Swiper>
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dailyNewsList, isLoading]);
-
-  if (isLoading) return <div>Loading news...</div>;
-
-  return <Container>{memoizedSwiper}</Container>;
+    </Container>
+  );
 };
 
 const Container = styled.div`
@@ -130,4 +122,4 @@ const Container = styled.div`
   }
 `;
 
-export default React.memo(DailyNews);
+export default DailyNews;

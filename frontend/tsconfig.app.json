@@ -33,6 +33,7 @@
       "@assets/*": ["src/assets/*"],
       "types/*": ["src/types/*"],
       "@store/*": ["src/store/*"],
+      "@reducers/*": ["src/reducers/*"]
     }
   },
   "include": ["src"]

@@ -9,23 +9,21 @@ interface NewsSlideProps {
   content: string;
 }
 
-const NewsSlide: React.FC<NewsSlideProps> = React.memo(
-  ({ image, title, content }) => (
-    <>
-      {image ? (
-        <ThumbnailImage loading="lazy" src={image} alt="news" />
-      ) : (
-        <>
-          <ThumbnailImage src={lightThumbnailImage} />
-          <DarkThumbnailImage src={darkThumbnailImage} />
-        </>
-      )}
-      <NewsContent className="news-content">
-        <h1>{title}</h1>
-        <div>{content}</div>
-      </NewsContent>
-    </>
-  )
+const NewsSlide: React.FC<NewsSlideProps> = ({ image, title, content }) => (
+  <>
+    {image ? (
+      <ThumbnailImage loading="lazy" src={image} alt="news" />
+    ) : (
+      <>
+        <ThumbnailImage src={lightThumbnailImage} />
+        <DarkThumbnailImage src={darkThumbnailImage} />
+      </>
+    )}
+    <NewsContent>
+      <div className="title">{title}</div>
+      <div className="content">{content}</div>
+    </NewsContent>
+  </>
 );
 
 const ThumbnailImage = styled.img`
@@ -55,7 +53,7 @@ const NewsContent = styled.div`
   color: ${(props) => props.theme.colors.text};
   transition: background-color 0.3s ease;
 
-  h1 {
+  .title {
     margin-bottom: 0.5rem;
     font-size: 1.25rem;
     font-weight: 700;
@@ -67,7 +65,7 @@ const NewsContent = styled.div`
     -webkit-line-clamp: 1;
   }
 
-  div {
+  .content {
     font-size: 1rem;
     line-height: 1.25rem;
     height: 2.5rem;

@@ -32,12 +32,24 @@ public class SearchController {
 	private final UserService userService;
 
 	@GetMapping
-	public ApiResponse<?> getTitle(Authentication authentication, @RequestBody SearchListRequestDTO searchListRequestDTO) {
+	public ApiResponse<?> getTitle(Authentication authentication, @RequestParam("difficulty") int difficulty,
+		@RequestParam("lang") String query,
+		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "10") int size) {
 		try {
 			Users user = userService.findByEmail(authentication.getName());
 			if (user == null) {
 				return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
 			}
+
+			SearchListRequestDTO searchListRequestDTO = SearchListRequestDTO.builder()
+				.difficulty(difficulty)
+				.query(query)
+				.size(size)
+				.page(page)
+				.build();
+
+
 			Page<NewsResponseDTO> result = searchService.searchByTitleOrTitleEng(searchListRequestDTO, user);
 			if (result.isEmpty()) {
 				return ApiResponse.createSuccess(result, "조회없음");

@@ -16,6 +16,7 @@ import co.elastic.clients.elasticsearch.indices.RefreshRequest;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
@@ -23,6 +24,7 @@ import co.elastic.clients.elasticsearch.core.search.Hit;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -59,23 +61,32 @@ public class SearchService {
 
 		SearchResponse<SearchNews> response = elasticsearchClient.search(searchRequest, SearchNews.class);
 
+		// 검색 결과에서 newsId 리스트 추출
 		List<Long> newsIds = response.hits().hits().stream()
 			.map(Hit::source)
 			.map(SearchNews::getNewsId)
 			.collect(Collectors.toList());
 
-		Page<News> newsList = newsRepository.findAllByOrderByNewsIdDesc(searchListRequestDTO.getPageable());
+		// 검색 결과가 없을 때 빈 페이지 반환
+		if (newsIds.isEmpty()) {
+			return new PageImpl<>(Collections.emptyList(), searchListRequestDTO.getPageable(), 0);
+		}
 
+		// 필터링된 뉴스 데이터에 페이지네이션 적용하여 가져오기
+		Page<News> newsList = newsRepository.findByNewsIdInOrderByNewsIdDesc(newsIds, searchListRequestDTO.getPageable());
 
-		List<UserNewsRead> userNewsReads = readRepository.findAllByUser(user);
+		// 사용자가 읽은 뉴스 데이터를 newsIds를 기준으로 한 번에 조회하여 매핑
+		List<UserNewsRead> userNewsReads = readRepository.findAllByUserAndNews_NewsIdIn(user, newsIds);
 		Map<Long, UserNewsRead> userNewsReadMap = userNewsReads.stream()
 			.collect(Collectors.toMap(unr -> unr.getNews().getNewsId(), Function.identity()));
 
-
-		return newsList.map(news -> NewsResponseDTO.makeNewsResponseDTO(news,
+		// 결과를 DTO로 변환하여 반환
+		return newsList.map(news -> NewsResponseDTO.makeNewsResponseDTO(
+			news,
 			searchListRequestDTO.getLang(),
 			searchListRequestDTO.getDifficulty(),
-			userNewsReadMap.get(news.getNewsId())));
+			userNewsReadMap.get(news.getNewsId()) // 사용자가 읽은 정보와 함께 반환
+		));
 	}
 
 

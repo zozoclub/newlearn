@@ -8,7 +8,7 @@ import NewsDetailContent from "@components/newspage/NewsDetailContent";
 import NewsHeader from "@components/newspage/NewsHeader";
 import ProgressBar from "@components/newspage/ProgressBar";
 import Spinner from "@components/Spinner";
-import { DetailNewsType, getNewsDetail } from "@services/newsService";
+import { getNewsDetail } from "@services/newsService";
 import userInfoState from "@store/userInfoState";
 import newsWordState from "@store/newsWordState";
 import languageState from "@store/languageState";
@@ -16,6 +16,7 @@ import WordHunt from "@components/WordHunt";
 import lightThumbnailImage from "@assets/images/lightThumbnail.png";
 import darkThumbnailImage from "@assets/images/darkThumbnail.png";
 import BackArrow from "@assets/icons/BackArrow";
+import { DetailNewsType } from "types/newsType";
 
 const NewsDetailPage = () => {
   const userInfoData = useRecoilValue(userInfoState);

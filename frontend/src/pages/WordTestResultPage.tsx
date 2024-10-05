@@ -94,15 +94,17 @@ const WordTestResultPage: React.FC = () => {
               newsId={testDetail.result[currentWordIndex].newsId}
               answerWord={testDetail.result[currentWordIndex].correctAnswer}
               userAnswer={testDetail.result[currentWordIndex].answer}
+              difficulty={testDetail.result[currentWordIndex].difficulty}
               sentence={testDetail.result[currentWordIndex].sentence}
               sentenceMeaning={testDetail.result[currentWordIndex].sentenceMeaning}
               isCorrect={testDetail.result[currentWordIndex].correct}
-            />
-          ) : (
-            <WordTestResultWordDetail
+              />
+            ) : (
+              <WordTestResultWordDetail
               newsId={testDetail.result[0].newsId}
               answerWord={testDetail.result[0].correctAnswer}
               userAnswer={testDetail.result[0].answer}
+              difficulty={testDetail.result[currentWordIndex].difficulty}
               sentence={testDetail.result[0].sentence}
               sentenceMeaning={testDetail.result[0].sentenceMeaning}
               isCorrect={testDetail.result[0].correct}

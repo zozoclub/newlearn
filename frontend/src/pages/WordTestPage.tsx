@@ -490,8 +490,12 @@ const BottomContainer = styled.div`
 `;
 
 const ErrorMessage = styled.span`
+display: flex;
+justify-content:center;
+margin-bottom: 1rem;
   color: ${(props) => props.theme.colors.danger};
-  font-size: 0.875rem;
+  font-size: 1.25rem;
+  font-weight: 600;
   margin-top: 0.5rem;
 `;
 

@@ -45,7 +45,7 @@ public class SearchService {
 		elasticsearchClient.indices().refresh(RefreshRequest.of(r -> r.index("news")));
 
 		String analyzer = isKorean(query) ? "title" : "title_eng";
-		searchListRequestDTO.setLang(isKorean(query) ? "ko" : "en");
+		searchListRequestDTO.setLang(isKorean(query) ? "kr" : "en");
 		SearchRequest searchRequest = SearchRequest.of(s -> s
 			.index("news")
 			.size(200)

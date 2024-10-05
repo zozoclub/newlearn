@@ -12,6 +12,7 @@ public class WordTestResultDetailResponseDTO {
     private long newsId;
     private long questionId;
     private String answer;
+    private long difficulty;
     private String correctAnswer;
     private String sentence;
     private String sentenceMeaning;

@@ -247,6 +247,7 @@ public class StudyServiceImpl implements StudyService{
                     .newsId(wordSentence.getNewsId())
                     .questionId(question.getWordQuizQuestionId())
                     .answer(answer)
+                    .difficulty(wordSentence.getDifficulty())
                     .correctAnswer(question.getCorrectAnswer())
                     .sentence(question.getSentence())
                     .sentenceMeaning(question.getSentenceMeaning())

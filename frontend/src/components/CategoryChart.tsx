@@ -97,7 +97,8 @@ const CategoryChart: React.FC = () => {
         },
         pointLabels: {
           font: {
-            size: 12,
+            size: 14,
+            weight: 600,
           },
           color: theme.colors.text,
         },
@@ -118,5 +119,5 @@ const CategoryChart: React.FC = () => {
 export default CategoryChart;
 
 const ChartContainer = styled.div`
-  width: 100%;
+  width: 95%;
 `;

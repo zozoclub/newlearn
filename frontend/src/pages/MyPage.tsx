@@ -77,6 +77,6 @@ const WidgetContainer = styled.div`
   border-radius: 12px;
   transition: box-shadow 0.5s;
   backdrop-filter: blur(4px);
-  box-shadow: ${(props) => props.theme.shadows.medium};
+  box-shadow: ${(props) => props.theme.shadows.small};
   box-sizing: border-box;
 `;

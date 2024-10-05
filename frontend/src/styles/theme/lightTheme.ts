@@ -28,6 +28,7 @@ export const lightTheme: Theme = {
     highliting: "#0268ed",
   },
   shadows: {
+    xsmall: "0.125rem 0.125rem 0.125rem #4747477F",
     small: "0.25rem 0.25rem 0.25rem #0000007F",
     medium: "0.5rem 0.5rem 0.25rem #0000007F",
   },

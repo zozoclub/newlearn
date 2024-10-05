@@ -1,12 +1,12 @@
 import styled from "styled-components";
-import CategoryChart from "@components/CategoryChart";
+// import CategoryChart from "@components/CategoryChart";
 import TopRankingWidget, {
   PointRankingType,
   ReadRankingType,
 } from "./TopRankingWidget";
 import MainGoalBar from "@components/mainpage/MainGoalBar";
 import { useNavigate } from "react-router-dom";
-import RankingWidget from "./RankingWidget";
+// import RankingWidget from "./RankingWidget";
 import { useQuery } from "@tanstack/react-query";
 import {
   getPointRankingList,
@@ -14,6 +14,7 @@ import {
 } from "@services/rankingService";
 import { useRecoilValue } from "recoil";
 import { goalDataSelector } from "@store/goalState";
+import CategoryChart from "@components/CategoryChart";
 
 const Widget: React.FC<{ variety: string }> = ({ variety }) => {
   const { isLoading: pointIsLoading, data: pointRankingList } = useQuery<
@@ -44,26 +45,26 @@ const Widget: React.FC<{ variety: string }> = ({ variety }) => {
       );
     case "topRanking":
       return (
-        <WidgetContainer>
+        <LargeWidgetContainer>
           <TopRankingWidget
             pointIsLoading={pointIsLoading}
             pointRankingList={pointRankingList}
             readIsLoading={readIsLoading}
             readRankingList={readRankingList}
           />
-        </WidgetContainer>
+        </LargeWidgetContainer>
       );
-    case "ranking":
-      return (
-        <WidgetContainer>
-          <RankingWidget
-            pointIsLoading={pointIsLoading}
-            pointRankingList={pointRankingList}
-            readIsLoading={readIsLoading}
-            readRankingList={readRankingList}
-          />
-        </WidgetContainer>
-      );
+    // case "ranking":
+    //   return (
+    //     <WidgetContainer>
+    //       <RankingWidget
+    //         pointIsLoading={pointIsLoading}
+    //         pointRankingList={pointRankingList}
+    //         readIsLoading={readIsLoading}
+    //         readRankingList={readRankingList}
+    //       />
+    //     </WidgetContainer>
+    //   );
     case "goal":
       return (
         <WidgetContainer>
@@ -90,7 +91,7 @@ const WidgetContainer = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 95%;
+  height: 300px;
   padding: 2.5%;
 
   aspect-ratio: 1;
@@ -98,7 +99,11 @@ const WidgetContainer = styled.div`
   border-radius: 1rem;
   transition: box-shadow 0.5s;
   backdrop-filter: blur(12px);
-  box-shadow: ${(props) => props.theme.shadows.medium};
+  box-shadow: ${(props) => props.theme.shadows.xsmall};
+`;
+
+const LargeWidgetContainer = styled(WidgetContainer)`
+  aspect-ratio: 2.12;
 `;
 
 const GoalSetting = styled.button`

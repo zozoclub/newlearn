@@ -27,8 +27,8 @@ const NewsSlide: React.FC<NewsSlideProps> = ({ image, title, content }) => (
 );
 
 const ThumbnailImage = styled.img`
-  width: 580px;
-  height: 340px;
+  width: 100%;
+  height: 100%;
   border-radius: 0.5rem;
   opacity: 0.9;
   object-fit: cover; // 이미지 비율 유지
@@ -44,8 +44,8 @@ const DarkThumbnailImage = styled(ThumbnailImage)`
 const NewsContent = styled.div`
   position: absolute;
   bottom: 0rem;
-  left: 0rem;
-  width: calc(100% - 4rem);
+  left: 0;
+  width: 90%;
   margin: 1rem;
   padding: 1rem 1rem;
   border-radius: 0.5rem;

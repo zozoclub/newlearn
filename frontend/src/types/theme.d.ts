@@ -26,6 +26,7 @@ export type Theme = {
     highliting: string;
   };
   shadows: {
+    xsmall: string;
     small: string;
     medium: string;
   };

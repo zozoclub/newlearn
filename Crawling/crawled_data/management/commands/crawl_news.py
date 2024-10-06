@@ -98,8 +98,8 @@ class Command(BaseCommand):
             101: 2,
             102: 3,
             103: 4,
-            104: 5,
-            105: 6
+            104: 6,
+            105: 5
         }
         section = sid_to_section.get(sid, sid)
 

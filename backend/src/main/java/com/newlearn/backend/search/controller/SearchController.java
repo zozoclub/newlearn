@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -69,6 +70,18 @@ public class SearchController {
 			return ApiResponse.createSuccess(result, "조회성공");
 		} catch (Exception e) {
 			e.printStackTrace();
+			return ApiResponse.createError(ErrorCode.SEARCH_NOT_FOUND);
+		}
+	}
+
+	//집계 함수 제거
+	@DeleteMapping("/delete")
+	public ApiResponse<?> deleteAggregateIndex() {
+		System.out.println("들어오기는함");
+		try {
+			searchService.deleteAggregateIndex();
+			return ApiResponse.createSuccess(null, "성공적으로 삭제했습니다");
+		} catch (Exception e) {
 			return ApiResponse.createError(ErrorCode.SEARCH_NOT_FOUND);
 		}
 	}

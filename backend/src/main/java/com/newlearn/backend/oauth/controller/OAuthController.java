@@ -96,7 +96,7 @@ public class OAuthController {
 				.maxAge(60*60*24*14)
 				.path("/")
 				.sameSite("None")
-				//.domain("j11d105.p.ssafy.io")
+				.domain("j11d105.p.ssafy.io")
 				.build();
 
 

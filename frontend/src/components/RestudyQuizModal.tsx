@@ -10,7 +10,12 @@ type ModalProps = {
   children: React.ReactNode;
 };
 
-const RestudyQuizModal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
+const RestudyQuizModal: React.FC<ModalProps> = ({
+  isOpen,
+  onClose,
+  title,
+  children,
+}) => {
   const [isAnimating, setIsAnimating] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false); // 종료 확인 모달 상태 추가
 
@@ -44,19 +49,21 @@ const RestudyQuizModal: React.FC<ModalProps> = ({ isOpen, onClose, title, childr
     <>
       <ModalOverlay $isOpen={isOpen} onClick={handleOverlayClick}>
         <ModalContent $isOpen={isOpen}>
-          <ModalHeader>
-            {title && <ModalTitle>{title}</ModalTitle>}
-          </ModalHeader>
+          <ModalHeader>{title && <ModalTitle>{title}</ModalTitle>}</ModalHeader>
           <ModalBody>{children}</ModalBody>
         </ModalContent>
       </ModalOverlay>
 
       {/* 종료 확인 모달 */}
-      <Modal isOpen={isConfirmModalOpen} onClose={handleCancelClose} title="확인">
-        <p>정말 종료하시겠습니까?</p>
+      <Modal isOpen={isConfirmModalOpen} onClose={handleCancelClose} title="">
+        <Description>정말 종료하시겠습니까?</Description>
         <ModalButtonContainer>
-          <ModalCancelButton onClick={handleCancelClose}>취소</ModalCancelButton>
-          <ModalConfirmButton onClick={handleConfirmClose}>확인</ModalConfirmButton>
+          <ModalCancelButton onClick={handleCancelClose}>
+            취소
+          </ModalCancelButton>
+          <ModalConfirmButton onClick={handleConfirmClose}>
+            확인
+          </ModalConfirmButton>
         </ModalButtonContainer>
       </Modal>
     </>,
@@ -102,8 +109,9 @@ const ModalOverlay = styled.div<{ $isOpen: boolean }>`
 
 const ModalContent = styled.div<{ $isOpen: boolean }>`
   position: relative;
-  min-width: 60%;
+  min-width: 50%;
   max-width: 90%;
+  height: 50%;
   padding: 2rem;
   background-color: ${(props) => props.theme.colors.cardBackground};
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -126,26 +134,36 @@ const ModalHeader = styled.div`
 `;
 
 const ModalTitle = styled.div`
-  font-size: 1.25rem;
+  margin-top: 0.5rem;
+  margin-left: 1rem;
+  font-size: 1.75rem;
   font-weight: bold;
 `;
 
 const ModalBody = styled.div`
-  padding-top: 1rem;
+  height: 100%;
+  padding: 3rem 0;
 `;
 
 const ModalButtonContainer = styled.div`
   display: flex;
-  justify-content: space-around;
-  margin-top: 2rem;
+  justify-content: space-evenly;
+  margin-top: 3rem;
 `;
 
+const Description = styled.div`
+  font-size: 1.25rem;
+  font-weight: 500;
+  text-align: center;
+`;
 const ModalCancelButton = styled.button`
-  padding: 0.5rem 1.5rem;
+  padding: 0.5rem 1rem;
   background-color: ${(props) => props.theme.colors.placeholder};
   color: white;
   border: none;
   border-radius: 0.5rem;
+  font-weight: bold;
+  font-size: 1.125rem;
   cursor: pointer;
 
   &:hover {
@@ -154,11 +172,13 @@ const ModalCancelButton = styled.button`
 `;
 
 const ModalConfirmButton = styled.button`
-  padding: 0.5rem 1.5rem;
+  padding: 0.5rem 1rem;
   background-color: ${(props) => props.theme.colors.primary};
   color: white;
   border: none;
   border-radius: 0.5rem;
+  font-weight: bold;
+  font-size: 1.125rem;
   cursor: pointer;
 
   &:hover {

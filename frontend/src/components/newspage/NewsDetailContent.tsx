@@ -144,9 +144,14 @@ const NewsDetailContent: React.FC<NewsDetailContentType> = ({
                     korSentence: result.koreanSentence,
                   });
                   if (prevWord !== selected.word) {
+                    console.log(window.innerWidth);
+                    console.log(event.pageX);
                     setWordModalPosition({
-                      x: event.pageX,
-                      y: event.pageY - 200,
+                      x:
+                        window.innerWidth - event.pageX < 700
+                          ? window.innerWidth - 700
+                          : event.pageX,
+                      y: event.pageY - 125,
                     });
                   }
                 })

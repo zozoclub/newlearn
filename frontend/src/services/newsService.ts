@@ -289,3 +289,17 @@ export const getCategoryRecommandNewsList = async (): Promise<NewsType[]> => {
     throw error;
   }
 };
+
+export const getContentsFilteringRecommendNewsList = async (
+  newsId: number
+): Promise<NewsType[]> => {
+  try {
+    const response = await axiosInstance.get(`recommend/news/${newsId}`);
+    console.log(response);
+
+    return response.data.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};

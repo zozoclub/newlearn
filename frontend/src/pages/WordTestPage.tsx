@@ -136,7 +136,7 @@ const WordTestPage: React.FC = () => {
     if (quizId) {
       try {
         await deleteWordTest(quizId); // 중간에 퇴장 시 테스트 삭제
-        navigate("/testhistory"); // 퇴장 후 홈으로 이동
+        navigate("/wordtesthistory"); // 퇴장 후 홈으로 이동
       } catch (error) {
         console.error("테스트 삭제 실패:", error);
       }

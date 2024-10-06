@@ -43,14 +43,12 @@ const MyPageCategory: React.FC = () => {
             <div key={key}>
               <DataRow>
                 <DataLabel>{getLabelFromKey(key)}</DataLabel>
-                <DataValueContainer>
-                  <DataValue>{value}</DataValue>
-                  <DataPercentage>
-                    {countSum > 0
-                      ? `${((value / countSum) * 100).toFixed(2)}%`
-                      : "0%"}
-                  </DataPercentage>
-                </DataValueContainer>
+                <DataValue>{value}</DataValue>
+                <DataPercentage>
+                  {countSum > 0
+                    ? `${((value / countSum) * 100).toFixed(2)}%`
+                    : "0%"}
+                </DataPercentage>
               </DataRow>
               {index < array.length - 1 && <Divider />}
             </div>
@@ -71,7 +69,7 @@ const Container = styled.div`
 
   @media (max-width: 768px) {
     flex-direction: column;
-    gap: 2rem;
+    gap: 3rem;
   }
 `;
 
@@ -82,6 +80,8 @@ const ChartContainer = styled.div`
   margin-left: 1rem;
   @media (max-width: 768px) {
     width: 90%;
+    align-items: center;
+    margin: 0;
   }
 `;
 
@@ -92,7 +92,6 @@ const DataContainer = styled.div`
   margin-right: 2rem;
   @media (max-width: 768px) {
     width: 90%;
-    margin: 0 5rem;
   }
 `;
 
@@ -108,47 +107,32 @@ const DataHeader = styled.div`
 const HeaderItem = styled.div`
   flex: 1;
   margin: 0 0.875rem;
-  text-align: right;
-  &:first-child {
-    text-align: left;
-  }
-  &:last-child {
-    text-align: right;
-  }
+  text-align: center;
 `;
 
 const DataRow = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 0.25rem;
+  margin: 0.25rem 0;
 `;
 
 const DataLabel = styled.div`
   flex: 1;
-  margin: 0 0.5rem;
   font-size: 1.125rem;
-`;
-
-const DataValueContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  flex: 1;
+  text-align: center;
 `;
 
 const DataValue = styled.div`
+  flex: 1;
   font-size: 1.25rem;
   font-weight: bold;
-  text-align: right;
-  width: 4ch;
-  margin-right: 2rem;
+  text-align: center;
 `;
 
 const DataPercentage = styled.div`
-  width: 7ch;
-  margin: 0 0.5rem;
-  text-align: right;
+  flex: 1;
+  text-align: center;
 `;
 
 const Divider = styled.hr`

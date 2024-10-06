@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import { useMediaQuery } from "react-responsive";
 import MyPageProfile from "@components/mypage/MyPageProfile";
 import MyPageInfo from "@components/mypage/MyPageInfo";
@@ -12,6 +12,7 @@ import MyPageProfileMobile from "@components/mypage/mobile/MyPageProfileMobile";
 import MyPageCountMobile from "@components/mypage/mobile/MyPageCountMobile";
 import { useState } from "react";
 import backArrowIcon from "@assets/icons/mobile/backArrowIcon.svg";
+import Goal from "@components/mystudypage/Goal";
 const MyPage = () => {
   const isMobile = useMediaQuery({ maxWidth: 768 });
 
@@ -46,7 +47,7 @@ const MyPage = () => {
           <img src={arrowIcon} alt="버튼" />
         </WidgetMenuContainer>
         <WidgetMenuContainer onClick={handleProgressModal}>
-          <MenuTitle>학습 현황</MenuTitle>
+          <MenuTitle>이 달의 학습 현황</MenuTitle>
           <img src={arrowIcon} alt="버튼" />
         </WidgetMenuContainer>
         <WidgetMenuContainer onClick={handleScrapNewsModal}>
@@ -54,7 +55,7 @@ const MyPage = () => {
           <img src={arrowIcon} alt="버튼" />
         </WidgetMenuContainer>
         {isChartModalOpen && (
-          <FullScreenModal>
+          <FullScreenModal $isVisible={isChartModalOpen}>
             <ModalHeader>
               <BackButton onClick={() => setIsChartModalOpen(false)}>
                 <img src={backArrowIcon} alt="버튼" />
@@ -62,30 +63,40 @@ const MyPage = () => {
               <ModalTitle>마이 페이지</ModalTitle>
             </ModalHeader>
             <ModalContent>
+              <ItemTitle>
+                {new Date().getFullYear()} Contribution Graph
+              </ItemTitle>
+              <MyPageGrass />
+              <Divider />
+              <ItemTitle>Category Chart</ItemTitle>
               <MyPageCategory />
             </ModalContent>
           </FullScreenModal>
         )}
         {isProgressModalOpen && (
-          <FullScreenModal>
+          <FullScreenModal $isVisible={isProgressModalOpen}>
             <ModalHeader>
-              <BackButton onClick={() => setIsChartModalOpen(false)}>
+              <BackButton onClick={() => setIsProgressModalOpen(false)}>
                 <img src={backArrowIcon} alt="버튼" />
               </BackButton>
               <ModalTitle>마이 페이지</ModalTitle>
             </ModalHeader>
-            <ModalContent>{/* <MyPageCategory /> */}</ModalContent>
+            <ModalContent>
+              <Goal />
+            </ModalContent>
           </FullScreenModal>
         )}
         {isScrapNewsModalOpen && (
-          <FullScreenModal>
+          <FullScreenModal $isVisible={isScrapNewsModalOpen}>
             <ModalHeader>
-              <BackButton onClick={() => setIsChartModalOpen(false)}>
+              <BackButton onClick={() => setIsScrapNewsModalOpen(false)}>
                 <img src={backArrowIcon} alt="버튼" />
               </BackButton>
               <ModalTitle>마이 페이지</ModalTitle>
             </ModalHeader>
-            <ModalContent>{/* <MyPageCategory /> */}</ModalContent>
+            <ModalContent>
+              <MyPageScrapNews />
+            </ModalContent>
           </FullScreenModal>
         )}
       </MyPageContainer>
@@ -191,6 +202,7 @@ const WidgetMenuContainer = styled(WidgetContainer)`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  cursor: pointer;
 `;
 
 const MenuTitle = styled.div`
@@ -200,15 +212,42 @@ const MenuTitle = styled.div`
 
 // modal
 
-const FullScreenModal = styled.div`
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+`;
+
+// 모달이 닫힐 때의 페이드 아웃 애니메이션
+const fadeOut = keyframes`
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+`;
+
+const FullScreenModal = styled.div<{ $isVisible: boolean }>`
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  height: 0%;
+  height: 100%;
   background-color: ${(props) => props.theme.colors.background};
   z-index: 1000;
   overflow-y: auto;
+  animation: ${(props) => (props.$isVisible ? fadeIn : fadeOut)} 0.3s ease;
+  opacity: ${(props) => (props.$isVisible ? 1 : 0)};
+  pointer-events: ${(props) => (props.$isVisible ? "auto" : "none")};
+  transition: opacity 0.3s ease;
 `;
 
 const ModalHeader = styled.div`
@@ -233,4 +272,16 @@ const ModalTitle = styled.h2`
 
 const ModalContent = styled.div`
   padding: 1rem;
+`;
+
+const ItemTitle = styled.div`
+  color: ${(props) => props.theme.colors.text03};
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin: 0 1rem 1rem;
+`;
+
+const Divider = styled.hr`
+  color: lightgray;
+  margin: 2rem 0;
 `;

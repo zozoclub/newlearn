@@ -3,12 +3,16 @@ import React from "react";
 import styled from "styled-components";
 import { useTheme } from "styled-components";
 import { GrassType } from "@services/mypageService";
+import { useMediaQuery } from "react-responsive";
 
 type grassProps = {
   data: GrassType[];
 };
 
 const ContributionGraph: React.FC<grassProps> = ({ data }) => {
+  const isMobile = useMediaQuery({ maxWidth: 768 });
+
+  const weekCount = isMobile ? 13 : 25;
   const getStartDate = () => {
     const today = new Date();
     const daysSinceLastMonday = (today.getDay() + 6) % 7;
@@ -16,13 +20,13 @@ const ContributionGraph: React.FC<grassProps> = ({ data }) => {
       today.setDate(today.getDate() - daysSinceLastMonday)
     );
     const startDate = new Date(
-      lastMonday.setDate(lastMonday.getDate() - 25 * 7)
+      lastMonday.setDate(lastMonday.getDate() - weekCount * 7)
     );
     return startDate;
   };
 
   const startDate = getStartDate();
-  const weeks = Array.from({ length: 26 }, (_, i) => i);
+  const weeks = Array.from({ length: weekCount + 1 }, (_, i) => i);
   const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
   const darkColors = [
@@ -209,6 +213,9 @@ const ColorLegend = styled.div`
   align-items: center;
   justify-content: end;
   margin-top: 1.5rem;
+  @media (max-width: 768px) {
+    display: none;
+  }
 `;
 
 const LegendColor = styled.div<{ color: string }>`

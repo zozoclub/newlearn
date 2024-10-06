@@ -1,29 +1,16 @@
 import styled from "styled-components";
-import { useEffect, useState } from "react";
-
+import { useEffect } from "react";
+import Goal from "@components/mystudypage/Goal";
 import locationState from "@store/locationState";
-import goalState from "@store/goalState";
-import { useRecoilState, useSetRecoilState } from "recoil";
-import { useMutation } from "@tanstack/react-query";
+import { useSetRecoilState } from "recoil";
 
-import GoalChart from "@components/GoalChart";
-import GoalSetting from "@components/GoalSetting";
 import testMenuBg from "@assets/images/background-speakingtest.png";
 import vocaMenuBg from "@assets/images/background-vocamenu.png";
-import Modal from "@components/Modal";
-import Spinner from "@components/Spinner";
 
-import {
-  GoalSettingType,
-  goalSetting,
-  getStudyProgress,
-} from "@services/goalService.ts";
 import { usePageTransition } from "@hooks/usePageTransition";
 
 const MyStudyPage = () => {
   const transitionTo = usePageTransition();
-
-  const [studyProgress, setStudyProgress] = useRecoilState(goalState);
 
   // 페이지 헤더
   const setCurrentLocation = useSetRecoilState(locationState);
@@ -40,76 +27,10 @@ const MyStudyPage = () => {
     transitionTo("/speakingtesthistory");
   };
 
-  // 모달 설정
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const openModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
-
-  // 학습 목표 설정
-  const goalMutation = useMutation<GoalSettingType, Error, GoalSettingType>({
-    mutationFn: (data: GoalSettingType) => goalSetting(data),
-    onSuccess: async (result) => {
-      // goalState 업데이트
-      setStudyProgress((goalInfo) => ({
-        ...goalInfo,
-        ...result,
-        isInitialized: true,
-      }));
-
-      try {
-        // 학습 진행 상황 가져오기
-        const updatedStudyProgress = await getStudyProgress();
-        // 상태 업데이트
-        setStudyProgress((goalInfo) => ({
-          ...goalInfo,
-          ...updatedStudyProgress,
-        }));
-      } catch (error) {
-        console.error("Failed to fetch updated study progress", error);
-      }
-
-      closeModal();
-    },
-    onError: (error) => {
-      console.error("Goal setting Failed", error);
-    },
-  });
-  const isSetGoal =
-    studyProgress.goalCompleteWord &&
-    studyProgress.goalPronounceTestScore &&
-    studyProgress.goalReadNewsCount
-      ? true
-      : false;
-
-  if (isSetGoal && !studyProgress.isInitialized) return <Spinner />;
-
   return (
     <Container>
-      <GoalContainer>
-        {studyProgress.goalReadNewsCount === 0 &&
-        studyProgress.goalPronounceTestScore === 0 &&
-        studyProgress.goalCompleteWord === 0 ? (
-          <GoalSettingContainer>
-            <GoalSettingDescription>
-              설정된 목표가 없습니다.
-            </GoalSettingDescription>
-            <GoalSettingButton onClick={openModal}>
-              {new Date().getMonth() + 1}월 목표 설정하기
-            </GoalSettingButton>
-            <Modal isOpen={isModalOpen} onClose={closeModal} title="목표 설정">
-              <GoalSetting goalMutation={goalMutation} />
-            </Modal>
-          </GoalSettingContainer>
-        ) : (
-          <GoalChart />
-        )}
-      </GoalContainer>
+      <Goal />
+
       <MenuContainer>
         <VocaMenu onClick={handleWordClick}>
           <Overlay>
@@ -137,48 +58,6 @@ const Container = styled.div`
   padding: 50px 5%;
   min-height: 600px;
   height: 600px;
-`;
-
-const GoalContainer = styled.div`
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  height: 100%;
-  min-height: 600px;
-
-  background-color: ${(props) => props.theme.colors.cardBackground01};
-  box-shadow: ${(props) => props.theme.shadows.medium};
-  box-sizing: border-box;
-  border-radius: 0.75rem;
-`;
-
-const GoalSettingContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2rem;
-`;
-
-const GoalSettingDescription = styled.div`
-  font-size: 1.25rem;
-  font-weight: bold;
-`;
-
-const GoalSettingButton = styled.button`
-  padding: 0.75rem 1.25rem;
-  background: none;
-  background-color: ${(props) => props.theme.colors.primary};
-  border: none;
-  border-radius: 1rem;
-  font-size: 1.25rem;
-  font-weight: bold;
-  color: white;
-  cursor: pointer;
-  &:hover {
-    background-color: ${(props) => props.theme.colors.primaryPress};
-  }
 `;
 
 const MenuContainer = styled.div`

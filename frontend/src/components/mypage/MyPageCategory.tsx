@@ -68,6 +68,11 @@ const Container = styled.div`
   justify-content: space-between;
   align-items: center;
   width: 100%;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 2rem;
+  }
 `;
 
 const ChartContainer = styled.div`
@@ -75,6 +80,9 @@ const ChartContainer = styled.div`
   flex-direction: column;
   width: 50%;
   margin-left: 1rem;
+  @media (max-width: 768px) {
+    width: 90%;
+  }
 `;
 
 const DataContainer = styled.div`
@@ -82,6 +90,10 @@ const DataContainer = styled.div`
   flex-direction: column;
   width: 40%;
   margin-right: 2rem;
+  @media (max-width: 768px) {
+    width: 90%;
+    margin: 0 5rem;
+  }
 `;
 
 const DataHeader = styled.div`

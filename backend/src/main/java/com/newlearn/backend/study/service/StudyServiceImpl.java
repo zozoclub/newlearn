@@ -363,6 +363,10 @@ public class StudyServiceImpl implements StudyService{
                         .audioFileId(file.getAudioFileId())
                         .totalScore(file.getTotalScore())
                         .createdAt(file.getCreatedAt())
+                        .accuracyScore(file.getAccuracyScore())
+                        .fluencyScore(file.getFluencyScore())
+                        .completenessScore(file.getCompletenessScore())
+                        .prosodyScore(file.getProsodyScore())
                         .build())
                 .collect(Collectors.toList());
 

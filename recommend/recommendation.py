@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import func
 from typing import List, Tuple
 from datetime import datetime
+import random
 from functools import lru_cache
 
 from models import News
@@ -101,6 +102,7 @@ def get_random_articles_by_categories(db: Session, user_categories: List[UserCat
             .all()
         # 선택된 레코드의 정보를 results 리스트에 추가
         results.extend([(article.news_id, article.title, article.category_id, 0.0, article.published_date, article.hit) for article in random_articles])
+    random.shuffle(results)
     return results
 
 def get_news_recomm_by_categories(user_id: int, db: Session):

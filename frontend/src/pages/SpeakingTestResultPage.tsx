@@ -69,7 +69,7 @@ const SpeakingTestResultPage: React.FC = () => {
     <MainLayout>
       <MainContainer>
         <BackHeader>
-          <BackArrow width={48} height={48} url="/testhistory" />
+          <BackArrow width={48} height={48} url="/speakingtesthistory" />
           평가 리스트로 돌아가기
         </BackHeader>
 

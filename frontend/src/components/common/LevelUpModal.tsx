@@ -1,4 +1,5 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useState } from "react";
+// useEffect,
 import ReactDOM from "react-dom";
 import styled, { keyframes, css } from "styled-components";
 import { useRecoilValue } from "recoil";
@@ -9,26 +10,15 @@ import LevelIcon from "@components/common/LevelIcon";
 const LevelUpModal: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const userInfo = useRecoilValue(userInfoState);
-  const prevLevelRef = useRef<number>();
 
   const calculatedExperience = calculateExperience(userInfo.experience);
-  const currentLevel = calculatedExperience.level;
+  const level = calculatedExperience.level;
 
-  useEffect(() => {
-    const prevLevel = prevLevelRef.current;
-
-    if (prevLevel !== undefined && currentLevel > prevLevel) {
-      setIsOpen(true);
-    }
-
-    prevLevelRef.current = currentLevel;
-  }, [userInfo.experience, currentLevel]);
-
-  const handleClose = () => {
-    setIsOpen(false);
-  };
-
-  if (!isOpen) return null;
+  //   useEffect(() => {
+  //     if (level) {
+  //       setIsOpen(true);
+  //     }
+  //   }, [userInfo.experience]);
 
   if (!isOpen) return null;
 
@@ -41,8 +31,8 @@ const LevelUpModal: React.FC = () => {
         <Description>
           <ActionText>축하합니다!</ActionText>
           <ActionText>레벨이 상승했습니다!</ActionText>
-          <LevelIcon level={currentLevel} size={72} />
-          <OkayButton onClick={handleClose}>확인</OkayButton>
+          <LevelIcon level={level} size={72} />
+          <OkayButton onClick={() => setIsOpen(false)}>확인</OkayButton>
         </Description>
       </ModalContent>
     </ModalOverlay>,

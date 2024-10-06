@@ -78,7 +78,7 @@ const NewsDetailPage = () => {
       />
       <Container>
         <News>
-          <div style={{}}>
+          <div style={{ marginBottom: "1.5rem" }}>
             <BackArrow height={30} width={30} />
           </div>
           <NewsContainer ref={newsContainerRef}>
@@ -135,6 +135,7 @@ const Container = styled.div`
   overflow: hidden;
   @media (max-width: 1279px) {
     flex-direction: column;
+    margin-bottom: 15rem;
   }
 `;
 
@@ -152,7 +153,7 @@ const News = styled.div`
   }
   @media (max-width: 767px) {
     width: 100%;
-    padding: 0;
+    padding: 5% 0;
     background-color: transparent;
   }
 `;
@@ -169,7 +170,7 @@ const ThumbnailImageDiv = styled.div`
 `;
 
 const ThumbnailImage = styled.img`
-  width: 80%;
+  width: 75%;
   min-height: 300px;
   border-radius: 0.75rem;
   @media screen and (max-width: 767px) {

@@ -134,7 +134,8 @@ const Container = styled.div`
       ${(props) => (props.theme.mode === "dark" ? "#1a1a1aaa" : "#e2e2e2aa")};
     cursor: pointer;
     transform: translateY(0rem);
-    transition: background-color 0.3s, transform 0.3s;
+    transition: background-color 0.3s, transform 0.3s, border 0.3s,
+      backdrop-filter 0.3s;
     &:hover {
       background-color: ${(props) =>
         props.theme.mode === "dark"

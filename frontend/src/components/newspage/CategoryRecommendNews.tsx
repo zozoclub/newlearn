@@ -48,13 +48,8 @@ const CategoryRecommendNews = () => {
             </div>
             <NewsListDiv>
               {data?.map((news) => (
-                <div
+                <NewsDiv
                   key={news.newsId}
-                  style={{
-                    display: "flex",
-                    minHeight: "calc(34% - 0.5rem)",
-                    cursor: "pointer",
-                  }}
                   onClick={() => transitionTo(`/news/detail/${news.newsId}`)}
                 >
                   <NewsInfoDiv>
@@ -73,7 +68,7 @@ const CategoryRecommendNews = () => {
                       </>
                     )}
                   </ThumbnailDiv>
-                </div>
+                </NewsDiv>
               ))}
             </NewsListDiv>
           </>
@@ -114,6 +109,28 @@ const NewsListDiv = styled.div`
   gap: 0.5rem;
   height: 100%;
   overflow-y: auto;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+`;
+
+const NewsDiv = styled.div`
+  display: flex;
+  min-height: calc(34% - 1rem - 4px);
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 0.75rem;
+  backdrop-filter: blur(10px);
+  background-color: ${(props) =>
+    props.theme.mode === "dark" ? "transparent" : "#ffffffaa"};
+  border: 2px solid
+    ${(props) => (props.theme.mode === "dark" ? "#1a1a1aaa" : "#ddddddaa")};
+  transform: translateY(0rem);
+  transition: backdrop-filter 0.3s, background-color 0.3s, transform 0.3s,
+    border 0.3s;
+  &:hover {
+    transform: translateY(-0.25rem);
+  }
 `;
 
 const NewsInfoDiv = styled.div`
@@ -121,7 +138,7 @@ const NewsInfoDiv = styled.div`
   flex-direction: column;
   justify-content: space-between;
   width: 55%;
-  padding: 0 5% 2.5% 0;
+  padding: 2.5%;
   .title {
     height: 2.5rem;
     font-size: 1.25rem;
@@ -132,10 +149,11 @@ const NewsInfoDiv = styled.div`
     -webkit-line-clamp: 2;
   }
   .category {
-    padding: 0.25rem 0.25rem;
+    padding: 0.5rem 0.5rem;
     max-width: 4rem;
     text-align: center;
     border-radius: 0.5rem;
+    color: white;
     background-color: ${(props) => props.theme.colors.primary};
   }
 `;

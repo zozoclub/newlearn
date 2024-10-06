@@ -11,7 +11,7 @@ import Avatar, { AvatarType } from "@components/common/Avatar";
 import { changeNickname, changeAvatar } from "@services/mypageService";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import LevelIcon from "@components/common/LevelIcon";
-import { checkNicknameDup } from "@services/userService";
+import { checkNicknameDup, getUserInfo } from "@services/userService";
 const MyPageProfile: React.FC = () => {
   const queryClient = useQueryClient();
   const userInfo = useRecoilValue(userInfoState);
@@ -37,6 +37,19 @@ const MyPageProfile: React.FC = () => {
   const requiredExpInCurrentLevel =
     calculatedExperience.requiredExpInCurrentLevel;
   const expPercentage = calculatedExperience.percentage;
+
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const newUserInfo = await getUserInfo();
+        setUserInfo(newUserInfo);
+      } catch (error) {
+        console.error("Failed to fetch user info:", error);
+      }
+    };
+
+    fetchUserInfo();
+  }, [userInfo.experience, setUserInfo]);
 
   // 유저 OAuth 정보
   const name = userInfo.name;

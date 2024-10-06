@@ -10,7 +10,8 @@ import NewsPage from "@pages/NewsPage";
 import MyPage from "@pages/MyPage";
 import MyStudyPage from "@pages/MyStudyPage";
 import VocabularyPage from "@pages/VocabularyPage";
-import TestHistoryPage from "@pages/TestHistoryPage";
+import WordTestHistoryPage from "@pages/WordTestHistoryPage";
+import SpeakingTestHistoryPage from "@pages/SpeakingTestHistoryPage";
 import NewsSearchPage from "@pages/NewsSearchPage";
 import LoginPage from "@pages/LoginPage";
 import SignUpPage from "@pages/SignUpPage";
@@ -64,8 +65,13 @@ export const router = createBrowserRouter([
             element: <MyStudyPage />,
           },
           {
-            path: "testhistory",
-            element: <TestHistoryPage />,
+            path: "wordtesthistory",
+            element: <WordTestHistoryPage />,
+          },
+          {
+            path: "speakingtesthistory",
+            element: <SpeakingTestHistoryPage
+            />,
           },
           {
             path: "voca",

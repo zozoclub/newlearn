@@ -8,6 +8,8 @@ import {
   PronounceTestResultListDto,
 } from "@services/speakingTestService";
 import { useQuery } from "@tanstack/react-query";
+import { useMediaQuery } from "react-responsive";
+
 import {
   Chart as ChartJS,
   LineElement,
@@ -30,6 +32,7 @@ ChartJS.register(
 );
 
 const SpeakingTestHistory: React.FC = () => {
+  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const { isLoading, data, error } = useQuery({
     queryKey: ["speakingTestHistory"],
     queryFn: () => getPronounceTestResultList(),
@@ -197,9 +200,65 @@ const SpeakingTestHistory: React.FC = () => {
 
   // 로딩 중일 때 Spinner 표시
   if (isLoading) return <Spinner />;
+
   // 에러 메시지 표시
   if (error)
     return <ErrorText>에러가 발생했습니다. 다시 시도해 주세요.</ErrorText>;
+
+  // 모바일 페이지
+  if (isMobile) {
+    return (
+      <>
+        <InfoContainer>
+          <MobileTitleText>
+            최근 점수보다{" "}
+            {monthCurrentScoreAverage ? (
+              monthCurrentScoreAverage >= monthAgoScoreAverage ? (
+                <InfoTextEmphasizeBlue>증가</InfoTextEmphasizeBlue>
+              ) : (
+                <InfoTextEmphasizeRed>감소</InfoTextEmphasizeRed>
+              )
+            ) : null}{" "}
+            했어요.
+          </MobileTitleText>
+          <InfoText>
+            10월에 학습된 발음 평균 점수 :
+            {monthCurrentScoreAverage >= monthAgoScoreAverage ? (
+              <InfoTextEmphasizeBlue>{Math.floor(monthCurrentScoreAverage)}</InfoTextEmphasizeBlue>
+            ) : (
+              <InfoTextEmphasizeRed>{Math.floor(monthCurrentScoreAverage)}</InfoTextEmphasizeRed>
+            )}
+            점
+          </InfoText>
+          <StatsHistory>
+            <StatItem>이번 달 테스트 횟수: {currentCount}회</StatItem>
+            <StatItem>이번 달 평균 점수: {Math.floor(monthCurrentScoreAverage)}점</StatItem>
+            <StatItem>최근 평균 점수: {Math.floor(monthAgoScoreAverage)}점</StatItem>
+          </StatsHistory>
+        </InfoContainer>
+        <ChartContainer>
+          <Line data={dateData} options={options} />
+        </ChartContainer>
+        {/* 고정된 높이 및 스크롤 가능한 영역 */}
+        {cardData.length === 0 ? (
+          <EmptyMessage>테스트 진행하면 리스트들이 출력됩니다.</EmptyMessage>
+        ) : (
+          <ScrollableTestHistoryList>
+            {data?.map((test: PronounceTestResultListDto, index: number) => (
+              <SpeakingTestHistoryCardList
+                audioFileId={test.audioFileId}
+                score={test.totalScore}
+                date={formatDate(test.createdAt)}
+                key={index}
+              />
+            ))}
+          </ScrollableTestHistoryList>
+        )}
+      </>
+    );
+  }
+
+
 
   return (
     <MainContainer>
@@ -282,7 +341,8 @@ const MainContainer = styled.div`
 const Layout = styled.div`
   display: flex;
   justify-content: space-between;
-  width: 100%;
+  width: 90%;
+  margin: 0 auto;
   margin-bottom: 2rem;
 `;
 
@@ -295,6 +355,8 @@ const InfoContainer = styled.div`
 
 const ChartContainer = styled.div`
   width: 100%;
+  padding-top: 1rem;
+  margin-bottom: 2rem;
   justify-content: center;
 `;
 
@@ -302,26 +364,41 @@ const TitleText = styled.h1`
   font-size: 2rem;
   font-weight: 700;
   margin-bottom: 1rem;
+
+  @media (max-width: 1280px) {
+    font-size: 1.25rem; /* 1280px 이하일 때 글씨 크기를 줄임 */
+  }
 `;
 
 const InfoText = styled.p`
   font-size: 1.25rem;
   font-weight: 600;
   margin-bottom: 1.5rem;
+
+  @media (max-width: 1280px) {
+    font-size: 1rem; /* 1280px 이하일 때 글씨 크기를 줄임 */
+  }
 `;
 
 const InfoTextEmphasizeRed = styled.span`
   margin-left: 0.25rem;
   font-size: 2rem;
   color: ${(props) => props.theme.colors.danger};
+
+  @media (max-width: 1280px) {
+    font-size: 1.255rem; /* 1280px 이하일 때 글씨 크기를 줄임 */
+  }
 `;
 
 const InfoTextEmphasizeBlue = styled.span`
   margin-left: 0.25rem;
   font-size: 2rem;
   color: ${(props) => props.theme.colors.primary};
-`;
 
+  @media (max-width: 1280px) {
+    font-size: 1.25rem; /* 1280px 이하일 때 글씨 크기를 줄임 */
+  }
+`;
 const StatsHistory = styled.div`
   display: flex;
   flex-direction: column;
@@ -357,4 +434,13 @@ const EmptyMessage = styled.p`
   text-align: center;
   font-size: 1.25rem;
   color: ${(props) => props.theme.colors.text04};
+`;
+
+
+// 모바일전용
+const MobileTitleText = styled.h1`
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
 `;

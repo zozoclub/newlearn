@@ -18,6 +18,8 @@ import {
 } from "@services/wordMemorize";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Spinner from "@components/Spinner";
+import { useMediaQuery } from "react-responsive";
+import VocabularyMobilePage from "./mobile/VocabularyMobilePage";
 
 type Word = {
   id: string;
@@ -27,6 +29,7 @@ type Word = {
 };
 
 const VocabularyPage: React.FC = () => {
+  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const setCurrentLocation = useSetRecoilState(locationState);
   const queryClient = useQueryClient();
 
@@ -132,7 +135,12 @@ const VocabularyPage: React.FC = () => {
     }
   };
 
+  if (isMobile) {
+    return <VocabularyMobilePage />
+  }
+
   if (isLoading) return <Spinner />;
+
   if (error)
     return <ErrorText>에러가 발생했습니다. 다시 시도해 주세요.</ErrorText>;
 
@@ -222,7 +230,12 @@ const MainLayout = styled.div`
   justify-content: space-between;
   gap: 1rem;
   margin: 0 4rem;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
 `;
+
 
 const MainContainer = styled.div`
   width: 46%;
@@ -234,6 +247,14 @@ const MainContainer = styled.div`
   overflow-y: auto;
   box-shadow: ${(props) => props.theme.shadows.medium};
   transition: box-shadow 0.5s;
+
+  @media (max-width: 1280px) {
+    padding: 0.75rem;
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
 `;
 
 const Title = styled.h2`
@@ -242,12 +263,20 @@ const Title = styled.h2`
   font-weight: 700;
   margin-top: 1rem;
   margin-bottom: 1.5rem;
+
+  @media (max-width: 1280px) {
+    font-size: 1.75rem;
+  }
 `;
 
 const WordCount = styled.span`
   font-size: 1rem;
   color: ${(props) => props.theme.colors.text04};
   margin-left: 0.5rem;
+
+  @media (max-width: 1280px) {
+    font-size: 0.875rem;
+  }
 `;
 
 const Item = styled.div<{ $isDragging: boolean }>`
@@ -259,10 +288,18 @@ const EmptyMessage = styled.p`
   text-align: center;
   font-size: 1.25rem;
   color: ${(props) => props.theme.colors.text04};
+
+  @media (max-width: 1280px) {
+    font-size: 1rem;
+  }
 `;
 
 const ErrorText = styled.div`
   color: ${(props) => props.theme.colors.danger};
   font-size: 1.25rem;
   text-align: center;
+
+  @media (max-width: 1280px) {
+    font-size: 1rem;
+  }
 `;

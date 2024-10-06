@@ -4,69 +4,84 @@ import locationState from "@store/locationState";
 import styled from "styled-components";
 import { useQuery } from "@tanstack/react-query";
 import {
-  MemorizeWordListResponseDto,
-  getMemorizeWordList,
+    MemorizeWordListResponseDto,
+    getMemorizeWordList,
 } from "@services/wordMemorize";
 import StartSpeakingTestWidget from "@components/testpage/StartSpeakingTestWidget";
 import SpeakingTestHistory from "@components/testpage/SpeakingTestHistory";
+import { useMediaQuery } from "react-responsive";
+import HeaderMobile from "@components/common/HeaderMobile";
 
 type Word = {
-  id: string;
-  title: string;
-  content: string;
+    id: string;
+    title: string;
+    content: string;
 };
 
 const SpeakingTestHistoryPage: React.FC = () => {
-  const setCurrentLocation = useSetRecoilState(locationState);
+    const setCurrentLocation = useSetRecoilState(locationState);
+    const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
 
-  const { data: wordList } = useQuery<MemorizeWordListResponseDto[]>({
-    queryKey: ["memorizeWordList"],
-    queryFn: () => getMemorizeWordList(),
-  });
+    const { data: wordList } = useQuery<MemorizeWordListResponseDto[]>({
+        queryKey: ["memorizeWordList"],
+        queryFn: () => getMemorizeWordList(),
+    });
 
-  const [toStudyWords, setToStudyWords] = useState<Word[]>([]);
-  const [learnedWords, setLearnedWords] = useState<Word[]>([]);
+    const [toStudyWords, setToStudyWords] = useState<Word[]>([]);
+    const [learnedWords, setLearnedWords] = useState<Word[]>([]);
 
-  useEffect(() => {
-    if (wordList) {
-      const toStudy = wordList
-        .filter((word) => !word.complete)
-        .map((word) => ({
-          id: word.wordId.toString(),
-          title: word.word,
-          content: word.wordMeaning,
-        }));
-      const learned = wordList
-        .filter((word) => word.complete)
-        .map((word) => ({
-          id: word.wordId.toString(),
-          title: word.word,
-          content: word.wordMeaning,
-        }));
-      setToStudyWords(toStudy);
-      setLearnedWords(learned);
+    useEffect(() => {
+        if (wordList) {
+            const toStudy = wordList
+                .filter((word) => !word.complete)
+                .map((word) => ({
+                    id: word.wordId.toString(),
+                    title: word.word,
+                    content: word.wordMeaning,
+                }));
+            const learned = wordList
+                .filter((word) => word.complete)
+                .map((word) => ({
+                    id: word.wordId.toString(),
+                    title: word.word,
+                    content: word.wordMeaning,
+                }));
+            setToStudyWords(toStudy);
+            setLearnedWords(learned);
+        }
+    }, [wordList]);
+
+    useEffect(() => {
+        setCurrentLocation("SpeakingTestHistoryPage");
+    }, [setCurrentLocation]);
+
+    if (isMobile) {
+        return (
+            <>
+                <HeaderMobile title="Pronounce Test" />
+                <MobileLayout>
+                    <StartSpeakingTestWidget posibleWords={toStudyWords.length + learnedWords.length} />
+                    <SpeakingTestHistory />
+                </MobileLayout>
+            </>
+        )
     }
-  }, [wordList]);
 
-  useEffect(() => {
-    setCurrentLocation("SpeakingTestHistoryPage");
-  }, [setCurrentLocation]);
+    return (
+        <Layout>
+            <LeftContainer>
+                <SmallContainer>
+                    <StartSpeakingTestWidget posibleWords={toStudyWords.length + learnedWords.length} />
+                </SmallContainer>
+            </LeftContainer>
 
-  return (
-    <Layout>
-      <LeftContainer>
-        <SmallContainer>
-          <StartSpeakingTestWidget posibleWords={toStudyWords.length + learnedWords.length} />
-        </SmallContainer>
-      </LeftContainer>
-
-      <RightContainer>
-        <BigContainer>
-          <SpeakingTestHistory />
-        </BigContainer>
-      </RightContainer>
-    </Layout>
-  );
+            <RightContainer>
+                <BigContainer>
+                    <SpeakingTestHistory />
+                </BigContainer>
+            </RightContainer>
+        </Layout>
+    );
 };
 
 export default SpeakingTestHistoryPage;
@@ -120,3 +135,9 @@ const BigContainer = styled.div`
   transition: box-shadow 0.5s;
   width: 100%;
 `;
+
+const MobileLayout = styled.div`
+width: 85%;
+  margin: 0 auto;
+  padding-bottom: 6rem;
+`

@@ -23,32 +23,43 @@ const SpeakingTestHistoryCardList: React.FC<Props> = ({
   const intoDetailHandler = () => {
     navigate(`/speaking/result/${audioFileId}`);
   };
+
   const renderStamp = () => {
-    if (score > 90) return <PerfectStamp />;
-    if (score > 80) return <GreatStamp />;
-    if (score > 70) return <GoodStamp />;
-    return <BadStamp />;
+    if (score > 90) return <ResponsiveIcon as={PerfectStamp} />;
+    if (score > 80) return <ResponsiveIcon as={GreatStamp} />;
+    if (score > 70) return <ResponsiveIcon as={GoodStamp} />;
+    return <ResponsiveIcon as={BadStamp} />;
   };
 
   return (
-    <MainContainer>
+    <MainContainer onClick={intoDetailHandler}>
       <ListDetailContainer>
-        <DateContainer>{date}</DateContainer>
         <ScoreContainer>
           <ScoreSpan>{score}</ScoreSpan>점
         </ScoreContainer>
       </ListDetailContainer>
+      <DateContainer>{date}</DateContainer>
       <ScoreStamp>{renderStamp()}</ScoreStamp>
-      <DetailButtonContainer>
-        <IntoDetailButton onClick={intoDetailHandler}>
-          상세보기
-        </IntoDetailButton>
-      </DetailButtonContainer>
     </MainContainer>
   );
 };
 
 export default SpeakingTestHistoryCardList;
+
+const ResponsiveIcon = styled.div`
+  width: 3rem;
+  height: 3rem;
+
+  @media (max-width: 768px) {
+    width: 2rem;
+    height: 2rem;
+  }
+
+  @media (max-width: 480px) {
+    width: 1rem;
+    height: 1rem;
+  }
+`;
 
 const MainContainer = styled.div`
   display: flex;
@@ -57,26 +68,39 @@ const MainContainer = styled.div`
   align-items: center;
   position: relative;
   width: 90%;
-  min-height: 12rem;
+  min-height: 8rem;
   margin: 0.625rem;
   padding: 0.625rem;
-  background-color: ${(props) => props.theme.colors.cardBackground + "5A"};
+  background-color: ${(props) => props.theme.colors.newsItemBackground};
   backdrop-filter: blur(0.25rem);
   border-radius: 0.75rem;
-  box-shadow: ${(props) => props.theme.shadows.small};
-  transition: box-shadow 0.5s;
+  transition: background-color 0.5s ease, box-shadow 0.5s ease;
+  cursor: pointer;
+
+  &:hover {
+    background-color: ${(props) => props.theme.colors.newsItemBackgroundPress};
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+    min-height: 4rem;
+  }
 `;
 
 const ListDetailContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  position: relative;
+  width: 100%;
 `;
 
 const DateContainer = styled.div`
   font-size: 0.875rem;
   font-weight: 200;
-  margin-bottom: 0.5rem;
+  position: absolute;
+  bottom: 0.5rem;
+  right: 1rem; 
 `;
 
 const ScoreContainer = styled.div`
@@ -89,6 +113,11 @@ const ScoreStamp = styled.div`
   position: absolute;
   top: -1.125rem;
   right: -1.125rem;
+
+  @media (max-width: 768px) {
+    top: 0.5rem;
+    left: 0.5rem;
+  }
 `;
 
 const ScoreSpan = styled.span`
@@ -97,24 +126,3 @@ const ScoreSpan = styled.span`
   color: ${(props) => props.theme.colors.primary};
 `;
 
-const DetailButtonContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 1rem;
-`;
-
-const IntoDetailButton = styled.button`
-  padding: 0.5rem 0.5rem;
-  background-color: ${(props) => props.theme.colors.primary};
-  color: white;
-  border: none;
-  border-radius: 0.625rem;
-  font-size: 0.875rem;
-  font-weight: bold;
-  transition: background-color 0.3s ease;
-  cursor: pointer;
-  &:hover {
-    background-color: ${(props) => props.theme.colors.primaryPress};
-  }
-`;

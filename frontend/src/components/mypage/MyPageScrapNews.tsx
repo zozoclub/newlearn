@@ -7,9 +7,11 @@ import MyPageScrapNewsItem from "@components/mypage/MyPageScrapNewsItem";
 import MyPagePagination from "@components/mypage/MyPagePagination";
 import Spinner from "@components/Spinner";
 import { usePageTransition } from "@hooks/usePageTransition";
+import { useMediaQuery } from "react-responsive";
 
 const MyPageScrapNews = () => {
   const transitionTo = usePageTransition();
+  const isMobile = useMediaQuery({ maxWidth: 768 });
 
   const [selectedDifficulty, setSelectedDifficulty] = useState(1);
   const difficultyList = [{ name: "초급" }, { name: "중급" }, { name: "고급" }];
@@ -17,13 +19,15 @@ const MyPageScrapNews = () => {
   const { page } = useParams();
   const [selectedPage, setSelectedPage] = useState(Number(page) || 0);
 
+  const elementsCount = isMobile ? 7 : 3;
   const {
     data: scrapNewsData,
     isLoading,
     refetch,
   } = useQuery<ScrapNewsListType>({
     queryKey: ["scrapNewsData", selectedDifficulty, selectedPage],
-    queryFn: () => getScrapNewsList(selectedDifficulty, selectedPage, 3),
+    queryFn: () =>
+      getScrapNewsList(selectedDifficulty, selectedPage, elementsCount),
   });
 
   if (isLoading)
@@ -92,7 +96,7 @@ const MyPageScrapNews = () => {
         <MyPagePagination
           currentPage={selectedPage + 1} // 사용자에게 보여줄 페이지 번호
           totalPages={totalPages}
-          showElement={3}
+          showElement={elementsCount}
           onPageChange={handlePageChange} // 페이지 변경 핸들러 전달
           onNextPage={handleNextPage} // 다음 페이지 핸들러 전달
         />
@@ -109,12 +113,18 @@ const HeaderContainer = styled.div`
   margin: 0 0 1.5rem;
   font-weight: bold;
   font-size: 1.5rem;
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
 `;
 
 const ScrapNewsTitle = styled.div`
   display: flex;
   align-items: center;
   gap: 1rem;
+  @media (max-width: 768px) {
+    display: none;
+  }
 `;
 
 const ScrapNewsCount = styled.div`
@@ -126,6 +136,9 @@ const DifficultyContainer = styled.div`
   display: flex;
   position: relative;
   width: 20%;
+  @media (max-width: 768px) {
+    width: 100%;
+  }
 `;
 
 const DifficultyItem = styled.div`
@@ -138,6 +151,9 @@ const DifficultyItem = styled.div`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: clip;
+  @media (max-width: 768px) {
+    margin-bottom: 0.5rem;
+  }
 `;
 
 const FocusEffect = styled.div<{ $difficultyId: number }>`

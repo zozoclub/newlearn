@@ -45,6 +45,9 @@ const TitleContainer = styled.div`
   display: flex;
   justify-content: space-between;
   margin-bottom: 1.25rem;
+  @media (max-width: 768px) {
+    display: none;
+  }
 `;
 
 const YearContainer = styled.div`

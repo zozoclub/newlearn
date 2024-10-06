@@ -114,6 +114,7 @@ const App: React.FC = () => {
 
 const AppContainer = styled.div`
   position: relative;
+  overflow-x: hidden;
   @media (min-width: 768px) {
     width: 90vw;
     min-height: 100vh;

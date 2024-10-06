@@ -9,7 +9,7 @@ import languageState from "@store/languageState";
 import userInfoState from "@store/userInfoState";
 import NewsSwiper from "@components/common/NewsSwiper";
 
-const HybridRecommandNews = () => {
+const HybridRecommendNews = () => {
   const languageData = useRecoilValue(languageState);
   const userInfoData = useRecoilValue(userInfoState);
   const { isLoading, data } = useQuery<NewsType[]>({
@@ -53,7 +53,7 @@ const HybridRecommandNews = () => {
   return MemoizedComponent;
 };
 
-export default HybridRecommandNews;
+export default HybridRecommendNews;
 
 const Container = styled.div`
   width: 60%;

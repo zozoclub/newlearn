@@ -3,8 +3,8 @@ import { useRecoilValue } from "recoil";
 
 import { goalDataSelector } from "@store/goalState";
 import userInfoState from "@store/userInfoState";
-import GoalChartDoughnut from "@components/GoalChartDoughnut";
-import GoalChartBar from "@components/GoalChartBar";
+import GoalChartDoughnut from "@components/mystudypage/GoalChartDoughnut";
+import GoalChartBar from "@components/mystudypage/GoalChartBar";
 
 const GoalChart: React.FC = () => {
   const userInfo = useRecoilValue(userInfoState);
@@ -44,6 +44,9 @@ const TitleContainer = styled.div`
   align-items: center;
   margin: 1rem 0 2rem;
   font-size: 1.25rem;
+  @media (max-width: 768px) {
+    display: none;
+  }
 `;
 
 const NicknameContainer = styled.div`

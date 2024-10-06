@@ -29,18 +29,13 @@ const WordTestHistoryCardList: React.FC<Props> = ({ date, score, quizId }) => {
   };
 
   return (
-    <MainContainer>
+    <MainContainer onClick={intoDetailHandler}>
       <ListDetailContainer>
-        <DateContainer>{date}</DateContainer>
         <ScoreContainer>
           <ScoreSpan>{score}</ScoreSpan>점
         </ScoreContainer>
-        <DetailButtonContainer>
-          <IntoDetailButton onClick={intoDetailHandler}>
-            상세보기
-          </IntoDetailButton>
-        </DetailButtonContainer>
       </ListDetailContainer>
+      <DateContainer>{date}</DateContainer>
       <ScoreStamp>{renderStamp()}</ScoreStamp>
     </MainContainer>
   );
@@ -53,24 +48,39 @@ const MainContainer = styled.div`
   flex-direction: column;
   position: relative;
   width: 20%;
-  min-height: 12rem;
+  min-height: 10rem;
   margin: 0.625rem;
   padding: 0.625rem;
-  background-color: ${(props) => props.theme.colors.cardBackground + "5A"};
+  background-color: ${(props) => props.theme.colors.newsItemBackground};
+  backdrop-filter: blur(0.25rem);
   border-radius: 0.75rem;
-  box-shadow: ${(props) => props.theme.shadows.small};
-  transition: box-shadow 0.5s;
+  transition: background-color 0.5s ease, box-shadow 0.5s ease;
+  cursor: pointer;
+
+  &:hover {
+    background-color: ${(props) => props.theme.colors.newsItemBackgroundPress};
+  }
+
+  @media (max-width: 768px) {
+    width: 30%;
+    min-height: 2rem;
+  }
 `;
 
 const ListDetailContainer = styled.div`
   display: flex;
   flex-direction: column;
+  align-items: center;
+  position: relative;
+  width: 100%;
 `;
 
 const DateContainer = styled.div`
   font-size: 0.875rem;
   font-weight: 200;
-  margin-bottom: 0.5rem;
+  position: absolute;
+  bottom: 0.5rem;
+  right: 1rem; 
 `;
 
 const ScoreContainer = styled.div`
@@ -85,33 +95,13 @@ const ScoreStamp = styled.div`
   position: absolute;
   top: -1.125rem;
   right: -1.125rem;
+
+  @media (max-width: 768px) {
+  }
 `;
 
 const ScoreSpan = styled.span`
   font-size: 3rem;
   font-weight: 700;
   color: ${(props) => props.theme.colors.primary};
-`;
-
-const DetailButtonContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 1rem;
-`;
-
-const IntoDetailButton = styled.button`
-  padding: 0.5rem 0.5rem;
-  background-color: ${(props) => props.theme.colors.primary};
-  color: white;
-  border: none;
-  border-radius: 0.625rem;
-  font-size: 0.875rem;
-  font-weight: bold;
-  transition: background-color 0.3s ease;
-  cursor: pointer;
-
-  &:hover {
-    background-color: ${(props) => props.theme.colors.primaryPress};
-  }
 `;

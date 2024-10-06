@@ -18,6 +18,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import { useMediaQuery } from "react-responsive";
 
 ChartJS.register(
   LineElement,
@@ -30,6 +31,7 @@ ChartJS.register(
 );
 
 const WordTestHistory: React.FC = () => {
+  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const [correctCount, setCorrectCount] = useState(0);
   const [currentCount, setCurrentCount] = useState(0); // 이번 달 평가 횟수
   const [wholeCount, setWholeCount] = useState(0);
@@ -197,6 +199,60 @@ const WordTestHistory: React.FC = () => {
   if (error)
     return <ErrorText>에러가 발생했습니다. 다시 시도해 주세요.</ErrorText>;
 
+  // 모바일 페이지
+  if (isMobile) {
+    return (
+      <>
+        <InfoContainer>
+          <MobileTitleText>
+            최근 평균보다{" "}
+            {wholeCount ? (
+              wholeCount >= monthAverage ? (
+                <InfoTextEmphasizeBlue>많이</InfoTextEmphasizeBlue>
+              ) : (
+                <InfoTextEmphasizeRed>적게</InfoTextEmphasizeRed>
+              )
+            ) : null}{" "}
+            학습했어요.
+          </MobileTitleText>
+          <InfoText>
+            {new Date().getMonth() + 1}월에 학습된 단어 개수 :
+            {wholeCount ? (
+              wholeCount >= monthAverage ? (
+                <InfoTextEmphasizeBlue>{wholeCount}</InfoTextEmphasizeBlue>
+              ) : (
+                <InfoTextEmphasizeRed>{wholeCount}</InfoTextEmphasizeRed>
+              )
+            ) : null}개
+          </InfoText>
+          <StatsHistory>
+            <StatItem>이번 달 테스트 횟수: {currentCount}회</StatItem>
+            <StatItem>맞힌 단어수: {correctCount}개</StatItem>
+            <StatItem>틀린 단어수: {wrongCount}개</StatItem>
+          </StatsHistory>
+        </InfoContainer>
+        <ChartContainer>
+          <Line data={dateData} options={options} />
+        </ChartContainer>
+        {/* 고정된 높이 및 스크롤 가능한 영역 */}
+        {cardData.length === 0 ? (
+          <EmptyMessage>테스트를 진행하면 리스트들이 출력됩니다.</EmptyMessage>
+        ) : (
+          <ScrollableTestHistoryList>
+            {cardData.map((data, index) => (
+              <WordTestHistoryCardList
+                score={data.score}
+                date={data.date}
+                key={index}
+                quizId={data.quizId}
+              />
+            ))}
+          </ScrollableTestHistoryList>
+        )}
+      </>
+    );
+  }
+
   return (
     <MainContainer>
       <Layout>
@@ -272,7 +328,8 @@ const MainContainer = styled.div`
 const Layout = styled.div`
   display: flex;
   justify-content: space-between;
-  width: 100%;
+  width: 90%;
+  margin: 0 auto;
   margin-bottom: 2rem;
 `;
 
@@ -285,6 +342,8 @@ const InfoContainer = styled.div`
 
 const ChartContainer = styled.div`
   width: 100%;
+  padding-top: 1rem;
+  margin-bottom: 2rem;
   justify-content: center;
 `;
 
@@ -292,24 +351,40 @@ const TitleText = styled.h1`
   font-size: 2rem;
   font-weight: 700;
   margin-bottom: 1rem;
+
+  @media (max-width: 1280px) {
+    font-size: 1.25rem; /* 1280px 이하에서 글씨 크기를 줄임 */
+  }
 `;
 
 const InfoText = styled.p`
   font-size: 1.25rem;
   font-weight: 600;
   margin-bottom: 1.5rem;
+
+  @media (max-width: 1280px) {
+    font-size: 1rem; /* 1280px 이하에서 글씨 크기를 줄임 */
+  }
 `;
 
 const InfoTextEmphasizeRed = styled.span`
   margin-left: 0.25rem;
   font-size: 2rem;
   color: ${(props) => props.theme.colors.danger};
+
+  @media (max-width: 1280px) {
+    font-size: 1.255rem; /* 1280px 이하에서 글씨 크기를 줄임 */
+  }
 `;
 
 const InfoTextEmphasizeBlue = styled.span`
   margin-left: 0.25rem;
   font-size: 2rem;
   color: ${(props) => props.theme.colors.primary};
+
+  @media (max-width: 1280px) {
+    font-size: 1.25rem; /* 1280px 이하에서 글씨 크기를 줄임 */
+  }
 `;
 
 const StatsHistory = styled.div`
@@ -341,14 +416,18 @@ const ErrorText = styled.div`
 `;
 
 const EmptyMessage = styled.p`
-  display: flex; 
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto;
-  height: 100%;
   margin-top: 5rem;
   justify-content: center;
+  margin: auto;
   text-align: center;
   font-size: 1.25rem;
   color: ${(props) => props.theme.colors.text04};
+`;
+
+// 모바일 전용 스타일
+const MobileTitleText = styled.h1`
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
 `;

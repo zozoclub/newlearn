@@ -1,10 +1,14 @@
 export const createGrid = (words: string[], gridSize: number) => {
     const grid = Array.from({ length: gridSize }, () => Array(gridSize).fill(""));
     const wordPositions: { word: string; positions: [number, number][] }[] = [];
+    const placedWords: string[] = []; // 배치에 성공한 단어들만 저장
 
     words.forEach((word) => {
         let placed = false;
-        while (!placed) {
+        let attempts = 0;
+        const maxAttempts = 100; // 배치 시도 횟수 제한
+
+        while (!placed && attempts < maxAttempts) {
             const direction = Math.random() > 0.5 ? "horizontal" : "vertical";
             const startRow = Math.floor(
                 Math.random() *
@@ -39,18 +43,30 @@ export const createGrid = (words: string[], gridSize: number) => {
                     grid[row][col] = word[idx];
                 });
                 wordPositions.push({ word, positions });
+                placedWords.push(word); // 성공적으로 배치된 단어만 저장
                 placed = true;
             }
+            attempts++;
+        }
+
+        if (!placed) {
+            console.error(`단어를 배치하지 못했습니다: ${word}`);
         }
     });
 
+    // 빈 칸만 필터링하여 무작위 알파벳으로 채우기
+    const emptyPositions: [number, number][] = [];
     for (let i = 0; i < gridSize; i++) {
         for (let j = 0; j < gridSize; j++) {
             if (grid[i][j] === "") {
-                grid[i][j] = String.fromCharCode(65 + Math.floor(Math.random() * 26));
+                emptyPositions.push([i, j]);
             }
         }
     }
 
-    return { grid, wordPositions };
+    emptyPositions.forEach(([row, col]) => {
+        grid[row][col] = String.fromCharCode(65 + Math.floor(Math.random() * 26));
+    });
+
+    return { grid, wordPositions, placedWords }; // placedWords 반환
 };

@@ -10,6 +10,7 @@ const DifficultyToggleBtn: React.FC<{
   return (
     <Container>
       <LowDiv
+        $difficulty={difficulty}
         onClick={() => {
           setDifficulty(1);
           if (isRead) {
@@ -20,6 +21,7 @@ const DifficultyToggleBtn: React.FC<{
         초급
       </LowDiv>
       <MidDiv
+        $difficulty={difficulty}
         onClick={() => {
           window.scrollTo(0, 0);
           setDifficulty(2);
@@ -31,6 +33,7 @@ const DifficultyToggleBtn: React.FC<{
         중급
       </MidDiv>
       <HighDiv
+        $difficulty={difficulty}
         onClick={() => {
           window.scrollTo(0, 0);
           setDifficulty(3);
@@ -55,24 +58,28 @@ const Container = styled.div`
   cursor: pointer;
 `;
 
-const ToggleItem = styled.div`
+const ToggleItem = styled.div<{ $difficulty: number }>`
   position: absolute;
   z-index: 2;
   width: 3.5rem;
   height: 2rem;
   line-height: 2rem;
   text-align: center;
+  transition: color 0.3s;
 `;
 
 const LowDiv = styled(ToggleItem)`
+  color: ${(props) => props.$difficulty === 1 && "white"};
   left: 0;
 `;
 
 const MidDiv = styled(ToggleItem)`
+  color: ${(props) => props.$difficulty === 2 && "white"};
   left: 3.5rem;
 `;
 
 const HighDiv = styled(ToggleItem)`
+  color: ${(props) => props.$difficulty === 3 && "white"};
   left: 7rem;
 `;
 

@@ -17,6 +17,7 @@ import lightThumbnailImage from "@assets/images/lightThumbnail.png";
 import darkThumbnailImage from "@assets/images/darkThumbnail.png";
 import BackArrow from "@assets/icons/BackArrow";
 import { DetailNewsType } from "types/newsType";
+import FilteredRecommendNews from "@components/newspage/FilteredRecommendNews";
 
 const NewsDetailPage = () => {
   const userInfoData = useRecoilValue(userInfoState);
@@ -77,7 +78,7 @@ const NewsDetailPage = () => {
       />
       <Container>
         <News>
-          <div style={{ position: "absolute", top: "1.5rem", left: "1.5rem" }}>
+          <div style={{}}>
             <BackArrow height={30} width={30} />
           </div>
           <NewsContainer ref={newsContainerRef}>
@@ -118,7 +119,7 @@ const NewsDetailPage = () => {
             <WordHunt engData={engData?.content} />
           </div>
         </News>
-        <RecommandContainer>추천 컨테이너</RecommandContainer>
+        <FilteredRecommendNews />
       </Container>
     </>
   );
@@ -127,20 +128,33 @@ const NewsDetailPage = () => {
 const Container = styled.div`
   display: flex;
   gap: 2.5%;
-  width: 80%;
+  width: 90%;
   height: 85%;
-  margin: 0 10%;
+  margin: 0 5%;
   border-radius: 0.75rem;
+  overflow: hidden;
+  @media (max-width: 1279px) {
+    flex-direction: column;
+  }
 `;
 
 const News = styled.div`
   position: relative;
-  background-color: ${(props) => props.theme.colors.cardBackground01};
+  width: 65%;
+  margin-bottom: 2.5%;
+  padding: 2.5% 5%;
   border-radius: 0.75rem;
-  width: 70%;
-  padding: 5%;
+  background-color: ${(props) => props.theme.colors.cardBackground01};
   letter-spacing: 0.5px;
   word-spacing: 0.5px;
+  @media (max-width: 1279px) {
+    width: 90%;
+  }
+  @media (max-width: 767px) {
+    width: 100%;
+    padding: 0;
+    background-color: transparent;
+  }
 `;
 
 const NewsContainer = styled.div``;
@@ -148,16 +162,19 @@ const NewsContainer = styled.div``;
 const ThumbnailImageDiv = styled.div`
   position: relative;
   width: 100%;
-  min-height: 400px;
+  min-height: 300px;
   background-color: ${(props) => props.theme.colors.cardBackground + "AA"};
   border-radius: 0.75rem;
   text-align: center;
 `;
 
 const ThumbnailImage = styled.img`
-  width: 600px;
-  min-height: 400px;
+  width: 80%;
+  min-height: 300px;
   border-radius: 0.75rem;
+  @media screen and (max-width: 767px) {
+    width: 100%;
+  }
 `;
 const DarkThumbnailImage = styled(ThumbnailImage)`
   position: absolute;
@@ -165,12 +182,6 @@ const DarkThumbnailImage = styled(ThumbnailImage)`
   transform: translateX(-50%);
   opacity: ${(props) => (props.theme.mode === "dark" ? 1 : 0)};
   transition: opacity 0.3s;
-`;
-
-const RecommandContainer = styled.div`
-  background-color: #1a1925bd;
-  border-radius: 0.75rem;
-  width: 27.5%;
 `;
 
 export default NewsDetailPage;

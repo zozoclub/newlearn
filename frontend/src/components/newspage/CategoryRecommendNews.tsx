@@ -10,7 +10,7 @@ import darkThumbnailImage from "@assets/images/darkThumbnail.png";
 import languageState from "@store/languageState";
 import { usePageTransition } from "@hooks/usePageTransition";
 
-const CategoryRecommandNews = () => {
+const CategoryRecommendNews = () => {
   const userInfoData = useRecoilValue(userInfoState);
   const languageData = useRecoilValue(languageState);
   const transitionTo = usePageTransition();
@@ -86,7 +86,7 @@ const CategoryRecommandNews = () => {
   return MemoizedComponent;
 };
 
-export default CategoryRecommandNews;
+export default CategoryRecommendNews;
 
 const Container = styled.div`
   width: 37.5%;

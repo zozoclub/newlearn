@@ -63,7 +63,7 @@ public class NewsServiceImpl implements NewsService{
     @Override
     public Page<NewsResponseDTO> getAllNews(Users user, NewsListRequestDTO newsRequestDTO) {
         // 1. NewsRepository에서 전체 뉴스 가져오기
-        Page<News> allNewsList = newsRepository.findAllByOrderByNewsIdDesc(newsRequestDTO.getPageable());
+        Page<News> allNewsList = newsRepository.findAllByOrderByPublishedDateDesc(newsRequestDTO.getPageable());
 
         // 2. 현재 사용자의 모든 UserNewsRead 정보 가져오기
         List<UserNewsRead> userNewsReads = userNewsReadRepository.findAllByUser(user);

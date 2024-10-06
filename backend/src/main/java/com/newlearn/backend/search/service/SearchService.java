@@ -12,6 +12,8 @@ import com.newlearn.backend.search.model.SearchNews;
 import com.newlearn.backend.user.model.Users;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch.core.DeleteByQueryRequest;
+import co.elastic.clients.elasticsearch.core.DeleteByQueryResponse;
 import co.elastic.clients.elasticsearch.indices.RefreshRequest;
 import lombok.RequiredArgsConstructor;
 
@@ -145,4 +147,20 @@ public class SearchService {
 		return new SearchNewsAutoDTO(news.getNewsId(), cleanTitle, cleanTitleEng);
 	}
 
+	public void deleteAggregateIndex() throws IOException {
+
+		DeleteByQueryRequest deleteRequest = DeleteByQueryRequest.of(d -> d
+			.index("news_aggregation")
+			.query(q -> q
+				.matchAll(m -> m)
+			)
+		);
+
+		DeleteByQueryResponse deleteResponse = elasticsearchClient.deleteByQuery(deleteRequest);
+
+		if (deleteResponse.deleted() <= 0) {
+			System.out.println("삭제할 문서 없음");
+		}
+
+	}
 }

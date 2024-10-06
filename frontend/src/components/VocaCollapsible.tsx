@@ -183,12 +183,15 @@ const VocaCollapsible: React.FC<VocaCollapsibleProps> = ({
 export default VocaCollapsible;
 
 const ListItem = styled.div`
+  letter-spacing: 0.1px;
+
+  width: 100%;
   border-radius: 0.5rem;
   margin-bottom: 1rem;
   padding: 0.125rem;
   overflow: hidden;
   transition: all 0.3s ease-in-out;
-  background-color:  ${(props) => props.theme.colors.newsItemBackground};
+  background-color: ${(props) => props.theme.colors.newsItemBackground};
 `;
 
 const Title = styled.div`
@@ -200,28 +203,59 @@ const Title = styled.div`
   justify-content: center;
   font-weight: bold;
   font-size: 1.25rem;
+
+  @media (max-width: 1280px) {
+    font-size: 1.125rem;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 1rem;
+  }
 `;
 
 const TitleContent = styled.div`
   min-width: 30%;
+  @media (max-width: 768px) {
+    min-width: 24%;
+  }
 `;
 
 const TitleWord = styled.span`
   color: ${(props) => props.theme.colors.text};
+
+  @media (max-width: 1280px) {
+    font-size: 1rem;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 0.875rem;
+  }
 `;
 
 const TitleProcessMeaning = styled.span<{ $isExpanded: boolean }>`
   color: ${(props) => props.theme.colors.text04};
   font-weight: 400;
-  font-size: 1rem;
+  font-size: 0.875rem;
   opacity: ${({ $isExpanded }) => ($isExpanded ? 1 : 0)};
   overflow: hidden;
   transition: opacity 0.3s ease, max-height 0.3s ease;
+
+  @media (max-width: 1280px) {
+    font-size: 0.75rem;
+  }
+  @media (max-width: 500px) {
+    display: none;
+  }
 `;
 
 const TitleMeaning = styled.span`
   color: ${(props) => props.theme.colors.text04};
-  font-size: 1rem;
+  font-size: 0.875rem;
+
+  @media (max-width: 1280px) {
+    font-size: 0.75rem;
+  }
+
 `;
 
 const Arrow = styled.div<{ $isExpanded: boolean }>`
@@ -232,6 +266,14 @@ const Arrow = styled.div<{ $isExpanded: boolean }>`
   transform: ${({ $isExpanded }) =>
     $isExpanded ? "rotate(180deg)" : "rotate(0deg)"};
   transition: transform 0.3s ease;
+
+  @media (max-width: 1280px) {
+    font-size: 0.625rem;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 0.5rem;
+  }
 `;
 
 const ContentContainer = styled.div<{ $isExpanded: boolean }>`
@@ -247,6 +289,14 @@ const Content = styled.div`
   color: ${(props) => props.theme.colors.text};
   font-size: 1rem;
   line-height: 1.5;
+
+  @media (max-width: 1280px) {
+    font-size: 0.875rem;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 0.75rem;
+  }
 `;
 
 const SentenceContainer = styled.div`
@@ -269,6 +319,11 @@ const DifficultyChip = styled.div<{ $difficulty: number }>`
   border-radius: 0.5rem;
   font-size: 0.875rem;
   font-weight: bold;
+
+  @media (max-width: 1280px) {
+    font-size: 0.75rem;
+  }
+
 `;
 
 const NewsLinkButton = styled.button`
@@ -279,10 +334,16 @@ const NewsLinkButton = styled.button`
   border-radius: 0.5rem;
   font-size: 0.875rem;
   cursor: pointer;
+  
 
   &:hover {
     background-color: ${(props) => props.theme.colors.primaryPress};
   }
+
+  @media (max-width: 1280px) {
+    font-size: 0.75rem;
+  }
+
 `;
 
 const SentenceText = styled.p`
@@ -290,11 +351,28 @@ const SentenceText = styled.p`
   font-weight: 500;
   margin-top: 1.25rem;
   margin-bottom: 0.5rem;
+  letter-spacing: 0.001rem;
+
+  @media (max-width: 1280px) {
+    font-size: 1rem;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 0.875rem;
+  }
 `;
 
 const SentenceMeaning = styled.p`
   font-size: 1rem;
   color: ${(props) => props.theme.colors.text04};
+
+  @media (max-width: 1280px) {
+    font-size: 0.875rem;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 0.75rem;
+  }
 `;
 
 const ModalButtonContainer = styled.div`
@@ -314,7 +392,16 @@ const ModalCancelButton = styled.button`
   &:hover {
     background-color: ${(props) => props.theme.colors.danger};
   }
+
+  @media (max-width: 1280px) {
+    font-size: 0.875rem;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 0.75rem;
+  }
 `;
+
 const ModalConfirmButton = styled.button`
   padding: 0.5rem 1.5rem;
   background-color: ${(props) => props.theme.colors.primary};
@@ -326,6 +413,14 @@ const ModalConfirmButton = styled.button`
   &:hover {
     background-color: ${(props) => props.theme.colors.primaryPress};
   }
+
+  @media (max-width: 1280px) {
+    font-size: 0.875rem;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 0.75rem;
+  }
 `;
 
 const DeleteButton = styled.div`
@@ -335,19 +430,48 @@ const DeleteButton = styled.div`
 const HighlightedWord = styled.span`
   color: ${(props) => props.theme.colors.primary};
   font-weight: bold;
+
+  @media (max-width: 1280px) {
+    font-size: 1rem;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 0.875rem;
+  }
 `;
 
 const AudioLayout = styled.div`
   display: flex;
-`
+  @media (max-width: 768px) {
+    flex-direction: column;
+    margin-bottom: 0.375rem;
+  }
+`;
 
 const AudioContainer = styled.div`
-display: flex;
-align-items: center;
-margin-right: 0.5rem;
-letter-spacing: 0.02rem;
-`
+  display: flex;
+  align-items: center;
+  margin-right: 0.5rem;
+  letter-spacing: 0.02rem;
+  font-size: 0.875rem;
+
+  @media (max-width: 1280px) {
+    font-size: 0.75rem;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 0.625rem;
+  }
+`;
 
 const PronounceText = styled.p`
   margin-right: 1rem;
-`
+
+  @media (max-width: 1280px) {
+    font-size: 0.875rem;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 0.75rem;
+  }
+`;

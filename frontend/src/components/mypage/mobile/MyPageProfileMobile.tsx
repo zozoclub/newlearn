@@ -12,7 +12,7 @@ import { changeNickname, changeAvatar } from "@services/mypageService";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import LevelIcon from "@components/common/LevelIcon";
 import { checkNicknameDup, getUserInfo } from "@services/userService";
-const MyPageProfile: React.FC = () => {
+const MyPageProfileMobile: React.FC = () => {
   const queryClient = useQueryClient();
   const userInfo = useRecoilValue(userInfoState);
   const setUserInfo = useSetRecoilState(userInfoState);
@@ -200,13 +200,13 @@ const MyPageProfile: React.FC = () => {
     <div>
       <Container>
         <AvatarContainer>
-          <Avatar avatar={avatar} size={8} />
+          <Avatar avatar={avatar} size={7} />
         </AvatarContainer>
         <ProfileInfoContainer>
           {/* 닉네임, 레벨 */}
           <NicknameContainer>
             <LevelContainer>
-              <LevelIcon level={level} size={48} />
+              <LevelIcon level={level} size={36} />
               {nickname}
             </LevelContainer>
             <EditIcon onClick={openModal} />
@@ -294,7 +294,7 @@ const MyPageProfile: React.FC = () => {
   );
 };
 
-export default MyPageProfile;
+export default MyPageProfileMobile;
 
 const Container = styled.div`
   display: grid;

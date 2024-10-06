@@ -40,6 +40,18 @@ const Container = styled.div`
   &:hover {
     background-color: #000000aa;
   }
+
+  @media (max-width: 768px) {
+    height: 6.5rem;
+    padding: 1rem;
+    margin: 0;
+    background-color: ${(props) => props.theme.colors.background};
+    border-radius: 5px;
+    border-bottom: 1px lightgray solid;
+    &:hover {
+      background-color: lightgray;
+    }
+  }
 `;
 
 const ThumbnailImage = styled.div`
@@ -52,6 +64,16 @@ const ThumbnailImage = styled.div`
     border-radius: 1rem;
     object-fit: fill;
   }
+  @media (max-width: 768px) {
+    min-width: 10rem;
+    height: 6.5rem;
+    margin-right: 1rem;
+    img {
+      width: 10rem;
+      height: 6.5rem;
+      border-radius: 5px;
+    }
+  }
 `;
 
 const Title = styled.div`
@@ -60,11 +82,15 @@ const Title = styled.div`
   font-size: 1.75rem;
   font-weight: 700;
   line-height: 2.5rem;
-  height: 5rem;
+  height: 2.5rem;
   overflow: hidden;
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
+  @media (max-width: 768px) {
+    font-size: 1.25rem;
+    line-height: 1.25rem;
+  }
 `;
 
 const Content = styled.div`
@@ -78,6 +104,9 @@ const Content = styled.div`
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
+  @media (max-width: 768px) {
+    display: none;
+  }
 `;
 
 const Category = styled.div`
@@ -87,6 +116,7 @@ const Category = styled.div`
 const CategoryButton = styled.div`
   padding: 0.5rem 1rem;
   border-radius: 0.5rem;
+  color: white;
   background-color: ${(props) => props.theme.colors.primary};
   transition: background-color 0.5s;
   &:hover {
@@ -97,13 +127,22 @@ const CategoryButton = styled.div`
 const Medal = styled.img`
   position: absolute;
   top: 0;
+  @media (max-width: 768px) {
+    width: 2rem;
+  }
 `;
 
 const GoldMedal = styled(Medal)`
   right: 8rem;
+  @media (max-width: 768px) {
+    right: 4rem;
+  }
 `;
 const SilverMedal = styled(Medal)`
   right: 3.75rem;
+  @media (max-width: 768px) {
+    right: 2rem;
+  }
 `;
 const BronzeMedal = styled(Medal)`
   right: 0rem;

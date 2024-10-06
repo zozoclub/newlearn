@@ -1,14 +1,14 @@
 import styled from "styled-components";
 import "swiper/css";
 import "swiper/css/pagination";
-import HybridRecommandNews from "./HybridRecommandNews";
-import CategoryRecommandNews from "./CategoryRecommandNews";
+import HybridRecommendNews from "./HybridRecommendNews";
+import CategoryRecommendNews from "./CategoryRecommendNews";
 
 const Recommend = () => {
   return (
     <Container>
-      <HybridRecommandNews />
-      <CategoryRecommandNews />
+      <HybridRecommendNews />
+      <CategoryRecommendNews />
     </Container>
   );
 };

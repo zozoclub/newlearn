@@ -55,8 +55,8 @@ const Container = styled.div<{
   place-items: center;
   position: fixed;
   bottom: 3rem;
-  width: 3rem;
-  height: 3rem;
+  width: 4rem;
+  height: 4rem;
   border-radius: 100%;
   color: #ffffff;
   background-color: ${(props) => props.theme.colors.primary};
@@ -81,6 +81,11 @@ const Container = styled.div<{
         animation: ${RotateAnimate} 0.5s;
       `}
     transition: transform 0.5s;
+  }
+
+  @media screen and (max-width: 767px) {
+    right: 3rem;
+    bottom: 6rem;
   }
 `;
 

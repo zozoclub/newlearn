@@ -226,10 +226,11 @@ const RestudyQuizList: React.FC<RestudyQuizListProps> = ({
   return (
     <Container>
       <ModalRightHeader>
-        <RemainingQuestions>{`남은 문항: ${remainingQuestions}`}</RemainingQuestions>
-
         {currentPage < questions.length && (
+            <>
+            <RemainingQuestions>{`남은 문항: ${remainingQuestions}`}</RemainingQuestions>
           <SkipAllButton onClick={handleSkipAll}>All Skip</SkipAllButton>
+            </>
         )}
       </ModalRightHeader>
 

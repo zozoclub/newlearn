@@ -32,7 +32,7 @@ def recommendation_contents_news(news_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="No news recommendations available.")
     return recommended_news
 
-# 카테고리 추천 (임시)
+# 카테고리 랜덤뉴스 추천
 @app.get("/recommendation/category/{user_id}")
 def recommendation_category_news(user_id: int, db: Session = Depends(get_db)):
     recommended_news = get_news_recomm_by_categories(user_id, db)

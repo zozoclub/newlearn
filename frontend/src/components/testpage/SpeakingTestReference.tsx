@@ -53,8 +53,8 @@ const SentenceArea = styled.div`
 
 const EnglishSentence = styled.div`
   font-size: 1.375rem;
-  font-weight: 300;
-  letter-spacing: 0.002rem; 
+  font-weight: 500;
+  letter-spacing: 0.0001rem; 
   line-height: 1.5;
 `;
 

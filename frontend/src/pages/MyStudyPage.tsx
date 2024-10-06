@@ -8,7 +8,7 @@ import { useMutation } from "@tanstack/react-query";
 
 import GoalChart from "@components/GoalChart";
 import GoalSetting from "@components/GoalSetting";
-import testMenuBg from "@assets/images/background-testmenu.png";
+import testMenuBg from "@assets/images/background-speakingtest.png";
 import vocaMenuBg from "@assets/images/background-vocamenu.png";
 import Modal from "@components/Modal";
 import Spinner from "@components/Spinner";
@@ -32,12 +32,12 @@ const MyStudyPage = () => {
   }, [setCurrentLocation]);
 
   // 페이지 이동
-  const handleVocaClick = () => {
-    transitionTo("/voca");
+  const handleWordClick = () => {
+    transitionTo("/wordtesthistory");
   };
 
-  const handleTestClick = () => {
-    transitionTo("/testhistory");
+  const handleSpeakingClick = () => {
+    transitionTo("/speakingtesthistory");
   };
 
   // 모달 설정
@@ -111,16 +111,15 @@ const MyStudyPage = () => {
         )}
       </GoalContainer>
       <MenuContainer>
-        <VocaMenu onClick={handleVocaClick}>
+        <VocaMenu onClick={handleWordClick}>
           <Overlay>
-            <MenuTitle>Vocabulary</MenuTitle>
-            <MenuDescription>내가 저장한 단어</MenuDescription>
+            <MenuTitle>Word Test</MenuTitle>
+            <MenuDescription>저장한 단어 테스트</MenuDescription>
           </Overlay>
         </VocaMenu>
-        <WordMenu onClick={handleTestClick}>
+        <WordMenu onClick={handleSpeakingClick}>
           <Overlay>
-            <MenuTitle>Test</MenuTitle>
-            <MenuDescription>내가 저장한 단어 테스트</MenuDescription>
+            <MenuTitle>Pronounce Test</MenuTitle>
             <MenuDescription>발음 테스트 및 분석</MenuDescription>
           </Overlay>
         </WordMenu>

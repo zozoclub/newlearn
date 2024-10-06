@@ -20,7 +20,7 @@ const SpeakingTestHistoryCardList: React.FC<Props> = ({
 }) => {
   const navigate = useNavigate();
 
-  const handleClick = () => {
+  const intoDetailHandler = () => {
     navigate(`/speaking/result/${audioFileId}`);
   };
 
@@ -32,7 +32,7 @@ const SpeakingTestHistoryCardList: React.FC<Props> = ({
   };
 
   return (
-    <MainContainer onClick={handleClick}>
+    <MainContainer onClick={intoDetailHandler}>
       <ListDetailContainer>
         <ScoreContainer>
           <ScoreSpan>{score}</ScoreSpan>점
@@ -46,7 +46,6 @@ const SpeakingTestHistoryCardList: React.FC<Props> = ({
 
 export default SpeakingTestHistoryCardList;
 
-// 아이콘 크기를 반응형으로 만드는 스타일
 const ResponsiveIcon = styled.div`
   width: 3rem;
   height: 3rem;

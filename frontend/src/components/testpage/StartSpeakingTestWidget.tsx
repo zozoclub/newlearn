@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import Modal from "@components/Modal";
 import { useMediaQuery } from "react-responsive";
-import speakingtestIcon from "@assets/icons/mobile/speakingTestIcon.png";
+import speakingTestIcon from "@assets/icons/mobile/speakingTestIcon.png";
 
 type Props = {
   posibleWords: number;
@@ -28,14 +28,14 @@ const StartSpeakingTestWidget: React.FC<Props> = ({ posibleWords }) => {
     return (
       <MobileWidgetContainer>
         <ImageTag>
-          <img src={speakingtestIcon} alt="speakingtestIcon" width={200} />
+          <img src={speakingTestIcon} alt="speakingTestIcon" width={200} />
         </ImageTag>
         <MobileExplain>제시되는 기사 예문을 읽고 내 발음 점수를 확인 해보세요.</MobileExplain>
         <MobileExplain>
           테스트 진행하는 문장 갯수는
           <ExplainNumber>3</ExplainNumber>문항 입니다.
         </MobileExplain>
-        <StartButton onClick={handleStartTest}>테스트 하러가기</StartButton>
+        <StartButton onClick={handleStartTest}>테스트 시작</StartButton>
         <MobileTipContainer>
           <MobileTip>단어장에 저장된 단어의 예문이 출제됩니다.</MobileTip>
           <MobileTip>저장된 단어가 3개 미만일 경우에 문항수가 제한됩니다.</MobileTip>
@@ -55,7 +55,7 @@ const StartSpeakingTestWidget: React.FC<Props> = ({ posibleWords }) => {
   return (
     <WidgetContainer>
       <ImageTag>
-        <img src={speakingtestIcon} alt="speakingtestIcon" width={200} />
+        <img src={speakingTestIcon} alt="speakingTestIcon" width={200} />
       </ImageTag>
       <Title>문장 발음 테스트</Title>
       <Explain>제시되는 기사 예문을 읽고 내 발음 점수를 확인 해보세요.</Explain>
@@ -65,7 +65,7 @@ const StartSpeakingTestWidget: React.FC<Props> = ({ posibleWords }) => {
       </Explain>
       <Tip>단어장에 저장된 단어의 예문이 출제됩니다.</Tip>
       <Tip>저장된 단어가 3개 미만일 경우에 문항수가 제한됩니다.</Tip>
-      <StartButton onClick={handleStartTest}>테스트 하러가기</StartButton>
+      <StartButton onClick={handleStartTest}>테스트 시작</StartButton>
       <Modal isOpen={isWarningModal} onClose={closewarningModal} title="알림">
         <p>단어장보다 테스트 개수가 많을 수 없습니다.</p>
         <ModalButtonContainer>

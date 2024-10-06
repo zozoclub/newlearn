@@ -364,26 +364,41 @@ const TitleText = styled.h1`
   font-size: 2rem;
   font-weight: 700;
   margin-bottom: 1rem;
+
+  @media (max-width: 1280px) {
+    font-size: 1.25rem; /* 1280px 이하일 때 글씨 크기를 줄임 */
+  }
 `;
 
 const InfoText = styled.p`
   font-size: 1.25rem;
   font-weight: 600;
   margin-bottom: 1.5rem;
+
+  @media (max-width: 1280px) {
+    font-size: 1rem; /* 1280px 이하일 때 글씨 크기를 줄임 */
+  }
 `;
 
 const InfoTextEmphasizeRed = styled.span`
   margin-left: 0.25rem;
   font-size: 2rem;
   color: ${(props) => props.theme.colors.danger};
+
+  @media (max-width: 1280px) {
+    font-size: 1.255rem; /* 1280px 이하일 때 글씨 크기를 줄임 */
+  }
 `;
 
 const InfoTextEmphasizeBlue = styled.span`
   margin-left: 0.25rem;
   font-size: 2rem;
   color: ${(props) => props.theme.colors.primary};
-`;
 
+  @media (max-width: 1280px) {
+    font-size: 1.25rem; /* 1280px 이하일 때 글씨 크기를 줄임 */
+  }
+`;
 const StatsHistory = styled.div`
   display: flex;
   flex-direction: column;

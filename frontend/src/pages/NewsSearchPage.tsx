@@ -8,7 +8,7 @@ import { useRecoilValue } from "recoil";
 import userInfoState from "@store/userInfoState";
 import MyPagePagination from "@components/mypage/MyPagePagination";
 import { useState } from "react";
-import WordCloud from "@components/WordCloud";
+// import WordCloud from "@components/WordCloud";
 
 type SearchNewsType = {
   newsId: number;
@@ -75,7 +75,7 @@ const NewsSearchPage = () => {
         ) : (
           <WordCloudContainer>
             <WordCloudTitle>HOT한 키워드</WordCloudTitle>
-            <WordCloud />
+            {/* <WordCloud /> */}
           </WordCloudContainer>
         )}
       </NewsListContainer>

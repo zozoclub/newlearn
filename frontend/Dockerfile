@@ -10,8 +10,7 @@ COPY package*.json ./
 RUN rm -rf node_modules
 
 # 의존성 설치
-RUN npm install --omit=react-tag-cloud
-RUN npm install react-tag-cloud --force
+RUN npm ci
 
 # 나머지 파일 컨테이너에 복사
 COPY . .

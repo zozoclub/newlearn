@@ -1,59 +1,28 @@
 import styled from "styled-components";
-// import CategoryChart from "@components/CategoryChart";
-import TopRankingWidget, {
-  PointRankingType,
-  ReadRankingType,
-} from "./TopRankingWidget";
 import MainGoalBar from "@components/mainpage/MainGoalBar";
 import { useNavigate } from "react-router-dom";
-// import RankingWidget from "./RankingWidget";
-import { useQuery } from "@tanstack/react-query";
-import {
-  getPointRankingList,
-  getReadRankingList,
-} from "@services/rankingService";
 import { useRecoilValue } from "recoil";
 import { goalDataSelector } from "@store/goalState";
 import CategoryChart from "@components/CategoryChart";
+import RankingWidget from "./RankingWidget";
 
 const Widget: React.FC<{ variety: string }> = ({ variety }) => {
-  const { isLoading: pointIsLoading, data: pointRankingList } = useQuery<
-    PointRankingType[]
-  >({
-    queryKey: ["pointRankingData"],
-    queryFn: getPointRankingList,
-    staleTime: 5 * 60 * 1000,
-  });
-  const { isLoading: readIsLoading, data: readRankingList } = useQuery<
-    ReadRankingType[]
-  >({
-    queryKey: ["readRankingList"],
-    queryFn: getReadRankingList,
-    staleTime: 5 * 60 * 1000,
-  });
   const navigate = useNavigate();
   const goalData = useRecoilValue(goalDataSelector);
   const handleMyStudy = () => {
     navigate("/mystudy");
   };
   switch (variety) {
-    case "profile":
-      return <WidgetContainer></WidgetContainer>;
     case "chart":
       return (
         <WidgetContainer className="chart">
           <CategoryChart />
         </WidgetContainer>
       );
-    case "topRanking":
+    case "ranking":
       return (
         <LargeWidgetContainer>
-          <TopRankingWidget
-            pointIsLoading={pointIsLoading}
-            pointRankingList={pointRankingList}
-            readIsLoading={readIsLoading}
-            readRankingList={readRankingList}
-          />
+          <RankingWidget />
         </LargeWidgetContainer>
       );
     case "goal":
@@ -82,9 +51,6 @@ const WidgetContainer = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 300px;
-  padding: 2.5%;
-
   aspect-ratio: 1;
   background-color: ${(props) => props.theme.colors.cardBackground01};
   border-radius: 1rem;
@@ -94,7 +60,8 @@ const WidgetContainer = styled.div`
 `;
 
 const LargeWidgetContainer = styled(WidgetContainer)`
-  aspect-ratio: 2.12;
+  grid-column: span 2;
+  aspect-ratio: 2;
 `;
 
 const GoalSetting = styled.button`

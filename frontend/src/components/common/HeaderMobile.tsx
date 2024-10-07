@@ -21,18 +21,18 @@ const HeaderMobile: React.FC<Props> = ({ title, url }) => {
     }
   };
   return (
-    <ModalHeader>
+    <MobileHeader>
       <BackButton onClick={handleClick}>
         <img src={backArrowIcon} alt="버튼" />
       </BackButton>
       <ModalTitle>{title}</ModalTitle>
-    </ModalHeader>
+    </MobileHeader>
   );
 };
 
 export default HeaderMobile;
 
-const ModalHeader = styled.div`
+const MobileHeader = styled.div`
   display: flex;
   align-items: center;
   padding: 1rem;

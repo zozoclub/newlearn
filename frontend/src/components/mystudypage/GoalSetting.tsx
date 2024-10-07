@@ -14,25 +14,62 @@ const GoalSetting: React.FC<GoalSettingComponentProps> = ({ goalMutation }) => {
   const [goalReadNewsCount, setGoalReadNewsCount] = useState("");
   const [goalCompleteWord, setGoalCompleteWord] = useState("");
   const [goalPronounceTestScore, setGoalPronounceTestScore] = useState("");
-  const [showTooltip, setShowTooltip] = useState(false);
+  const [showPronounceTooltip, setShowPronounceTooltip] = useState(false);
+  const [showWordTestTooltip, setShowWordTestTooptip] = useState(false);
+  const [errorMessages, setErrorMessages] = useState({
+    goalReadNewsCount: "",
+    goalCompleteWord: "",
+    goalPronounceTestScore: "",
+  });
 
   const queryClient = useQueryClient();
   const setGoalState = useSetRecoilState(goalState);
 
   const handleInputChange =
-    (setter: React.Dispatch<React.SetStateAction<string>>) =>
+    (
+      field: keyof typeof errorMessages,
+      setter: React.Dispatch<React.SetStateAction<string>>,
+      minValue: number
+    ) =>
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const value = e.target.value;
-      if (value === "" || (parseInt(value) >= 1 && !value.includes("."))) {
+      if (
+        value === "" ||
+        (parseInt(value) >= minValue && !value.includes("."))
+      ) {
         setter(value);
+        setErrorMessages((prev) => ({ ...prev, [field]: "" }));
+      } else {
+        setter(value);
+        setErrorMessages((prev) => ({
+          ...prev,
+          [field]: `${minValue} 이상의 값을 입력해주세요.`,
+        }));
       }
     };
 
   const handleSave = async () => {
+    const newErrorMessages = {
+      goalReadNewsCount:
+        parseInt(goalReadNewsCount) < 20 ? "20 이상의 값을 입력해주세요." : "",
+      goalCompleteWord:
+        parseInt(goalCompleteWord) < 20 ? "20 이상의 값을 입력해주세요." : "",
+      goalPronounceTestScore:
+        parseInt(goalPronounceTestScore) < 200
+          ? "200 이상의 값을 입력해주세요."
+          : "",
+    };
+
+    setErrorMessages(newErrorMessages);
+
+    if (Object.values(newErrorMessages).some((msg) => msg !== "")) {
+      return;
+    }
+
     const goalData: GoalSettingType = {
-      goalReadNewsCount: parseInt(goalReadNewsCount, 10) || 1,
-      goalCompleteWord: parseInt(goalCompleteWord, 10) || 1,
-      goalPronounceTestScore: parseInt(goalPronounceTestScore, 10) || 1,
+      goalReadNewsCount: parseInt(goalReadNewsCount, 10) || 20,
+      goalCompleteWord: parseInt(goalCompleteWord, 10) || 20,
+      goalPronounceTestScore: parseInt(goalPronounceTestScore, 10) || 200,
     };
 
     await goalMutation.mutateAsync(goalData);
@@ -56,6 +93,7 @@ const GoalSetting: React.FC<GoalSettingComponentProps> = ({ goalMutation }) => {
       console.error("newData가 객체가 아닙니다:", newData);
     }
   };
+
   return (
     <>
       <GoalContainer>
@@ -70,39 +108,68 @@ const GoalSetting: React.FC<GoalSettingComponentProps> = ({ goalMutation }) => {
           <GoalTitle>
             <GoalTitleStrong>뉴스</GoalTitleStrong> 읽기
           </GoalTitle>
-          <div>
-            <GoalInput
-              type="number"
-              min="1"
-              value={goalReadNewsCount}
-              onChange={handleInputChange(setGoalReadNewsCount)}
-            />
-            개
-          </div>
+          <GoalInputContainer>
+            <div>
+              <GoalInput
+                type="number"
+                min="1"
+                value={goalReadNewsCount}
+                onChange={handleInputChange(
+                  "goalReadNewsCount",
+                  setGoalReadNewsCount,
+                  20
+                )}
+              />
+              개
+            </div>
+            <div>
+              <ErrorMessage>{errorMessages.goalReadNewsCount}</ErrorMessage>
+            </div>
+          </GoalInputContainer>
         </GoalItem>
         <GoalItem>
           <GoalTitle>
             <GoalTitleStrong>단어</GoalTitleStrong> 테스트
+            <TooltipContainer>
+              <QuestionMark
+                onMouseEnter={() => setShowWordTestTooptip(true)}
+                onMouseLeave={() => setShowWordTestTooptip(false)}
+              />
+              {showWordTestTooltip && (
+                <Tooltip>
+                  단어 테스트는 맞춘 단어의 개수를 목표로 설정합니다.
+                </Tooltip>
+              )}
+            </TooltipContainer>
           </GoalTitle>
-          <div>
-            <GoalInput
-              type="number"
-              min="1"
-              value={goalCompleteWord}
-              onChange={handleInputChange(setGoalCompleteWord)}
-            />
-            개
-          </div>
+          <GoalInputContainer>
+            <div>
+              <GoalInput
+                type="number"
+                min="1"
+                value={goalCompleteWord}
+                onChange={handleInputChange(
+                  "goalCompleteWord",
+                  setGoalCompleteWord,
+                  20
+                )}
+              />
+              개
+            </div>
+            <div>
+              <ErrorMessage>{errorMessages.goalCompleteWord}</ErrorMessage>
+            </div>
+          </GoalInputContainer>
         </GoalItem>
         <GoalItem>
           <GoalTitle>
             <GoalTitleStrong>발음</GoalTitleStrong> 연습하기
             <TooltipContainer>
               <QuestionMark
-                onMouseEnter={() => setShowTooltip(true)}
-                onMouseLeave={() => setShowTooltip(false)}
+                onMouseEnter={() => setShowPronounceTooltip(true)}
+                onMouseLeave={() => setShowPronounceTooltip(false)}
               />
-              {showTooltip && (
+              {showPronounceTooltip && (
                 <Tooltip>
                   발음 연습하기는 1회 테스트 시 100점 만점으로, 점수 합계를
                   목표로 설정합니다.
@@ -110,15 +177,26 @@ const GoalSetting: React.FC<GoalSettingComponentProps> = ({ goalMutation }) => {
               )}
             </TooltipContainer>
           </GoalTitle>
-          <div>
-            <GoalInput
-              type="number"
-              min="1"
-              value={goalPronounceTestScore}
-              onChange={handleInputChange(setGoalPronounceTestScore)}
-            />
-            점
-          </div>
+          <GoalInputContainer>
+            <div>
+              <GoalInput
+                type="number"
+                min="200"
+                value={goalPronounceTestScore}
+                onChange={handleInputChange(
+                  "goalPronounceTestScore",
+                  setGoalPronounceTestScore,
+                  200
+                )}
+              />
+              점
+            </div>
+            <div>
+              <ErrorMessage>
+                {errorMessages.goalPronounceTestScore}
+              </ErrorMessage>
+            </div>
+          </GoalInputContainer>
         </GoalItem>
       </GoalContainer>
       <ButtonContainer>
@@ -141,7 +219,7 @@ const GoalItem = styled.div`
   justify-content: space-between;
   align-items: center;
   gap: 6rem;
-  margin: 1rem 8rem;
+  margin: 0.5rem 8rem;
 `;
 
 const GoalTitle = styled.div`
@@ -156,7 +234,7 @@ const GoalTitleStrong = styled.span`
 `;
 const GoalInput = styled.input`
   text-align: right;
-  width: 60px;
+  width: 110px;
   padding: 5px 0;
   margin: 0 0.25rem;
 
@@ -227,4 +305,19 @@ const Tooltip = styled.div`
     border-style: solid;
     border-color: #333 transparent transparent transparent;
   }
+`;
+
+const ErrorMessage = styled.div`
+  color: red;
+  font-size: 0.75rem;
+  height: 1rem;
+  margin-top: 0.25rem;
+  text-align: right;
+  width: 100%;
+`;
+
+const GoalInputContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: end;
 `;

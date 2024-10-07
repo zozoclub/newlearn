@@ -114,6 +114,7 @@ const GoalSettingDescription = styled.div`
 `;
 
 const GoalSettingButton = styled.button`
+  margin: 0 7rem;
   padding: 0.75rem 1.25rem;
   background: none;
   background-color: ${(props) => props.theme.colors.primary};

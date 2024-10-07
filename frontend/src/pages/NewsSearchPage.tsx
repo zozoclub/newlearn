@@ -74,7 +74,7 @@ const NewsSearchPage = () => {
           <NoResult>검색 결과가 없습니다.</NoResult>
         ) : (
           <WordCloudContainer>
-            <WordCloudTitle>HOT한 키워드</WordCloudTitle>
+            {/* <WordCloudTitle>HOT한 키워드</WordCloudTitle> */}
             <WordCloud />
           </WordCloudContainer>
         )}
@@ -114,12 +114,12 @@ const NoResult = styled.div`
   font-size: 2rem;
 `;
 
-const WordCloudTitle = styled.div`
-  font-weight: bold;
-  font-size: 2rem;
-  margin-top: 1rem;
-  color: gray;
-`;
+// const WordCloudTitle = styled.div`
+//   font-weight: bold;
+//   font-size: 2rem;
+//   margin-top: 1rem;
+//   color: gray;
+// `;
 
 const WordCloudContainer = styled.div`
   display: flex;

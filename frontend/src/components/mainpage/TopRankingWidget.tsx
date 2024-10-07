@@ -59,6 +59,7 @@ const TopRankingWidget: React.FC<{
         selectedType === "point"
           ? pointRankingList !== undefined && pointRankingList.length > 0
           : readRankingList !== undefined && readRankingList.length > 0,
+      staleTime: 5 * 60 * 1000,
     });
 
   const { isLoading: secondIsLoading, data: secondUserAvatar } =
@@ -74,6 +75,7 @@ const TopRankingWidget: React.FC<{
         selectedType === "point"
           ? pointRankingList !== undefined && pointRankingList.length > 1
           : readRankingList !== undefined && readRankingList.length > 1,
+      staleTime: 5 * 60 * 1000,
     });
 
   const { isLoading: thirdIsLoading, data: thirdUserAvatar } =
@@ -89,6 +91,7 @@ const TopRankingWidget: React.FC<{
         selectedType === "point"
           ? pointRankingList !== undefined && pointRankingList.length > 2
           : readRankingList !== undefined && readRankingList.length > 2,
+      staleTime: 5 * 60 * 1000,
     });
 
   const renderRankings = (

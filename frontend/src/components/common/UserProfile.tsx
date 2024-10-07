@@ -106,7 +106,7 @@ const UserProfileModal = styled.div<{ $isOpened: boolean }>`
   right: 0;
   width: 18rem;
   height: 17rem;
-  padding: 2rem 1rem 1rem 1rem;
+  padding: 2rem 1rem 3rem;
   background-color: ${(props) => props.theme.colors.cardBackground};
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   border-radius: 0.75rem 0 0.75rem 0.75rem;

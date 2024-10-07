@@ -45,6 +45,8 @@ const MainPage = () => {
           </div>
           <DailyNews />
         </RecommandNewsContainer>
+        <RestudyQuiz />
+        <PWAInstallPrompt />
       </Container>
     );
   };

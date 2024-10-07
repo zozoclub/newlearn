@@ -48,7 +48,6 @@ const fadeOutAnimation = keyframes`
   }
 `;
 const Content = styled.div`
-  position: relative;
   opacity: 0;
   &.fadeIn {
     animation: ${fadeInAnimation} 500ms;

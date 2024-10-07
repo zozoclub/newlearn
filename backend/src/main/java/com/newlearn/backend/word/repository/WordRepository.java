@@ -27,4 +27,7 @@ public interface WordRepository extends JpaRepository<Word, Long> {
 
 	@Query("select count(w) from Word w where w.user = :user and w.isComplete = true")
 	Long countCompleteWordsByUser(Users user);
+
+	@Query("select count(w) from Word w where w.user = :user and w.isDelete = false")
+	Long countSavedWordsByUser(Users user);
 }

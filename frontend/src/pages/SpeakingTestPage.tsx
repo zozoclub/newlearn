@@ -11,6 +11,7 @@ import SpeakingTestRealtimeText from "@components/testpage/SpeakingTestRealtimeT
 import SpeakingTestRecord from "@components/testpage/SpeakingTestRecord";
 import Modal from "@components/Modal";
 import Spinner from "@components/Spinner";
+import HeaderMobile from "@components/common/HeaderMobile";
 // 이외 라이브러리
 import { useSetRecoilState } from "recoil";
 import locationState from "@store/locationState";
@@ -25,9 +26,14 @@ import {
   PronounceTestListDto,
 } from "@services/speakingTestService";
 import { isExpModalState } from "@store/expState";
+import { useMediaQuery } from "react-responsive"; // 모바일 여부 감지
+import SpeakingTestRealtimeTextMobile from "@components/testpage/SpeakingTestRealtimeTextMobile";
+
+
 
 
 const SpeakingTestPage: React.FC = () => {
+  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const setExpModal = useSetRecoilState(isExpModalState);
   const navigate = useNavigate();
 
@@ -326,6 +332,59 @@ const SpeakingTestPage: React.FC = () => {
     );
   };
 
+  if (isMobile) {
+    return (
+      <>
+        <HeaderMobile title="Pronounce Test" url="/speakingtesthistory" />
+        <MobileContainer>
+          <SpeakingTestRealtimeTextMobile
+            isExplainText={isExplainText}
+            userRecognizedText={userRecognizedText}
+            userRecognizingText={recognizingText}
+            status={status}
+          />
+          <SpeakingTestRecord
+            startUserRecording={startUserRecording}
+            stopUserRecording={stopUserRecording}
+            restartRecording={restartRecording}
+            audioUrl={audioUrl}
+            status={status}
+            isStartRecordModal={isStartRecordModal}
+            startRecordingModal={startRecordingModal}
+            closeRecordingModal={closeRecordingModal}
+          />
+          <SpeakingTestReference
+            referenceTest={referenceText}
+            referenceTextTranslate={referenceTextTranslate}
+          />
+        <SubmitButtonContainer>
+          <SubmitButton
+            onClick={handleRecordingDataSubmit}
+            disabled={isSubmitDisabled || !userRecognizedText}
+          >
+            {isSubmitLoading ? <Spinner></Spinner> : "제출하기"}
+          </SubmitButton>
+        </SubmitButtonContainer>
+        </MobileContainer>
+        <Modal
+          isOpen={isSubmitModal}
+          onClose={closeSubmitModal}
+          title="Speaking Test"
+        >
+          <p>정말로 제출하시겠습니까?</p>
+          <ModalButtonContainer>
+            <ModalCancelButton onClick={closeSubmitModal}>
+              취소
+            </ModalCancelButton>
+            <ModalConfirmButton onClick={handleSubmitConfirm}>
+              확인
+            </ModalConfirmButton>
+          </ModalButtonContainer>
+        </Modal>
+      </>
+    )
+  }
+
   return (
     <>
       <MainContainer>
@@ -391,6 +450,8 @@ const SpeakingTestPage: React.FC = () => {
     </>
   );
 };
+
+export default SpeakingTestPage;
 
 const MainContainer = styled.div`
   width: 90%;
@@ -499,4 +560,12 @@ const ErrorText = styled.div`
   text-align: center;
 `;
 
-export default SpeakingTestPage;
+const MobileContainer = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  padding-bottom: 5rem;
+`;
+

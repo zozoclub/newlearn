@@ -13,12 +13,12 @@ import NewsSwiper from "@components/common/NewsSwiper";
 const DailyNews = () => {
   const userInfoData = useRecoilValue(userInfoState);
   const languageData = useRecoilValue(languageState);
-  const difficulty = userInfoData.difficulty;
 
   const { data: dailyNewsList, isLoading } = useQuery({
-    queryKey: ["dailyNewsList", difficulty, languageData],
-    queryFn: () => getTopNewsList(difficulty, languageData),
+    queryKey: ["dailyNewsList", userInfoData, languageData],
+    queryFn: () => getTopNewsList(userInfoData.difficulty, languageData),
     staleTime: 5 * 60 * 1000, // 5분 동안 데이터를 신선한 상태로 유지
+    enabled: userInfoData.isInitialized,
   });
 
   if (isLoading) return <div>Loading news...</div>;

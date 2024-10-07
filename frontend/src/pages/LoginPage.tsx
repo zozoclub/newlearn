@@ -14,20 +14,6 @@ const LoginPage = () => {
   const [isLogin, setIsLogin] = useState(sessionStorage.getItem("accessToken"));
   const transitionTo = usePageTransition();
   const setCurrentLocation = useSetRecoilState(locationState);
-  const requestAccessToken = async () => {
-    try {
-      const response = await getRefreshToken();
-      if (response) {
-        setIsLogin(response);
-        console.log("refreshToken 유효, 토큰 재발급");
-        transitionTo("/");
-      } else {
-        console.log("refreshToken 만료, 다시 로그인하세요.");
-      }
-    } catch {
-      console.log("refreshToken 만료, 다시 로그인하세요.");
-    }
-  };
 
   useEffect(() => {
     setCurrentLocation("login");
@@ -40,14 +26,28 @@ const LoginPage = () => {
     if (isLogin) {
       transitionTo("/");
     } else {
+      const requestAccessToken = async () => {
+        try {
+          const response = await getRefreshToken();
+          if (response) {
+            setIsLogin(response);
+            console.log("refreshToken 유효, 토큰 재발급");
+            transitionTo("/");
+          } else {
+            console.log("refreshToken 만료, 다시 로그인하세요.");
+          }
+        } catch {
+          console.log("refreshToken 만료, 다시 로그인하세요.");
+        }
+      };
+
       requestAccessToken();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLogin, transitionTo]);
 
   return (
     <Container>
-      <LogoDiv onClick={() => transitionTo("/landing")}>
+      <LogoDiv>
         <FullLogo width={360} height={60} />
       </LogoDiv>
       <img
@@ -71,16 +71,14 @@ const LoginPage = () => {
 const Container = styled.div`
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
   position: absolute;
   left: 50%;
-  top: calc(50% + 150px);
-  transform: translate(-50%, 0);
-  width: 25.25rem;
-  height: 16.5rem;
-  padding: 3rem;
-  border-radius: 0.5rem;
-  background-color: ${(props) => props.theme.colors.cardBackground + "AA"};
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 25rem;
+  height: 20rem;
   :nth-child(2) {
     margin-bottom: 0.5rem;
     cursor: pointer;
@@ -91,8 +89,7 @@ const Container = styled.div`
 `;
 
 const LogoDiv = styled.div`
-  margin: 1rem 0 3rem 0;
-  cursor: pointer;
+  margin-bottom: 3rem;
 `;
 
 export default LoginPage;

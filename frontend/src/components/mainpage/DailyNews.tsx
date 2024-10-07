@@ -9,16 +9,18 @@ import { useRecoilValue } from "recoil";
 import userInfoState from "@store/userInfoState";
 import languageState from "@store/languageState";
 import NewsSwiper from "@components/common/NewsSwiper";
+import { useMediaQuery } from "react-responsive";
 
 const DailyNews = () => {
   const userInfoData = useRecoilValue(userInfoState);
   const languageData = useRecoilValue(languageState);
-  const difficulty = userInfoData.difficulty;
+  const isMobile = useMediaQuery({ query: "(max-width: 767px)" });
 
   const { data: dailyNewsList, isLoading } = useQuery({
-    queryKey: ["dailyNewsList", difficulty, languageData],
-    queryFn: () => getTopNewsList(difficulty, languageData),
+    queryKey: ["dailyNewsList", userInfoData, languageData],
+    queryFn: () => getTopNewsList(userInfoData.difficulty, languageData),
     staleTime: 5 * 60 * 1000, // 5분 동안 데이터를 신선한 상태로 유지
+    enabled: userInfoData.isInitialized,
   });
 
   if (isLoading) return <div>Loading news...</div>;
@@ -26,7 +28,12 @@ const DailyNews = () => {
   return (
     <Container>
       {dailyNewsList && (
-        <NewsSwiper variety={"daily"} newsList={dailyNewsList} height={440} />
+        <NewsSwiper
+          variety={"daily"}
+          newsList={dailyNewsList}
+          height={440}
+          sildesPerView={isMobile ? 1 : 1.5}
+        />
       )}
     </Container>
   );
@@ -37,6 +44,9 @@ const Container = styled.div`
   top: 10rem;
   width: 50vw;
   overflow: hidden;
+  @media screen and (max-width: 767px) {
+    width: 100vw;
+  }
 `;
 
 export default DailyNews;

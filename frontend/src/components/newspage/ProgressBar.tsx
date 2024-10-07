@@ -1,10 +1,11 @@
 import { readNews } from "@services/newsService";
 import { RefObject, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import goalState from "@store/goalState";
 import { useParams } from "react-router-dom";
 import languageState from "@store/languageState";
+import { isExpModalState } from "@store/expState";
 
 type ProgressBarPropsType = {
   engIsLoading: boolean;
@@ -38,6 +39,7 @@ const ProgressBar: React.FC<ProgressBarPropsType> = ({
   const isLoadingRef = useRef<boolean>(engIsLoading || korIsLoading);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const isActiveRef = useRef<boolean>(false);
+  const setExpModal = useSetRecoilState(isExpModalState);
 
   // 현재 Loading 상태
   useEffect(() => {
@@ -143,6 +145,12 @@ const ProgressBar: React.FC<ProgressBarPropsType> = ({
         currentReadNewsCount: prevProgress.currentReadNewsCount + 1,
       }));
 
+      // 경험치 모달
+      setExpModal({
+        isOpen: true,
+        experience: 10,
+        action: "기사 읽기  ",
+      });
       console.log(userProgress);
     } else {
       setIsReadFinished(false);

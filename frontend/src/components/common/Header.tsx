@@ -11,7 +11,7 @@ import NewsListHeader from "@components/newspage/NewsListHeader";
 
 const Header = () => {
   const currentLocation = useRecoilValue(locationState);
-  const [isVisible, setIsVisible] = useState<boolean>(true);
+  const [isVisible, setIsVisible] = useState<boolean>(false);
   const [isNewsPage, setIsNewspage] = useState<boolean>(false);
   const transitionTo = usePageTransition();
   const hiddenPages = ["login", "signUp", "notFound"];

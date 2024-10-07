@@ -1,6 +1,7 @@
 package com.newlearn.backend.user.dto.response;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -56,5 +57,6 @@ public class UserProfileResponseDTO {
 		for (Category category : set) {
 			this.categories.add(category.getCategoryName());
 		}
+		Collections.sort(categories);
 	}
 }

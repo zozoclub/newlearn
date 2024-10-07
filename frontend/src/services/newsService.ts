@@ -225,47 +225,6 @@ export const deleteScrapNews = async (newsId: number, difficulty: number) => {
   }
 };
 
-export const searchAutoNews = async (query: string) => {
-  try {
-    const response = await axiosInstance.get("search/auto", {
-      params: {
-        query: query,
-      },
-    });
-    console.log(response.data.data);
-    return response.data.data;
-  } catch (error) {
-    console.error("뉴스 자동 검색 실패", error);
-    throw error;
-  }
-};
-
-export const searchNews = async (
-  query: string,
-  difficulty: number,
-  page: number,
-  size: number
-) => {
-  try {
-    const response = await axiosInstance.get("search", {
-      params: {
-        query: query,
-        difficulty: difficulty,
-        page: page,
-        size: size,
-      },
-    });
-    console.log(response.data.data);
-    return {
-      searchResult: response.data.data.content,
-      totalPages: response.data.data.totalPages,
-    };
-  } catch (error) {
-    console.log("뉴스 검색 실패", error);
-    throw error;
-  }
-};
-
 export const getHybridNews = async (): Promise<NewsType[]> => {
   try {
     const response = await axiosInstance.get(`recommend/hybrid`);

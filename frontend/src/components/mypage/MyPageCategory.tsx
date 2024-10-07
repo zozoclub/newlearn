@@ -93,6 +93,7 @@ const DataContainer = styled.div`
   @media (max-width: 768px) {
     width: 90%;
     margin: 0 1rem;
+    margin-bottom: 1rem;
   }
 `;
 

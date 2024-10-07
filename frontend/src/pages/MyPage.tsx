@@ -419,6 +419,7 @@ const FullScreenModal = styled.div<{ $isVisible: boolean }>`
 
 const ModalContent = styled.div`
   padding: 0 1rem;
+  margin-top: 70px;
   overflow-y: auto;
   flex-grow: 1;
   height: 100%;

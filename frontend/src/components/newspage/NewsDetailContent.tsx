@@ -148,9 +148,9 @@ const NewsDetailContent: React.FC<NewsDetailContentType> = ({
                     console.log(event.pageX);
                     setWordModalPosition({
                       x:
-                        window.innerWidth - event.pageX < 700
-                          ? window.innerWidth - 700
-                          : event.pageX,
+                        window.innerWidth - event.pageX < 200
+                          ? window.screenLeft - 200
+                          : event.pageX - 200,
                       y: event.pageY - 125,
                     });
                   }

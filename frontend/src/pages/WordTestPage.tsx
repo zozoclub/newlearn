@@ -224,7 +224,7 @@ const WordTestPage: React.FC = () => {
   return (
     <>
       {isMobile &&
-        <HeaderMobile title="단어 빈칸 테스트"/>
+        <HeaderMobile title="Word Test"/>
       }
       <MainContainer>
         {/* 테스트 퇴장 모달 */}

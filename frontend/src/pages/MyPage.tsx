@@ -9,7 +9,6 @@ import MyPageScrapNews from "@components/mypage/MyPageScrapNews";
 
 import FullLogo from "@components/common/FullLogo";
 
-import HeaderMobile from "@components/common/HeaderMobile";
 import arrowIcon from "@assets/icons/mobile/arrowIcon.svg";
 import MyPageProfileMobile from "@components/mypage/mobile/MyPageProfileMobile";
 import MyPageCountMobile from "@components/mypage/mobile/MyPageCountMobile";
@@ -19,6 +18,7 @@ import { logout, deleteUser } from "@services/userService";
 import { createGlobalStyle } from "styled-components";
 import { usePageTransition } from "@hooks/usePageTransition";
 import Modal from "@components/Modal";
+import backArrowIcon from "@assets/icons/mobile/backArrowIcon.svg";
 import { useSetRecoilState } from "recoil";
 import locationState from "@store/locationState";
 
@@ -145,7 +145,16 @@ const MyPage = () => {
             <>
               <BodyScrollLock />
               <FullScreenModal $isVisible={isChartModalOpen}>
-                <HeaderMobile title="마이 페이지" />
+                <ModalHeader>
+                  <BackButton
+                    onClick={() => {
+                      setIsChartModalOpen(false);
+                    }}
+                  >
+                    <img src={backArrowIcon} alt="버튼" />
+                  </BackButton>
+                  <ModalTitle>마이 페이지</ModalTitle>
+                </ModalHeader>
                 <ModalContent>
                   <ItemTitle>
                     {new Date().getFullYear()} Contribution Graph
@@ -162,7 +171,16 @@ const MyPage = () => {
             <>
               <BodyScrollLock />
               <FullScreenModal $isVisible={isProgressModalOpen}>
-                <HeaderMobile title="마이 페이지" />
+                <ModalHeader>
+                  <BackButton
+                    onClick={() => {
+                      setIsProgressModalOpen(false);
+                    }}
+                  >
+                    <img src={backArrowIcon} alt="버튼" />
+                  </BackButton>
+                  <ModalTitle>마이 페이지</ModalTitle>
+                </ModalHeader>
                 <ModalContent>
                   <Goal />
                 </ModalContent>
@@ -173,7 +191,16 @@ const MyPage = () => {
             <>
               <BodyScrollLock />
               <FullScreenModal $isVisible={isScrapNewsModalOpen}>
-                <HeaderMobile title="마이 페이지" />
+                <ModalHeader>
+                  <BackButton
+                    onClick={() => {
+                      setIsScrapNewsModalOpen(false);
+                    }}
+                  >
+                    <img src={backArrowIcon} alt="버튼" />
+                  </BackButton>
+                  <ModalTitle>마이 페이지</ModalTitle>
+                </ModalHeader>
                 <ModalContent>
                   <MyPageScrapNews />
                 </ModalContent>
@@ -267,7 +294,6 @@ const ContentWrapper = styled.main`
   flex: 1;
   overflow-y: auto;
   margin-top: 70px;
-  margin-bottom: 70px;
 `;
 
 const MyPageContainer = styled.div`
@@ -309,7 +335,7 @@ const WidgetContainer = styled.div`
   box-shadow: ${(props) => props.theme.shadows.xsmall};
   box-sizing: border-box;
 
-  @media (max-width: 768px) {
+  @media (max-width: 767px) {
     box-shadow: none;
     border: 1px solid lightgray;
     margin: 1rem 0;
@@ -318,7 +344,7 @@ const WidgetContainer = styled.div`
 `;
 
 const WidgetMenuContainer = styled(WidgetContainer)`
-  padding: 1.5rem 2rem;
+  padding: 1rem 1.5rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -327,7 +353,7 @@ const WidgetMenuContainer = styled(WidgetContainer)`
 
 const MenuTitle = styled.div`
   font-weight: bold;
-  font-size: 1.5rem;
+  font-size: 1.125rem;
 `;
 
 // modal
@@ -392,7 +418,7 @@ const ModalContent = styled.div`
 
 const ItemTitle = styled.div`
   color: ${(props) => props.theme.colors.text03};
-  font-size: 1.75rem;
+  font-size: 1.25rem;
   font-weight: 600;
   margin: 1rem;
 `;
@@ -404,7 +430,7 @@ const Divider = styled.hr`
 
 const UserButton = styled.div`
   font-weight: bold;
-  font-size: 1.25rem;
+  font-size: 1rem;
   margin: 2rem 1rem;
   cursor: pointer;
 `;
@@ -437,4 +463,28 @@ const ConfirmButton = styled(Button)`
   background-color: ${(props) => props.theme.colors.primary};
   color: white;
   font-size: 1.125rem;
+`;
+
+const ModalHeader = styled.div`
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  position: sticky;
+  top: 0;
+  background-color: ${(props) => props.theme.colors.background};
+  z-index: 1001;
+`;
+
+const BackButton = styled.button`
+  background: none;
+  border: none;
+  padding: 0.5rem;
+  cursor: pointer;
+`;
+
+const ModalTitle = styled.h2`
+  margin: 0;
+  margin-left: 1rem;
+  font-size: 1.5rem;
+  font-weight: bold;
 `;

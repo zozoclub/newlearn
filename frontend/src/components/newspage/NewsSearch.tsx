@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import searchIcon from "@assets/icons/searchIcon.svg";
-import { searchAutoNews } from "@services/newsService";
+import { searchAutoNews } from "@services/searchService";
 import { usePageTransition } from "@hooks/usePageTransition";
 
 type SearchAutoNews = {

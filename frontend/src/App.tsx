@@ -90,7 +90,7 @@ const App: React.FC = () => {
     <ThemeProvider theme={theme}>
       <GlobalStyle />
       <Background />
-      <AppContainer>
+      <AppContainer className="no_scroll">
         {!isMobile && <Header />}
         <TransitionContent>
           <Outlet />
@@ -114,23 +114,23 @@ const App: React.FC = () => {
 
 const AppContainer = styled.div`
   position: relative;
-  min-height: 100vh;
-  height: 100vh;
   @media screen and (min-width: 1280px) {
     width: 90vw;
+    min-height: 100vh;
+    height: 100vh;
     padding: 0 calc(5vw - 0.1875rem);
   }
   @media screen and (min-width: 768px) and (max-width: 1279px) {
     width: 95vw;
+    min-height: 100vh;
+    height: 100vh;
     padding: 0 calc(2.5vw - 0.1875rem);
   }
   @media screen and (max-width: 767px) {
     width: 100vw;
-    overflow: scroll;
-    margin-bottom: 4rem;
-    &::-webkit-scrollbar {
-      display: none;
-    }
+    min-height: 100vh - 4rem;
+    height: calc(100vh - 4rem);
+    padding-bottom: 4rem;
   }
 `;
 

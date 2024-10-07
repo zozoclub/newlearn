@@ -32,7 +32,7 @@ const StartSpeakingTestWidget: React.FC<Props> = ({ posibleWords }) => {
         </ImageTag>
         <MobileExplain>제시되는 기사 예문을 읽고 내 발음 점수를 확인 해보세요.</MobileExplain>
         <MobileExplain>
-          테스트 진행하는 문장 갯수는
+          테스트 진행하는 문장 개수는
           <ExplainNumber>3</ExplainNumber>문항 입니다.
         </MobileExplain>
         <StartButton onClick={handleStartTest}>테스트 시작</StartButton>
@@ -60,7 +60,7 @@ const StartSpeakingTestWidget: React.FC<Props> = ({ posibleWords }) => {
       <Title>문장 발음 테스트</Title>
       <Explain>제시되는 기사 예문을 읽고 내 발음 점수를 확인 해보세요.</Explain>
       <Explain>
-        테스트 진행하는 문장 갯수는
+        테스트 진행하는 문장 개수는
         <ExplainNumber>3</ExplainNumber>문항 입니다.
       </Explain>
       <Tip>단어장에 저장된 단어의 예문이 출제됩니다.</Tip>

@@ -201,7 +201,7 @@ const VocaCollapsible: React.FC<VocaCollapsibleProps> = ({
                         <MobileActionButton
                           onClick={() => handleToggleWordState(id)}
                         >
-                          {isState ? "공부할 단어로 이동" : "외운 단어로 이동"}
+                          {isState ? "To Study" : "Learned"}
                         </MobileActionButton>
                       </MobileActionButtonContainer>
                     )}
@@ -510,6 +510,7 @@ const AudioContainer = styled.div`
 
   @media (max-width: 768px) {
     font-size: 0.625rem;
+    margin-right: 0.5rem;
   }
 `;
 
@@ -522,17 +523,22 @@ const PronounceText = styled.p`
 
   @media (max-width: 768px) {
     font-size: 0.75rem;
+    margin-right: 0.5rem;
   }
 `;
 
 const MobileActionButton = styled.button`
   background-color: ${(props) => props.theme.colors.primary};
+  letter-spacing: 0.01rem;
   color: white;
   border: none;
   width: 6.5rem;
   height: 2rem;
   border-radius: 0.5rem;
   cursor: pointer;
+  @media (max-width: 768px) {
+    width: 4rem;
+  }
 `;
 
 const MobileActionButtonContainer = styled.div`

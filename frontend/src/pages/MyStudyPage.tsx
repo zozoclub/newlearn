@@ -3,13 +3,16 @@ import { useEffect } from "react";
 import Goal from "@components/mystudypage/Goal";
 import locationState from "@store/locationState";
 import { useSetRecoilState } from "recoil";
-
-import testMenuBg from "@assets/images/background-speakingtest.png";
+import { useMediaQuery } from "react-responsive"; // 모바일 여부 감지
 import vocaMenuBg from "@assets/images/background-vocamenu.png";
+import speakingMenuBg from "@assets/images/background-speakingtest.png";
 
 import { usePageTransition } from "@hooks/usePageTransition";
+import HeaderMobile from "@components/common/HeaderMobile";
 
 const MyStudyPage = () => {
+  const isTablet = useMediaQuery({ query: "(max-width: 1280px)" });
+  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const transitionTo = usePageTransition();
 
   // 페이지 헤더
@@ -28,24 +31,30 @@ const MyStudyPage = () => {
   };
 
   return (
-    <Container>
-      <Goal />
-
-      <MenuContainer>
-        <VocaMenu onClick={handleWordClick}>
-          <Overlay>
-            <MenuTitle>Word Test</MenuTitle>
-            <MenuDescription>저장한 단어 테스트</MenuDescription>
-          </Overlay>
-        </VocaMenu>
-        <WordMenu onClick={handleSpeakingClick}>
-          <Overlay>
-            <MenuTitle>Pronounce Test</MenuTitle>
-            <MenuDescription>발음 테스트 및 분석</MenuDescription>
-          </Overlay>
-        </WordMenu>
-      </MenuContainer>
-    </Container>
+    <>
+      {isMobile && (
+        <Header>
+          <HeaderMobile title="Study" />
+        </Header>
+      )}
+      <Container>
+        {!isTablet && <Goal />}
+        <MenuContainer>
+          <VocaMenu onClick={handleWordClick}>
+            <Overlay>
+              <MenuTitle>Word Test</MenuTitle>
+              <MenuDescription>저장한 단어 테스트</MenuDescription>
+            </Overlay>
+          </VocaMenu>
+          <WordMenu onClick={handleSpeakingClick}>
+            <Overlay>
+              <MenuTitle>Pronounce Test</MenuTitle>
+              <MenuDescription>발음 테스트 및 분석</MenuDescription>
+            </Overlay>
+          </WordMenu>
+        </MenuContainer>
+      </Container>
+    </>
   );
 };
 
@@ -54,14 +63,19 @@ export default MyStudyPage;
 const Container = styled.div`
   display: flex;
   gap: 3rem;
-  width: 90%;
   padding: 50px 5%;
   min-height: 600px;
   height: 600px;
+  @media (max-width: 1280px) {
+    padding-top: 1rem;
+    padding-bottom: 5rem;
+    min-height: 30rem;
+    height: 30rem;
+  }
 `;
 
 const MenuContainer = styled.div`
-  flex: 2;
+  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 2.75rem;
@@ -144,16 +158,27 @@ const MenuTitle = styled.h2`
   font-size: 2.5rem;
   font-weight: bold;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  @media (max-width: 768px) {
+    font-size: 2rem;
+  }
 `;
 
 const MenuDescription = styled.div`
   margin: 0.5rem 0;
   font-size: 1.25rem;
+  @media (max-width: 768px) {
+    font-size: 1rem;
+  }
 `;
+
 const VocaMenu = styled(MenuItemBase)`
   background-image: url(${vocaMenuBg});
 `;
 
 const WordMenu = styled(MenuItemBase)`
-  background-image: url(${testMenuBg});
+  background-image: url(${speakingMenuBg});
+`;
+
+const Header = styled.div`
+  width: 100%;
 `;

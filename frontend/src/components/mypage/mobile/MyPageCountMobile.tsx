@@ -41,6 +41,9 @@ const Container = styled.div`
   align-items: center;
   padding: 0.5rem 1.5rem;
   justify-content: space-between;
+  @media (max-width: 767px) {
+    padding: 0.5rem;
+  }
 `;
 
 const ItemContainer = styled.div`

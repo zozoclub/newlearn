@@ -35,9 +35,9 @@ public interface UserService {
 	UserProfileResponseDTO getProfile(Long userId) throws Exception;
 
 	// 마이페이지
-	Page<UserScrapedNewsResponseDTO> getScrapedNewsList(Long userId, NewsPagenationRequestDTO newsPagenationRequestDTO, int difficulty);
-	List<UserGrassResponseDTO> getGrass(Long userId);
-	UserCategoryChartResponseDTO getCategoryChart(long userId);
+	Page<UserScrapedNewsResponseDTO> getScrapedNewsList(Users user, NewsPagenationRequestDTO newsPagenationRequestDTO, int difficulty);
+	List<UserGrassResponseDTO> getGrass(Users user);
+	UserCategoryChartResponseDTO getCategoryChart(Users user);
 
 	Long getUserRank(Long userId) throws Exception;
 

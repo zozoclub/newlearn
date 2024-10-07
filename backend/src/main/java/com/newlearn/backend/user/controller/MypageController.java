@@ -42,7 +42,7 @@ public class MypageController {
                 .size(size)
                 .build();
 
-            Page<UserScrapedNewsResponseDTO> newsList = userService.getScrapedNewsList(user.getUserId(), newsPagenationRequestDTO, 0);
+            Page<UserScrapedNewsResponseDTO> newsList = userService.getScrapedNewsList(user, newsPagenationRequestDTO, 0);
 
             return ApiResponse.createSuccess(newsList, "사용자의 스크랩한 뉴스 전체 목록 조회 성공");
         } catch (Exception e) {
@@ -68,7 +68,7 @@ public class MypageController {
                 .size(size)
                 .build();
 
-            Page<UserScrapedNewsResponseDTO> newsList = userService.getScrapedNewsList(user.getUserId(), newsPagenationRequestDTO, difficulty);
+            Page<UserScrapedNewsResponseDTO> newsList = userService.getScrapedNewsList(user, newsPagenationRequestDTO, difficulty);
 
             return ApiResponse.createSuccess(newsList, "사용자의 스크랩한 뉴스 난이도별 목록 조회 성공");
         } catch (Exception e) {
@@ -86,7 +86,7 @@ public class MypageController {
                 return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
             }
 
-            List<UserGrassResponseDTO> grass = userService.getGrass(user.getUserId());
+            List<UserGrassResponseDTO> grass = userService.getGrass(user);
             return ApiResponse.createSuccess(grass, "유저 잔디 조회 성공");
         } catch (Exception e) {
             log.error("유저 잔디 조회 중 실패", e);
@@ -103,7 +103,7 @@ public class MypageController {
             if (user == null) {
                 return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
             }
-            UserCategoryChartResponseDTO chart = userService.getCategoryChart(user.getUserId());
+            UserCategoryChartResponseDTO chart = userService.getCategoryChart(user);
 
             return ApiResponse.createSuccess(chart, "사용자의 카테고리별 읽은 횟수 차트 조회 성공");
         } catch (Exception e) {

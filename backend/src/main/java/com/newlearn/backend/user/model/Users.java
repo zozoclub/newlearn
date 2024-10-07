@@ -1,12 +1,9 @@
 package com.newlearn.backend.user.model;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
-import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import com.newlearn.backend.word.model.Word;
@@ -126,9 +123,15 @@ public class Users {
 	public void incrementNewsReadCnt() {
 		this.totalNewsReadCount++;
 	}
+	public void updateUserTotalNewsReadCnt(long cnt) {
+		this.totalNewsReadCount = cnt;
+	}
 	// 스크랩수 +1
 	public void incrementScrapCount() {
 		this.scrapCount++;
+	}
+	public void updateUserTotalScrapCount(long cnt){
+		this.scrapCount = cnt;
 	}
 	// 스크랩수 -1
 	public void decrementScrapCount() {

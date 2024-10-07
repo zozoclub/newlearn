@@ -149,12 +149,7 @@ const NewsInfoDiv = styled.div`
     -webkit-line-clamp: 2;
   }
   .category {
-    padding: 0.5rem 0.5rem;
-    max-width: 4rem;
-    text-align: center;
-    border-radius: 0.5rem;
-    color: white;
-    background-color: ${(props) => props.theme.colors.primary};
+    opacity: 0.8;
   }
 `;
 

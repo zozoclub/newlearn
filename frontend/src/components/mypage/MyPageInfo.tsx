@@ -29,7 +29,7 @@ const MyPageInfo: React.FC = () => {
   const [difficulty, setDifficulty] = useState<number>(1);
   const [tempDifficulty, setTempDifficulty] = useState<number>(1);
 
-  const categoryList = ["경제", "정치", "사회", "생활/문화", "IT/과학", "세계"];
+  const categoryList = ["정치", "경제", "사회", "생활/문화", "IT/과학", "세계"];
   const [interests, setInterests] = useState<string[]>([]);
   const [tempInterests, setTempInterests] = useState<string[]>([]);
 
@@ -116,7 +116,7 @@ const MyPageInfo: React.FC = () => {
       if (prev.includes(interest)) {
         return prev.filter((i) => i !== interest);
       } else if (prev.length < 3) {
-        return [...prev, interest].sort();
+        return [...prev, interest];
       }
       return prev;
     });
@@ -239,6 +239,7 @@ const ContentContainer = styled.div`
   font-size: 1.25rem;
   @media (max-width: 767px) {
     font-size: 1rem;
+    gap: 0.5rem;
   }
 `;
 
@@ -301,6 +302,10 @@ const ModalButtonItem = styled(CustomButton)<{ isSelected: boolean }>`
         : props.theme.colors.placeholder};
   }
   font-size: 1.25rem;
+
+  @media (max-width: 767px) {
+    font-size: 0.75rem;
+  }
 `;
 
 const SaveButton = styled(CustomButton)`

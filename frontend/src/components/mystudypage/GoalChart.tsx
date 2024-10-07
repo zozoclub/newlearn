@@ -17,6 +17,7 @@ const GoalChart: React.FC = () => {
         <TitleContainer>
           <NicknameContainer>{nickname}</NicknameContainer> 님의 학습 현황
         </TitleContainer>
+        <MonthContainer>{new Date().getMonth() + 1}월 학습 현황</MonthContainer>
         <GoalChartDoughnut />
       </ChartContainer>
 
@@ -52,6 +53,17 @@ const TitleContainer = styled.div`
 const NicknameContainer = styled.div`
   font-size: 1.75rem;
   font-weight: bold;
+`;
+
+const MonthContainer = styled.div`
+  display: none;
+  @media (max-width: 768px) {
+    display: block;
+    font-size: 1.25rem;
+    text-align: center;
+    margin: 2rem 0;
+    font-weight: bold;
+  }
 `;
 
 const ChartContainer = styled.div`

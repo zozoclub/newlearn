@@ -7,7 +7,7 @@ const MyPageCountMobile = () => {
   const userInfo = useRecoilValue(userInfoState);
 
   const readCount = userInfo.totalNewsReadCount;
-  const vocaCount = userInfo.unCompleteWordCount + userInfo.completeWordCount;
+  const vocaCount = userInfo.savedWordCount;
   const scrapCount = userInfo.scrapCount;
 
   const items = [
@@ -41,6 +41,9 @@ const Container = styled.div`
   align-items: center;
   padding: 0.5rem 1.5rem;
   justify-content: space-between;
+  @media (max-width: 767px) {
+    padding: 0.5rem;
+  }
 `;
 
 const ItemContainer = styled.div`

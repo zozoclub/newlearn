@@ -14,10 +14,9 @@ const Recommend = () => {
 };
 
 const Container = styled.div`
-  display: flex;
-  min-height: 30rem;
-  @media (max-width: 1279px) {
-    flex-direction: column;
+  @media screen and (min-width: 768px) {
+    display: flex;
+    min-height: 30rem;
   }
 `;
 

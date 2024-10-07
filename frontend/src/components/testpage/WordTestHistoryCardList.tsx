@@ -48,7 +48,7 @@ const MainContainer = styled.div`
   flex-direction: column;
   position: relative;
   width: 20%;
-  min-height: 10rem;
+  min-height: 8rem;
   margin: 0.625rem;
   padding: 0.625rem;
   background-color: ${(props) => props.theme.colors.newsItemBackground};
@@ -63,7 +63,8 @@ const MainContainer = styled.div`
 
   @media (max-width: 768px) {
     width: 30%;
-    min-height: 2rem;
+    min-height: 3rem;
+    padding: 2rem 1.25rem;
   }
 `;
 
@@ -81,6 +82,9 @@ const DateContainer = styled.div`
   position: absolute;
   bottom: 0.5rem;
   right: 1rem; 
+  @media (max-width: 768px) {
+    font-size: 0.75rem;
+  }
 `;
 
 const ScoreContainer = styled.div`
@@ -104,4 +108,7 @@ const ScoreSpan = styled.span`
   font-size: 3rem;
   font-weight: 700;
   color: ${(props) => props.theme.colors.primary};
+  @media (max-width: 768px) {
+    font-size: 2rem;
+  }
 `;

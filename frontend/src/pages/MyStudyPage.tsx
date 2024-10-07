@@ -129,6 +129,12 @@ const MenuItemBase = styled.div`
     filter: grayscale(0%);
     transform: scale();
   }
+
+    @media (max-width: 768px) {
+    &::before {
+      filter: none; 
+    }
+  }
 `;
 
 const Overlay = styled.div`

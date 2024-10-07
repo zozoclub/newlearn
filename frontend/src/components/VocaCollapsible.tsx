@@ -532,13 +532,11 @@ const MobileActionButton = styled.button`
   letter-spacing: 0.01rem;
   color: white;
   border: none;
-  width: 6.5rem;
   height: 2rem;
   border-radius: 0.5rem;
   cursor: pointer;
-  @media (max-width: 768px) {
-    width: 4rem;
-  }
+  width: 4rem;
+  font-weight: 700;
 `;
 
 const MobileActionButtonContainer = styled.div`

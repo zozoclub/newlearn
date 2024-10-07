@@ -48,7 +48,14 @@ public class WordServiceImpl implements WordService {
 		List<Word> words = wordRepository.findAllByWordAndUser(wordRequestDto.getWord(), user);
 		for(Word word : words) {
 			if(word.getSentence().getSentence().equals(wordRequestDto.getSentence())) {
-				throw new Exception("중복 단어입니다");
+				if(word.isDelete()) {
+					word.setDelete(false);
+				}
+				else {
+					word.setDelete(true);
+				}
+				wordRepository.save(word);
+				return word.getWordId();
 			}
 		}
 

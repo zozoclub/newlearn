@@ -1,5 +1,6 @@
 package com.newlearn.backend.word.service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -177,8 +178,8 @@ public class WordServiceImpl implements WordService {
 	@Override
 	public List<RestudyWordResponseDTO> getWordsForRestudy(Users user) {
 
-		LocalDateTime now = LocalDateTime.now();
-		List<Word> words = wordRepository.findByUserAndNextRestudyDateLessThanEqualAndIsFinalCompleteFalseAndIsCompleteTrue(
+		LocalDate now = LocalDate.now();
+		List<Word> words = wordRepository.findByUserAndNextRestudyDateLessThanEqualAndIsFinalCompleteFalseAndIsCompleteTrueAndIsDeleteFalse(
 				user, now);
 
 		List<RestudyWordResponseDTO> response = new ArrayList<>();

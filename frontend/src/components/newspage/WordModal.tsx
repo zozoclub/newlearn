@@ -106,44 +106,6 @@ const WordModal: React.FC<WordModalPropsType> = ({
       <Word>
         <div>{selected.word}</div>
         <div style={{ display: "flex", gap: "1rem" }}>
-          {searchResult[2][0] && (
-            <div
-              style={{
-                fontSize: "1rem",
-                lineHeight: "2rem",
-                whiteSpace: "nowrap",
-              }}
-            >
-              미국 {searchResult[1][0]}{" "}
-              <a
-                href={searchResult[2][0]} // 음성 파일 링크
-                onClick={(event) => handlePlayAudio(event, searchResult[2][0])}
-                className="btn_voice"
-              >
-                듣기
-              </a>
-            </div>
-          )}
-
-          {searchResult[2][1] && (
-            <div
-              style={{
-                fontSize: "1rem",
-                lineHeight: "2rem",
-                whiteSpace: "nowrap",
-              }}
-            >
-              영국 {searchResult[1][1]}{" "}
-              <a
-                href={searchResult[2][1]} // 음성 파일 링크
-                onClick={(event) => handlePlayAudio(event, searchResult[2][1])}
-                className="btn_voice"
-              >
-                듣기
-              </a>
-            </div>
-          )}
-
           <div
             onClick={() => setSelected({ ...selected, word: "" })}
             style={{ cursor: "pointer" }}
@@ -152,6 +114,52 @@ const WordModal: React.FC<WordModalPropsType> = ({
           </div>
         </div>
       </Word>
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          gap: "0.5rem",
+          marginBottom: "0.5rem",
+        }}
+      >
+        {searchResult[2][0] && (
+          <div
+            style={{
+              fontSize: "1rem",
+              lineHeight: "2rem",
+              whiteSpace: "nowrap",
+            }}
+          >
+            미국 {searchResult[1][0]}{" "}
+            <a
+              href={searchResult[2][0]} // 음성 파일 링크
+              onClick={(event) => handlePlayAudio(event, searchResult[2][0])}
+              className="btn_voice"
+            >
+              듣기
+            </a>
+          </div>
+        )}
+
+        {searchResult[2][1] && (
+          <div
+            style={{
+              fontSize: "1rem",
+              lineHeight: "2rem",
+              whiteSpace: "nowrap",
+            }}
+          >
+            영국 {searchResult[1][1]}{" "}
+            <a
+              href={searchResult[2][1]} // 음성 파일 링크
+              onClick={(event) => handlePlayAudio(event, searchResult[2][1])}
+              className="btn_voice"
+            >
+              듣기
+            </a>
+          </div>
+        )}
+      </div>
       <div
         style={{
           display: "flex",

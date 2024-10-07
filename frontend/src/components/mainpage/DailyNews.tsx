@@ -14,7 +14,7 @@ import { useMediaQuery } from "react-responsive";
 const DailyNews = () => {
   const userInfoData = useRecoilValue(userInfoState);
   const languageData = useRecoilValue(languageState);
-  const isMobile = useMediaQuery({ query: "(max-width: 767px)" });
+  const isTablet = useMediaQuery({ query: "(max-width: 1279px)" });
 
   const { data: dailyNewsList, isLoading } = useQuery({
     queryKey: ["dailyNewsList", userInfoData, languageData],
@@ -31,8 +31,7 @@ const DailyNews = () => {
         <NewsSwiper
           variety={"daily"}
           newsList={dailyNewsList}
-          height={440}
-          sildesPerView={isMobile ? 1 : 1.5}
+          slidesPerView={isTablet ? 1 : 1.5}
         />
       )}
     </Container>
@@ -40,12 +39,17 @@ const DailyNews = () => {
 };
 
 const Container = styled.div`
-  top: 10rem;
-  width: 50vw;
-  overflow: hidden;
+  @media screen and (min-width: 1280px) {
+    top: 10rem;
+    width: 50vw;
+    overflow: hidden;
+  }
+  @media screen and (min-width: 768px) and (max-width: 1279px) {
+    width: 90vw;
+  }
   @media screen and (max-width: 767px) {
     width: 100vw;
-    aspect-ratio: 1.6;
+    aspect-ratio: 1.5;
   }
 `;
 

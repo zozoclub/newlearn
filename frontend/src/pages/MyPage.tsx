@@ -402,10 +402,10 @@ const MobileMainHeader = styled.div`
 
 const FullScreenModal = styled.div<{ $isVisible: boolean }>`
   position: fixed;
-  top: 0;
+  top: 70px;
   left: 0;
   width: 100%;
-  height: calc(100vh - 70px);
+  height: calc(100% - 70px);
   background-color: ${(props) => props.theme.colors.background};
   z-index: 1000;
   display: flex;
@@ -417,22 +417,22 @@ const FullScreenModal = styled.div<{ $isVisible: boolean }>`
 `;
 
 const ModalContent = styled.div`
-  padding: 1rem;
+  padding: 0 1rem;
   overflow-y: auto;
   flex-grow: 1;
-  height: calc(100% - 70px);
+  height: 100%;
 `;
 
 const ItemTitle = styled.div`
   color: ${(props) => props.theme.colors.text03};
   font-size: 1.25rem;
   font-weight: 600;
-  margin: 1rem;
+  margin: 0.5rem 1rem;
 `;
 
 const Divider = styled.hr`
   color: lightgray;
-  margin: 2rem 0;
+  margin: 1.5rem 0;
 `;
 
 const UserButton = styled.div`
@@ -473,10 +473,12 @@ const ConfirmButton = styled(Button)`
 `;
 
 const ModalHeader = styled.div`
+  position: fixed;
   display: flex;
   align-items: center;
-  padding: 1rem;
-  position: sticky;
+  padding: 0 1rem;
+  width: 100%;
+  height: 70px;
   top: 0;
   background-color: ${(props) => props.theme.colors.background};
   z-index: 1001;
@@ -492,6 +494,6 @@ const BackButton = styled.button`
 const ModalTitle = styled.h2`
   margin: 0;
   margin-left: 1rem;
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   font-weight: bold;
 `;

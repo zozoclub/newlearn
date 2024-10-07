@@ -144,8 +144,9 @@ public class UserServiceImpl implements UserService{
 
 		Long unCount = wordRepository.countIncompleteWordsByUser(user);
 		Long Count = wordRepository.countCompleteWordsByUser(user);
+		Long savedWordCount= wordRepository.countSavedWordsByUser(user);
 		Long userRank = getUserRank(userId);
-		return new UserProfileResponseDTO(user, unCount, Count, userRank);
+		return new UserProfileResponseDTO(user, unCount, Count, savedWordCount, userRank);
 
 	}
 

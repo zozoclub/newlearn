@@ -191,7 +191,7 @@ public class SearchService {
 			.aggregations("popular_keywords_eng", a -> a
 				.terms(t -> t
 					.field("title_eng.agg")
-					.size(40)
+					.size(65)
 					.include(TermsInclude.of(ti -> ti.regexp(".{4,}")))
 				)
 			)

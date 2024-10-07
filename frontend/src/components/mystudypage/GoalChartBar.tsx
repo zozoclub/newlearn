@@ -33,6 +33,9 @@ const BarContainer = styled.div`
   margin: 2.5rem 0rem;
   font-size: 1.25rem;
   font-weight: bold;
+  @media (max-width: 767px) {
+    font-size: 1rem;
+  }
 `;
 
 const GoalItem = styled.div`

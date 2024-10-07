@@ -42,7 +42,7 @@ const MyPageProfileMobile: React.FC = () => {
     const fetchUserInfo = async () => {
       try {
         const newUserInfo = await getUserInfo();
-        setUserInfo(newUserInfo);
+        setUserInfo({ ...newUserInfo, isInitialized: true });
       } catch (error) {
         console.error("Failed to fetch user info:", error);
       }

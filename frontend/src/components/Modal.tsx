@@ -65,7 +65,7 @@ const ModalOverlay = styled.div<{ $isOpen: boolean }>`
   right: 0;
   bottom: 0;
   left: 0;
-  z-index: 10;
+  z-index: 2000;
 
   background-color: rgba(0, 0, 0, 0.5);
 

@@ -2,12 +2,17 @@ import React, { useEffect, useState } from "react";
 import RestudyQuizModal from "@components/RestudyQuizModal";
 import RestudyQuizList from "@components/RestudyQuizList";
 import { useQuery } from "@tanstack/react-query";
-import { getForgettingCurveWordList, ForgettingCurveWordListResponseDto } from "@services/forgettingCurve";
+import {
+  getForgettingCurveWordList,
+  ForgettingCurveWordListResponseDto,
+} from "@services/forgettingCurve";
 
 const RestudyQuiz: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [newRestudyData, setNewRestudyData] = useState<
+    ForgettingCurveWordListResponseDto[]
+  >([]);
 
-  // getForgettingCurveWordList로 데이터를 불러옴
   const { data: questions } = useQuery<ForgettingCurveWordListResponseDto[]>({
     queryKey: ["forgettingCurveQuestions"],
     queryFn: getForgettingCurveWordList,
@@ -16,15 +21,21 @@ const RestudyQuiz: React.FC = () => {
   useEffect(() => {
     if (questions && questions.length > 0) {
       setIsModalOpen(true);
+      setNewRestudyData(questions);
     }
   }, [questions]);
 
   return (
     <>
-      {/* 모달 컴포넌트 */}
-      <RestudyQuizModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Daily Quiz">
-        {/* props로 questions 데이터를 전달 */}
-        <RestudyQuizList onClose={() => setIsModalOpen(false)} questions={questions} />
+      <RestudyQuizModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title="Pop Quiz"
+      >
+        <RestudyQuizList
+          onClose={() => setIsModalOpen(false)}
+          newRestudyData={newRestudyData}
+        />
       </RestudyQuizModal>
     </>
   );

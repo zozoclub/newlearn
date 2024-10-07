@@ -1,6 +1,6 @@
 import { getOAuthAccessToken } from "@services/userService";
 import { useEffect, useState } from "react";
-import { Navigate, Outlet, useLocation } from "react-router-dom";
+import { Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
 import loginState from "@store/loginState";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { getRefreshToken } from "@services/axiosInstance";
@@ -14,6 +14,7 @@ const PrivateRoute = () => {
   const [isLoading, setIsLoading] = useState(true);
   const isLogin = useRecoilValue(loginState);
   const setLoginState = useSetRecoilState(loginState);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const checkAuthentication = async () => {
@@ -35,6 +36,7 @@ const PrivateRoute = () => {
           if (response && response.accessToken) {
             sessionStorage.setItem("accessToken", response.accessToken);
             setLoginState(true);
+            navigate("/", { replace: true });
           }
         } catch (error) {
           console.log(error);
@@ -63,11 +65,7 @@ const PrivateRoute = () => {
     return <div>Loading...</div>;
   }
 
-  return isLogin ? (
-    <Outlet />
-  ) : (
-    <Navigate to="/login" />
-  );
+  return isLogin ? <Outlet /> : <Navigate to="/login" />;
 };
 
 export default PrivateRoute;

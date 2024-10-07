@@ -8,9 +8,13 @@ import Pagination from "@components/newspage/Pagination";
 import { useSetRecoilState } from "recoil";
 import locationState from "@store/locationState";
 import { useMediaQuery } from "react-responsive";
-import MobileLogoHeader from "@components/common/MobileLogoHeader";
+
+import FullLogo from "@components/common/FullLogo";
+import newsSearchIcon from "@assets/icons/searchIcon.svg";
 
 const NewsPage = () => {
+  const isMobile = useMediaQuery({ maxWidth: 768 });
+
   const { category, page } = useParams();
   const selectedCategory = Number(category);
   const selectedPage = Number(page);
@@ -27,20 +31,43 @@ const NewsPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return (
-    <Container>
-      {isMobile && <MobileLogoHeader />}
-      <NewsContent>
-        {selectedCategory === 0 && <Recommand />}
-        <NewsList setTotalPages={setTotalPages} />
-      </NewsContent>
-      <Pagination
-        category={selectedCategory}
-        currentPage={selectedPage}
-        totalPages={totalPages}
-      />
-    </Container>
-  );
+  const DesktopRender = () => {
+    return (
+      <Container>
+        <NewsContent>
+          {selectedCategory === 0 && <Recommand />}
+          <NewsList setTotalPages={setTotalPages} />
+        </NewsContent>
+        <Pagination
+          category={selectedCategory}
+          currentPage={selectedPage}
+          totalPages={totalPages}
+        />
+      </Container>
+    );
+  };
+
+  const MobileRender = () => {
+    return (
+      <>
+        <MobileMainHeader>
+          <FullLogo height={75} width={200} />
+          <img height={30} src={newsSearchIcon} />
+        </MobileMainHeader>
+        <NewsContent>
+          {selectedCategory === 0 && <Recommand />}
+          <NewsList setTotalPages={setTotalPages} />
+        </NewsContent>
+        <Pagination
+          category={selectedCategory}
+          currentPage={selectedPage}
+          totalPages={totalPages}
+        />
+      </>
+    );
+  };
+
+  return isMobile ? <MobileRender /> : <DesktopRender />;
 };
 
 const Container = styled.div`
@@ -64,4 +91,11 @@ const NewsContent = styled.div`
   }
 `;
 
+const MobileMainHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 75px;
+  padding: 0 1.5rem 0 0;
+`;
 export default NewsPage;

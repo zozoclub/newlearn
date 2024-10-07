@@ -9,7 +9,6 @@ import MyPageScrapNews from "@components/mypage/MyPageScrapNews";
 
 import FullLogo from "@components/common/FullLogo";
 
-import HeaderMobile from "@components/common/HeaderMobile";
 import arrowIcon from "@assets/icons/mobile/arrowIcon.svg";
 import MyPageProfileMobile from "@components/mypage/mobile/MyPageProfileMobile";
 import MyPageCountMobile from "@components/mypage/mobile/MyPageCountMobile";
@@ -19,6 +18,7 @@ import { logout, deleteUser } from "@services/userService";
 import { createGlobalStyle } from "styled-components";
 import { usePageTransition } from "@hooks/usePageTransition";
 import Modal from "@components/Modal";
+import backArrowIcon from "@assets/icons/mobile/backArrowIcon.svg";
 import { useSetRecoilState } from "recoil";
 import locationState from "@store/locationState";
 
@@ -114,9 +114,9 @@ const MyPage = () => {
   const MobileRender = () => {
     return (
       <PageWrapper>
-        <HeaderContainer>
-          <FullLogo width={220} height={70} />
-        </HeaderContainer>
+        <MobileMainHeader>
+          <FullLogo width={200} height={75} />
+        </MobileMainHeader>
         <ContentWrapper>
           <MyPageContainer>
             <MyPageProfileMobile />
@@ -145,7 +145,16 @@ const MyPage = () => {
             <>
               <BodyScrollLock />
               <FullScreenModal $isVisible={isChartModalOpen}>
-                <HeaderMobile title="마이 페이지" />
+                <ModalHeader>
+                  <BackButton
+                    onClick={() => {
+                      setIsChartModalOpen(false);
+                    }}
+                  >
+                    <img src={backArrowIcon} alt="버튼" />
+                  </BackButton>
+                  <ModalTitle>마이 페이지</ModalTitle>
+                </ModalHeader>
                 <ModalContent>
                   <ItemTitle>
                     {new Date().getFullYear()} Contribution Graph
@@ -162,7 +171,16 @@ const MyPage = () => {
             <>
               <BodyScrollLock />
               <FullScreenModal $isVisible={isProgressModalOpen}>
-                <HeaderMobile title="마이 페이지" />
+                <ModalHeader>
+                  <BackButton
+                    onClick={() => {
+                      setIsProgressModalOpen(false);
+                    }}
+                  >
+                    <img src={backArrowIcon} alt="버튼" />
+                  </BackButton>
+                  <ModalTitle>마이 페이지</ModalTitle>
+                </ModalHeader>
                 <ModalContent>
                   <Goal />
                 </ModalContent>
@@ -173,7 +191,16 @@ const MyPage = () => {
             <>
               <BodyScrollLock />
               <FullScreenModal $isVisible={isScrapNewsModalOpen}>
-                <HeaderMobile title="마이 페이지" />
+                <ModalHeader>
+                  <BackButton
+                    onClick={() => {
+                      setIsScrapNewsModalOpen(false);
+                    }}
+                  >
+                    <img src={backArrowIcon} alt="버튼" />
+                  </BackButton>
+                  <ModalTitle>마이 페이지</ModalTitle>
+                </ModalHeader>
                 <ModalContent>
                   <MyPageScrapNews />
                 </ModalContent>
@@ -266,8 +293,6 @@ const PageWrapper = styled.div`
 const ContentWrapper = styled.main`
   flex: 1;
   overflow-y: auto;
-  margin-top: 70px;
-  margin-bottom: 70px;
 `;
 
 const MyPageContainer = styled.div`
@@ -279,7 +304,7 @@ const MyPageContainer = styled.div`
   }
   @media (max-width: 767px) {
     min-height: calc(100vh - 70px);
-    padding: 1.125rem;
+    padding: 0 1.125rem;
     background-color: ${(props) => props.theme.colors.background};
   }
 `;
@@ -309,16 +334,16 @@ const WidgetContainer = styled.div`
   box-shadow: ${(props) => props.theme.shadows.xsmall};
   box-sizing: border-box;
 
-  @media (max-width: 768px) {
+  @media (max-width: 767px) {
     box-shadow: none;
-    border: 1px solid lightgray;
+    border: 1px solid ${(props) => props.theme.colors.placeholder};
     margin: 1rem 0;
     padding: 1rem;
   }
 `;
 
 const WidgetMenuContainer = styled(WidgetContainer)`
-  padding: 1.5rem 2rem;
+  padding: 1rem 1.5rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -327,7 +352,7 @@ const WidgetMenuContainer = styled(WidgetContainer)`
 
 const MenuTitle = styled.div`
   font-weight: bold;
-  font-size: 1.5rem;
+  font-size: 1.125rem;
 `;
 
 // modal
@@ -355,24 +380,33 @@ const fadeOut = keyframes`
   }
 `;
 
-const HeaderContainer = styled.header`
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
+// const HeaderContainer = styled.header`
+//   position: fixed;
+//   top: 0;
+//   left: 0;
+//   right: 0;
+//   display: flex;
+//   align-items: center;
+//   height: 70px;
+//   background-color: ${(props) => props.theme.colors.background};
+//   z-index: 1000;
+// `;
+
+const MobileMainHeader = styled.div`
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  height: 70px;
-  background-color: ${(props) => props.theme.colors.background};
-  z-index: 1000;
+  height: 75px;
+  padding: 0 1.5rem 0 0;
 `;
 
 const FullScreenModal = styled.div<{ $isVisible: boolean }>`
   position: fixed;
   top: 0;
   left: 0;
+  bottom: 70px;
   width: 100%;
-  height: calc(100% - 60px);
+  height: calc(100% - 70px);
   background-color: ${(props) => props.theme.colors.background};
   z-index: 1000;
   display: flex;
@@ -384,27 +418,28 @@ const FullScreenModal = styled.div<{ $isVisible: boolean }>`
 `;
 
 const ModalContent = styled.div`
-  padding: 1rem;
+  padding: 0 1rem;
+  margin-top: 70px;
   overflow-y: auto;
   flex-grow: 1;
-  height: calc(100% - 70px);
+  height: 100%;
 `;
 
 const ItemTitle = styled.div`
   color: ${(props) => props.theme.colors.text03};
-  font-size: 1.75rem;
+  font-size: 1.25rem;
   font-weight: 600;
-  margin: 1rem;
+  margin: 0.5rem 1rem;
 `;
 
 const Divider = styled.hr`
   color: lightgray;
-  margin: 2rem 0;
+  margin: 1.5rem 0;
 `;
 
 const UserButton = styled.div`
   font-weight: bold;
-  font-size: 1.25rem;
+  font-size: 1rem;
   margin: 2rem 1rem;
   cursor: pointer;
 `;
@@ -437,4 +472,30 @@ const ConfirmButton = styled(Button)`
   background-color: ${(props) => props.theme.colors.primary};
   color: white;
   font-size: 1.125rem;
+`;
+
+const ModalHeader = styled.div`
+  position: fixed;
+  top: 0;
+  display: flex;
+  align-items: center;
+  padding: 0 1rem;
+  width: 100%;
+  height: 70px;
+  background-color: ${(props) => props.theme.colors.background};
+  z-index: 1002;
+`;
+
+const BackButton = styled.button`
+  background: none;
+  border: none;
+  padding: 0.5rem;
+  cursor: pointer;
+`;
+
+const ModalTitle = styled.h2`
+  margin: 0;
+  margin-left: 1rem;
+  font-size: 1.25rem;
+  font-weight: bold;
 `;

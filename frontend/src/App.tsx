@@ -116,7 +116,6 @@ const AppContainer = styled.div`
   position: relative;
   min-height: 100vh;
   height: 100vh;
-  margin-bottom: 4rem;
   @media screen and (min-width: 1280px) {
     width: 90vw;
     padding: 0 calc(5vw - 0.1875rem);
@@ -128,6 +127,7 @@ const AppContainer = styled.div`
   @media screen and (max-width: 767px) {
     width: 100vw;
     overflow: scroll;
+    margin-bottom: 4rem;
     &::-webkit-scrollbar {
       display: none;
     }

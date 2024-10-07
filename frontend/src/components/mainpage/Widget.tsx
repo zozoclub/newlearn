@@ -22,12 +22,14 @@ const Widget: React.FC<{ variety: string }> = ({ variety }) => {
   >({
     queryKey: ["pointRankingData"],
     queryFn: getPointRankingList,
+    staleTime: 5 * 60 * 1000,
   });
   const { isLoading: readIsLoading, data: readRankingList } = useQuery<
     ReadRankingType[]
   >({
     queryKey: ["readRankingList"],
     queryFn: getReadRankingList,
+    staleTime: 5 * 60 * 1000,
   });
   const navigate = useNavigate();
   const goalData = useRecoilValue(goalDataSelector);
@@ -54,17 +56,6 @@ const Widget: React.FC<{ variety: string }> = ({ variety }) => {
           />
         </LargeWidgetContainer>
       );
-    // case "ranking":
-    //   return (
-    //     <WidgetContainer>
-    //       <RankingWidget
-    //         pointIsLoading={pointIsLoading}
-    //         pointRankingList={pointRankingList}
-    //         readIsLoading={readIsLoading}
-    //         readRankingList={readRankingList}
-    //       />
-    //     </WidgetContainer>
-    //   );
     case "goal":
       return (
         <WidgetContainer>

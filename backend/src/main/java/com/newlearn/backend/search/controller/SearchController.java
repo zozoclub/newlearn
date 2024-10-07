@@ -1,6 +1,8 @@
 package com.newlearn.backend.search.controller;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
@@ -92,5 +94,18 @@ public class SearchController {
 
 	boolean isEnglish(String text) {
 		return text.matches(".*[a-zA-Z]+.*");
+	}
+
+	@GetMapping("/aggregate")
+	public ApiResponse<?> getAggregateIndex() {
+
+		try {
+			Map<String, List<Map<String, Object>>> popularKeywords =
+				searchService.getPopularKeywords();
+
+			return ApiResponse.createSuccess(popularKeywords, "성공적 조회");
+		} catch (IOException e) {
+			return ApiResponse.createError(ErrorCode.SEARCH_NOT_FOUND);
+		}
 	}
 }

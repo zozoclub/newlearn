@@ -12,11 +12,23 @@ import com.newlearn.backend.search.model.SearchNews;
 import com.newlearn.backend.user.model.Users;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch._types.ElasticsearchException;
+import co.elastic.clients.elasticsearch._types.FieldValue;
+import co.elastic.clients.elasticsearch._types.aggregations.Aggregate;
+import co.elastic.clients.elasticsearch._types.aggregations.StringTermsAggregate;
+import co.elastic.clients.elasticsearch._types.aggregations.TermsInclude;
 import co.elastic.clients.elasticsearch.core.DeleteByQueryRequest;
 import co.elastic.clients.elasticsearch.core.DeleteByQueryResponse;
+import co.elastic.clients.elasticsearch.core.UpdateRequest;
+import co.elastic.clients.elasticsearch.core.UpdateResponse;
+import co.elastic.clients.elasticsearch.indices.AnalyzeRequest;
+import co.elastic.clients.elasticsearch.indices.AnalyzeResponse;
 import co.elastic.clients.elasticsearch.indices.RefreshRequest;
+import co.elastic.clients.elasticsearch.indices.analyze.AnalyzeToken;
+import co.elastic.clients.json.JsonData;
 import lombok.RequiredArgsConstructor;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
@@ -27,6 +39,7 @@ import co.elastic.clients.elasticsearch.core.search.Hit;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -50,6 +63,7 @@ public class SearchService {
 
 		String analyzer = isKorean(query) ? "title" : "title_eng";
 		searchListRequestDTO.setLang(isKorean(query) ? "kr" : "en");
+
 		SearchRequest searchRequest = SearchRequest.of(s -> s
 			.index("news")
 			.size(200)
@@ -82,15 +96,13 @@ public class SearchService {
 		Map<Long, UserNewsRead> userNewsReadMap = userNewsReads.stream()
 			.collect(Collectors.toMap(unr -> unr.getNews().getNewsId(), Function.identity()));
 
-		// 결과를 DTO로 변환하여 반환
 		return newsList.map(news -> NewsResponseDTO.makeNewsResponseDTO(
 			news,
 			searchListRequestDTO.getLang(),
 			searchListRequestDTO.getDifficulty(),
-			userNewsReadMap.get(news.getNewsId()) // 사용자가 읽은 정보와 함께 반환
+			userNewsReadMap.get(news.getNewsId())
 		));
 	}
-
 
 	public List<SearchNewsAutoDTO> searchAutoCompleteByTitleOrTitleEng(String query) throws IOException {
 		System.out.println(query);
@@ -162,5 +174,68 @@ public class SearchService {
 			System.out.println("삭제할 문서 없음");
 		}
 
+	}
+
+
+	public Map<String, List<Map<String, Object>>> getPopularKeywords() throws IOException {
+		SearchRequest searchRequest = SearchRequest.of(s -> s
+			.index("news_aggregation")
+			.size(0)
+			.aggregations("popular_keywords_kor", a -> a
+				.terms(t -> t
+					.field("title.agg")
+					.size(20)
+					.include(TermsInclude.of(ti -> ti.regexp(".{2,}")))
+				)
+			)
+			.aggregations("popular_keywords_eng", a -> a
+				.terms(t -> t
+					.field("title_eng.agg")
+					.size(20)
+					.include(TermsInclude.of(ti -> ti.regexp(".{4,}")))
+				)
+			)
+		);
+
+		SearchResponse<Void> response = elasticsearchClient.search(searchRequest, Void.class);
+
+		Map<String, List<Map<String, Object>>> result = new HashMap<>();
+
+		Aggregate aggregateKor = response.aggregations().get("popular_keywords_kor");
+
+		if (aggregateKor != null && aggregateKor.isSterms()) {
+			StringTermsAggregate termsAggregateKor = aggregateKor.sterms();
+			List<Map<String, Object>> korKeywords = termsAggregateKor.buckets().array().stream()
+				.map(bucket -> {
+					Map<String, Object> map = new HashMap<>();
+					FieldValue key = bucket.key();
+					String keyword = key.isString() ? key.stringValue() : key.toString();
+					map.put("keyword", keyword);
+					map.put("count", bucket.docCount());
+					return map;
+				})
+				.collect(Collectors.toList());
+			result.put("popular_keywords_kor", korKeywords);
+		}
+
+		// 영어 인기 키워드 처리
+		Aggregate aggregateEng = response.aggregations().get("popular_keywords_eng");
+
+		if (aggregateEng != null && aggregateEng.isSterms()) {
+			StringTermsAggregate termsAggregateEng = aggregateEng.sterms();
+			List<Map<String, Object>> engKeywords = termsAggregateEng.buckets().array().stream()
+				.map(bucket -> {
+					Map<String, Object> map = new HashMap<>();
+					FieldValue key = bucket.key();
+					String keyword = key.isString() ? key.stringValue() : key.toString();
+					map.put("keyword", keyword);
+					map.put("count", bucket.docCount());
+					return map;
+				})
+				.collect(Collectors.toList());
+			result.put("popular_keywords_eng", engKeywords);
+		}
+
+		return result;
 	}
 }

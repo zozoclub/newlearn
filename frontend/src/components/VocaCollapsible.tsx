@@ -392,9 +392,6 @@ const NewsLinkButton = styled.button`
   @media (max-width: 768px) {
     background-color: transparent;
     color: ${(props) => props.theme.colors.text04};
-    &:hover {
-      background-color: transparent;
-    }
   }
 `;
 

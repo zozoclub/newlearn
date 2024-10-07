@@ -8,26 +8,21 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y \
     gcc \
     python3-dev \
+    libpq-dev \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
-
-# setuptools 설치 (distutils를 포함)
-RUN pip install --no-cache-dir setuptools
 
 # 필요한 패키지 설치
 COPY requirements.txt .
 RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
-# .env 파일 복사
-COPY .env /app/.env
-
-# 소스 코드 복사
+# 소스 코드 및 .env 파일 복사
 COPY . .
+COPY .env .env
 
-# 환경 변수 설정을 위한 패키지 설치
-RUN pip install python-dotenv
+# Django 환경 변수 설정
+ENV DJANGO_SETTINGS_MODULE=Crawling.settings
 
-# 환경 변수 로드 및 서버 실행 명령
-CMD ["python", "manage.py", "main"]
-
+# 컨테이너 시작 시 실행할 명령어를 scheduler.py로 변경
+CMD ["python", "scheduler.py"]

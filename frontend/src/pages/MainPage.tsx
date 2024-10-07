@@ -129,11 +129,11 @@ const Container = styled.div`
 
 const NewsContainer = styled.div`
   @media screen and (min-width: 1280px) {
+    width: 57.5%;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
     position: relative;
-    width: 57.5%;
-    overflow: hidden;
     gap: 5rem;
   }
   @media screen and (min-width: 768px) and (max-width: 1279px) {

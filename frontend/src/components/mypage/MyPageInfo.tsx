@@ -239,6 +239,7 @@ const ContentContainer = styled.div`
   font-size: 1.25rem;
   @media (max-width: 767px) {
     font-size: 1rem;
+    gap: 0.5rem;
   }
 `;
 
@@ -301,6 +302,10 @@ const ModalButtonItem = styled(CustomButton)<{ isSelected: boolean }>`
         : props.theme.colors.placeholder};
   }
   font-size: 1.25rem;
+
+  @media (max-width: 767px) {
+    font-size: 0.75rem;
+  }
 `;
 
 const SaveButton = styled(CustomButton)`

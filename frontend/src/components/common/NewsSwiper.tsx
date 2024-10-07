@@ -15,12 +15,14 @@ type NewsSwiperProps = {
   variety: "daily" | "hybrid";
   newsList: NewsType[];
   height: number;
+  sildesPerView: number;
 };
 
 const NewsSwiper: React.FC<NewsSwiperProps> = ({
   variety,
   newsList,
   height,
+  sildesPerView,
 }) => {
   const transitionTo = usePageTransition();
   const languageData = useRecoilValue(languageState);
@@ -32,7 +34,7 @@ const NewsSwiper: React.FC<NewsSwiperProps> = ({
         effect={"slide"} // coverflow 대신 기본 slide 효과 사용
         grabCursor={true}
         centeredSlides={true}
-        slidesPerView={1.5} // 한 번에 1.5개의 슬라이드가 보이도록 설정
+        slidesPerView={sildesPerView} // 한 번에 1.5개의 슬라이드가 보이도록 설정
         spaceBetween={-50} // 음수 값을 주어 슬라이드가 겹치도록 설정
         speed={500}
         mousewheel={true}
@@ -74,7 +76,7 @@ export default NewsSwiper;
 
 const Container = styled.div`
   .swiper {
-    padding-bottom: 70px;
+    padding-bottom: 50px;
   }
   .swiper-pagination-bullet {
     background-color: ${(props) =>
@@ -91,8 +93,6 @@ const Container = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 580px;
-    height: 440px;
     background-color: ${(props) => props.theme.colors.cardBackground + "BF"};
     border-radius: 0.5rem;
     backdrop-filter: blur(4px);

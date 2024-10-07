@@ -9,10 +9,12 @@ import { useRecoilValue } from "recoil";
 import userInfoState from "@store/userInfoState";
 import languageState from "@store/languageState";
 import NewsSwiper from "@components/common/NewsSwiper";
+import { useMediaQuery } from "react-responsive";
 
 const DailyNews = () => {
   const userInfoData = useRecoilValue(userInfoState);
   const languageData = useRecoilValue(languageState);
+  const isMobile = useMediaQuery({ query: "(max-width: 767px)" });
 
   const { data: dailyNewsList, isLoading } = useQuery({
     queryKey: ["dailyNewsList", userInfoData, languageData],
@@ -26,17 +28,25 @@ const DailyNews = () => {
   return (
     <Container>
       {dailyNewsList && (
-        <NewsSwiper variety={"daily"} newsList={dailyNewsList} height={440} />
+        <NewsSwiper
+          variety={"daily"}
+          newsList={dailyNewsList}
+          height={440}
+          sildesPerView={isMobile ? 1 : 1.5}
+        />
       )}
     </Container>
   );
 };
 
 const Container = styled.div`
-  position: absolute;
   top: 10rem;
   width: 50vw;
   overflow: hidden;
+  @media screen and (max-width: 767px) {
+    width: 100vw;
+    aspect-ratio: 1.6;
+  }
 `;
 
 export default DailyNews;

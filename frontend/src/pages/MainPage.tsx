@@ -5,10 +5,13 @@ import Widget from "@components/mainpage/Widget";
 import locationState from "@store/locationState";
 import { useEffect } from "react";
 import { useMediaQuery } from "react-responsive";
-import { useSetRecoilState } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 // import NewsSearch from "@components/newspage/NewsSearch";
 import styled from "styled-components";
 import RestudyQuiz from "@components/RestudyQuiz";
+import FullLogo from "@components/common/FullLogo";
+import newsSearchIcon from "@assets/icons/searchIcon.svg";
+import userInfoState from "@store/userInfoState";
 
 const MainPage = () => {
   const widgetList = [
@@ -18,6 +21,7 @@ const MainPage = () => {
     { variety: "ranking" },
   ];
   const setCurrentLocationData = useSetRecoilState(locationState);
+  const userInfoData = useRecoilValue(userInfoState);
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
 
   useEffect(() => {
@@ -31,9 +35,16 @@ const MainPage = () => {
   const MobileRender = () => {
     return (
       <Container>
-        <NewsContainer>
+        <MobileMainHeader>
+          <FullLogo height={75} width={200} />
+          <img height={30} src={newsSearchIcon} />
+        </MobileMainHeader>
+        <RecommandNewsContainer>
+          <div style={{ fontSize: "1.5rem" }}>
+            {userInfoData.nickname} 님의 추천 뉴스
+          </div>
           <DailyNews />
-        </NewsContainer>
+        </RecommandNewsContainer>
         <RestudyQuiz />
         <PWAInstallPrompt />
       </Container>
@@ -43,10 +54,18 @@ const MainPage = () => {
   const DesktopRender = () => {
     return (
       <Container>
-        <div style={{ paddingLeft: "1rem", paddingTop: "1rem" }}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "5rem",
+            paddingLeft: "1rem",
+            paddingTop: "1rem",
+          }}
+        >
           <Clock />
+          <DailyNews />
         </div>
-        <DailyNews />
         <WidgetContainer>
           {widgetList.map((widget, index) => (
             <Widget key={index} variety={widget.variety} />
@@ -70,14 +89,25 @@ export default MainPage;
 const Container = styled.div`
   display: flex;
   position: relative;
-  height: 35rem;
   padding: 0;
   @media screen and (max-width: 767px) {
+    flex-direction: column;
   }
 `;
 
-const NewsContainer = styled.div``;
+const MobileMainHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 75px;
+  padding: 0 1.5rem 0 0;
+`;
 
+const RecommandNewsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+`;
 const WidgetContainer = styled.div`
   display: grid;
   position: absolute;

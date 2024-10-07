@@ -76,7 +76,7 @@ export default NewsSwiper;
 
 const Container = styled.div`
   .swiper {
-    padding-bottom: 70px;
+    padding-bottom: 50px;
   }
   .swiper-pagination-bullet {
     background-color: ${(props) =>
@@ -93,8 +93,6 @@ const Container = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 580px;
-    height: 440px;
     background-color: ${(props) => props.theme.colors.cardBackground + "BF"};
     border-radius: 0.5rem;
     backdrop-filter: blur(4px);

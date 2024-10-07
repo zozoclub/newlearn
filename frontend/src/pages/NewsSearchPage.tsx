@@ -1,13 +1,14 @@
 import NewsSearch from "@components/newspage/NewsSearch";
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import styled from "styled-components";
 import NewsListItem from "@components/newspage/NewsListItem";
-import { searchNews } from "@services/newsService";
+import { searchNews } from "@services/searchService";
 import { useQuery } from "@tanstack/react-query";
 import { useRecoilValue } from "recoil";
 import userInfoState from "@store/userInfoState";
 import MyPagePagination from "@components/mypage/MyPagePagination";
 import { useState } from "react";
+// import WordCloud from "@components/WordCloud";
 
 type SearchNewsType = {
   newsId: number;
@@ -40,7 +41,12 @@ const NewsSearchPage = () => {
   const searchResultList = searchResultData?.searchResult || [];
   const totalPages = searchResultData?.totalPages || 0;
 
-  console.log(searchResultList);
+  // 기본 /news/search 경로일 때
+  const location = useLocation();
+  const isSearchPath = location.pathname === "/news/search";
+  const showNoResultMessage =
+    !isSearchPath && searchResultList.length === 0 && query;
+
   const handlePageChange = (newPage: number) => {
     if (newPage < 1 || newPage > totalPages) return; // 유효한 페이지인지 확인
     setSelectedPage(newPage - 1); // 상태 업데이트, 0부터 시작하는 값으로 조정
@@ -64,8 +70,13 @@ const NewsSearchPage = () => {
           searchResultList.map((news) => (
             <NewsListItem key={news.newsId} news={news} />
           ))
-        ) : (
+        ) : showNoResultMessage ? (
           <NoResult>검색 결과가 없습니다.</NoResult>
+        ) : (
+          <WordCloudContainer>
+            <WordCloudTitle>HOT한 키워드</WordCloudTitle>
+            {/* <WordCloud /> */}
+          </WordCloudContainer>
         )}
       </NewsListContainer>
       {searchResultList.length > 0 && (
@@ -102,4 +113,19 @@ const NoResult = styled.div`
   font-weight: bold;
   font-size: 2rem;
 `;
+
+const WordCloudTitle = styled.div`
+  font-weight: bold;
+  font-size: 2rem;
+  margin-top: 1rem;
+  color: gray;
+`;
+
+const WordCloudContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`;
+
 export default NewsSearchPage;

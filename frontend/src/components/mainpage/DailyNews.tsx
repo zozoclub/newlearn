@@ -40,12 +40,12 @@ const DailyNews = () => {
 };
 
 const Container = styled.div`
-  position: absolute;
   top: 10rem;
   width: 50vw;
   overflow: hidden;
   @media screen and (max-width: 767px) {
     width: 100vw;
+    aspect-ratio: 1.6;
   }
 `;
 

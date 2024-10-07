@@ -39,7 +39,12 @@ const HybridRecommendNews = () => {
                     님을 위한 추천 뉴스
                   </RecommendPhrase>
                 )}
-                <NewsSwiper variety={"hybrid"} newsList={data} height={380} />
+                <NewsSwiper
+                  variety={"hybrid"}
+                  newsList={data}
+                  height={380}
+                  sildesPerView={1.5}
+                />
               </>
             )
           )}

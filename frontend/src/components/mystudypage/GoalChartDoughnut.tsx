@@ -43,6 +43,9 @@ export default GoalChartDoughnut;
 
 const DoughnutContainer = styled.div`
   position: relative;
+  @media (max-width: 767px) {
+    margin-top: 1rem;
+  }
 `;
 
 const DoughnutText = styled.div`

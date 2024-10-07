@@ -72,24 +72,24 @@ const VocabularyPage: React.FC = () => {
       <HeaderMobile title="My Voca" />
 
       <NavMenu>
-        <NavButtonWrapper active={currentView === "toStudy"}>
+        <NavButtonWrapper $active={currentView === "toStudy"}>
           <NavButton
-            active={currentView === "toStudy"}
+            $active={currentView === "toStudy"}
             onClick={() => setCurrentView("toStudy")}
           >
-            <NavButtonText active={currentView === "toStudy"}>
+            <NavButtonText $active={currentView === "toStudy"}>
               공부할 단어
             </NavButtonText>
             <WordCount>({toStudyWords.length})</WordCount>
           </NavButton>
         </NavButtonWrapper>
 
-        <NavButtonWrapper active={currentView === "learned"}>
+        <NavButtonWrapper $active={currentView === "learned"}>
           <NavButton
-            active={currentView === "learned"}
+            $active={currentView === "learned"}
             onClick={() => setCurrentView("learned")}
           >
-            <NavButtonText active={currentView === "learned"}>
+            <NavButtonText $active={currentView === "learned"}>
               외운 단어
             </NavButtonText>
             <WordCount>({learnedWords.length})</WordCount>
@@ -98,7 +98,7 @@ const VocabularyPage: React.FC = () => {
       </NavMenu>
 
       <MainLayout>
-        <WordListLayout currentView={currentView}>
+        <WordListLayout $currentView={currentView}>
           <WordListContainer>
             {toStudyWords.length === 0 ? (
               <EmptyMessage>공부할 단어가 없습니다.</EmptyMessage>
@@ -148,10 +148,10 @@ const MainLayout = styled.div`
   overflow: hidden;
 `;
 
-const WordListLayout = styled.div<{ currentView: string }>`
+const WordListLayout = styled.div<{ $currentView: string }>`
   display: flex;
   transform: ${(props) =>
-    props.currentView === "toStudy" ? "translateX(100)" : "translateX(-100%)"};
+    props.$currentView === "toStudy" ? "translateX(100)" : "translateX(-100%)"};
   transition: transform 0.5s ease;
 `;
 
@@ -187,28 +187,28 @@ const NavMenu = styled.div`
   border-bottom: 0.5px solid ${(props) => props.theme.colors.readonly};
 `;
 
-const NavButtonWrapper = styled.div<{ active: boolean }>`
+const NavButtonWrapper = styled.div<{ $active: boolean }>`
   width: 100%;
   text-align: center;
   border-bottom: ${(props) =>
-    props.active ? `3px solid ${props.theme.colors.primary}` : "none"};
+    props.$active ? `3px solid ${props.theme.colors.primary}` : "none"};
 `;
 
-const NavButton = styled.button<{ active: boolean }>`
+const NavButton = styled.button<{ $active: boolean }>`
   background-color: transparent;
   color: ${(props) =>
-    props.active ? props.theme.colors.primary : props.theme.colors.placeholder};
+    props.$active ? props.theme.colors.primary : props.theme.colors.placeholder};
   font-size: 1.125rem;
-  font-weight: ${(props) => (props.active ? "700" : "500")};
+  font-weight: ${(props) => (props.$active ? "700" : "500")};
   cursor: pointer;
   border: none;
   width: 100%;
   padding: 1rem 0;
 `;
 
-const NavButtonText = styled.span<{ active: boolean }>`
+const NavButtonText = styled.span<{ $active: boolean }>`
   color: ${(props) =>
-    props.active ? props.theme.colors.text : props.theme.colors.placeholder};
+    props.$active ? props.theme.colors.text : props.theme.colors.placeholder};
   transition: color 0.5s ease;
 `;
 

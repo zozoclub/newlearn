@@ -12,7 +12,7 @@ type grassProps = {
 const ContributionGraph: React.FC<grassProps> = ({ data }) => {
   const isMobile = useMediaQuery({ maxWidth: 768 });
 
-  const weekCount = isMobile ? 13 : 25;
+  const weekCount = isMobile ? 10 : 25;
   const getStartDate = () => {
     const today = new Date();
     const daysSinceLastMonday = (today.getDay() + 6) % 7;

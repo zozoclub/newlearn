@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import styled, { keyframes, css } from "styled-components";
-import Modal from "@components/Modal"; // 확인용 모달을 사용
+import Modal from "@components/Modal";
 
 type ModalProps = {
   isOpen: boolean;
@@ -17,22 +17,16 @@ const RestudyQuizModal: React.FC<ModalProps> = ({
   children,
 }) => {
   const [isAnimating, setIsAnimating] = useState(false);
-  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false); // 종료 확인 모달 상태 추가
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
       setIsAnimating(true);
     } else {
-      const timer = setTimeout(() => setIsAnimating(false), 200); // 애니메이션 지속 시간과 일치
+      const timer = setTimeout(() => setIsAnimating(false), 200);
       return () => clearTimeout(timer);
     }
   }, [isOpen]);
-
-  const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (e.target === e.currentTarget) {
-      setIsConfirmModalOpen(true); // 바깥 클릭 시 종료 확인 모달 열기
-    }
-  };
 
   const handleConfirmClose = () => {
     setIsConfirmModalOpen(false); // 종료 확인 모달 닫기
@@ -47,15 +41,19 @@ const RestudyQuizModal: React.FC<ModalProps> = ({
 
   return ReactDOM.createPortal(
     <>
-      <ModalOverlay $isOpen={isOpen} onClick={handleOverlayClick}>
-        <ModalContent $isOpen={isOpen}>
+      <ModalOverlay $isOpen={isOpen}>
+        <ModalContent $isOpen={isOpen} onClick={(e) => e.stopPropagation()}>
           <ModalHeader>{title && <ModalTitle>{title}</ModalTitle>}</ModalHeader>
           <ModalBody>{children}</ModalBody>
         </ModalContent>
       </ModalOverlay>
 
       {/* 종료 확인 모달 */}
-      <Modal isOpen={isConfirmModalOpen} onClose={handleCancelClose} title="">
+      <Modal
+        isOpen={isConfirmModalOpen}
+        onClose={handleCancelClose}
+        title="Pop Quiz"
+      >
         <Description>정말 종료하시겠습니까?</Description>
         <ModalButtonContainer>
           <ModalCancelButton onClick={handleCancelClose}>
@@ -109,9 +107,10 @@ const ModalOverlay = styled.div<{ $isOpen: boolean }>`
 
 const ModalContent = styled.div<{ $isOpen: boolean }>`
   position: relative;
-  min-width: 50%;
+  min-width: 60%;
   max-width: 90%;
-  height: 50%;
+  height: 55vh;
+  align-items: center;
   padding: 2rem;
   background-color: ${(props) => props.theme.colors.cardBackground};
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);

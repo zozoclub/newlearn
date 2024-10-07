@@ -157,7 +157,9 @@ public class NewsServiceImpl implements NewsService{
         boolean isScrapped = userNewsScrapRepository.existsByUserAndNewsAndDifficulty(user, news, newsDetailRequestDTO.getDifficulty());
 
         // 해당 뉴스(newsId)에 사용자가 하이라이팅한 단어 & 문장 가져오기
-        Set<Word> wordList = user.getWords();
+        Set<Word> wordList = user.getWords().stream()
+                .filter(word -> !word.isDelete())
+                .collect(Collectors.toSet());;
         List<Long> wordIds = wordList.stream().map(Word::getWordId).collect(Collectors.toList());
         List<WordSentence> wordSentences = wordSentenceRepository
                 .findByNewsIdAndWordIdsAndDifficulty(
@@ -195,7 +197,6 @@ public class NewsServiceImpl implements NewsService{
         return NewsDetailResponseDTO.of(news, title, content, isScrapped, userNewsRead, words);
     }
 
-    @Transactional
     @Override
     public void readNews(Users user, NewsReadRequestDTO newsReadRequestDTO) {
         News news = newsRepository.findById(newsReadRequestDTO.getNewsId())
@@ -214,7 +215,7 @@ public class NewsServiceImpl implements NewsService{
 
                     // 사용자 뉴스 읽음 +1
 //                    user.incrementNewsReadCnt(); // 단순 +1
-                    user.updateUserTotalNewsReadCnt(userNewsReadRepository.countByUser(user)); //userNewsRead에서 개수 가져옴
+                    user.updateUserTotalNewsReadCnt(userNewsReadRepository.countByUser(user) + 1); //userNewsRead에서 개수 가져옴. 아직 userNewsRead레파지토리.save하기 전이기 때문에 +1 해줘야함
 
                     // 사용자 뉴스 읽음 (데일리) 테이블 업데이트
                     LocalDate today = LocalDate.now();

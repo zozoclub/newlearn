@@ -1,34 +1,57 @@
 import React from "react";
-import BackArrow from "@assets/icons/BackArrow";
+import backArrowIcon from "@assets/icons/mobile/backArrowIcon.svg";
 import styled from "styled-components";
-type Props = {
-    title: string
-}
+import useBackPage from "@hooks/useBackPage";
+import { usePageTransition } from "@hooks/usePageTransition";
 
-const HeaderMobile: React.FC<Props> = ({ title }) => {
-    return (
-        <MobileHeader>
-            <BackArrow width={40} height={40}>
-            </BackArrow>
-            <Text>
-                {title}
-            </Text>
-        </MobileHeader>)
+type Props = {
+  title?: string;
+  url?: string;
+};
+
+const HeaderMobile: React.FC<Props> = ({ title, url }) => {
+  const back = useBackPage();
+  const transitionTo = usePageTransition();
+
+  const handleClick = () => {
+    if (url) {
+      transitionTo(url);
+    } else {
+      back();
+    }
+  };
+  return (
+    <ModalHeader>
+      <BackButton onClick={handleClick}>
+        <img src={backArrowIcon} alt="버튼" />
+      </BackButton>
+      <ModalTitle>{title}</ModalTitle>
+    </ModalHeader>
+  );
 };
 
 export default HeaderMobile;
 
-const MobileHeader = styled.div`
-    display: flex;
-    align-items: center;
-    padding-top: 1rem;
-    padding-bottom: 1rem;
-    padding-left: 1rem;
-    height: 40px;
-`
-const Text = styled.div`
-margin-top: 0.25rem;
-margin-left: 0.5rem;
-font-size: 1.5rem;
-font-weight: 700;
-`
+const ModalHeader = styled.div`
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  position: sticky;
+  top: 0;
+  background-color: ${(props) => props.theme.colors.background};
+  z-index: 1001;
+`;
+
+const BackButton = styled.button`
+  background: none;
+  border: none;
+  padding: 0.5rem;
+  cursor: pointer;
+`;
+
+const ModalTitle = styled.h2`
+  margin: 0;
+  margin-left: 1rem;
+  font-size: 1.5rem;
+  font-weight: bold;
+`;

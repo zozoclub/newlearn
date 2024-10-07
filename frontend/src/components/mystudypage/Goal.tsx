@@ -94,6 +94,9 @@ const GoalContainer = styled.div`
   box-sizing: border-box;
   border-radius: 0.75rem;
   @media (max-width: 768px) {
+    align-items: start;
+    margin-top: 2rem;
+    height: 400px;
     box-shadow: none;
   }
 `;

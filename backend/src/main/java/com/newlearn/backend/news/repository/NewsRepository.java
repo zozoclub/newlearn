@@ -26,4 +26,7 @@ public interface NewsRepository extends JpaRepository<News, Long> {
     List<News> findByTitleEngContaining(String titleEng);
 
     Page<News> findByNewsIdInOrderByNewsIdDesc(List<Long> newsIds, Pageable pageable);
+
+    Page<News> findByTitleContaining(String query, Pageable pageable);
+    Page<News> findByTitleEngContaining(String query, Pageable pageable);
 }

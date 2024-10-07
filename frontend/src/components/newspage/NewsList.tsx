@@ -47,32 +47,6 @@ const NewsList: React.FC<{
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [totalNewsList, categoryNewsList]);
 
-  useEffect(() => {
-    switch (selectedCategory) {
-      case 0:
-        console.log("전체 선택");
-        break;
-      case 1:
-        console.log("정치 선택");
-        break;
-      case 2:
-        console.log("경제 선택");
-        break;
-      case 3:
-        console.log("사회 선택");
-        break;
-      case 4:
-        console.log("생활/문화 선택");
-        break;
-      case 5:
-        console.log("IT/과학 선택");
-        break;
-      case 6:
-        console.log("세계 선택");
-        break;
-    }
-  }, [selectedCategory]);
-
   return (
     <Container>
       <NewsListContainer>

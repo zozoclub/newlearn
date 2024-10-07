@@ -7,6 +7,8 @@ import { useEffect, useState } from "react";
 import Pagination from "@components/newspage/Pagination";
 import { useSetRecoilState } from "recoil";
 import locationState from "@store/locationState";
+import { useMediaQuery } from "react-responsive";
+import MobileLogoHeader from "@components/common/MobileLogoHeader";
 
 const NewsPage = () => {
   const { category, page } = useParams();
@@ -14,6 +16,7 @@ const NewsPage = () => {
   const selectedPage = Number(page);
   const [totalPages, setTotalPages] = useState<number>(1);
   const setCurrentLocation = useSetRecoilState(locationState);
+  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
 
   useEffect(() => {
     setCurrentLocation("newsList");
@@ -26,6 +29,7 @@ const NewsPage = () => {
 
   return (
     <Container>
+      {isMobile && <MobileLogoHeader />}
       <NewsContent>
         {selectedCategory === 0 && <Recommand />}
         <NewsList setTotalPages={setTotalPages} />
@@ -40,20 +44,24 @@ const NewsPage = () => {
 };
 
 const Container = styled.div`
-  width: 80%;
-  height: 85%;
-  margin: 0 5% 10%;
-  padding: 0 5% 2.5%;
-  border-radius: 0.5rem;
+  @media (min-width: 768px) {
+    width: 80%;
+    height: 85%;
+    margin: 0 5% 10%;
+    padding: 0 5% 2.5%;
+    border-radius: 0.5rem;
+  }
   @media (max-width: 767px) {
     width: 95%;
     margin: 0 0 10%;
-    padding: 5% 2.5% 2.5%;
+    padding: 0 2.5% 2.5%;
   }
 `;
 
 const NewsContent = styled.div`
-  padding: 2.5% 0;
+  @media screen and (min-width: 768px) {
+    padding: 2.5% 0;
+  }
 `;
 
 export default NewsPage;

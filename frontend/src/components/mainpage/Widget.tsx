@@ -5,6 +5,7 @@ import { useRecoilValue } from "recoil";
 import { goalDataSelector } from "@store/goalState";
 import CategoryChart from "@components/CategoryChart";
 import RankingWidget from "./RankingWidget";
+import TopRanking from "./TopRanking";
 
 const Widget: React.FC<{ variety: string }> = ({ variety }) => {
   const navigate = useNavigate();
@@ -42,6 +43,12 @@ const Widget: React.FC<{ variety: string }> = ({ variety }) => {
           )}
         </WidgetContainer>
       );
+    case "topRanking":
+      return (
+        <WidgetContainer>
+          <TopRanking />
+        </WidgetContainer>
+      );
   }
 };
 
@@ -51,12 +58,15 @@ const WidgetContainer = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  min-width: 240px;
+  min-height: 240px;
   aspect-ratio: 1;
   background-color: ${(props) => props.theme.colors.cardBackground01};
   border-radius: 1rem;
   transition: box-shadow 0.5s;
   backdrop-filter: blur(12px);
   box-shadow: ${(props) => props.theme.shadows.xsmall};
+  overflow: hidden;
 `;
 
 const LargeWidgetContainer = styled(WidgetContainer)`

@@ -2,16 +2,23 @@ import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import Modal from "./Modal";
-import { deleteMemorizeWord, getWordDetail, WordDetailResponseDto } from "@services/wordMemorize";
+import {
+  deleteMemorizeWord,
+  getWordDetail,
+  postMemorizeWord,
+  WordDetailResponseDto,
+} from "@services/wordMemorize";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Spinner from "./Spinner";
 import SpeakerIcon from "@assets/icons/SpeakerIcon";
+import { useMediaQuery } from "react-responsive";
 
 type VocaCollapsibleProps = {
   id: string;
   title: string;
   meaning: string;
   isExpanded: boolean;
+  isState?: boolean;
 };
 
 const VocaCollapsible: React.FC<VocaCollapsibleProps> = ({
@@ -19,7 +26,9 @@ const VocaCollapsible: React.FC<VocaCollapsibleProps> = ({
   title,
   meaning,
   isExpanded,
+  isState,
 }) => {
+  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const [expanded, setExpanded] = useState<boolean>(isExpanded);
   const contentRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
@@ -42,6 +51,12 @@ const VocaCollapsible: React.FC<VocaCollapsibleProps> = ({
     setExpanded((prev) => !prev);
   };
 
+  const { mutate: toggleMemorizeMutation } = useMutation<void, Error, number>({
+    mutationFn: (wordId: number) => postMemorizeWord(wordId),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ["memorizeWordList"] }),
+  });
+
   const [isDeleteModal, setIsDeleteModal] = useState<boolean>(false);
   const openDeleteModal = () => setIsDeleteModal(true);
   const closeDeleteModal = () => setIsDeleteModal(false);
@@ -49,7 +64,7 @@ const VocaCollapsible: React.FC<VocaCollapsibleProps> = ({
   const handleDeleteConfirm = () => {
     console.log(id);
     deleteMutation(Number(id));
-    closeDeleteModal()
+    closeDeleteModal();
   };
 
   const handleNewsLinkClick = (newsId: number) => {
@@ -77,7 +92,7 @@ const VocaCollapsible: React.FC<VocaCollapsibleProps> = ({
   };
 
   const highlightWordInSentence = (sentence: string, word: string) => {
-    const parts = sentence.split(new RegExp(`(${word})`, 'gi')); // 단어로 split, 대소문자 무시
+    const parts = sentence.split(new RegExp(`(${word})`, "gi"));
     return parts.map((part, index) =>
       part.toLowerCase() === word.toLowerCase() ? (
         <HighlightedWord key={index}>{part}</HighlightedWord>
@@ -90,15 +105,18 @@ const VocaCollapsible: React.FC<VocaCollapsibleProps> = ({
   const handlePlayPronounceAudio = (audioUrl: string) => {
     const newAudioPlayer = new Audio(audioUrl);
 
-    newAudioPlayer.play()
+    newAudioPlayer
+      .play()
       .then(() => {
         console.log("Audio playback started.");
       })
       .catch((error) => {
         console.error("Error during audio playback:", error);
       });
-
-  }
+  };
+  const handleToggleWordState = (wordId: string) => {
+    toggleMemorizeMutation(Number(wordId));
+  };
 
   const currentHeight = expanded ? contentRef.current?.scrollHeight : 0;
 
@@ -109,7 +127,9 @@ const VocaCollapsible: React.FC<VocaCollapsibleProps> = ({
           <TitleContent>
             <TitleWord>{title.toLowerCase()}</TitleWord>
           </TitleContent>
-          <TitleProcessMeaning $isExpanded={!expanded}>{processMeaning(meaning)}</TitleProcessMeaning>
+          <TitleProcessMeaning $isExpanded={!expanded}>
+            {processMeaning(meaning)}
+          </TitleProcessMeaning>
           <Arrow $isExpanded={expanded}>▼</Arrow>
           <DeleteButton onClick={openDeleteModal}>&times;</DeleteButton>
         </Title>
@@ -125,37 +145,66 @@ const VocaCollapsible: React.FC<VocaCollapsibleProps> = ({
               <AudioLayout>
                 <AudioContainer>
                   <PronounceText>
-                    US : {data?.sentences[0].pronounceUs ? data?.sentences[0].pronounceUs : "None"}
+                    US :{" "}
+                    {data?.sentences[0].pronounceUs
+                      ? data?.sentences[0].pronounceUs
+                      : "None"}
                   </PronounceText>
-                  <SpeakerIcon onClick={() => handlePlayPronounceAudio(data!.sentences[0].audioUs)} width="20px" height="20px" />
+                  <SpeakerIcon
+                    onClick={() =>
+                      handlePlayPronounceAudio(data!.sentences[0].audioUs)
+                    }
+                    width="20px"
+                    height="20px"
+                  />
                 </AudioContainer>
                 <AudioContainer>
                   <PronounceText>
-                    UK : {data?.sentences[0].pronounceUk ? data?.sentences[0].pronounceUk : "None"}
+                    UK :{" "}
+                    {data?.sentences[0].pronounceUk
+                      ? data?.sentences[0].pronounceUk
+                      : "None"}
                   </PronounceText>
-                  <SpeakerIcon onClick={() => handlePlayPronounceAudio(data!.sentences[0].audioUk)} width="20px" height="20px" />
+                  <SpeakerIcon
+                    onClick={() =>
+                      handlePlayPronounceAudio(data!.sentences[0].audioUk)
+                    }
+                    width="20px"
+                    height="20px"
+                  />
                 </AudioContainer>
               </AudioLayout>
               <TitleMeaning>{fullProcessMeaning(meaning)}</TitleMeaning>
               {data?.sentences.map((sentence) => (
                 <SentenceContainer key={sentence.newsId}>
-                  <SentenceText>{highlightWordInSentence(sentence.sentence, title)}</SentenceText>
+                  <SentenceText>
+                    {highlightWordInSentence(sentence.sentence, title)}
+                  </SentenceText>
                   <SentenceMeaning>{sentence.sentenceMeaning}</SentenceMeaning>
                   <SentenceFooter>
                     <DifficultyChip $difficulty={sentence.difficulty}>
                       {sentence.difficulty === 1
                         ? "초급"
                         : sentence.difficulty === 2
-                          ? "중급"
-                          : sentence.difficulty === 3
-                            ? "고급"
-                            : "알 수 없음"}
+                        ? "중급"
+                        : sentence.difficulty === 3
+                        ? "고급"
+                        : "알 수 없음"}
                     </DifficultyChip>
                     <NewsLinkButton
                       onClick={() => handleNewsLinkClick(sentence.newsId)}
                     >
                       원문 보기
                     </NewsLinkButton>
+                    {isMobile && (
+                      <MobileActionButtonContainer>
+                        <MobileActionButton
+                          onClick={() => handleToggleWordState(id)}
+                        >
+                          {isState ? "공부할 단어로 이동" : "외운 단어로 이동"}
+                        </MobileActionButton>
+                      </MobileActionButtonContainer>
+                    )}
                   </SentenceFooter>
                 </SentenceContainer>
               ))}
@@ -255,7 +304,6 @@ const TitleMeaning = styled.span`
   @media (max-width: 1280px) {
     font-size: 0.75rem;
   }
-
 `;
 
 const Arrow = styled.div<{ $isExpanded: boolean }>`
@@ -323,7 +371,6 @@ const DifficultyChip = styled.div<{ $difficulty: number }>`
   @media (max-width: 1280px) {
     font-size: 0.75rem;
   }
-
 `;
 
 const NewsLinkButton = styled.button`
@@ -334,7 +381,6 @@ const NewsLinkButton = styled.button`
   border-radius: 0.5rem;
   font-size: 0.875rem;
   cursor: pointer;
-  
 
   &:hover {
     background-color: ${(props) => props.theme.colors.primaryPress};
@@ -343,7 +389,10 @@ const NewsLinkButton = styled.button`
   @media (max-width: 1280px) {
     font-size: 0.75rem;
   }
-
+  @media (max-width: 768px) {
+    background-color: transparent;
+    color: ${(props) => props.theme.colors.text04};
+  }
 `;
 
 const SentenceText = styled.p`
@@ -452,7 +501,7 @@ const AudioContainer = styled.div`
   display: flex;
   align-items: center;
   margin-right: 0.5rem;
-  letter-spacing: 0.02rem;
+  letter-spacing: 0.01rem;
   font-size: 0.875rem;
 
   @media (max-width: 1280px) {
@@ -474,4 +523,18 @@ const PronounceText = styled.p`
   @media (max-width: 768px) {
     font-size: 0.75rem;
   }
+`;
+
+const MobileActionButton = styled.button`
+  background-color: ${(props) => props.theme.colors.primary};
+  color: white;
+  border: none;
+  width: 6.5rem;
+  height: 2rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+`;
+
+const MobileActionButtonContainer = styled.div`
+  margin-left: auto;
 `;

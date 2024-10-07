@@ -136,7 +136,7 @@ const VocabularyPage: React.FC = () => {
   };
 
   if (isMobile) {
-    return <VocabularyMobilePage />
+    return <VocabularyMobilePage />;
   }
 
   if (isLoading) return <Spinner />;
@@ -235,7 +235,6 @@ const MainLayout = styled.div`
     flex-direction: column;
   }
 `;
-
 
 const MainContainer = styled.div`
   width: 46%;

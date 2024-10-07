@@ -59,7 +59,7 @@ const StartWordTestWidget: React.FC<Props> = ({ posibleWords }) => {
           기사 예문 속 빈칸에 알맞은 단어를 넣어 문장을 완성해보세요.
         </MobileExplain>
         <MobileExplain>
-          현재 테스트 가능한 단어 갯수는{" "}
+          현재 테스트 가능한 단어 개수는{" "}
           <MobileExplainNumber>{posibleWords}</MobileExplainNumber>개 입니다.
         </MobileExplain>
         {!posibleWords ? (
@@ -83,7 +83,7 @@ const StartWordTestWidget: React.FC<Props> = ({ posibleWords }) => {
               테스트 시작
             </MobileStartButton>
             <MobileTipContainer>
-              <MobileTip>단어장 속 외워야할 단어 문제들이 출제됩니다.</MobileTip>
+              <MobileTip>단어장 속 외워야 할 단어 문제들이 출제됩니다.</MobileTip>
               <MobileTip>시험 중 페이지를 이동할 경우 0점 처리될 수 있으니 유의해주세요.</MobileTip>
             </MobileTipContainer>
           </>
@@ -110,7 +110,7 @@ const StartWordTestWidget: React.FC<Props> = ({ posibleWords }) => {
         기사 예문 속 빈칸에 알맞은 단어를 넣어 문장을 완성해보세요.
       </Explain>
       <Explain>
-        현재 테스트 가능한 단어 갯수는{" "}
+        현재 테스트 가능한 단어 개수는{" "}
         <ExplainNumber>{posibleWords}</ExplainNumber>개 입니다.
       </Explain>
       {!posibleWords ? (
@@ -127,7 +127,7 @@ const StartWordTestWidget: React.FC<Props> = ({ posibleWords }) => {
             />
             <TextButton onClick={handleIncrease}>+</TextButton>
           </CounterContainer>
-          <Tip>단어장 속 외워야할 단어 문제들이 출제됩니다.</Tip>
+          <Tip>단어장 속 외워야 할 단어 문제들이 출제됩니다.</Tip>
           <Tip>시험 중 페이지를 이동할 경우 0점 처리될 수 있으니 유의해주세요.</Tip>
           <StartButton onClick={handleStartTest}>테스트 시작</StartButton>
         </>

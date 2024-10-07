@@ -40,6 +40,7 @@ const Container = styled.div`
   width: 100%;
   height: 4rem;
   z-index: 10;
+  box-shadow: 0 0 0.25rem #0000004f;
 `;
 
 const NavItem = styled.div`

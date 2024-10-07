@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { useSetRecoilState } from "recoil";
 import locationState from "@store/locationState";
 import styled from "styled-components";
-import { useMediaQuery } from "react-responsive"; // 모바일 여부 감지
+// import { useMediaQuery } from "react-responsive"; // 모바일 여부 감지
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import {
@@ -10,15 +10,14 @@ import {
   postWordTestResult,
   WordTestListResponseDto,
   WordTestRequestDto,
-  deleteWordTest
+  deleteWordTest,
 } from "@services/wordTestService";
 import Spinner from "@components/Spinner";
 import Modal from "@components/Modal";
 import { isExpModalState } from "@store/expState";
-import WordTestMobilePage from "./mobile/WordTestMobilePage";
 
 const WordTestPage: React.FC = () => {
-  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
+  // const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const [searchParams] = useSearchParams();
   const totalCount = searchParams.get("totalCount");
   const setExpModal = useSetRecoilState(isExpModalState);
@@ -38,12 +37,16 @@ const WordTestPage: React.FC = () => {
     setCurrentLocation("Word Test Page");
   }, [setCurrentLocation]);
 
-  const { isLoading, error: dataError, data } = useQuery<WordTestListResponseDto>({
+  const {
+    isLoading,
+    error: dataError,
+    data,
+  } = useQuery<WordTestListResponseDto>({
     queryKey: ["wordTestData", Number(totalCount)],
     queryFn: () => getWordTestList(Number(totalCount)),
     refetchOnWindowFocus: false,
   });
-  const quizId = data?.quizId
+  const quizId = data?.quizId;
   console.log("퀴즈 아이디", quizId);
 
   const [userAnswers, setUserAnswers] = useState<string[]>([]);
@@ -57,7 +60,10 @@ const WordTestPage: React.FC = () => {
   useEffect(() => {
     if (data) {
       const processedQuiz = data.tests.map((item) => ({
-        question: item.sentence.replace(item.word, "_".repeat(item.word.length)),
+        question: item.sentence.replace(
+          item.word,
+          "_".repeat(item.word.length)
+        ),
         translation: item.sentenceMeaning,
         answer: item.word,
       }));
@@ -73,7 +79,10 @@ const WordTestPage: React.FC = () => {
   const questionsPerPage = 5;
   const indexOfLastQuestion = currentPage * questionsPerPage;
   const indexOfFirstQuestion = indexOfLastQuestion - questionsPerPage;
-  const currentQuestions = quiz.slice(indexOfFirstQuestion, indexOfLastQuestion);
+  const currentQuestions = quiz.slice(
+    indexOfFirstQuestion,
+    indexOfLastQuestion
+  );
 
   const handleInputChange = (
     index: number,
@@ -83,8 +92,7 @@ const WordTestPage: React.FC = () => {
     const englishOnly = /^[a-zA-Z]*$/;
     if (!englishOnly.test(value)) {
       setError(true);
-      return
-
+      return;
     } else {
       setError(false);
     }
@@ -146,7 +154,8 @@ const WordTestPage: React.FC = () => {
   // 뒤로 가기 방지 + 모달 로직
   useEffect(() => {
     const handlePopState = (event: PopStateEvent) => {
-      if (!isSubmit) { // 제출된 상태가 아닐 때만 뒤로 가기 방지
+      if (!isSubmit) {
+        // 제출된 상태가 아닐 때만 뒤로 가기 방지
         event.preventDefault();
         setIsExitModalOpen(true); // 뒤로 가기 시 모달 띄우기
         window.history.pushState(null, "", window.location.href); // 현재 페이지로 다시 푸시
@@ -199,7 +208,9 @@ const WordTestPage: React.FC = () => {
     });
   };
 
-  const answeredWordsCount = userAnswers.filter((ans) => ans.trim() !== "").length;
+  const answeredWordsCount = userAnswers.filter(
+    (ans) => ans.trim() !== ""
+  ).length;
 
   // 로딩 상태 처리
   if (isLoading) return <Spinner />;
@@ -208,20 +219,30 @@ const WordTestPage: React.FC = () => {
   if (dataError)
     return <ErrorText>에러가 발생했습니다. 다시 시도해 주세요.</ErrorText>;
 
-  if (isMobile) return <WordTestMobilePage />;
-
   return (
     <MainContainer>
       {/* 테스트 퇴장 모달 */}
-      <Modal isOpen={isExitModalOpen} onClose={() => setIsExitModalOpen(false)} title="테스트 퇴장">
+      <Modal
+        isOpen={isExitModalOpen}
+        onClose={() => setIsExitModalOpen(false)}
+        title="테스트 퇴장"
+      >
         <p>테스트를 중단하고 나가시겠습니까?</p>
         <ModalButtonContainer>
-          <ModalCancelButton onClick={() => setIsExitModalOpen(false)}>취소</ModalCancelButton>
+          <ModalCancelButton onClick={() => setIsExitModalOpen(false)}>
+            취소
+          </ModalCancelButton>
           <ModalConfirmButton onClick={handleExitTest}>확인</ModalConfirmButton>
         </ModalButtonContainer>
       </Modal>
       <WordCount>
-        입력된 단어수 {answeredWordsCount < quiz.length ? <InfoTextEmphasizeRed>{answeredWordsCount}</InfoTextEmphasizeRed> : <InfoTextEmphasizeBlue>{answeredWordsCount}</InfoTextEmphasizeBlue>}개, 전체 문제 수 <InfoTextNormal>{quiz.length}</InfoTextNormal>개
+        입력된 단어수{" "}
+        {answeredWordsCount < quiz.length ? (
+          <InfoTextEmphasizeRed>{answeredWordsCount}</InfoTextEmphasizeRed>
+        ) : (
+          <InfoTextEmphasizeBlue>{answeredWordsCount}</InfoTextEmphasizeBlue>
+        )}
+        개, 전체 문제 수 <InfoTextNormal>{quiz.length}</InfoTextNormal>개
       </WordCount>
 
       {/* 문제 랜더링 */}
@@ -243,7 +264,9 @@ const WordTestPage: React.FC = () => {
                           key={i}
                           type="text"
                           ref={(el) => (inputRefs.current[index][i] = el)}
-                          value={userAnswers[indexOfFirstQuestion + index]?.[i] || ""}
+                          value={
+                            userAnswers[indexOfFirstQuestion + index]?.[i] || ""
+                          }
                           onChange={(e) =>
                             handleInputChange(index, i, e.target.value)
                           }
@@ -275,7 +298,9 @@ const WordTestPage: React.FC = () => {
             </PageInfo>
             <PageButton
               onClick={handleNextPage}
-              disabled={currentPage === Math.ceil(quiz.length / questionsPerPage)}
+              disabled={
+                currentPage === Math.ceil(quiz.length / questionsPerPage)
+              }
             >
               다음
             </PageButton>
@@ -285,10 +310,16 @@ const WordTestPage: React.FC = () => {
         <SubmitButtonContainer>
           {currentPage === Math.ceil(quiz.length / questionsPerPage) ? (
             <SubmitButton onClick={handleWordDataSubmit}>제출</SubmitButton>
-          ) : <Empty />}
+          ) : (
+            <Empty />
+          )}
         </SubmitButtonContainer>
       </BottomContainer>
-      <Modal isOpen={isSubmitModal} onClose={closeSubmitModal} title="Speaking Test">
+      <Modal
+        isOpen={isSubmitModal}
+        onClose={closeSubmitModal}
+        title="Speaking Test"
+      >
         <p>정말로 제출하시겠습니까?</p>
         <ModalButtonContainer>
           <ModalCancelButton onClick={closeSubmitModal}>취소</ModalCancelButton>
@@ -321,13 +352,28 @@ const WordCount = styled.div`
   position: absolute;
   top: 3rem;
   left: 3rem;
-  font-size: 1.2rem;
+  font-size: 1.25rem;
+  @media (max-width: 1280px) {
+    font-size: 1.125rem;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 1rem;
+    top: 1rem;
+    left: 1rem;
+  }
 `;
 
 const QuizLayout = styled.div`
   width: 95%;
   margin-top: 8rem;
-`
+  @media (max-width: 1280px) {
+  }
+
+  @media (max-width: 768px) {
+    margin-top: 3rem;
+  }
+`;
 
 const QuizContainer = styled.div`
   margin-bottom: 1.5rem;
@@ -340,6 +386,15 @@ const Question = styled.div`
   font-weight: bold;
   align-items: center;
   flex-wrap: wrap;
+  letter-spacing: 0.001px;
+  margin-right: 1rem;
+  @media (max-width: 1280px) {
+    font-size: 1.25rem;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 1.125rem;
+  }
 `;
 
 const Translation = styled.div`
@@ -349,6 +404,13 @@ const Translation = styled.div`
   margin-bottom: 0.5rem;
   color: ${(props) => props.theme.colors.text04};
   flex-basis: 100%;
+  letter-spacing: 0.001px;
+  line-height: 1.1;
+  @media (max-width: 1280px) {
+    font-size: 1rem;
+    line-height: 1.2;
+    letter-spacing: 0.005px;
+  }
 `;
 
 const BlankInput = styled.input`
@@ -369,6 +431,10 @@ const BlankInput = styled.input`
 
   &:hover {
     cursor: text;
+  }
+
+  @media (max-width: 768px) {
+    padding: 0.375rem 0.125rem 0 0.125rem;
   }
 `;
 
@@ -396,6 +462,10 @@ const PageButton = styled.button`
     background-color: #ccc;
     cursor: not-allowed;
   }
+
+  @media (max-width: 768px) {
+    font-size: 0.875rem;
+  }
 `;
 
 const SubmitButtonContainer = styled.div`
@@ -413,8 +483,8 @@ const SubmitButton = styled(PageButton)`
 `;
 
 const Empty = styled.div`
-  margin-top:3rem;
-`
+  margin-top: 3rem;
+`;
 
 const ModalButtonContainer = styled.div`
   display: flex;
@@ -452,6 +522,10 @@ const ErrorText = styled.div`
   color: ${(props) => props.theme.colors.danger};
   font-size: 1.25rem;
   text-align: center;
+
+  @media (max-width: 768px) {
+    font-size: 1rem;
+  }
 `;
 
 const BlankInputContainer = styled.span`
@@ -477,11 +551,25 @@ const Index = styled.div`
   margin-right: 0.25rem;
   font-size: 1.5rem;
   font-weight: 500;
+  @media (max-width: 1280px) {
+    font-size: 1.25rem;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 1.125rem;
+  }
 `;
 
 const PageInfo = styled.div`
-  font-size: 1.2rem;
+  font-size: 1.25rem;
   font-weight: bold;
+  @media (max-width: 1280px) {
+    font-size: 1.125rem;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 1rem;
+  }
 `;
 
 const BottomContainer = styled.div`
@@ -490,13 +578,17 @@ const BottomContainer = styled.div`
 `;
 
 const ErrorMessage = styled.span`
-display: flex;
-justify-content:center;
-margin-bottom: 1rem;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
   color: ${(props) => props.theme.colors.danger};
   font-size: 1.25rem;
   font-weight: 600;
   margin-top: 0.5rem;
+
+  @media (max-width: 768px) {
+    font-size: 1.125rem;
+  }
 `;
 
 const InfoTextEmphasizeRed = styled.span`
@@ -505,7 +597,11 @@ const InfoTextEmphasizeRed = styled.span`
   font-size: 1.25rem;
   font-weight: 700;
   color: ${(props) => props.theme.colors.danger};
-  `;
+
+  @media (max-width: 768px) {
+    font-size: 1.125rem;
+  }
+`;
 
 const InfoTextEmphasizeBlue = styled.span`
   margin-right: 0.25rem;
@@ -513,6 +609,10 @@ const InfoTextEmphasizeBlue = styled.span`
   font-size: 1.25rem;
   font-weight: 700;
   color: ${(props) => props.theme.colors.primary};
+
+  @media (max-width: 768px) {
+    font-size: 1.125rem;
+  }
 `;
 
 const InfoTextNormal = styled.span`
@@ -521,4 +621,8 @@ const InfoTextNormal = styled.span`
   font-size: 1.25rem;
   font-weight: 700;
   color: ${(props) => props.theme.colors.text};
+
+  @media (max-width: 768px) {
+    font-size: 1.125rem;
+  }
 `;

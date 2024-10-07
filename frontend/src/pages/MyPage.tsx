@@ -114,9 +114,9 @@ const MyPage = () => {
   const MobileRender = () => {
     return (
       <PageWrapper>
-        <HeaderContainer>
-          <FullLogo width={220} height={70} />
-        </HeaderContainer>
+        <MobileMainHeader>
+          <FullLogo width={200} height={75} />
+        </MobileMainHeader>
         <ContentWrapper>
           <MyPageContainer>
             <MyPageProfileMobile />
@@ -293,7 +293,6 @@ const PageWrapper = styled.div`
 const ContentWrapper = styled.main`
   flex: 1;
   overflow-y: auto;
-  margin-top: 70px;
 `;
 
 const MyPageContainer = styled.div`
@@ -305,7 +304,7 @@ const MyPageContainer = styled.div`
   }
   @media (max-width: 767px) {
     min-height: calc(100vh - 70px);
-    padding: 1.125rem;
+    padding: 0 1.125rem;
     background-color: ${(props) => props.theme.colors.background};
   }
 `;
@@ -337,7 +336,7 @@ const WidgetContainer = styled.div`
 
   @media (max-width: 767px) {
     box-shadow: none;
-    border: 1px solid lightgray;
+    border: 1px solid ${(props) => props.theme.colors.placeholder};
     margin: 1rem 0;
     padding: 1rem;
   }
@@ -381,16 +380,24 @@ const fadeOut = keyframes`
   }
 `;
 
-const HeaderContainer = styled.header`
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
+// const HeaderContainer = styled.header`
+//   position: fixed;
+//   top: 0;
+//   left: 0;
+//   right: 0;
+//   display: flex;
+//   align-items: center;
+//   height: 70px;
+//   background-color: ${(props) => props.theme.colors.background};
+//   z-index: 1000;
+// `;
+
+const MobileMainHeader = styled.div`
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  height: 70px;
-  background-color: ${(props) => props.theme.colors.background};
-  z-index: 1000;
+  height: 75px;
+  padding: 0 1.5rem 0 0;
 `;
 
 const FullScreenModal = styled.div<{ $isVisible: boolean }>`
@@ -398,7 +405,7 @@ const FullScreenModal = styled.div<{ $isVisible: boolean }>`
   top: 0;
   left: 0;
   width: 100%;
-  height: calc(100% - 60px);
+  height: calc(100vh - 70px);
   background-color: ${(props) => props.theme.colors.background};
   z-index: 1000;
   display: flex;

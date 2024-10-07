@@ -34,6 +34,7 @@ const MainPage = () => {
         <NewsContainer>
           <DailyNews />
         </NewsContainer>
+        <RestudyQuiz />
       </Container>
     );
   };

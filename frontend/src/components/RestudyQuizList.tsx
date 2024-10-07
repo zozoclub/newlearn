@@ -8,6 +8,7 @@ import {
   postSkipCurveWord,
 } from "@services/forgettingCurve";
 import { words } from "@utils/words";
+// import { useMediaQuery } from "react-responsive"; // 모바일 여부 감지
 
 type RestudyQuizListProps = {
   onClose: () => void;
@@ -24,8 +25,9 @@ type ResultData = {
 
 const RestudyQuizList: React.FC<RestudyQuizListProps> = ({
   onClose,
-  newRestudyData
+  newRestudyData,
 }) => {
+  // const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const queryClient = useQueryClient();
   const [currentPage, setCurrentPage] = useState(0);
   const [score, setScore] = useState(0);
@@ -217,7 +219,8 @@ const RestudyQuizList: React.FC<RestudyQuizListProps> = ({
   };
 
   // 서버에서 문제가 없을 때 처리
-  if (newRestudyData.length === 0) return <ErrorText>문제를 불러오는 데 실패했습니다.</ErrorText>;
+  if (newRestudyData.length === 0)
+    return <ErrorText>문제를 불러오는 데 실패했습니다.</ErrorText>;
 
   if (options.length === 0 && newRestudyData && newRestudyData.length > 0) {
     initializeOptions(newRestudyData);
@@ -228,8 +231,8 @@ const RestudyQuizList: React.FC<RestudyQuizListProps> = ({
       <ModalRightHeader>
         {currentPage < newRestudyData.length && (
           <>
-            <RemainingQuestions>{`남은 문항: ${remainingQuestions}`}</RemainingQuestions>
             <SkipAllButton onClick={handleSkipAll}>미루기</SkipAllButton>
+            <RemainingQuestions>{`남은 문항: ${remainingQuestions}`}</RemainingQuestions>
           </>
         )}
       </ModalRightHeader>
@@ -270,12 +273,23 @@ const RestudyQuizList: React.FC<RestudyQuizListProps> = ({
           </QuestionWrapper>
         ))}
 
-        <QuestionWrapper $currentPage={currentPage} $index={newRestudyData.length}>
+        <QuestionWrapper
+          $currentPage={currentPage}
+          $index={newRestudyData.length}
+        >
           <ResultPage>
             {results.length ? (
-              <ResultText>{`퀴즈 완료! ${newRestudyData.length}문제 중 ${score}문제 맞혔습니다.`}</ResultText>
+              <>
+                <ResultText>퀴즈 완료! </ResultText>
+                <ResultText>{`${newRestudyData.length}문제 중 ${score}문제 맞혔습니다.`}</ResultText>
+              </>
             ) : (
-              <ResultText>{`모든 문제를 Skip 했습니다.`}</ResultText>
+              <>
+                <ResultSkipTitle>모든 문제를 Skip 했습니다.</ResultSkipTitle>
+                <ResultSkipText>
+                  Skip한 문제는 다음 날 등장합니다.
+                </ResultSkipText>
+              </>
             )}
             <ScrollableResultContainer>
               {showResults.map((result, index) => (
@@ -325,6 +339,15 @@ const SkipAllButton = styled.button`
   &:active {
     transform: translateY(0);
   }
+  @media (max-width: 1280px) {
+    top: 1rem;
+    right: 2rem;
+  }
+  @media (max-width: 768px) {
+    top: 0.5rem;
+    right: 1rem;
+    padding: 0.375rem 1rem;
+  }
 `;
 
 const QuizContainer = styled.div<{ $currentPage: number }>`
@@ -339,15 +362,23 @@ const ModalRightHeader = styled.div`
   position: absolute;
   top: 2rem;
   right: 3rem;
-  display: flex;
   align-items: center;
   gap: 2rem;
+  @media (max-width: 1280px) {
+    top: 1rem;
+    right: 2rem;
+  }
+  @media (max-width: 768px) {
+    top: 0.5rem;
+    right: 1rem;
+    padding: 0.375rem 1rem;
+  }
 `;
 
 const QuestionWrapper = styled.div<{ $currentPage: number; $index: number }>`
   position: absolute;
   width: 100%;
-  height: 100%;
+  height: 80%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -377,11 +408,11 @@ const QuestionText = styled.p`
   line-height: 1.2;
   letter-spacing: 0.5px;
   @media (max-width: 1280px) {
-    font-size: 1.375rem;
+    font-size: 1.25rem;
     line-height: 1.1;
   }
-  @media (max-width: 768) {
-    font-size: 1.25rem;
+  @media (max-width: 768px) {
+    font-size: 1.125rem;
   }
 `;
 
@@ -407,8 +438,9 @@ const OptionButton = styled.button`
   @media (max-width: 1280px) {
     font-size: 1.125rem;
   }
-  @media (max-width: 768) {
-    font-size: 1rem;
+  @media (max-width: 768px) {
+    font-size: 0.875rem;
+    padding: 0.625rem 0.875rem;
   }
 `;
 
@@ -436,9 +468,6 @@ const ActionButton = styled.button`
   @media (max-width: 1280px) {
     font-size: 1rem;
   }
-  @media (max-width: 768) {
-    font-size: 0.875rem;
-  }
 `;
 
 const ResultPage = styled.div`
@@ -451,6 +480,30 @@ const ResultPage = styled.div`
   border-radius: 1rem;
   padding: 0 2rem;
   background-color: ${({ theme }) => theme.colors.cardBackground};
+  @media (max-width: 768px) {
+    padding: 0 0.875rem;
+  }
+`;
+
+const ResultSkipTitle = styled.div`
+  font-size: 2rem;
+  font-weight: 700;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 20%;
+  border-radius: 1rem;
+  background-color: ${({ theme }) => theme.colors.cardBackground};
+  @media (max-width: 768px) {
+    padding: 0 0.875rem;
+    font-size: 1.5rem;
+  }
+`;
+const ResultSkipText = styled.div`
+  font-size: 1.125rem;
+  color: ${({ theme }) => theme.colors.text04};
 `;
 
 const ResultText = styled.p`
@@ -462,8 +515,9 @@ const ResultText = styled.p`
   @media (max-width: 1280px) {
     font-size: 1.625rem;
   }
-  @media (max-width: 768) {
+  @media (max-width: 768px) {
     font-size: 1.5rem;
+    margin-bottom: 1rem;
   }
 `;
 
@@ -476,7 +530,7 @@ const SentenceMeaning = styled.p`
     font-size: 1.125rem;
     line-height: 1.3;
   }
-  @media (max-width: 768) {
+  @media (max-width: 768px) {
     font-size: 1rem;
   }
 `;
@@ -489,7 +543,7 @@ const ErrorText = styled.p`
   @media (max-width: 1280px) {
     font-size: 1.375rem;
   }
-  @media (max-width: 768) {
+  @media (max-width: 768px) {
     font-size: 1.25rem;
   }
 `;
@@ -500,6 +554,9 @@ const Container = styled.div`
   height: 45vh;
   align-items: center;
   justify-content: center;
+  @media (max-width: 768px) {
+    height: 45vh;
+  }
 `;
 
 const ScrollableResultContainer = styled.div`
@@ -532,7 +589,7 @@ const AnswerStatus = styled.span<{ $isCorrect: boolean }>`
   @media (max-width: 1280px) {
     font-size: 1.125rem;
   }
-  @media (max-width: 768) {
+  @media (max-width: 768px) {
     font-size: 1rem;
   }
 `;
@@ -544,7 +601,7 @@ const AnswerText = styled.p`
   @media (max-width: 1280px) {
     font-size: 1rem;
   }
-  @media (max-width: 768) {
+  @media (max-width: 768px) {
     font-size: 0.875rem;
   }
 `;
@@ -556,7 +613,7 @@ const AnswerReview = styled.p`
   @media (max-width: 1280px) {
     font-size: 1.125rem;
   }
-  @media (max-width: 768) {
+  @media (max-width: 768px) {
     font-size: 1rem;
   }
 `;
@@ -570,10 +627,12 @@ const AnswerMeanText = styled.p`
 `;
 const RemainingQuestions = styled.div`
   margin-top: 0.25rem;
+  text-align: center;
   font-size: 1.125rem;
   font-weight: bold;
   color: ${({ theme }) => theme.colors.text04};
   @media (max-width: 1280px) {
-    font-size: 1rem;
+    font-size: 0.875rem;
+    font-weight: 400;
   }
 `;

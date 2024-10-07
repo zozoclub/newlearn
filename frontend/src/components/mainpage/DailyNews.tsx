@@ -10,6 +10,7 @@ import userInfoState from "@store/userInfoState";
 import languageState from "@store/languageState";
 import NewsSwiper from "@components/common/NewsSwiper";
 import { useMediaQuery } from "react-responsive";
+import Spinner from "@components/Spinner";
 
 const DailyNews = () => {
   const userInfoData = useRecoilValue(userInfoState);
@@ -23,7 +24,12 @@ const DailyNews = () => {
     enabled: userInfoData.isInitialized,
   });
 
-  if (isLoading) return <div>Loading news...</div>;
+  if (isLoading)
+    return (
+      <Container style={{ display: "flex", alignItems: "center" }}>
+        <Spinner />
+      </Container>
+    );
 
   return (
     <Container>
@@ -45,7 +51,8 @@ const Container = styled.div`
     overflow: hidden;
   }
   @media screen and (min-width: 768px) and (max-width: 1279px) {
-    width: 90vw;
+    width: 50vw;
+    min-height: 25vh;
   }
   @media screen and (max-width: 767px) {
     width: 100vw;

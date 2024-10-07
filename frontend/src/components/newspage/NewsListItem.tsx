@@ -6,9 +6,11 @@ import { usePageTransition } from "@hooks/usePageTransition";
 import lightThumbnailImage from "@assets/images/lightThumbnail.png";
 import darkThumbnailImage from "@assets/images/darkThumbnail.png";
 import { NewsType } from "types/newsType";
+import { useMediaQuery } from "react-responsive";
 
 const NewsListItem: React.FC<{ news: NewsType }> = ({ news }) => {
   const transitionTo = usePageTransition();
+  const isTablet = useMediaQuery({ query: "(max-width: 1279px)" });
 
   return (
     <Container onClick={() => transitionTo(`/news/detail/${news.newsId}`)}>
@@ -22,15 +24,25 @@ const NewsListItem: React.FC<{ news: NewsType }> = ({ news }) => {
           </>
         )}
       </ThumbnailImageDiv>
-      <div style={{ position: "relative" }}>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+          position: "relative",
+        }}
+      >
         <Title>{news.title}</Title>
-        <Content>{news.content}</Content>
-        <Category>
+        {/* 데스크탑에서만 내용 표시 */}
+        {!isTablet && <Content>{news.content}</Content>}
+        <Footer>
           <CategoryButton>{news.category}</CategoryButton>
-        </Category>
-        {news.isRead[2] && <BronzeMedal src={bronzeMedal} alt="" />}
-        {news.isRead[1] && <SilverMedal src={silverMedal} alt="" />}
-        {news.isRead[0] && <GoldMedal src={goldMedal} alt="" />}
+          <div style={{ display: "flex", gap: "0.5rem" }}>
+            {news.isRead[2] && <Medal src={bronzeMedal} alt="" />}
+            {news.isRead[1] && <Medal src={silverMedal} alt="" />}
+            {news.isRead[0] && <Medal src={goldMedal} alt="" />}
+          </div>
+        </Footer>
       </div>
     </Container>
   );
@@ -39,7 +51,6 @@ const NewsListItem: React.FC<{ news: NewsType }> = ({ news }) => {
 const Container = styled.div`
   display: flex;
   height: 13rem;
-  padding: 2rem;
   margin: 1rem 0;
   border-radius: 1rem;
   background-color: ${(props) => props.theme.colors.newsItemBackground};
@@ -50,20 +61,36 @@ const Container = styled.div`
   &:hover {
     background-color: ${(props) => props.theme.colors.newsItemBackgroundPress};
   }
+  @media screen and (min-width: 768px) {
+    padding: 2rem;
+  }
+  @media screen and (max-width: 1279px) {
+    height: 10rem;
+  }
 `;
 
 const ThumbnailImageDiv = styled.div`
   position: relative;
-  min-width: 20rem;
-  height: 13rem;
+  height: 100%;
   margin-right: 2.5rem;
+  @media screen and (min-width: 1280px) {
+    min-width: 20rem;
+  }
+  @media screen and (max-width: 1279px) {
+    aspect-ratio: 1.6;
+  }
 `;
 
 const ThumbnailImage = styled.img`
-  width: 20rem;
-  height: 13rem;
+  height: 100%;
   border-radius: 1rem;
   object-fit: fill;
+  @media screen and (min-width: 1280px) {
+    width: 20rem;
+  }
+  @media screen and (max-width: 1279px) {
+    aspect-ratio: 1.6;
+  }
 `;
 
 const DarkThumbnailImage = styled(ThumbnailImage)`
@@ -75,7 +102,6 @@ const DarkThumbnailImage = styled(ThumbnailImage)`
 `;
 
 const Title = styled.div`
-  width: 70%;
   margin-bottom: 1rem;
   font-size: 1.75rem;
   font-weight: 700;
@@ -85,6 +111,7 @@ const Title = styled.div`
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
+  width: 100%;
 `;
 
 const Content = styled.div`
@@ -100,8 +127,9 @@ const Content = styled.div`
   -webkit-line-clamp: 2;
 `;
 
-const Category = styled.div`
+const Footer = styled.div`
   display: flex;
+  justify-content: space-between;
 `;
 
 const CategoryButton = styled.div`
@@ -116,18 +144,7 @@ const CategoryButton = styled.div`
 `;
 
 const Medal = styled.img`
-  position: absolute;
-  top: 0;
-`;
-
-const GoldMedal = styled(Medal)`
-  right: 0rem;
-`;
-const SilverMedal = styled(Medal)`
-  right: 3.75rem;
-`;
-const BronzeMedal = styled(Medal)`
-  right: 8rem;
+  width: 32px;
 `;
 
 export default NewsListItem;

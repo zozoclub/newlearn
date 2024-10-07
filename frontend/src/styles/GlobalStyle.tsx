@@ -12,6 +12,13 @@ export const GlobalStyle = createGlobalStyle`
     letter-spacing: -1px;
     box-sizing: border-box;
   }
+
+  // 모바일 크기에서 스크롤바 제거
+  @media screen and (max-width: 767px) {
+  body::-webkit-scrollbar {
+    display: none;  /* Chrome, Safari and Opera */
+  }
+}
   /* 스크롤바 커스터마이징 */
   :root {
     ::-webkit-scrollbar {

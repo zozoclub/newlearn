@@ -8,6 +8,7 @@ export type NewsType = {
   content?: string;
   contentEn?: string;
   contentKr?: string;
+  press?: string;
   thumbnailImageUrl: string;
   category: string;
   publishedDate: string;

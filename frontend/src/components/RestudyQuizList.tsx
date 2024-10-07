@@ -8,7 +8,6 @@ import {
   postSkipCurveWord,
 } from "@services/forgettingCurve";
 import { words } from "@utils/words";
-// import { useMediaQuery } from "react-responsive"; // 모바일 여부 감지
 
 type RestudyQuizListProps = {
   onClose: () => void;
@@ -27,7 +26,6 @@ const RestudyQuizList: React.FC<RestudyQuizListProps> = ({
   onClose,
   newRestudyData,
 }) => {
-  // const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const queryClient = useQueryClient();
   const [currentPage, setCurrentPage] = useState(0);
   const [score, setScore] = useState(0);

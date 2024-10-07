@@ -1,5 +1,6 @@
 package com.newlearn.backend.word.repository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -18,7 +19,8 @@ public interface WordRepository extends JpaRepository<Word, Long> {
 
 	List<Word> findAllByWordAndUser(String word, Users user);
 
-	List<Word> findByUserAndNextRestudyDateLessThanEqualAndIsFinalCompleteFalseAndIsCompleteTrue(Users user, LocalDateTime today);
+	@Query("SELECT w FROM Word w WHERE w.user = :user AND DATE(w.nextRestudyDate) <= :today AND w.isFinalComplete = false AND w.isComplete = true AND w.isDelete = false")
+	List<Word> findByUserAndNextRestudyDateLessThanEqualAndIsFinalCompleteFalseAndIsCompleteTrueAndIsDeleteFalse(Users user, LocalDate today);
 
 	@Query("select count(w) from Word w where w.user = :user and w.isComplete = false")
 	Long countIncompleteWordsByUser(Users user);

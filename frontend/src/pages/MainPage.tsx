@@ -29,18 +29,22 @@ const MainPage = () => {
   }, []);
 
   const MobileRender = () => {
-    return <Container>안녕하세요</Container>;
+    return (
+      <Container>
+        <NewsContainer>
+          <DailyNews />
+        </NewsContainer>
+      </Container>
+    );
   };
 
   const DesktopRender = () => {
     return (
       <Container>
-        <NewsContainer>
-          <div style={{ paddingLeft: "1rem", paddingTop: "1rem" }}>
-            <Clock />
-          </div>
-          <DailyNews />
-        </NewsContainer>
+        <div style={{ paddingLeft: "1rem", paddingTop: "1rem" }}>
+          <Clock />
+        </div>
+        <DailyNews />
         <WidgetContainer>
           {widgetList.map((widget, index) => (
             <Widget key={index} variety={widget.variety} />
@@ -66,15 +70,11 @@ const Container = styled.div`
   position: relative;
   height: 35rem;
   padding: 0;
-  @media (min-width: 768px) {
+  @media screen and (max-width: 767px) {
   }
 `;
 
-const NewsContainer = styled.div`
-  position: relative;
-  width: 50%;
-  padding: 0 3%;
-`;
+const NewsContainer = styled.div``;
 
 const WidgetContainer = styled.div`
   display: grid;

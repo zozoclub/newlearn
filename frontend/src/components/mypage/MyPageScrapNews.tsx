@@ -152,6 +152,7 @@ const DifficultyItem = styled.div`
   overflow: hidden;
   text-overflow: clip;
   @media (max-width: 768px) {
+    margin-top: 0.5rem;
     margin-bottom: 0.5rem;
   }
 `;

@@ -23,7 +23,8 @@ const LanguageToggleBtn = () => {
   if (
     currentLocationData === "login" ||
     currentLocationData === "signUp" ||
-    currentLocationData === "notFound"
+    currentLocationData === "notFound" ||
+    currentLocationData === "myPage"
   )
     return null;
 
@@ -54,6 +55,7 @@ const Container = styled.div<{
   display: grid;
   place-items: center;
   position: fixed;
+  z-index: 1;
   bottom: 3rem;
   width: 4rem;
   height: 4rem;

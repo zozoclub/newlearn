@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { useSetRecoilState } from "recoil";
 import locationState from "@store/locationState";
 import styled from "styled-components";
-// import { useMediaQuery } from "react-responsive"; // 모바일 여부 감지
+import { useMediaQuery } from "react-responsive"; // 모바일 여부 감지
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import {
@@ -15,9 +15,11 @@ import {
 import Spinner from "@components/Spinner";
 import Modal from "@components/Modal";
 import { isExpModalState } from "@store/expState";
+import HeaderMobile from "@components/common/HeaderMobile";
+
 
 const WordTestPage: React.FC = () => {
-  // const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
+  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const [searchParams] = useSearchParams();
   const totalCount = searchParams.get("totalCount");
   const setExpModal = useSetRecoilState(isExpModalState);
@@ -177,7 +179,7 @@ const WordTestPage: React.FC = () => {
 
     quiz.forEach((_, index) => {
       const correctAnswer = data?.tests[index].word;
-      const answer = userAnswers[index]?.toLowerCase().replace(/\s+/g, "");
+      const answer = userAnswers[index]?.replace(/\s+/g, "");
       const isCorrect = correctAnswer === answer;
       if (isCorrect) correctAnswerCount += 1;
 
@@ -220,113 +222,125 @@ const WordTestPage: React.FC = () => {
     return <ErrorText>에러가 발생했습니다. 다시 시도해 주세요.</ErrorText>;
 
   return (
-    <MainContainer>
-      {/* 테스트 퇴장 모달 */}
-      <Modal
-        isOpen={isExitModalOpen}
-        onClose={() => setIsExitModalOpen(false)}
-        title="테스트 퇴장"
-      >
-        <p>테스트를 중단하고 나가시겠습니까?</p>
-        <ModalButtonContainer>
-          <ModalCancelButton onClick={() => setIsExitModalOpen(false)}>
-            취소
-          </ModalCancelButton>
-          <ModalConfirmButton onClick={handleExitTest}>확인</ModalConfirmButton>
-        </ModalButtonContainer>
-      </Modal>
-      <WordCount>
-        입력된 단어수{" "}
-        {answeredWordsCount < quiz.length ? (
-          <InfoTextEmphasizeRed>{answeredWordsCount}</InfoTextEmphasizeRed>
-        ) : (
-          <InfoTextEmphasizeBlue>{answeredWordsCount}</InfoTextEmphasizeBlue>
-        )}
-        개, 전체 문제 수 <InfoTextNormal>{quiz.length}</InfoTextNormal>개
-      </WordCount>
+    <>
+      {isMobile &&
+        <HeaderMobile title="단어 빈칸 테스트"/>
+      }
+      <MainContainer>
+        {/* 테스트 퇴장 모달 */}
+        <Modal
+          isOpen={isExitModalOpen}
+          onClose={() => setIsExitModalOpen(false)}
+          title="테스트 퇴장"
+        >
+          <p>테스트를 중단하고 나가시겠습니까?</p>
+          <ModalButtonContainer>
+            <ModalCancelButton onClick={() => setIsExitModalOpen(false)}>
+              취소
+            </ModalCancelButton>
+            <ModalConfirmButton onClick={handleExitTest}>확인</ModalConfirmButton>
+          </ModalButtonContainer>
+        </Modal>
 
-      {/* 문제 랜더링 */}
-      <QuizLayout>
-        {currentQuestions.map((q, index) => {
-          inputRefs.current[index] = [];
-          return (
-            <QuizContainer key={index}>
-              <QuestionBox>
-                <Index>{indexOfFirstQuestion + index + 1}. </Index>
-                <Question>
-                  <div>
-                    <BeforeText>
-                      {q.question.split("_".repeat(q.answer.length))[0]}
-                    </BeforeText>
-                    <BlankInputContainer>
-                      {q.answer.split("").map((_, i) => (
-                        <BlankInput
-                          key={i}
-                          type="text"
-                          ref={(el) => (inputRefs.current[index][i] = el)}
-                          value={
-                            userAnswers[indexOfFirstQuestion + index]?.[i] || ""
-                          }
-                          onChange={(e) =>
-                            handleInputChange(index, i, e.target.value)
-                          }
-                          onKeyDown={(e) => handleKeyDown(e, index, i)}
-                          maxLength={1}
-                        />
-                      ))}
-                    </BlankInputContainer>
-                    <AfterText>
-                      {q.question.split("_".repeat(q.answer.length))[1]}
-                    </AfterText>
-                  </div>
-                  <Translation>{q.translation}</Translation>
-                </Question>
-              </QuestionBox>
-            </QuizContainer>
-          );
-        })}
-      </QuizLayout>
+        <QuizLayout>
+          {/* 문제 랜더링 */}
+          <WordCount>
+            <RemainCountContainer>
+              <RemainCount>
+                남은 문제 <InfoTextNormal>{quiz.length - answeredWordsCount}</InfoTextNormal>개
+              </RemainCount>
+              <RemainCount>
+                지금까지 푼 문제 {" "}
+                {answeredWordsCount < quiz.length ? (
+                  <InfoTextEmphasizeRed>{answeredWordsCount}</InfoTextEmphasizeRed>
+                ) : (
+                  <InfoTextEmphasizeBlue>{answeredWordsCount}</InfoTextEmphasizeBlue>
+                )}
+                개
+              </RemainCount>
+            </RemainCountContainer>
+          </WordCount>
+          {currentQuestions.map((q, index) => {
+            inputRefs.current[index] = [];
+            return (
+              <QuizContainer key={index}>
+                <QuestionBox>
+                  {/* <Index>{indexOfFirstQuestion + index + 1}. </Index> */}
+                  <Question>
+                    <div>
+                      <BeforeText>
+                        {q.question.split("_".repeat(q.answer.length))[0]}
+                      </BeforeText>
+                      <BlankInputContainer>
+                        {q.answer.split("").map((_, i) => (
+                          <BlankInput
+                            key={i}
+                            type="text"
+                            ref={(el) => (inputRefs.current[index][i] = el)}
+                            value={
+                              userAnswers[indexOfFirstQuestion + index]?.[i] || ""
+                            }
+                            onChange={(e) =>
+                              handleInputChange(index, i, e.target.value)
+                            }
+                            onKeyDown={(e) => handleKeyDown(e, index, i)}
+                            maxLength={1}
+                          />
+                        ))}
+                      </BlankInputContainer>
+                      <AfterText>
+                        {q.question.split("_".repeat(q.answer.length))[1]}
+                      </AfterText>
+                    </div>
+                    <Translation>{q.translation}</Translation>
+                  </Question>
+                </QuestionBox>
+              </QuizContainer>
+            );
+          })}
+        </QuizLayout>
 
-      <BottomContainer>
-        {quiz.length > questionsPerPage && (
-          <ButtonContainer>
-            <PageButton onClick={handlePrevPage} disabled={currentPage === 1}>
-              이전
-            </PageButton>
-            <PageInfo>
-              {currentPage} / {Math.ceil(quiz.length / questionsPerPage)}
-            </PageInfo>
-            <PageButton
-              onClick={handleNextPage}
-              disabled={
-                currentPage === Math.ceil(quiz.length / questionsPerPage)
-              }
-            >
-              다음
-            </PageButton>
-          </ButtonContainer>
-        )}
-        {error && <ErrorMessage>영어만 입력 가능합니다</ErrorMessage>}
-        <SubmitButtonContainer>
-          {currentPage === Math.ceil(quiz.length / questionsPerPage) ? (
-            <SubmitButton onClick={handleWordDataSubmit}>제출</SubmitButton>
-          ) : (
-            <Empty />
+        <BottomContainer>
+          {quiz.length > questionsPerPage && (
+            <ButtonContainer>
+              <PageButton onClick={handlePrevPage} disabled={currentPage === 1}>
+                이전
+              </PageButton>
+              <PageInfo>
+                {currentPage} / {Math.ceil(quiz.length / questionsPerPage)}
+              </PageInfo>
+              <PageButton
+                onClick={handleNextPage}
+                disabled={
+                  currentPage === Math.ceil(quiz.length / questionsPerPage)
+                }
+              >
+                다음
+              </PageButton>
+            </ButtonContainer>
           )}
-        </SubmitButtonContainer>
-      </BottomContainer>
-      <Modal
-        isOpen={isSubmitModal}
-        onClose={closeSubmitModal}
-        title="Speaking Test"
-      >
-        <p>정말로 제출하시겠습니까?</p>
-        <ModalButtonContainer>
-          <ModalCancelButton onClick={closeSubmitModal}>취소</ModalCancelButton>
-          <ModalConfirmButton onClick={handleSubmit}>확인</ModalConfirmButton>
-        </ModalButtonContainer>
-      </Modal>
-    </MainContainer>
+          {error && <ErrorMessage>영어만 입력 가능합니다</ErrorMessage>}
+          <SubmitButtonContainer>
+            {currentPage === Math.ceil(quiz.length / questionsPerPage) ? (
+              <SubmitButton onClick={handleWordDataSubmit}>제출</SubmitButton>
+            ) : (
+              <Empty />
+            )}
+          </SubmitButtonContainer>
+        </BottomContainer>
+        <Modal
+          isOpen={isSubmitModal}
+          onClose={closeSubmitModal}
+          title="Speaking Test"
+        >
+          <p>정말로 제출하시겠습니까?</p>
+          <ModalButtonContainer>
+            <ModalCancelButton onClick={closeSubmitModal}>취소</ModalCancelButton>
+            <ModalConfirmButton onClick={handleSubmit}>확인</ModalConfirmButton>
+          </ModalButtonContainer>
+        </Modal>
+      </MainContainer>
+    </>
   );
 };
 
@@ -346,32 +360,38 @@ const MainContainer = styled.div`
   border-radius: 0.75rem;
   box-shadow: ${(props) => props.theme.shadows.medium};
   transition: box-shadow 0.5s;
+  @media (max-width: 768px) {
+    backdrop-filter: none;
+    border-radius: none;
+    box-shadow: none;
+    transition: none;
+    margin: 0;
+    width: 100%;
+    padding-top: 3rem;
+    padding-left:0rem;
+    padding-right:0rem;
+    padding-bottom: 6rem;
+  }
 `;
 
 const WordCount = styled.div`
-  position: absolute;
-  top: 3rem;
-  left: 3rem;
   font-size: 1.25rem;
+  margin-bottom: 1rem;
   @media (max-width: 1280px) {
     font-size: 1.125rem;
   }
 
   @media (max-width: 768px) {
     font-size: 1rem;
-    top: 1rem;
-    left: 1rem;
   }
 `;
 
 const QuizLayout = styled.div`
   width: 95%;
   margin-top: 8rem;
-  @media (max-width: 1280px) {
-  }
 
   @media (max-width: 768px) {
-    margin-top: 3rem;
+    margin-top: 2rem;
   }
 `;
 
@@ -394,6 +414,7 @@ const Question = styled.div`
 
   @media (max-width: 768px) {
     font-size: 1.125rem;
+    margin: 0.5rem 1rem;
   }
 `;
 
@@ -471,7 +492,6 @@ const PageButton = styled.button`
 const SubmitButtonContainer = styled.div`
   display: flex;
   justify-content: center;
-  width: 100%;
   margin-bottom: 1rem;
 `;
 
@@ -535,30 +555,30 @@ const BlankInputContainer = styled.span`
 `;
 
 const BeforeText = styled.span`
-  line-height: 1.5;
+  line-height: 1.2;
 `;
 
 const AfterText = styled.span`
-  line-height: 1.5;
+  line-height: 1.2;
 `;
 
 const QuestionBox = styled.div`
   display: flex;
 `;
 
-const Index = styled.div`
-  margin-top: 0.375rem;
-  margin-right: 0.25rem;
-  font-size: 1.5rem;
-  font-weight: 500;
-  @media (max-width: 1280px) {
-    font-size: 1.25rem;
-  }
+// const Index = styled.div`
+//   margin-top: 0.375rem;
+//   margin-right: 0.25rem;
+//   font-size: 1.5rem;
+//   font-weight: 500;
+//   @media (max-width: 1280px) {
+//     font-size: 1.25rem;
+//   }
 
-  @media (max-width: 768px) {
-    font-size: 1.125rem;
-  }
-`;
+//   @media (max-width: 768px) {
+//     font-size: 1.125rem;
+//   }
+// `;
 
 const PageInfo = styled.div`
   font-size: 1.25rem;
@@ -626,3 +646,17 @@ const InfoTextNormal = styled.span`
     font-size: 1.125rem;
   }
 `;
+const RemainCountContainer = styled.div`
+position: absolute;
+top: 2rem;
+@media (max-width: 768px) {
+  top: 5rem;
+  }
+`
+
+const RemainCount = styled.div`
+  margin-bottom: 1rem;
+@media (max-width: 768px) {
+    margin: 0.5rem 1rem;
+  }
+`

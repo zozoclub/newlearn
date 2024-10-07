@@ -13,7 +13,7 @@ import {
 } from "@services/wordTestService";
 import Spinner from "@components/Spinner";
 import { useMediaQuery } from "react-responsive"; // 모바일 여부 감지
-import WordTestResultListMobilePage from "./mobile/WordTestResultListMobilePage";
+import WordTestResultDetailMobilePage from "./mobile/WordTestResultDetailMobilePage";
 
 const WordTestResultPage: React.FC = () => {
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
@@ -61,7 +61,7 @@ const WordTestResultPage: React.FC = () => {
     return <ErrorText>데이터가 없습니다.</ErrorText>;
 
   // 모바일
-  if (isMobile) return <WordTestResultListMobilePage />;
+  if (isMobile) return <WordTestResultDetailMobilePage />;
 
   return (
     <MainLayout>

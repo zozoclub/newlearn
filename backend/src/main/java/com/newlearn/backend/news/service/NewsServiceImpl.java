@@ -27,6 +27,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -289,12 +291,12 @@ public class NewsServiceImpl implements NewsService{
         if (isKorean && isEnglish) {
             return null;
         }
-
+        Pageable pageable = PageRequest.of(0, 10);
         List<News> newsList;
         if (isKorean) {
-            newsList = newsRepository.findByTitleContaining(query);
+            newsList = newsRepository.findByTitleContaining(query, pageable).getContent();
         } else {
-            newsList = newsRepository.findByTitleEngContaining(query);
+            newsList = newsRepository.findByTitleEngContaining(query, pageable).getContent();
         }
 
         return newsList.stream()

@@ -6,7 +6,7 @@ const MyPageCount = () => {
   const userInfo = useRecoilValue(userInfoState);
 
   const readCount = userInfo.totalNewsReadCount;
-  const vocaCount = userInfo.unCompleteWordCount + userInfo.completeWordCount;
+  const vocaCount = userInfo.savedWordCount;
   const scrapCount = userInfo.scrapCount;
 
   const items = [

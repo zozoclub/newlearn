@@ -17,6 +17,7 @@ export type userInfoType = {
   totalNewsReadCount: number;
   unCompleteWordCount: number;
   completeWordCount: number;
+  savedWordCount: number;
   scrapCount: number;
 };
 
@@ -39,6 +40,7 @@ const userInfoState = atom<userInfoType>({
     totalNewsReadCount: 0,
     unCompleteWordCount: 0,
     completeWordCount: 0,
+    savedWordCount: 0,
     scrapCount: 0,
   },
 });

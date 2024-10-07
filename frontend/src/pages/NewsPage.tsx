@@ -13,8 +13,6 @@ import FullLogo from "@components/common/FullLogo";
 import newsSearchIcon from "@assets/icons/searchIcon.svg";
 
 const NewsPage = () => {
-  const isMobile = useMediaQuery({ maxWidth: 768 });
-
   const { category, page } = useParams();
   const selectedCategory = Number(category);
   const selectedPage = Number(page);

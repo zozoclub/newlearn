@@ -118,6 +118,13 @@ const AppContainer = styled.div`
   min-height: 100vh;
   height: 100vh;
   padding: 0 calc(5vw - 0.1875rem);
+  @media screen and (max-width: 767px) {
+    width: 100vw;
+    padding: 0;
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
 `;
 
 export default App;

@@ -402,8 +402,9 @@ const MobileMainHeader = styled.div`
 
 const FullScreenModal = styled.div<{ $isVisible: boolean }>`
   position: fixed;
-  top: 70px;
+  top: 0;
   left: 0;
+  bottom: 70px;
   width: 100%;
   height: calc(100% - 70px);
   background-color: ${(props) => props.theme.colors.background};
@@ -474,14 +475,14 @@ const ConfirmButton = styled(Button)`
 
 const ModalHeader = styled.div`
   position: fixed;
+  top: 0;
   display: flex;
   align-items: center;
   padding: 0 1rem;
   width: 100%;
   height: 70px;
-  top: 0;
   background-color: ${(props) => props.theme.colors.background};
-  z-index: 1001;
+  z-index: 1002;
 `;
 
 const BackButton = styled.button`

@@ -15,12 +15,14 @@ type NewsSwiperProps = {
   variety: "daily" | "hybrid";
   newsList: NewsType[];
   height: number;
+  sildesPerView: number;
 };
 
 const NewsSwiper: React.FC<NewsSwiperProps> = ({
   variety,
   newsList,
   height,
+  sildesPerView,
 }) => {
   const transitionTo = usePageTransition();
   const languageData = useRecoilValue(languageState);
@@ -32,7 +34,7 @@ const NewsSwiper: React.FC<NewsSwiperProps> = ({
         effect={"slide"} // coverflow 대신 기본 slide 효과 사용
         grabCursor={true}
         centeredSlides={true}
-        slidesPerView={1.5} // 한 번에 1.5개의 슬라이드가 보이도록 설정
+        slidesPerView={sildesPerView} // 한 번에 1.5개의 슬라이드가 보이도록 설정
         spaceBetween={-50} // 음수 값을 주어 슬라이드가 겹치도록 설정
         speed={500}
         mousewheel={true}

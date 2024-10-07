@@ -35,6 +35,7 @@ const Container = styled.div`
   align-items: center;
   background-color: ${(props) => props.theme.colors.cardBackground};
   position: fixed;
+  left: 0;
   bottom: 0;
   width: 100%;
   height: 4rem;

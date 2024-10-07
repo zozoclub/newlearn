@@ -1,7 +1,7 @@
 import {
   PointRankingType,
   ReadRankingType,
-} from "@components/mainpage/TopRankingWidget";
+} from "@components/mainpage/RankingWidget";
 import axios from "axios";
 
 export const getPointRankingList = async (): Promise<PointRankingType[]> => {

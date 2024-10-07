@@ -19,6 +19,8 @@ import { createGlobalStyle } from "styled-components";
 import { usePageTransition } from "@hooks/usePageTransition";
 import Modal from "@components/Modal";
 import backArrowIcon from "@assets/icons/mobile/backArrowIcon.svg";
+import { useSetRecoilState } from "recoil";
+import locationState from "@store/locationState";
 
 const BodyScrollLock = createGlobalStyle`
   body {
@@ -34,6 +36,7 @@ const MyPage = () => {
   const [isScrapNewsModalOpen, setIsScrapNewsModalOpen] = useState(false);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [isDeleteUserModalOpen, setIsDeleteUserModalOpen] = useState(false);
+  const setCurrentLocation = useSetRecoilState(locationState);
 
   const handleChartModal = () => {
     setIsChartModalOpen(true);
@@ -99,6 +102,14 @@ const MyPage = () => {
       document.body.style.overflow = "unset";
     };
   }, [isChartModalOpen, isProgressModalOpen, isScrapNewsModalOpen]);
+
+  useEffect(() => {
+    setCurrentLocation("myPage");
+    return () => {
+      setCurrentLocation("");
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const MobileRender = () => {
     return (

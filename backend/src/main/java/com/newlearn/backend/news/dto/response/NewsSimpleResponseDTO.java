@@ -15,6 +15,7 @@ public class NewsSimpleResponseDTO {
     private String thumbnailImageUrl;
     private String category; //"정치", "경제", "사회", "생활/문화", "IT/과학", "세계"
     private String publishedDate;
+    private String press;
 
 
     public static NewsSimpleResponseDTO makeNewsSimpleResponseDTO(News news) {
@@ -27,6 +28,7 @@ public class NewsSimpleResponseDTO {
                 .thumbnailImageUrl(news.getThumbnailImageUrl())
                 .category(news.getCategory().getCategoryName())
                 .publishedDate(news.getPublishedDate())
+                .press(news.getPress())
                 .build();
     }
 

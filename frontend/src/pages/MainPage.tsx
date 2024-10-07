@@ -7,14 +7,18 @@ import { useEffect } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 // import NewsSearch from "@components/newspage/NewsSearch";
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 import RestudyQuiz from "@components/RestudyQuiz";
-import FullLogo from "@components/common/FullLogo";
-import newsSearchIcon from "@assets/icons/searchIcon.svg";
 import userInfoState from "@store/userInfoState";
 import TopRanking from "@components/mainpage/TopRanking";
 import RankingKindSelect from "@components/mainpage/RankingKindSelect";
-import DarkModeButton from "@components/common/DarkModeButton";
+import MobileLogoHeader from "@components/common/MobileLogoHeader";
+import { useQuery } from "@tanstack/react-query";
+import { NewsType } from "types/newsType";
+import { getHybridNews } from "@services/newsService";
+import languageState from "@store/languageState";
+import lightThumbnailImage from "@assets/images/lightThumbnail.png";
+import darkThumbnailImage from "@assets/images/darkThumbnail.png";
 
 const MainPage = () => {
   const widgetList = [
@@ -24,8 +28,15 @@ const MainPage = () => {
   ];
   const setCurrentLocationData = useSetRecoilState(locationState);
   const userInfoData = useRecoilValue(userInfoState);
+  const languageData = useRecoilValue(languageState);
   const isTablet = useMediaQuery({ query: "(max-width: 1279px" });
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
+  const { isLoading, data } = useQuery<NewsType[]>({
+    queryKey: ["getHybridNews"],
+    queryFn: getHybridNews,
+    staleTime: 5 * 60 * 1000,
+  });
+  const Theme = useTheme();
 
   useEffect(() => {
     setCurrentLocationData("main");
@@ -38,15 +49,7 @@ const MainPage = () => {
   const MobileRender = () => {
     return (
       <Container>
-        <MobileMainHeader>
-          <FullLogo height={60} width={200} />
-          <div style={{ display: "flex", alignItems: "center" }}>
-            <div style={{ marginBottom: "0.25rem", transform: "scale(0.8)" }}>
-              <DarkModeButton />
-            </div>
-            <img height={30} src={newsSearchIcon} />
-          </div>
-        </MobileMainHeader>
+        <MobileLogoHeader />
         <RecommandNewsContainer>
           <div
             style={{
@@ -59,10 +62,81 @@ const MainPage = () => {
           </div>
           <DailyNews />
         </RecommandNewsContainer>
+        <RecommandNewsContainer>
+          {isLoading ? (
+            <div>로딩둥</div>
+          ) : (
+            <div>
+              {data?.map((news) => (
+                <div
+                  style={{
+                    display: "flex",
+                    position: "relative",
+                    padding: "1.25rem",
+                    borderBottom: "1px solid #0000004f",
+                  }}
+                >
+                  {news.thumbnailImageUrl ? (
+                    <img
+                      style={{ width: "30%", aspectRatio: 1.6 }}
+                      src={news.thumbnailImageUrl}
+                    />
+                  ) : (
+                    <>
+                      <div style={{ minWidth: "30%", aspectRatio: 1.6 }}></div>
+                      <img
+                        style={{
+                          position: "absolute",
+                          zIndex: 1,
+                          width: "calc(30% - 0.75rem)",
+                          aspectRatio: 1.6,
+                        }}
+                        src={lightThumbnailImage}
+                      />
+                      <img
+                        style={{
+                          position: "absolute",
+                          zIndex: 2,
+                          width: "calc(30% - 0.75rem)",
+                          aspectRatio: 1.6,
+                          opacity: Theme.mode === "dark" ? 1 : 0,
+                          transition: "opacity 0.3s",
+                        }}
+                        src={darkThumbnailImage}
+                      />
+                    </>
+                  )}
+
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "space-between",
+                      padding: "0 1rem",
+                      fontSize: "1.25rem",
+                    }}
+                  >
+                    <div>
+                      {languageData === "en" ? news.titleEn : news.titleKr}
+                    </div>
+                    <div
+                      style={{ display: "flex", gap: "0.5rem", opacity: 0.8 }}
+                    >
+                      {/* <div>{news.press}</div> */}
+                      <div>{news.category}</div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </RecommandNewsContainer>
         <RankingContainer>
           <RankingKindSelect />
           <TopRanking />
         </RankingContainer>
+        <RestudyQuiz />
+        <PWAInstallPrompt />
       </Container>
     );
   };
@@ -74,6 +148,12 @@ const MainPage = () => {
           <div className="desc">오늘의 추천 뉴스</div>
           <DailyNews />
         </NewsContainer>
+        <WidgetContainer>
+          <Widget variety="goal" />
+          <Widget variety="topRanking" />
+        </WidgetContainer>
+        <RestudyQuiz />
+        <PWAInstallPrompt />
       </Container>
     );
   };
@@ -119,7 +199,7 @@ const Container = styled.div`
     padding: 0;
   }
   @media screen and (min-width: 768px) and (max-width: 1279px) {
-    gap: 2.5%;
+    gap: 5%;
   }
   @media screen and (max-width: 767px) {
     flex-direction: column;
@@ -137,31 +217,19 @@ const NewsContainer = styled.div`
     gap: 5rem;
   }
   @media screen and (min-width: 768px) and (max-width: 1279px) {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, calc(-50% + 75px));
-    height: calc(100vh - 150px);
-    overflow: hidden;
+    width: 50%;
+    margin: auto;
     .desc {
       font-size: 2rem;
+      font-weight: 600;
       margin-bottom: 1rem;
     }
   }
 `;
 
-const MobileMainHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 60px;
-  padding: 0 1.5rem 0 0;
-  background-color: ${(props) => props.theme.colors.cardBackground};
-`;
-
 const RecommandNewsContainer = styled.div`
   background-color: ${(props) => props.theme.colors.cardBackground};
-  padding: 1rem 0;
+  padding: 1rem 0 0;
   display: flex;
   flex-direction: column;
   gap: 2.5%;
@@ -184,6 +252,10 @@ const WidgetContainer = styled.div`
     width: 40%;
   }
   @media screen and (min-width: 768px) and (max-width: 1279px) {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin: auto;
     width: 30%;
   }
 `;

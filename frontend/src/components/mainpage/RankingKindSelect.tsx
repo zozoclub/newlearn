@@ -47,11 +47,11 @@ const RankingKindContainer = styled.div<{ $type: "point" | "read" }>`
     left: 0;
     height: 100%;
     transform: ${(props) =>
-      props.$type === "point" ? "translateX(0)" : "translateX(5.5rem)"};
+      props.$type === "point" ? "translateX(0)" : "translateX(6rem)"};
     transition: transform 0.5s;
     border-radius: 1rem;
     background-color: ${(props) => props.theme.colors.primary};
-    width: 4.5rem;
+    width: 4rem;
     padding: 0 1rem;
   }
 `;

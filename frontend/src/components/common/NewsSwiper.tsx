@@ -36,7 +36,7 @@ const NewsSwiper: React.FC<NewsSwiperProps> = ({
         spaceBetween={-50} // 음수 값을 주어 슬라이드가 겹치도록 설정
         speed={500}
         mousewheel={true}
-        pagination={slidesPerView > 1}
+        pagination={true}
         modules={[Pagination, Mousewheel]} // EffectCoverflow 제거
         className="mySwiper"
       >

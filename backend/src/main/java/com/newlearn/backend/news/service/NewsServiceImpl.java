@@ -157,7 +157,9 @@ public class NewsServiceImpl implements NewsService{
         boolean isScrapped = userNewsScrapRepository.existsByUserAndNewsAndDifficulty(user, news, newsDetailRequestDTO.getDifficulty());
 
         // 해당 뉴스(newsId)에 사용자가 하이라이팅한 단어 & 문장 가져오기
-        Set<Word> wordList = user.getWords();
+        Set<Word> wordList = user.getWords().stream()
+                .filter(word -> !word.isDelete())
+                .collect(Collectors.toSet());;
         List<Long> wordIds = wordList.stream().map(Word::getWordId).collect(Collectors.toList());
         List<WordSentence> wordSentences = wordSentenceRepository
                 .findByNewsIdAndWordIdsAndDifficulty(

@@ -11,7 +11,7 @@ RUN rm -rf node_modules
 
 # 의존성 설치
 RUN npm ci
-
+RUN npm install react-tag-cloud --force
 # 나머지 파일 컨테이너에 복사
 COPY . .
 

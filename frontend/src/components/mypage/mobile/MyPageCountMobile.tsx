@@ -13,7 +13,7 @@ const MyPageCountMobile = () => {
   const items = [
     { title: "읽은 기사", count: readCount },
     { title: "저장한 단어", count: vocaCount },
-    { title: "스크랩한 기사", count: scrapCount },
+    { title: "스크랩 기사", count: scrapCount },
   ];
   return (
     <Container>
@@ -39,8 +39,8 @@ export default MyPageCountMobile;
 const Container = styled.div`
   display: flex;
   align-items: center;
-  padding: 1rem 1.5rem;
-  justify-content: space-around;
+  padding: 0.5rem 1.5rem;
+  justify-content: space-between;
 `;
 
 const ItemContainer = styled.div`
@@ -54,7 +54,7 @@ const TitleContainer = styled.div`
   display: flex;
   flex: 3;
   gap: 2rem;
-  font-size: 1.25rem;
+  font-size: 1rem;
   font-weight: bold;
 `;
 
@@ -63,7 +63,7 @@ const ContentContainer = styled.div`
   flex: 1;
   align-items: center;
   gap: 2rem;
-  font-size: 1.5rem;
+  font-size: 1.125rem;
   font-weight: bold;
   color: ${(props) => props.theme.colors.primary};
 `;

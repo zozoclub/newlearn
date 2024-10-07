@@ -1,41 +1,23 @@
-import Spinner from "@components/Spinner";
+import Avatar, { AvatarType } from "@components/common/Avatar";
+import { getUserAvatar } from "@services/userService";
+import { selectedRankingState } from "@store/selectedRankingState";
+import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { useRecoilValue } from "recoil";
 import styled, { keyframes } from "styled-components";
+import { PointRankingType, ReadRankingType } from "./RankingWidget";
+import LevelIcon from "@components/common/LevelIcon";
+import { calculateExperience } from "@utils/calculateExperience";
 import firstRankIcon from "@assets/icons/firstIcon.png";
 import secondRankIcon from "@assets/icons/secondIcon.png";
 import thirdRankIcon from "@assets/icons/thirdIcon.png";
-import Avatar, { AvatarType } from "@components/common/Avatar";
-import { useRecoilState } from "recoil";
-import { selectedRankingState } from "@store/selectedRankingState";
-import { useEffect, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { getUserAvatar } from "@services/userService";
-import LevelIcon from "@components/common/LevelIcon";
-import { calculateExperience } from "@utils/calculateExperience";
-import RankingWidget from "./RankingWidget";
+import Spinner from "@components/Spinner";
+import { useRankings } from "@hooks/useRankings";
 
-type RankingType = {
-  userId: number;
-  nickname: string;
-  ranking: number;
-};
-
-export type PointRankingType = RankingType & {
-  experience: number;
-};
-
-export type ReadRankingType = RankingType & {
-  experience: number;
-  totalNewsReadCount: number;
-};
-
-const TopRankingWidget: React.FC<{
-  pointIsLoading: boolean;
-  readIsLoading: boolean;
-  pointRankingList: PointRankingType[] | undefined;
-  readRankingList: ReadRankingType[] | undefined;
-}> = ({ pointIsLoading, readIsLoading, pointRankingList, readRankingList }) => {
-  const [selectedType, setSelectedType] = useRecoilState(selectedRankingState);
+const TopRanking = () => {
+  const { isLoading, pointRankingList, readRankingList } = useRankings();
   const [animate, setAnimate] = useState(false);
+  const [selectedType] = useRecoilValue(selectedRankingState);
 
   // 랭킹 유형 변경 시 animation
   useEffect(() => {
@@ -45,7 +27,6 @@ const TopRankingWidget: React.FC<{
     }, 50);
     return () => clearTimeout(timer);
   }, [selectedType]);
-
   const { isLoading: firstIsLoading, data: firstUserAvatar } =
     useQuery<AvatarType>({
       queryKey: ["getFirstUserAvatar", selectedType],
@@ -93,7 +74,6 @@ const TopRankingWidget: React.FC<{
           : readRankingList !== undefined && readRankingList.length > 2,
       staleTime: 5 * 60 * 1000,
     });
-
   const renderRankings = (
     rankings: PointRankingType[] | ReadRankingType[] | undefined
   ) => {
@@ -160,57 +140,36 @@ const TopRankingWidget: React.FC<{
       </>
     );
   };
-
   return (
     <Container>
-      <RankingKindContainer $type={selectedType}>
-        <RankingKind
-          $isSelected={selectedType === "point"}
-          $type="point"
-          onClick={() => setSelectedType("point")}
-        >
-          포인트왕
-        </RankingKind>
-        <RankingKind
-          $isSelected={selectedType === "read"}
-          $type="read"
-          onClick={() => setSelectedType("read")}
-        >
-          다독왕
-        </RankingKind>
-      </RankingKindContainer>
-      <HorizontalLayout>
-        <TopRankingWrapper>
-          <TopRanking>
-            {selectedType === "point" ? (
-              pointIsLoading ? (
-                <LoadingDiv>
-                  <Spinner />
-                </LoadingDiv>
-              ) : (
-                renderRankings(pointRankingList)
-              )
-            ) : readIsLoading ? (
-              <LoadingDiv>
-                <Spinner />
-              </LoadingDiv>
-            ) : (
-              renderRankings(readRankingList)
-            )}
-          </TopRanking>
-        </TopRankingWrapper>
-        <RankingWidgetWrapper>
-          <RankingWidget
-            pointIsLoading={pointIsLoading}
-            pointRankingList={pointRankingList}
-            readIsLoading={readIsLoading}
-            readRankingList={readRankingList}
-          />
-        </RankingWidgetWrapper>
-      </HorizontalLayout>
+      {isLoading ? (
+        <LoadingDiv>
+          <Spinner />
+        </LoadingDiv>
+      ) : selectedType === "point" ? (
+        renderRankings(pointRankingList)
+      ) : (
+        renderRankings(readRankingList)
+      )}
     </Container>
   );
 };
+
+export default TopRanking;
+
+const Container = styled.div`
+  display: flex;
+  position: relative;
+  width: 100%;
+  height: 90%;
+`;
+
+const LoadingDiv = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+`;
 
 const popIn = keyframes`
   0% {
@@ -224,70 +183,6 @@ const popIn = keyframes`
     transform: scale(1);
     opacity: 1;
   }
-`;
-
-const Container = styled.div`
-  display: flex;
-  position: relative;
-  width: 90%;
-  min-height: 95%;
-  height: 95%;
-  padding: 5%;
-  flex-direction: column;
-  align-items: center;
-`;
-
-const RankingKindContainer = styled.div<{ $type: "point" | "read" }>`
-  position: absolute;
-  top: 10%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 10rem;
-  height: 1rem;
-  margin: 0 auto;
-  padding: 0.5rem 1rem;
-  color: white;
-  border-radius: 1rem;
-  background-color: white;
-  font-weight: 500;
-  cursor: pointer;
-  &::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    transform: ${(props) =>
-      props.$type === "point" ? "translateX(0)" : "translateX(6rem)"};
-    transition: transform 0.5s;
-    border-radius: 1rem;
-    background-color: ${(props) => props.theme.colors.primary};
-    width: 4.5rem;
-    height: 1rem;
-    padding: 0.5rem 1rem;
-  }
-`;
-
-const RankingKind = styled.div<{
-  $isSelected: boolean;
-  $type: "point" | "read";
-}>`
-  position: absolute;
-  z-index: 1;
-  width: 5rem;
-  height: 1rem;
-  padding: 0 0.75rem;
-  color: ${(props) => (props.$isSelected ? "white" : "black")};
-  transition: color 0.5s;
-  font-size: 1.125rem;
-  text-align: center;
-  left: ${(props) => (props.$type === "point" ? 0 : "6rem")};
-`;
-
-const TopRanking = styled.div`
-  display: flex;
-  position: relative;
-  width: 100%;
-  height: 90%;
 `;
 
 const RankStand = styled.div<{ $animate: boolean }>`
@@ -391,30 +286,3 @@ const ThirdRank = styled(RankStand)`
     border-left: 0px;
   }
 `;
-
-const LoadingDiv = styled.div`
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-`;
-
-const HorizontalLayout = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  width: 100%;
-  height: 100%;
-  margin-top: 1.75rem;
-`;
-
-const TopRankingWrapper = styled.div`
-  width: 50%; // 필요에 따라 조정
-`;
-
-const RankingWidgetWrapper = styled.div`
-  width: 45%; // 필요에 따라 조정
-  margin-top: 1rem;
-`;
-
-export default TopRankingWidget;

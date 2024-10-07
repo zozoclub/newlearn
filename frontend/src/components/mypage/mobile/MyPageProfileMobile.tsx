@@ -200,13 +200,13 @@ const MyPageProfileMobile: React.FC = () => {
     <div>
       <Container>
         <AvatarContainer>
-          <Avatar avatar={avatar} size={7} />
+          <Avatar avatar={avatar} size={5} />
         </AvatarContainer>
         <ProfileInfoContainer>
           {/* 닉네임, 레벨 */}
           <NicknameContainer>
             <LevelContainer>
-              <LevelIcon level={level} size={36} />
+              <LevelIcon level={level} size={30} />
               {nickname}
             </LevelContainer>
             <EditIcon onClick={openModal} />
@@ -299,7 +299,7 @@ export default MyPageProfileMobile;
 const Container = styled.div`
   display: grid;
   grid-template-columns: 1fr 2fr;
-  gap: 2rem;
+  gap: 1rem;
 `;
 
 const AvatarContainer = styled.div`
@@ -312,7 +312,7 @@ const ProfileInfoContainer = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 1rem;
+  gap: 0.5rem;
 `;
 
 // 닉네임
@@ -327,7 +327,7 @@ const NicknameContainer = styled.div`
   align-items: center;
   justify-content: space-between;
   padding-right: 1rem;
-  font-size: 1.5rem;
+  font-size: 1.125rem;
   font-weight: bold;
 `;
 
@@ -391,7 +391,7 @@ const ExperienceContainer = styled.div`
 
 const ExperienceBarContainer = styled.div`
   width: 100%;
-  height: 1.25rem;
+  height: 1.125rem;
   background-color: ${(props) => props.theme.colors.cancel};
   border-radius: 5px;
   overflow: hidden;
@@ -413,7 +413,7 @@ const ExperienceText = styled.div`
 // 이름, 네이버&카카오, 이메일
 const SocialInfoContainer = styled.div`
   display: flex;
-  font-size: 1.25rem;
+  font-size: 0.875rem;
   align-items: center;
   gap: 0.5rem;
 `;

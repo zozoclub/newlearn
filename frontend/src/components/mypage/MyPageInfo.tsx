@@ -218,12 +218,18 @@ const AllContainer = styled.div`
 const Container = styled.div`
   display: flex;
   padding: 1rem;
+  @media (max-width: 767px) {
+    padding: 0.5rem;
+  }
 `;
 
 const TitleContainer = styled.div`
   flex: 2;
   font-size: 1.25rem;
   font-weight: bold;
+  @media (max-width: 767px) {
+    font-size: 1rem;
+  }
 `;
 
 const ContentContainer = styled.div`
@@ -231,6 +237,9 @@ const ContentContainer = styled.div`
   flex: 3;
   gap: 0.875rem;
   font-size: 1.25rem;
+  @media (max-width: 767px) {
+    font-size: 1rem;
+  }
 `;
 
 const IconContainer = styled.div`
@@ -238,13 +247,6 @@ const IconContainer = styled.div`
   flex: 1;
   justify-content: flex-end;
 `;
-
-// const StyledHr = styled.hr`
-//   height: 0.5px;
-//   margin: 0.125rem;
-//   background-color: ${(props) => props.theme.colors.text04};
-//   border: none;
-// `;
 
 // 모달 버튼
 const ButtonContainer = styled.div`

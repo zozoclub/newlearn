@@ -114,13 +114,20 @@ const App: React.FC = () => {
 
 const AppContainer = styled.div`
   position: relative;
-  width: 90vw;
   min-height: 100vh;
   height: 100vh;
-  padding: 0 calc(5vw - 0.1875rem);
+  margin-bottom: 4rem;
+  @media screen and (min-width: 1280px) {
+    width: 90vw;
+    padding: 0 calc(5vw - 0.1875rem);
+  }
+  @media screen and (min-width: 768px) and (max-width: 1279px) {
+    width: 95vw;
+    padding: 0 calc(2.5vw - 0.1875rem);
+  }
   @media screen and (max-width: 767px) {
     width: 100vw;
-    padding: 0;
+    overflow: scroll;
     &::-webkit-scrollbar {
       display: none;
     }

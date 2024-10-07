@@ -47,7 +47,7 @@ const Container = styled.div`
   @media screen and (min-width: 768px) and (max-width: 1279px) {
     width: 90vw;
   }
-  @media screen and (max-width: 767pxpx) {
+  @media screen and (max-width: 767px) {
     width: 100vw;
     aspect-ratio: 1.5;
   }

@@ -20,7 +20,7 @@ env = environ.Env(
 )
 
 # .env 파일 경로 설정 및 로드
-env_file = os.path.join(BASE_DIR, '.env')
+env_file = os.getenv('ENV_FILE', os.path.join(BASE_DIR, '.env'))
 if os.path.exists(env_file):
     environ.Env.read_env(env_file)
 
@@ -31,9 +31,9 @@ if os.path.exists(env_file):
 SECRET_KEY = 'django-insecure-wbljksz6!1k_3xxe!&c#*@f@x69@%686f#o(qb=re$)hc$1y)x'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env('DEBUG')
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'your_domain.com']  # 필요에 따라 도메인 추가
 
 
 # Application definition
@@ -47,6 +47,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'crawled_data.apps.CrawledDataConfig',
     'django_apscheduler',
+    # 실제 추가된 다른 앱이 있다면 여기에 추가
+    # 예: 'my_app.apps.MyAppConfig',
 ]
 
 MIDDLEWARE = [
@@ -64,8 +66,7 @@ ROOT_URLCONF = 'Crawling.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates']
-        ,
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -136,6 +137,7 @@ LOGGING = {
         },
     },
 }
+
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
@@ -158,28 +160,28 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# default
+# APScheduler settings
 APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"
 
-# 자동으로 스케쥴러 실행
+# 자동으로 스케줄러 실행
 SCHEDULER_DEFAULT = True
 
 
+# Environment Variables
 GEN_AI_SECRET_KEY = env('GEN_AI_SECRET_KEY')
 CRAWLING_USER_AGENT = env('CRAWLING_USER_AGENT')
 OPEN_AI_API_KEY = env('OPEN_AI_API_KEY')
-
 
 REDIS_HOST = env('REDIS_HOST')
 REDIS_USERNAME = env('REDIS_USERNAME')
 REDIS_PASSWORD = env('REDIS_PASSWORD')
 
 MONGO_HOST = env('MONGO_HOST')
-MONGO_PORT = 27017
+MONGO_PORT = env('MONGO_PORT', default=27017)
 MONGO_USERNAME = env('MONGO_USERNAME')
 MONGO_PASSWORD = env('MONGO_PASSWORD')
-MONGO_DB_NAME = 'newlearn'
-MONGO_COLLECTION_NAME = 'news'
+MONGO_DB_NAME = env('MONGO_DB_NAME', default='newlearn')
+MONGO_COLLECTION_NAME = env('MONGO_COLLECTION_NAME', default='news')
 
 S3_REGION = env('S3_REGION')
 S3_ACCESS_KEY = env('S3_ACCESS_KEY')
@@ -189,4 +191,4 @@ MYSQL_HOST = env('MYSQL_HOST')
 MYSQL_USER = env('MYSQL_USER')
 MYSQL_PWD = env('MYSQL_PWD')
 MYSQL_DB_NAME = env('MYSQL_DB_NAME')
-MYSQL_PORT = 3306
+MYSQL_PORT = env('MYSQL_PORT', default=3306)

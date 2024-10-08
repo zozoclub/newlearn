@@ -7,11 +7,15 @@ import collections.abc
 
 
 def main():
+    # Python 3.10 이상에서 collections 모듈과 collections.abc 간의 호환성 문제 해결
     for name in ['Callable', 'Iterable', 'Iterator', 'Mapping', 'MutableMapping']:
         if not hasattr(collections, name):
             setattr(collections, name, getattr(collections.abc, name))
+
     """Run administrative tasks."""
+    # Django 설정 모듈을 명시적으로 지정
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Crawling.settings')
+
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:

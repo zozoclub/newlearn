@@ -66,7 +66,7 @@ const WordTestResultDetailMobilePage: React.FC = () => {
 
   return (
     <>
-      <HeaderMobile title="빈칸 평가 결과" url={`/wordtesthistory`}/>
+      <HeaderMobile title="Word Test Result" url={`/wordtesthistory`}/>
       <MobileMainContainer>
         <ScoreSummary>
           <ScoreText>Total : {totalQuestions} / Correct : {correctAnswers}</ScoreText>

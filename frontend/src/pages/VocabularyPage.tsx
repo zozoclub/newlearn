@@ -244,7 +244,7 @@ const MainContainer = styled.div`
   min-height: 800px;
   max-height: 800px;
   overflow-y: auto;
-  box-shadow: ${(props) => props.theme.shadows.medium};
+  box-shadow: ${(props) => props.theme.shadows.small};
   transition: box-shadow 0.5s;
 
   @media (max-width: 1280px) {

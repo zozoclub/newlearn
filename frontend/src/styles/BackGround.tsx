@@ -51,6 +51,10 @@ const BackgroundDiv = styled.div`
   transition: opacity 0.5s;
   opacity: ${(props) => props.theme.opacities.background};
   background-color: ${(props) => props.theme.colors.background};
+  @media (max-width: ${(props) => props.theme.size.mobile}) {
+    background-color: ${(props) => props.theme.colors.cardBackground};
+    opacity: 1; 
+  }
 `;
 
 export default Background;

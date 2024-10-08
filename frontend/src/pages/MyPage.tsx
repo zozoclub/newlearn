@@ -7,8 +7,6 @@ import MyPageCategory from "@components/mypage/MyPageCategory";
 import MyPageGrass from "@components/mypage/MyPageGrass";
 import MyPageScrapNews from "@components/mypage/MyPageScrapNews";
 
-import FullLogo from "@components/common/FullLogo";
-
 import arrowIcon from "@assets/icons/mobile/arrowIcon.svg";
 import MyPageProfileMobile from "@components/mypage/mobile/MyPageProfileMobile";
 import MyPageCountMobile from "@components/mypage/mobile/MyPageCountMobile";
@@ -21,6 +19,7 @@ import Modal from "@components/Modal";
 import BackArrowMobileIcon from "@assets/icons/mobile/BackArrowMobileIcon";
 import { useSetRecoilState } from "recoil";
 import locationState from "@store/locationState";
+import MobileLogoHeader from "@components/common/MobileLogoHeader";
 
 const BodyScrollLock = createGlobalStyle`
   body {
@@ -104,9 +103,7 @@ const MyPage = () => {
   const MobileRender = () => {
     return (
       <PageWrapper>
-        <MobileMainHeader>
-          <FullLogo width={200} height={75} />
-        </MobileMainHeader>
+        <MobileLogoHeader />
         <ContentWrapper>
           <MyPageContainer>
             <MyPageProfileMobile />
@@ -356,26 +353,6 @@ const fadeOut = keyframes`
     opacity: 0;
     transform: translateY(-20px);
   }
-`;
-
-// const HeaderContainer = styled.header`
-//   position: fixed;
-//   top: 0;
-//   left: 0;
-//   right: 0;
-//   display: flex;
-//   align-items: center;
-//   height: 70px;
-//   background-color: ${(props) => props.theme.colors.background};
-//   z-index: 1000;
-// `;
-
-const MobileMainHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 70px;
-  padding: 0 1.5rem 0 0;
 `;
 
 const FullScreenModal = styled.div<{ $isVisible: boolean }>`

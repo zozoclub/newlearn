@@ -24,7 +24,10 @@ const Bookmark: React.FC<{
 const Path = styled.path<{ $isScrapped: boolean }>`
   fill: ${(props) =>
     props.$isScrapped ? props.theme.colors.primary : "transparent"};
-  stroke: ${(props) => props.theme.colors.text};
+  stroke: ${(props) =>
+    props.$isScrapped ? props.theme.colors.primary : props.theme.colors.text04};
+  stroke-width: 3;
+  border-radius: 5px;
   cursor: pointer;
   transition: fill 0.3s;
 `;

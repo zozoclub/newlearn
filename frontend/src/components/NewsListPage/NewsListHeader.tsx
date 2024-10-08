@@ -51,7 +51,7 @@ const HeaderContainer = styled.div`
     top: 0;
     left: 0;
     width: 95%;
-    margin: 0 1rem;
+    margin: 0 auto;
     padding: 1rem 0;
     background-color: ${(props) => props.theme.colors.background};
     z-index: 10;

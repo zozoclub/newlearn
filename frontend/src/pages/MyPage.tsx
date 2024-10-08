@@ -324,7 +324,7 @@ const WidgetContainer = styled.div`
   width: 100%;
   height: 100%;
   padding: 1.75rem;
-  background-color: ${(props) => props.theme.colors.cardBackground + "BF"};
+  background-color: transparent;
   border-radius: 12px;
   transition: box-shadow 0.5s;
   backdrop-filter: blur(4px);
@@ -333,7 +333,7 @@ const WidgetContainer = styled.div`
 
   @media (max-width: 767px) {
     box-shadow: none;
-    border: 1px solid ${(props) => props.theme.colors.placeholder};
+    border: 2px solid ${(props) => props.theme.colors.cancel};
     margin: 1rem 0;
     padding: 1rem;
   }
@@ -393,7 +393,7 @@ const MobileMainHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 75px;
+  height: 70px;
   padding: 0 1.5rem 0 0;
 `;
 

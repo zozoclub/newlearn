@@ -53,7 +53,7 @@ const HeaderContainer = styled.div`
     width: 95%;
     margin: 0 auto;
     padding: 1rem 0;
-    background-color: ${(props) => props.theme.colors.background};
+    background-color: transparent;
     z-index: 10;
   }
 `;

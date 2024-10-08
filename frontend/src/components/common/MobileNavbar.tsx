@@ -38,7 +38,7 @@ const Container = styled.div`
   left: 0;
   bottom: 0;
   width: 100%;
-  height: 4rem;
+  height: 70px;
   z-index: 10;
   box-shadow: 0 0 0.25rem #0000004f;
 `;
@@ -48,6 +48,7 @@ const NavItem = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  width: 50px;
   p {
     font-size: 0.75rem;
     margin-top: 0.25rem;

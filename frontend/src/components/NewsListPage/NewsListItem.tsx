@@ -162,12 +162,14 @@ const Footer = styled.div`
   }
 `;
 
-const CategoryButton = styled.div`
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
+const CategoryButton = styled.button`
+  padding: 0 1rem;
+  border-radius: 0.75rem;
+  min-height: 2.5rem;
   color: #ffffff;
   background-color: ${(props) => props.theme.colors.primary};
   transition: background-color 0.5s;
+  border: none;
   &:hover {
     background-color: ${(props) => props.theme.colors.primaryPress};
   }
@@ -180,7 +182,7 @@ const CategoryButton = styled.div`
 `;
 
 const Medal = styled.img`
-  width: 32px;
+  width: 2.5rem;
   @media (max-width: 768px) {
     width: 1.75rem;
     height: 1.75rem;

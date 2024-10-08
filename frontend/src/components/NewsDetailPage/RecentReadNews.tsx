@@ -1,35 +1,35 @@
-import { getContentsFilteringRecommendNewsList } from "@services/newsService";
 import languageState from "@store/languageState";
 import { useQuery } from "@tanstack/react-query";
 import { NewsType } from "types/newsType";
-import { useParams } from "react-router-dom";
 import { useRecoilValue } from "recoil";
-import { useTheme } from "styled-components";
-import Spinner from "@components/Spinner";
-import LoadingDiv from "./LoadingDiv";
-import LoadingBar from "./LoadingBar";
-import LightThumbnailImage from "@assets/images/lightThumbnail.png";
-import DarkThumbnailImage from "@assets/images/darkThumbnail.png";
+import { getRecentReadNews } from "@services/newsService";
+import { useParams } from "react-router-dom";
 import { usePageTransition } from "@hooks/usePageTransition";
 import { useMemo } from "react";
+import { useTheme } from "styled-components";
+import LoadingBar from "../common/LoadingBar";
+import LoadingDiv from "../common/LoadingDiv";
+import Spinner from "@components/Spinner";
+import LightThumbnailImage from "@assets/images/lightThumbnail.png";
+import DarkThumbnailImage from "@assets/images/darkThumbnail.png";
 
-const FilteredRecommendNews = () => {
+const RecentReadNews = () => {
   const languageData = useRecoilValue(languageState);
   const { newsId } = useParams();
   const { isLoading, data } = useQuery<NewsType[]>({
-    queryKey: ["getFilteredRecommendNews", Number(newsId)],
-    queryFn: () => getContentsFilteringRecommendNewsList(Number(newsId)),
-    staleTime: 5 * 60 * 1000,
+    queryKey: ["getRecentReadNews", Number(newsId)],
+    queryFn: getRecentReadNews,
     enabled: newsId !== null,
+    staleTime: 5 * 60 * 1000,
   });
   const theme = useTheme();
   const transitionTo = usePageTransition();
   const MemoizedComponent = useMemo(() => {
     return (
       <>
-        <div className="header">이 뉴스와 비슷한 뉴스</div>
+        <div className="header">최근 읽은 뉴스</div>
         {isLoading ? (
-          <div className="recommand-news">
+          <div className="recent-news">
             {[...Array(5)].map((_, index) => (
               <div style={{ display: "flex" }} key={index}>
                 <div
@@ -58,8 +58,8 @@ const FilteredRecommendNews = () => {
             ))}
           </div>
         ) : (
-          <div className="recommand-news">
-            {data?.slice(0, Math.min(data?.length, 5)).map((news) => (
+          <div className="recent-news">
+            {data?.map((news) => (
               <div
                 className="news-div"
                 key={news.newsId}
@@ -102,9 +102,9 @@ const FilteredRecommendNews = () => {
       </>
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data]);
+  }, [data, languageData]);
 
   return MemoizedComponent;
 };
 
-export default FilteredRecommendNews;
+export default RecentReadNews;

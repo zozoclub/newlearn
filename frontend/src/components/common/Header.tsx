@@ -7,7 +7,7 @@ import { usePageTransition } from "@hooks/usePageTransition";
 import UserProfile from "@components/common/UserProfile";
 import FullLogo from "./FullLogo";
 import { useEffect, useState } from "react";
-import NewsListHeader from "@components/newspage/NewsListHeader";
+import NewsListHeader from "@components/NewsListPage/NewsListHeader";
 
 const Header = () => {
   const currentLocation = useRecoilValue(locationState);

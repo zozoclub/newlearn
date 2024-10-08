@@ -19,6 +19,9 @@ import { getHybridNews } from "@services/newsService";
 import languageState from "@store/languageState";
 import lightThumbnailImage from "@assets/images/lightThumbnail.png";
 import darkThumbnailImage from "@assets/images/darkThumbnail.png";
+import LoadingDiv from "@components/common/LoadingDiv";
+import LoadingBar from "@components/common/LoadingBar";
+import Spinner from "@components/Spinner";
 
 const MainPage = () => {
   const widgetList = [
@@ -51,54 +54,60 @@ const MainPage = () => {
       <Container>
         <MobileLogoHeader />
         <RecommandNewsContainer>
-          <div
-            style={{
-              padding: "0 1rem",
-              fontSize: "1.5rem",
-              marginBottom: "1rem",
-            }}
-          >
-            {userInfoData.nickname} 님의 추천 뉴스
-          </div>
+          <div className="desc">오늘의 뉴스</div>
           <DailyNews />
         </RecommandNewsContainer>
-        <RecommandNewsContainer>
+        <RecommandNewsContainer style={{ paddingBottom: "1rem" }}>
+          <div className="desc">{userInfoData.nickname} 님의 추천 뉴스</div>
           {isLoading ? (
-            <div>로딩둥</div>
-          ) : (
-            <div>
-              {data?.map((news) => (
+            [...Array(5)].map((_, index) => (
+              <RecommandNewsDiv key={index}>
+                <div className="img-space">
+                  <Spinner />
+                </div>
                 <div
                   style={{
                     display: "flex",
-                    position: "relative",
-                    padding: "1.25rem",
-                    borderBottom: "1px solid #0000004f",
+                    flexDirection: "column",
+                    gap: "0.1rem",
+                    width: "60%",
                   }}
                 >
+                  <LoadingDiv>
+                    <LoadingBar />
+                  </LoadingDiv>
+                  <LoadingDiv>
+                    <LoadingBar />
+                  </LoadingDiv>
+                  <LoadingDiv>
+                    <LoadingBar />
+                  </LoadingDiv>
+                </div>
+              </RecommandNewsDiv>
+            ))
+          ) : (
+            <div>
+              {data?.slice(0, 5).map((news) => (
+                <RecommandNewsDiv>
                   {news.thumbnailImageUrl ? (
                     <img
-                      style={{ width: "30%", aspectRatio: 1.6 }}
+                      className="thumbnail-img"
                       src={news.thumbnailImageUrl}
                     />
                   ) : (
                     <>
-                      <div style={{ minWidth: "30%", aspectRatio: 1.6 }}></div>
+                      <div className="img-space"></div>
                       <img
+                        className="default-thumbnail-img"
                         style={{
-                          position: "absolute",
                           zIndex: 1,
-                          width: "calc(30% - 0.75rem)",
-                          aspectRatio: 1.6,
                         }}
                         src={lightThumbnailImage}
                       />
                       <img
+                        className="default-thumbnail-img"
                         style={{
-                          position: "absolute",
                           zIndex: 2,
-                          width: "calc(30% - 0.75rem)",
-                          aspectRatio: 1.6,
                           opacity: Theme.mode === "dark" ? 1 : 0,
                           transition: "opacity 0.3s",
                         }}
@@ -126,7 +135,7 @@ const MainPage = () => {
                       <div>{news.category}</div>
                     </div>
                   </div>
-                </div>
+                </RecommandNewsDiv>
               ))}
             </div>
           )}
@@ -210,6 +219,7 @@ const Container = styled.div`
 const NewsContainer = styled.div`
   @media screen and (min-width: 1280px) {
     width: 57.5%;
+    aspect-ratio: 1.6;
     overflow: hidden;
     display: flex;
     flex-direction: column;
@@ -233,10 +243,30 @@ const RecommandNewsContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 2.5%;
-  @media screen and (max-width: 1279px) {
+  .desc {
+    padding: 0 1rem;
+    font-size: 1.5rem;
+    margin: 0.5rem 0 1rem;
   }
 `;
 
+const RecommandNewsDiv = styled.div`
+  display: flex;
+  position: relative;
+  padding: 1.25rem;
+  border-bottom: 1px solid #0000004f;
+  .img-space,
+  .thumbnail-img {
+    min-width: 30%;
+    aspect-ratio: 1.6;
+    object-fit: cover;
+  }
+  .default-thumbnail-img {
+    position: absolute;
+    width: calc(30% - 0.75rem);
+    aspect-ratio: 1.6;
+  }
+`;
 const RankingContainer = styled.div`
   height: 20rem;
   padding: 1rem 2rem 2rem;

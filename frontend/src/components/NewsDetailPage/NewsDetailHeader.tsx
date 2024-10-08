@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import LoadingDiv from "./LoadingDiv";
-import LoadingBar from "./LoadingBar";
+import LoadingDiv from "../common/LoadingDiv";
+import LoadingBar from "../common/LoadingBar";
 import { deleteScrapNews, scrapNews } from "@services/newsService";
 import { useRecoilValue } from "recoil";
 import languageState from "@store/languageState";
@@ -21,7 +21,7 @@ type NewsHeaderPropsType = {
   setIsReadFinished: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const NewsHeader: React.FC<NewsHeaderPropsType> = ({
+const NewsDetailHeader: React.FC<NewsHeaderPropsType> = ({
   engIsLoading,
   korIsLoading,
   engData,
@@ -133,7 +133,7 @@ const NewsHeader: React.FC<NewsHeaderPropsType> = ({
   );
 };
 
-export default NewsHeader;
+export default NewsDetailHeader;
 
 const Container = styled.div`
   display: flex;

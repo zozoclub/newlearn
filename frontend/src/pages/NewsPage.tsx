@@ -57,8 +57,8 @@ const NewsPage = () => {
             src={newsSearchIcon}
           />
         </MobileMainHeader>
+        <NewsListHeader />
         <ContentWrapper>
-          <NewsListHeader />
           <NewsContent>
             <NewsList setTotalPages={setTotalPages} />
             <Pagination
@@ -106,7 +106,7 @@ const NewsContent = styled.div`
   }
 
   @media screen and (max-width: 767px) {
-    padding: 0 16px;
+    padding: 0 8px;
     margin-bottom: 70px;
   }
 `;

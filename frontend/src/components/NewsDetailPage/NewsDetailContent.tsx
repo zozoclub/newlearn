@@ -240,4 +240,8 @@ const Container = styled.div`
   font-size: 1.25rem;
   line-height: 1.75rem;
   margin: 1.5rem 0;
+  @media (max-width: 767px) {
+    font-size: 1.1rem;
+    line-height: 1.5rem;
+  }
 `;

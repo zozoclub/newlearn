@@ -92,7 +92,7 @@ public class OAuthController {
 
 			ResponseCookie responseCookie = ResponseCookie.from("refreshToken", refreshToken)
 				.httpOnly(true)
-				.secure(false) //이거 나중에 수정해줘야하는데 true로
+				.secure(true) //이거 나중에 수정해줘야하는데 true로
 				.maxAge(60*60*24*14)
 				.path("/")
 				.sameSite("None")

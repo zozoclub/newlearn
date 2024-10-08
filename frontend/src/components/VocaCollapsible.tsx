@@ -46,6 +46,8 @@ const VocaCollapsible: React.FC<VocaCollapsibleProps> = ({
   });
 
   const toggleExpand = () => {
+    console.log(id);
+
     setExpanded((prev) => !prev);
   };
 
@@ -232,7 +234,7 @@ export default VocaCollapsible;
 const ListItem = styled.div`
   letter-spacing: 0.1px;
 
-  width: 95%;
+  width: 90%;
   margin: 0 auto;
   border-radius: 0.5rem;
   margin-bottom: 1rem;
@@ -293,7 +295,7 @@ const TitleProcessMeaning = styled.span<{ $isExpanded: boolean }>`
     font-size: 0.75rem;
   }
   @media (max-width: 500px) {
-    display: none;
+    visibility: hidden;
   }
 `;
 

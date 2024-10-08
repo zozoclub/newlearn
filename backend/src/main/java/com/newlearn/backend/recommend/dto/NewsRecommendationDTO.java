@@ -21,13 +21,17 @@ public class NewsRecommendationDTO {
 
 
     public static List<NewsRecommendationDTO> convertToNewsRecommendationDTOList(List<List<Object>> rawData) {
-        return rawData.stream()
+        List<NewsRecommendationDTO> a = rawData.stream()
                 .filter(item -> item.size() >= 6)
                 .map(NewsRecommendationDTO::convertToNewsRecommendationDTO)
                 .collect(Collectors.toList());
+        System.out.println(a);
+        return a;
     }
 
     private static NewsRecommendationDTO convertToNewsRecommendationDTO(List<Object> item) {
+        System.out.println("item");
+        System.out.println(item);
         return NewsRecommendationDTO.builder()
                 .newsId(((Number) item.get(0)).longValue())
                 .title((String) item.get(1))

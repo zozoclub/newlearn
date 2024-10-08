@@ -19,8 +19,14 @@ import {
   getFluencyFeedback,
   getProsodyFeedback,
 } from "@utils/speakingFeedback";
+import { useMediaQuery } from "react-responsive"; // 모바일 여부 감지
+import HeaderMobile from "@components/common/HeaderMobile";
+import SpeakingTestResultChartsMobile from "@components/testpage/SpeakingTestResultChartsMobile";
+import SpeakingTestResultInfoWidgetMobile from "@components/testpage/SpeakingTestResultInfoWidgetMobile";
+import SpeakingTestResultReferenceMobile from "@components/testpage/SpeakingTestResultReferenceMobile";
 
 const SpeakingTestResultPage: React.FC = () => {
+  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const { audioFileId } = useParams<{ audioFileId: string }>();
   const setCurrentLocation = useSetRecoilState(locationState);
 
@@ -65,6 +71,49 @@ const SpeakingTestResultPage: React.FC = () => {
     .map((test) => test.sentenceMeaning)
     .join(" ");
 
+  if (isMobile) {
+    return (
+      <>
+        <HeaderMobile
+          title="Pronounce Test Result"
+          url="/speakingtesthistory"
+        />
+        <MobileContainer>
+          <SpeakingTestResultChartsMobile results={results} />
+          <MobileInfoContainer>
+            <SpeakingTestResultInfoWidgetMobile
+              title="AccuracyScore"
+              estimate={getAccuracyFeedback(results.accuracyScore)}
+              content="발음 정확도"
+            />
+            <SpeakingTestResultInfoWidgetMobile
+              title="FluencyScore"
+              estimate={getFluencyFeedback(results.fluencyScore)}
+              content="음성 능숙도"
+            />
+            <SpeakingTestResultInfoWidgetMobile
+              title="ProsodyScore"
+              estimate={getProsodyFeedback(results.prosodyScore)}
+              content="음성의 운율"
+            />
+            <SpeakingTestResultInfoWidgetMobile
+              title="CompletenessScore"
+              estimate={getCompletenessFeedback(results.completenessScore)}
+              content="문장 완성도"
+            />
+          </MobileInfoContainer>
+          <MobileReferenceContainer>
+            <SpeakingTestResultReferenceMobile
+              referenceTest={referenceTest}
+              referenceTextTranslate={referenceTextTranslate}
+              audioUrl={testDetail.audioFileUrl}
+            />
+          </MobileReferenceContainer>
+        </MobileContainer>
+      </>
+    );
+  }
+
   return (
     <MainLayout>
       <MainContainer>
@@ -73,7 +122,6 @@ const SpeakingTestResultPage: React.FC = () => {
           평가 리스트로 돌아가기
         </BackHeader>
 
-        {/* 차트 컴포넌트는 results가 변경되지 않으면 리렌더링되지 않음 */}
         <SpeakingTestResultCharts results={results} />
 
         <GridContainer>
@@ -155,4 +203,16 @@ const ErrorText = styled.div`
   color: ${(props) => props.theme.colors.danger};
   font-size: 1.25rem;
   text-align: center;
+`;
+
+const MobileContainer = styled.div`
+  padding-bottom: 5rem;
+`;
+const MobileInfoContainer = styled.div`
+  width: 88%;
+  margin: auto;
+`;
+const MobileReferenceContainer = styled.div`
+  width: 88%;
+  margin: auto;
 `;

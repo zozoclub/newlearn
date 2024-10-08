@@ -125,7 +125,7 @@ const SpeakingTestResultCharts: React.FC<Props> = ({ results }) => {
             indexAxis: "y", // 수평 막대형 차트
             scales: {
               x: {
-                max: 120, // 120점 만점 기준으로 하여 데이터가 페이지 넘어가는 경우를 제거
+                max: 110,
                 grid: { display: false },
                 ticks: {
                   display: false,
@@ -194,15 +194,14 @@ const ChartContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 95%;
-  margin: 0.5rem 0;
 `;
 
 const DoughnutChartContainer = styled.div`
   display: flex;
   justify-content: center;
+  width: 12rem;
   height: 12rem;
-  margin-left: 15%;
+  margin: 0 auto;
   margin-bottom: 1rem;
   `;
 
@@ -216,5 +215,5 @@ const BarChartContainer = styled.div`
 
 const StyledCanvas = styled.canvas`
   width: 100% !important; 
-  height: auto !important;
+  height: 100% !important;
 `;

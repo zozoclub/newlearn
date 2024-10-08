@@ -152,10 +152,17 @@ const NewsTitle = styled.div`
   width: 100%;
   font-size: 1.75rem;
   font-weight: 600;
+  @media (max-width: 767px) {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
 `;
 
 const NewsDate = styled.div`
   color: ${(props) => props.theme.colors.text03};
+  @media (max-width: 767px) {
+    font-size: 0.875rem;
+  }
 `;
 
 const OriginalUrlButton = styled.button`
@@ -170,6 +177,10 @@ const SecondaryDiv = styled.div`
   display: flex;
   gap: 0.5rem;
   color: ${(props) => props.theme.colors.text03};
+  @media (max-width: 767px) {
+    font-size: 0.75rem;
+    gap: 0.25rem;
+  }
 `;
 
 const SettingDiv = styled.div`
@@ -177,4 +188,7 @@ const SettingDiv = styled.div`
   align-items: center;
   gap: 2.5rem;
   right: 0;
+  @media (max-width: 767px) {
+    gap: 1.5rem;
+  }
 `;

@@ -1,13 +1,13 @@
 import React from "react";
 import { useTheme } from "styled-components";
 
-type Props = {
+type SpeakerIconProps = {
   onClick?: () => void;
   width?: string; // width를 외부에서 전달
   height?: string; // height를 외부에서 전달
 };
 
-const SpeakerIcon: React.FC<Props> = ({
+const SpeakerIcon: React.FC<SpeakerIconProps> = ({
   onClick,
   width = "30px",
   height = "30px",

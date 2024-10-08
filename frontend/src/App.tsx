@@ -24,6 +24,7 @@ import { isExpModalState } from "@store/expState";
 import ExperienceModal from "@components/common/ExperienceModal";
 import GoalManager from "./AppGoalManager";
 import LanguageToggleBtn from "@components/common/LanguageToggleBtn";
+import TutorialTip from "@components/common/TutorialTip";
 // import LevelUpModal from "@components/common/LevelUpModal";
 
 const App: React.FC = () => {
@@ -88,6 +89,7 @@ const App: React.FC = () => {
 
   return (
     <ThemeProvider theme={theme}>
+      <TutorialTip />
       <GlobalStyle />
       <Background />
       <AppContainer className="no_scroll">

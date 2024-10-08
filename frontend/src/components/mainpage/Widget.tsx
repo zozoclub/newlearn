@@ -16,19 +16,19 @@ const Widget: React.FC<{ variety: string }> = ({ variety }) => {
   switch (variety) {
     case "chart":
       return (
-        <WidgetContainer className="chart">
+        <WidgetContainer id="step4" className="chart">
           <CategoryChart />
         </WidgetContainer>
       );
     case "ranking":
       return (
-        <LargeWidgetContainer>
+        <LargeWidgetContainer id="step5">
           <RankingWidget />
         </LargeWidgetContainer>
       );
     case "goal":
       return (
-        <WidgetContainer>
+        <WidgetContainer id="step3">
           {goalData[0].goal && goalData[1].goal && goalData[2].goal ? (
             <>
               <MainGoalBar />
@@ -53,25 +53,28 @@ const Widget: React.FC<{ variety: string }> = ({ variety }) => {
 };
 
 const WidgetContainer = styled.div`
-  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-width: 240px;
-  min-height: 240px;
   aspect-ratio: 1;
   background-color: ${(props) => props.theme.colors.cardBackground01};
   border-radius: 1rem;
   transition: box-shadow 0.5s;
   backdrop-filter: blur(12px);
   box-shadow: ${(props) => props.theme.shadows.xsmall};
-  overflow: hidden;
+  @media screen and (min-width: 768px) and (max-width: 1279px) {
+    min-width: 14.5rem;
+  }
 `;
 
 const LargeWidgetContainer = styled(WidgetContainer)`
   grid-column: span 2;
   aspect-ratio: 2;
+  @media screen and (min-width: 768px) and (max-width: 1279px) {
+    grid-column: span 1;
+    min-height: 14.5rem;
+  }
 `;
 
 const GoalSetting = styled.button`

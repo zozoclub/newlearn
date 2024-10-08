@@ -24,7 +24,8 @@ const LanguageToggleBtn = () => {
     currentLocationData === "login" ||
     currentLocationData === "signUp" ||
     currentLocationData === "notFound" ||
-    currentLocationData === "myPage"
+    currentLocationData === "myPage" ||
+    currentLocationData === "search"
   )
     return null;
 
@@ -35,6 +36,7 @@ const LanguageToggleBtn = () => {
       onClick={() => {
         setLanguageData(languageData === "kr" ? "en" : "kr");
       }}
+      id="step1"
     >
       <div
         className="lang-div"

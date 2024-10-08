@@ -5,15 +5,35 @@ import NewsList from "@components/NewsListPage/NewsList";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Pagination from "@components/NewsListPage/Pagination";
-import { useSetRecoilState } from "recoil";
+import { useResetRecoilState, useSetRecoilState } from "recoil";
 import locationState from "@store/locationState";
 import { useMediaQuery } from "react-responsive";
 
 import FullLogo from "@components/common/FullLogo";
 import newsSearchIcon from "@assets/icons/searchIcon.svg";
 import NewsListHeader from "@components/NewsListPage/NewsListHeader";
+import { tutorialTipState } from "@store/tutorialState";
 
 const NewsPage = () => {
+  const setTutorialTip = useSetRecoilState(tutorialTipState);
+  const resetTutorialTip = useResetRecoilState(tutorialTipState);
+  const startTutorial = () => {
+    setTutorialTip({
+      steps: [
+        { selector: "#step6", content: "첫 번째 단계입니다." },
+        { selector: "#step7", content: "두 번째 단계입니다." },
+        { selector: "#step8", content: "세 번째 단계입니다." },
+        { selector: "#step9", content: "네 번째 단계입니다." },
+        { selector: "#step10", content: "다섯 번째 단계입니다." },
+      ],
+      isActive: true,
+      onComplete: () => {
+        console.log("튜토리얼 완료!");
+        resetTutorialTip();
+      },
+    });
+  };
+
   const { category, page } = useParams();
   const selectedCategory = Number(category);
   const selectedPage = Number(page);
@@ -23,7 +43,7 @@ const NewsPage = () => {
 
   useEffect(() => {
     setCurrentLocation("newsList");
-
+    startTutorial();
     return () => {
       setCurrentLocation("");
     };
@@ -33,7 +53,7 @@ const NewsPage = () => {
   const DesktopRender = () => {
     return (
       <Container>
-        <NewsContent>
+        <NewsContent id="step6">
           {selectedCategory === 0 && <Recommand />}
           <NewsList setTotalPages={setTotalPages} />
         </NewsContent>
@@ -57,8 +77,8 @@ const NewsPage = () => {
             src={newsSearchIcon}
           />
         </MobileMainHeader>
+        <NewsListHeader />
         <ContentWrapper>
-          <NewsListHeader />
           <NewsContent>
             <NewsList setTotalPages={setTotalPages} />
             <Pagination
@@ -97,6 +117,7 @@ const Container = styled.div`
     margin: 0 0 70px;
     padding: 0;
     width: 100%;
+    height: calc(100vh);
   }
 `;
 
@@ -106,7 +127,7 @@ const NewsContent = styled.div`
   }
 
   @media screen and (max-width: 767px) {
-    padding: 0 16px;
+    padding: 0 8px;
     margin-bottom: 70px;
   }
 `;

@@ -300,9 +300,9 @@ const MyPageContainer = styled.div`
     padding: 0 1rem;
   }
   @media (max-width: 767px) {
-    min-height: calc(100vh - 70px);
+    min-height: 100vh;
     padding: 0 1.125rem;
-    background-color: ${(props) => props.theme.colors.background};
+    background-color: transparent;
   }
 `;
 
@@ -333,7 +333,7 @@ const WidgetContainer = styled.div`
 
   @media (max-width: 767px) {
     box-shadow: none;
-    border: 1px solid ${(props) => props.theme.colors.placeholder};
+    border: 1px solid ${(props) => props.theme.colors.cancelPress};
     margin: 1rem 0;
     padding: 1rem;
   }
@@ -393,7 +393,7 @@ const MobileMainHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 75px;
+  height: 70px;
   padding: 0 1.5rem 0 0;
 `;
 

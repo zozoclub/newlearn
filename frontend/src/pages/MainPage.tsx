@@ -5,12 +5,37 @@ import Widget from "@components/mainpage/Widget";
 import locationState from "@store/locationState";
 import { useEffect } from "react";
 import { useMediaQuery } from "react-responsive";
-import { useSetRecoilState } from "recoil";
 import styled from "styled-components";
 import RestudyQuiz from "@components/RestudyQuiz";
 import MainMobilePage from "./mobile/MainMobilePage";
+import { tutorialTipState } from "@store/tutorialState";
+import { useResetRecoilState, useSetRecoilState } from "recoil";
 
 const MainPage = () => {
+  // 페이지마다 튜토리얼 추가해주시면 됩니다.
+  const setTutorialTip = useSetRecoilState(tutorialTipState);
+  const resetTutorialTip = useResetRecoilState(tutorialTipState);
+  const startTutorial = () => {
+    setTutorialTip({
+      steps: [
+        { selector: "#step1", content: "첫 번째 단계입니다." },
+        { selector: "#step2", content: "두 번째 단계입니다." },
+        { selector: "#step3", content: "세 번째 단계입니다." },
+        { selector: "#step4", content: "네 번째 단계입니다." },
+        { selector: "#step5", content: "다섯 번째 단계입니다." },
+      ],
+      isActive: true,
+      onComplete: () => {
+        console.log("튜토리얼 완료!");
+        resetTutorialTip();
+      },
+    });
+  };
+  useEffect(() => {
+    startTutorial();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const widgetList = [
     { variety: "goal" },
     { variety: "chart" },
@@ -31,14 +56,24 @@ const MainPage = () => {
   const TabletRender = () => {
     return (
       <Container>
-        <NewsContainer>
-          <div className="desc">오늘의 추천 뉴스</div>
-          <DailyNews />
-        </NewsContainer>
-        <WidgetContainer>
-          <Widget variety="goal" />
-          <Widget variety="topRanking" />
-        </WidgetContainer>
+        <div style={{ position: "relative" }}>
+          <div
+            style={{
+              position: "absolute",
+              top: "-2.5rem",
+              fontSize: "1.75rem",
+              marginBottom: "1rem",
+            }}
+          >
+            오늘의 추천 뉴스
+          </div>
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            <DailyNews />
+          </div>
+        </div>
+        <Widget variety="goal" />
+        <Widget variety="ranking" />
+        <Widget variety="chart" />
       </Container>
     );
   };
@@ -46,7 +81,7 @@ const MainPage = () => {
   const DesktopRender = () => {
     return (
       <Container>
-        <NewsContainer>
+        <NewsContainer id="step2">
           <Clock />
           <DailyNews />
         </NewsContainer>
@@ -84,11 +119,18 @@ const Container = styled.div`
     left: 50%;
     top: 55%;
     transform: translate(-50%, -50%);
-    width: 90%;
-    padding: 0;
+    width: 90vw;
+    padding: 0 5vw;
+    position: absolute;
   }
   @media screen and (min-width: 768px) and (max-width: 1279px) {
-    gap: 5%;
+    display: grid;
+    grid-template-columns: calc(66% - 0.5rem) calc(34% - 0.5rem);
+    grid-gap: 1rem;
+    align-content: center;
+    width: 80vw;
+    min-height: 80vh;
+    margin: 0 auto;
   }
   @media screen and (max-width: 767px) {
     flex-direction: column;
@@ -98,38 +140,24 @@ const Container = styled.div`
 
 const NewsContainer = styled.div`
   @media screen and (min-width: 1280px) {
-    width: 57.5%;
+    width: 55vw;
     aspect-ratio: 1.6;
     overflow: hidden;
     display: flex;
     flex-direction: column;
     position: relative;
-    gap: 5rem;
-  }
-  @media screen and (min-width: 768px) and (max-width: 1279px) {
-    width: 50%;
-    margin: auto;
-    .desc {
-      font-size: 2rem;
-      font-weight: 600;
-      margin-bottom: 1rem;
-    }
+    gap: 2rem;
   }
 `;
 
 const WidgetContainer = styled.div`
-  @media screen and (min-width: 1279px) {
+  grid-gap: 1rem;
+  @media screen and (min-width: 1280px) {
     display: grid;
-    grid-template-columns: repeat(2, calc(50% - 0.5rem));
-    grid-template-rows: repeat() (2, calc(50% - 0.5rem));
-    grid-gap: 1rem;
-    width: 40%;
-  }
-  @media screen and (min-width: 768px) and (max-width: 1279px) {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    margin: auto;
-    width: 30%;
+    align-content: flex-start;
+    grid-template-columns: calc(50% - 0.25rem) calc(50% - 0.25rem);
+    padding-top: 1.5rem;
+    width: 32.5%;
+    min-width: 30rem;
   }
 `;

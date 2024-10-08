@@ -37,6 +37,8 @@ const NewsDetailPage = () => {
   const [isFirstView, setIsFirstView] = useState<boolean>(true);
   const { newsId } = useParams();
 
+  console.log(newsId);
+
   const { isLoading: engIsLoading, data: engData } = useQuery<DetailNewsType>({
     queryKey: ["getEngNewsDetail", difficulty, Number(newsId)],
     queryFn: () => getNewsDetail(Number(newsId), difficulty, "en", isFirstView),
@@ -51,7 +53,7 @@ const NewsDetailPage = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, [languageData, difficulty]);
+  }, [languageData, difficulty, newsId]);
 
   useEffect(() => {
     setDifficulty(userInfoData.difficulty);
@@ -86,7 +88,6 @@ const NewsDetailPage = () => {
             style={{
               display: "flex",
               justifyContent: "space-between",
-              marginBottom: "1.5rem",
             }}
           >
             <BackArrow height={30} width={30} />
@@ -134,9 +135,9 @@ const NewsDetailPage = () => {
               />
             </div>
           </NewsContainer>
-          <div>
+          <WordHuntContainer>
             <WordHunt engData={engData?.content} />
-          </div>
+          </WordHuntContainer>
         </News>
         <SubContainer>
           <FilteredRecommendNews />
@@ -157,7 +158,7 @@ const Container = styled.div`
   overflow: hidden;
   @media (max-width: 1279px) {
     flex-direction: column;
-    margin-bottom: 15rem;
+    padding-bottom: 6rem;
   }
 `;
 
@@ -187,14 +188,14 @@ const ThumbnailImageDiv = styled.div`
   width: 100%;
   min-height: 300px;
   background-color: ${(props) => props.theme.colors.cardBackground + "AA"};
-  border-radius: 0.75rem;
+  border-radius: 5px;
   text-align: center;
 `;
 
 const ThumbnailImage = styled.img`
   width: 75%;
   min-height: 300px;
-  border-radius: 0.75rem;
+  border-radius: 5px;
   @media screen and (max-width: 767px) {
     width: 100%;
   }
@@ -228,7 +229,7 @@ const SubContainer = styled.div`
   }
   .news-div {
     display: flex;
-    border-radius: 0.5rem;
+    border-radius: 5px;
     padding: 0.5rem;
     background-color: ${(props) =>
       props.theme.mode === "dark" ? "transparent" : "#ffffffaa"};
@@ -267,17 +268,38 @@ const SubContainer = styled.div`
         line-height: 1.75rem;
         height: 5.25rem;
       }
+      @media (max-width: 767px) {
+        height: 2.5rem;
+        line-height: 1.25rem;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 1rem;
+        margin-bottom: 3%;
+      }
+    }
+    .category {
+      @media (max-width: 767px) {
+        font-size: 0.875rem;
+        color: gray;
+        margin-bottom: 0.25rem;
+      }
+    }
+
+    @media (max-width: 767px) {
+      padding: 2% 3%;
     }
   }
   .thumbnail-div {
     position: relative;
     width: 45%;
-    aspect-ratio: 1.6;
+    aspect-ratio: 1.4;
     img {
       width: 100%;
-      aspect-ratio: 1.6;
+      height: 100%;
       object-fit: cover;
-      border-radius: 0.5rem;
+      border-radius: 5px;
     }
   }
   @media (max-width: 1279px) {
@@ -299,4 +321,9 @@ const Medal = styled.img`
   }
 `;
 
+const WordHuntContainer = styled.div`
+  @media (max-width: 767px) {
+    display: none;
+  }
+`;
 export default NewsDetailPage;

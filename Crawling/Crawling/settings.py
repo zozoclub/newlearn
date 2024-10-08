@@ -9,12 +9,20 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
-
+import os
+import environ
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+env = environ.Env(
+    DEBUG=(bool, False)
+)
 
+# .env 파일 경로 설정 및 로드
+env_file = os.path.join(BASE_DIR, '.env')
+if os.path.exists(env_file):
+    environ.Env.read_env(env_file)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -156,16 +164,6 @@ APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"
 # 자동으로 스케쥴러 실행
 SCHEDULER_DEFAULT = True
 
-#######################################################
-
-import environ
-import os
-
-env = environ.Env(DEBUG=(bool, True))
-
-environ.Env.read_env(
-    env_file=os.path.join(BASE_DIR, '.env')
-)
 
 GEN_AI_SECRET_KEY = env('GEN_AI_SECRET_KEY')
 CRAWLING_USER_AGENT = env('CRAWLING_USER_AGENT')

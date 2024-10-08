@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @Getter
 @AllArgsConstructor
-@RedisHash(value = "refreshToken", timeToLive = 604800)
+@RedisHash(value = "refreshToken", timeToLive = 1209600)
 @NoArgsConstructor
 public class RefreshToken {
 

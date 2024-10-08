@@ -196,7 +196,7 @@ const NewsDetailContent: React.FC<NewsDetailContentType> = ({
                   <div
                     key={index}
                     style={{
-                      color: `${
+                      backgroundColor: `${
                         engData?.words.some((engWord) => {
                           const cleanWord = word.replace(
                             /^[^\w]+|[^\w]+$/g,
@@ -207,7 +207,7 @@ const NewsDetailContent: React.FC<NewsDetailContentType> = ({
                             cleanWord.toLowerCase()
                           );
                         })
-                          ? "red"
+                          ? "#ffff00a4"
                           : ""
                       }`,
                     }}

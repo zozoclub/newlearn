@@ -64,7 +64,7 @@ const TutorialTip = () => {
             style={highlightStyle}
             onClick={() => handleNext()}
           ></Overlay>
-          <Content style={contentStyle}>
+          <Content style={contentStyle} onClick={() => handleNext()}>
             <div>{steps[currentStep].content}</div>
             <div style={{ display: "flex", justifyContent: "end" }}>
               <StepButton>

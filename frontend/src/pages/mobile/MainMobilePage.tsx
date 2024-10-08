@@ -99,11 +99,11 @@ const MainMobilePage = () => {
         </RecommandNewsContainer>
         <Divider />
 
-        <div style={{ marginTop: "1.5rem" }}>
+        <div style={{ position: "relative", marginTop: "1.5rem" }}>
           <Title>이 달의 랭킹</Title>
+          <RankingKindSelect />
         </div>
         <RankingContainer>
-          <RankingKindSelect />
           <TopRanking />
         </RankingContainer>
       </ContentWrapper>

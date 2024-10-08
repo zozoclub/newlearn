@@ -68,6 +68,9 @@ const Container = styled.div`
 
 const NewsListContainer = styled.div`
   column-gap: 0.5rem;
+  @media (max-width: 767px) {
+    gap: 0rem;
+  }
 `;
 
 export default NewsList;

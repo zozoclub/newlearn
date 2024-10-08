@@ -71,7 +71,10 @@ const Container = styled.div`
     height: 100%;
     background-color: ${(props) => props.theme.colors.background};
     box-shadow: none;
-    border-radius: 5px;
+    border-radius: 2px;
+    margin: 0;
+    padding: 0.5rem;
+    border-bottom: 1px solid lightgray;
   }
 `;
 
@@ -173,7 +176,7 @@ const CategoryButton = styled.div`
   }
 
   @media (max-width: 768px) {
-    margin-bottom: 1rem;
+    margin-bottom: 0.75rem;
     padding: 0.375rem 0.5rem;
     font-size: 0.75rem;
   }

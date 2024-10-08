@@ -79,7 +79,7 @@ const CategoryItem = styled.div<{ $isSelected?: boolean }>`
     props.$isSelected ? props.theme.colors.primary : props.theme.colors.text};
 
   @media (max-width: 767px) {
-    font-size: 1.125rem;
+    font-size: 1rem;
   }
 `;
 export default NewsListHeader;

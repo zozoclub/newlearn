@@ -99,6 +99,6 @@ const PageButton = styled.div<{ $active?: boolean }>`
     padding: 0.5rem;
     font-weight: normal;
     font-family: "Righteous";
-    margin-bottom: 1rem;
+    margin-bottom: 2rem;
   }
 `;

@@ -300,7 +300,7 @@ const MyPageContainer = styled.div`
     padding: 0 1rem;
   }
   @media (max-width: 767px) {
-    min-height: calc(100vh - 70px);
+    min-height: 100vh;
     padding: 0 1.125rem;
     background-color: transparent;
   }
@@ -333,7 +333,7 @@ const WidgetContainer = styled.div`
 
   @media (max-width: 767px) {
     box-shadow: none;
-    border: 2px solid ${(props) => props.theme.colors.cancel};
+    border: 1px solid ${(props) => props.theme.colors.cancelPress};
     margin: 1rem 0;
     padding: 1rem;
   }

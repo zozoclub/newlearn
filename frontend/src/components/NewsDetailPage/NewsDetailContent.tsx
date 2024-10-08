@@ -57,11 +57,29 @@ const NewsDetailContent: React.FC<NewsDetailContentType> = ({
     { sentence: string; words: string[] }[]
   >([]);
 
-  const handleSelectionEnd = (event: React.TouchEvent | React.MouseEvent) => {
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  const getSelectionPosition = (): { x: number; y: number } | null => {
+    const selection = window.getSelection();
+    if (!selection || selection.rangeCount === 0) return null;
+
+    const range = selection.getRangeAt(0);
+    const rect = range.getBoundingClientRect();
+
+    if (!contentRef.current) return null;
+
+    const containerRect = contentRef.current.getBoundingClientRect();
+
+    return {
+      x: rect.left - containerRect.left + contentRef.current.scrollLeft,
+      y: rect.top - containerRect.top + contentRef.current.scrollTop,
+    };
+  };
+
+  const handleSelectionEnd = () => {
     const result = handleSelection();
     if (result) {
       const prevWord = result.word;
-      // 선택된 단어에 대한 추가 정보를 외부 사전에서 조회
       searchDaumDictionary(result.word)
         .then((searchResult) => {
           console.log("Daum Dictionary Result:", searchResult);
@@ -72,24 +90,22 @@ const NewsDetailContent: React.FC<NewsDetailContentType> = ({
             engSentence: result.englishSentence,
             korSentence: result.koreanSentence,
           });
+
           if (prevWord !== selected.word) {
-            let x: number, y: number;
+            const position = getSelectionPosition();
+            if (position) {
+              const modalWidth = 200; // 모달의 예상 너비
 
-            if ("touches" in event) {
-              // Touch event
-              const touch = event.changedTouches[0];
-              x = touch.clientX;
-              y = touch.clientY;
-            } else {
-              // Mouse event
-              x = (event as React.MouseEvent).clientX;
-              y = (event as React.MouseEvent).clientY;
+              let x = position.x;
+              const y = position.y + 30;
+
+              // 컨테이너의 오른쪽 경계를 넘어가지 않도록 조정
+              if (x + modalWidth > (contentRef.current?.offsetWidth || 0)) {
+                x = x - modalWidth;
+              }
+
+              setWordModalPosition({ x, y });
             }
-
-            setWordModalPosition({
-              x: window.innerWidth - x < 200 ? window.screenLeft + 200 : x,
-              y: y + 200,
-            });
           }
         })
         .catch((error) => {
@@ -163,11 +179,13 @@ const NewsDetailContent: React.FC<NewsDetailContentType> = ({
         </div>
       ) : (
         <div
+          ref={contentRef}
           style={{
             display: "flex",
             gap: "0.25rem",
             maxWidth: "100%",
             flexWrap: "wrap",
+            position: "relative", // 추가
           }}
           onMouseUp={handleSelectionEnd}
           onTouchEnd={handleSelectionEnd}

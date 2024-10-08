@@ -5,12 +5,37 @@ import Widget from "@components/mainpage/Widget";
 import locationState from "@store/locationState";
 import { useEffect } from "react";
 import { useMediaQuery } from "react-responsive";
-import { useSetRecoilState } from "recoil";
 import styled from "styled-components";
 import RestudyQuiz from "@components/RestudyQuiz";
 import MainMobilePage from "./mobile/MainMobilePage";
+import { tutorialTipState } from "@store/tutorialState";
+import { useResetRecoilState, useSetRecoilState } from "recoil";
 
 const MainPage = () => {
+  // 페이지마다 튜토리얼 추가해주시면 됩니다.
+  const setTutorialTip = useSetRecoilState(tutorialTipState);
+  const resetTutorialTip = useResetRecoilState(tutorialTipState);
+  const startTutorial = () => {
+    setTutorialTip({
+      steps: [
+        { selector: "#step1", content: "첫 번째 단계입니다." },
+        { selector: "#step2", content: "두 번째 단계입니다." },
+        { selector: "#step3", content: "세 번째 단계입니다." },
+        { selector: "#step4", content: "네 번째 단계입니다." },
+        { selector: "#step5", content: "다섯 번째 단계입니다." },
+      ],
+      isActive: true,
+      onComplete: () => {
+        console.log("튜토리얼 완료!");
+        resetTutorialTip();
+      },
+    });
+  };
+  useEffect(() => {
+    startTutorial();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const widgetList = [
     { variety: "goal" },
     { variety: "chart" },
@@ -56,7 +81,7 @@ const MainPage = () => {
   const DesktopRender = () => {
     return (
       <Container>
-        <NewsContainer>
+        <NewsContainer id="step2">
           <Clock />
           <DailyNews />
         </NewsContainer>

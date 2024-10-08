@@ -36,6 +36,7 @@ const LanguageToggleBtn = () => {
       onClick={() => {
         setLanguageData(languageData === "kr" ? "en" : "kr");
       }}
+      id="step1"
     >
       <div
         className="lang-div"

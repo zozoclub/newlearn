@@ -16,19 +16,19 @@ const Widget: React.FC<{ variety: string }> = ({ variety }) => {
   switch (variety) {
     case "chart":
       return (
-        <WidgetContainer className="chart">
+        <WidgetContainer id="step4" className="chart">
           <CategoryChart />
         </WidgetContainer>
       );
     case "ranking":
       return (
-        <LargeWidgetContainer>
+        <LargeWidgetContainer id="step5">
           <RankingWidget />
         </LargeWidgetContainer>
       );
     case "goal":
       return (
-        <WidgetContainer>
+        <WidgetContainer id="step3">
           {goalData[0].goal && goalData[1].goal && goalData[2].goal ? (
             <>
               <MainGoalBar />

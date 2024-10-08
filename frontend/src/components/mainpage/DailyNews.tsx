@@ -47,12 +47,13 @@ const DailyNews = () => {
 const Container = styled.div`
   @media screen and (min-width: 1280px) {
     top: 10rem;
-    width: 50vw;
-    overflow: hidden;
+    width: 55vw;
+    aspect-ratio: 1.6;
   }
   @media screen and (min-width: 768px) and (max-width: 1279px) {
     width: 50vw;
-    min-height: 25vh;
+    aspect-ratio: 2;
+    overflow: hidden;
   }
   @media screen and (max-width: 767px) {
     width: 100vw;

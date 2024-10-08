@@ -93,8 +93,27 @@ const MainPage = () => {
   const DesktopRender = () => {
     return (
       <Container>
-        <NewsContainer>
-          <Clock />
+        <NewsContainer id="step2">
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <Clock />
+            <div
+              style={{
+                color: "gray",
+                fontFamily: "Righteous",
+                fontWeight: "400",
+                fontSize: "2rem",
+                marginRight: "1rem",
+              }}
+            >
+              Today's TOP 10
+            </div>
+          </div>
           <DailyNews />
         </NewsContainer>
         <WidgetContainer>

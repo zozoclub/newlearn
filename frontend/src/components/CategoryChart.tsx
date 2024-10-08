@@ -121,7 +121,7 @@ export default CategoryChart;
 const ChartContainer = styled.div`
   display: grid;
   place-items: center;
-  width: 100%;
+  width: 90%;
   @media (max-width: 768px) {
     width: 80%;
     background-color: ${(props) => props.theme.colors.background};

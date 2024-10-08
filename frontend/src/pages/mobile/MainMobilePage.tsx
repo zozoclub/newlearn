@@ -163,9 +163,11 @@ const RecommandNewsDiv = styled.div<{ $isLast: boolean }>`
   .img-space {
     min-width: 30%;
     width: 30%;
+    height: 100%;
     aspect-ratio: 1.6;
     img {
       width: 100%;
+      height: 100%;
       aspect-ratio: 1.6;
       object-fit: cover;
       border-radius: 5px;
@@ -198,7 +200,7 @@ const RecommandNewsDiv = styled.div<{ $isLast: boolean }>`
       font-size: 0.875rem;
       color: ${(props) => props.theme.colors.text04};
       padding: 0.375rem 0rem;
-      min-height: 1.5rem;
+      min-height: 0.75rem;
     }
   }
 `;
@@ -211,7 +213,7 @@ const RankingContainer = styled.div`
 
 const Divider = styled.div`
   height: 1rem;
-  margin: 0.5rem 0 0.5rem;
+  margin: 0 0 0.5rem;
   background-color: ${(props) => props.theme.colors.divider};
   border-top: none;
   border-bottom: none;

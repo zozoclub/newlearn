@@ -49,7 +49,7 @@ const WordTestHistoryPage: React.FC = () => {
     if (isMobile) {
         return (
             <>
-                <HeaderMobile title="Word Test" />
+                <HeaderMobile title="Word Test" url="/mystudy"/>
                 <MobileLayout>
                     <StartWordTestWidget posibleWords={toStudyWords.length} />
                     <WordTestHistory />

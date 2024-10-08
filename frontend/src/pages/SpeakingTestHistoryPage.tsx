@@ -58,7 +58,7 @@ const SpeakingTestHistoryPage: React.FC = () => {
     if (isMobile) {
         return (
             <>
-                <HeaderMobile title="Pronounce Test" />
+                <HeaderMobile title="Pronounce Test" url="/mystudy"/>
                 <MobileLayout>
                     <StartSpeakingTestWidget posibleWords={toStudyWords.length + learnedWords.length} />
                     <SpeakingTestHistory />

@@ -109,9 +109,8 @@ const ModalContent = styled.div<{ $isOpen: boolean }>`
   position: relative;
   min-width: 60%;
   max-width: 90%;
-  height: 45vh;
   align-items: center;
-  padding: 2rem;
+  padding: 1rem;
   background-color: ${(props) => props.theme.colors.cardBackground};
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   border-radius: 0.5rem;
@@ -125,8 +124,6 @@ const ModalContent = styled.div<{ $isOpen: boolean }>`
         `};
   @media (max-width: 768px) {
     min-width: 80%;
-    height: 45vh;
-    padding: 1rem;
   }
 `;
 
@@ -148,11 +145,7 @@ const ModalTitle = styled.div`
 `;
 
 const ModalBody = styled.div`
-  height: 100%;
-  padding: 3rem 0;
-  @media (max-width: 768) {
-    padding: 1rem 0;
-  }
+  padding-top: 1rem;
 `;
 
 const ModalButtonContainer = styled.div`

@@ -157,7 +157,7 @@ const SpeakingTestRecord: React.FC<Props> = ({
           )}
           <CompletionText>녹음이 완료되었습니다!</CompletionText>
           <RestartRecordingContainer>
-            <RestartText>다시 녹음하기</RestartText>
+            <RestartText onClick={reStartRecordingModal}>다시 녹음하기</RestartText>
             <RestartRecordingIconStyled onClick={reStartRecordingModal} />
             {/* 녹음 모달 */}
             <Modal
@@ -205,6 +205,10 @@ const scaleAnimation = keyframes`
     transform: scale(1.1);
   }
 `;
+const RecordingContainer = styled.div`
+  position: relative;
+  display: inline-block;
+`;
 
 // 파동 애니메이션 효과
 const Pulse = styled.div`
@@ -223,11 +227,6 @@ const RecordingIconStyled = styled(RecordingIcon)`
   animation: ${scaleAnimation} 1s infinite ease-in-out;
 `;
 
-const RecordingContainer = styled.div`
-  position: relative;
-  display: inline-block;
-`;
-
 const StopButton = styled.div`
   width: 5rem;
   height: 2rem;
@@ -238,12 +237,23 @@ const StopButton = styled.div`
   border-radius: 0.25rem;
   cursor: pointer;
   margin-top: 1rem;
+
+  @media (max-width: 768px) {
+    width: 4rem;
+    height: 1.75rem;
+    line-height: 1.75rem;
+    font-size: 0.875rem;
+  }
 `;
 
 const RecordingTime = styled.div`
   margin-top: 1rem;
   font-size: 1.25rem;
   font-weight: bold;
+
+  @media (max-width: 768px) {
+    font-size: 1rem;
+  }
 `;
 
 const RecordingStatus = styled.div`
@@ -251,20 +261,33 @@ const RecordingStatus = styled.div`
   font-size: 1.25rem;
   font-weight: bold;
   margin-top: 0.5rem;
+
+  @media (max-width: 768px) {
+    font-size: 1rem;
+  }
 `;
 
-// 녹음 완료 시 텍스트 스타일
 const CompletionText = styled.p`
   color: ${(props) => props.theme.colors.text};
   font-size: 1.25rem;
   font-weight: 400;
   margin-top: 2rem;
+
+  @media (max-width: 768px) {
+    font-size: 1rem;
+    margin-top: 1.5rem;
+  }
 `;
 
 const RestartRecordingContainer = styled.div`
   display: flex;
   align-items: center;
   margin-top: 1rem;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 `;
 
 const RestartRecordingIconStyled = styled(RestartRecordingIcon)`
@@ -273,13 +296,16 @@ const RestartRecordingIconStyled = styled(RestartRecordingIcon)`
   cursor: pointer;
   margin-right: 0.5rem;
 
-  &:hover {
-    opacity: 0.8;
+  @media (max-width: 768px) {
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-right: 0;
+    margin-bottom: 0.5rem;
   }
 `;
 
 const RestartText = styled.p`
-  color: ${(props) => props.theme.colors.primary};
+  color: ${(props) => props.theme.colors.text04};
   font-size: 1rem;
   font-weight: bold;
   cursor: pointer;
@@ -287,12 +313,20 @@ const RestartText = styled.p`
   &:hover {
     text-decoration: underline;
   }
+
+  @media (max-width: 768px) {
+    font-size: 0.875rem;
+  }
 `;
 
 const PromptText = styled.p`
   color: ${(props) => props.theme.colors.text};
   font-size: 1.125rem;
   margin-top: 0.5rem;
+
+  @media (max-width: 768px) {
+    font-size: 1rem;
+  }
 `;
 
 const ModalButtonContainer = styled.div`
@@ -312,7 +346,12 @@ const ModalCancelButton = styled.button`
   &:hover {
     background-color: ${(props) => props.theme.colors.danger};
   }
+
+  @media (max-width: 768px) {
+    padding: 0.5rem 1rem;
+  }
 `;
+
 const ModalConfirmButton = styled.button`
   padding: 0.5rem 1.5rem;
   background-color: ${(props) => props.theme.colors.primary};
@@ -324,11 +363,19 @@ const ModalConfirmButton = styled.button`
   &:hover {
     background-color: ${(props) => props.theme.colors.primaryPress};
   }
+
+  @media (max-width: 768px) {
+    padding: 0.5rem 1rem;
+  }
 `;
 
-// 플레이어 배경 색깔
 const StyledAudioPlayer = styled.div`
   background-color: ${(props) => props.theme.colors.cardBackground01};
   box-shadow: 3px 3px 10px 0 rgba(0, 0, 0, 0.2);
   margin: 0 1rem;
+
+  @media (max-width: 768px) {
+    margin: 0.5rem;
+  }
 `;
+

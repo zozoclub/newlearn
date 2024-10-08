@@ -407,6 +407,9 @@ const StatsHistory = styled.div`
 const StatItem = styled.p`
   font-size: 1rem;
   margin-bottom: 0.5rem;
+  @media (max-width: 768px) {
+    font-size: 0.875rem;
+  }
 `;
 
 const ScrollableTestHistoryList = styled.div`

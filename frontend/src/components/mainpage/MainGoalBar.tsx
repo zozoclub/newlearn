@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { useRecoilValue } from "recoil";
-import goalState, { goalDataSelector } from "@store/goalState";
+import { goalDataSelector, useStudyProgress } from "@store/goalState";
 import Spinner from "@components/Spinner";
 
 interface GoalData {
@@ -17,13 +17,14 @@ const titleMapping: { [key: string]: string } = {
 };
 
 const MainGoalBar: React.FC = () => {
-  const isInitialized = useRecoilValue(goalState).isInitialized;
+  const { isLoading } = useStudyProgress();
   const goalData = useRecoilValue(goalDataSelector);
+
   const calculatePercentage = (current: number, goal: number): number => {
     return Math.min(Math.round((current / goal) * 100), 100);
   };
 
-  if (!isInitialized)
+  if (isLoading)
     return (
       <div>
         <Spinner />

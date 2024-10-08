@@ -7,8 +7,9 @@ import { useQuery } from "@tanstack/react-query";
 import { useRecoilValue } from "recoil";
 import userInfoState from "@store/userInfoState";
 import MyPagePagination from "@components/mypage/MyPagePagination";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import WordCloud from "@components/WordCloud";
+import { usePageTransition } from "@hooks/usePageTransition";
 
 type SearchNewsType = {
   newsId: number;
@@ -27,12 +28,17 @@ type SearchResponseType = {
 };
 
 const NewsSearchPage = () => {
+  const transitionTo = usePageTransition();
   const { query } = useParams<{ query?: string }>();
   const { page } = useParams();
   const [selectedPage, setSelectedPage] = useState(Number(page) || 0);
   const userInfoData = useRecoilValue(userInfoState);
   const userDifficulty = userInfoData.difficulty;
+  const [searchQuery, setSearchQuery] = useState(query || "");
 
+  useEffect(() => {
+    setSearchQuery(query || "");
+  }, [query]);
   const { data: searchResultData, refetch } = useQuery<SearchResponseType>({
     queryKey: ["searchNews", query, userDifficulty, selectedPage],
     queryFn: () => searchNews(query || "", userDifficulty, selectedPage, 5),
@@ -60,10 +66,17 @@ const NewsSearchPage = () => {
     }
   };
 
+  const handleSearch = (newQuery: string) => {
+    setSearchQuery(newQuery);
+    setSelectedPage(0);
+    transitionTo(`/news/search/${newQuery}`);
+    refetch();
+  };
+
   return (
     <Container>
       <SearchBarContainer>
-        <NewsSearch initialQuery={decodeURIComponent(query || "")} />
+        <NewsSearch initialQuery={searchQuery} onSearch={handleSearch} />
       </SearchBarContainer>
       <NewsListContainer>
         {searchResultList.length > 0 ? (

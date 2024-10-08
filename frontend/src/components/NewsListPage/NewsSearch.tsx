@@ -11,10 +11,11 @@ type SearchAutoNews = {
 };
 
 type NewsSearchProps = {
-  initialQuery?: string;
+  initialQuery: string;
+  onSearch: (query: string) => void;
 };
 
-const NewsSearch: React.FC<NewsSearchProps> = ({ initialQuery = "" }) => {
+const NewsSearch: React.FC<NewsSearchProps> = ({ initialQuery, onSearch }) => {
   const transitionTo = usePageTransition();
   const inputRef = useRef<HTMLInputElement>(null);
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
@@ -48,6 +49,7 @@ const NewsSearch: React.FC<NewsSearchProps> = ({ initialQuery = "" }) => {
   }, []);
 
   useEffect(() => {
+    setSearchValue(initialQuery);
     if (initialQuery) {
       debouncedSearch(initialQuery);
     }
@@ -115,6 +117,8 @@ const NewsSearch: React.FC<NewsSearchProps> = ({ initialQuery = "" }) => {
     if (searchValue.trim()) {
       const encodedQuery = encodeURIComponent(searchValue.trim());
       transitionTo(`/news/search/${encodedQuery}`);
+      onSearch(searchValue.trim());
+
       inputRef.current?.blur();
     }
   };
@@ -128,6 +132,7 @@ const NewsSearch: React.FC<NewsSearchProps> = ({ initialQuery = "" }) => {
       executeSearch();
     }
   };
+
   return (
     <SearchContainer>
       <input

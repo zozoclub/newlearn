@@ -44,8 +44,8 @@ const NewsDetailHeader: React.FC<NewsHeaderPropsType> = ({
   };
 
   useEffect(() => {
-    if (engData && engData.isScrapped) {
-      setIsScrapped(true);
+    if (engData) {
+      setIsScrapped(engData.isScrapped);
     }
   }, [engData]);
 
@@ -149,7 +149,7 @@ const NewsCategory = styled.div`
 `;
 
 const NewsTitle = styled.div`
-  width: 80%;
+  width: 100%;
   font-size: 1.75rem;
   font-weight: 600;
 `;

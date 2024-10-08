@@ -203,37 +203,44 @@ const WordTestHistory: React.FC = () => {
   if (isMobile) {
     return (
       <>
-        <InfoContainer>
-          <MobileTitleText>
-            최근 평균보다{" "}
-            {wholeCount ? (
-              wholeCount >= monthAverage ? (
-                <InfoTextEmphasizeBlue>많이</InfoTextEmphasizeBlue>
-              ) : (
-                <InfoTextEmphasizeRed>적게</InfoTextEmphasizeRed>
-              )
-            ) : null}{" "}
-            학습했어요.
-          </MobileTitleText>
-          <InfoText>
-            {new Date().getMonth() + 1}월에 학습된 단어 개수 :
-            {wholeCount ? (
-              wholeCount >= monthAverage ? (
-                <InfoTextEmphasizeBlue>{wholeCount}</InfoTextEmphasizeBlue>
-              ) : (
-                <InfoTextEmphasizeRed>{wholeCount}</InfoTextEmphasizeRed>
-              )
-            ) : null}개
-          </InfoText>
-          <StatsHistory>
-            <StatItem>이번 달 테스트 횟수: {currentCount}회</StatItem>
-            <StatItem>맞힌 단어수: {correctCount}개</StatItem>
-            <StatItem>틀린 단어수: {wrongCount}개</StatItem>
-          </StatsHistory>
-        </InfoContainer>
-        <ChartContainer>
-          <Line data={dateData} options={options} />
-        </ChartContainer>
+        {data?.length === 0 ? (
+          <EmptyMessage>첫 테스트를 진행해보세요!</EmptyMessage>
+        ) : (
+          <>
+            <InfoContainer>
+              <MobileTitleText>
+                최근 평균보다{" "}
+                {wholeCount ? (
+                  wholeCount >= monthAverage ? (
+                    <InfoTextEmphasizeBlue>많이</InfoTextEmphasizeBlue>
+                  ) : (
+                    <InfoTextEmphasizeRed>적게</InfoTextEmphasizeRed>
+                  )
+                ) : null}{" "}
+                학습했어요.
+              </MobileTitleText>
+              <InfoText>
+                {new Date().getMonth() + 1}월에 학습된 단어 개수 :
+                {wholeCount ? (
+                  wholeCount >= monthAverage ? (
+                    <InfoTextEmphasizeBlue>{wholeCount}</InfoTextEmphasizeBlue>
+                  ) : (
+                    <InfoTextEmphasizeRed>{wholeCount}</InfoTextEmphasizeRed>
+                  )
+                ) : null}
+                개
+              </InfoText>
+              <StatsHistory>
+                <StatItem>이번 달 테스트 횟수: {currentCount}회</StatItem>
+                <StatItem>맞힌 단어수: {correctCount}개</StatItem>
+                <StatItem>틀린 단어수: {wrongCount}개</StatItem>
+              </StatsHistory>
+            </InfoContainer>
+            <ChartContainer>
+              <Line data={dateData} options={options} />
+            </ChartContainer>
+          </>
+        )}
         {/* 고정된 높이 및 스크롤 가능한 영역 */}
         {cardData.length === 0 ? (
           <EmptyMessage>테스트를 진행하면 리스트들이 출력됩니다.</EmptyMessage>
@@ -280,7 +287,8 @@ const WordTestHistory: React.FC = () => {
                   ) : (
                     <InfoTextEmphasizeRed>{wholeCount}</InfoTextEmphasizeRed>
                   )
-                ) : null}개
+                ) : null}
+                개
               </InfoText>
               <StatsHistory>
                 <StatItem>이번 달 테스트 횟수: {currentCount}회</StatItem>

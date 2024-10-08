@@ -341,15 +341,15 @@ const SpeakingTestPage: React.FC = () => {
       <>
         <HeaderMobile title="Pronounce Test" url="/speakingtesthistory" />
         <MobileContainer>
+          <SpeakingTestReference
+            referenceTest={referenceText}
+            referenceTextTranslate={referenceTextTranslate}
+          />
           <SpeakingTestRealtimeTextMobile
             isExplainText={isExplainText}
             userRecognizedText={userRecognizedText}
             userRecognizingText={recognizingText}
             status={status}
-          />
-          <SpeakingTestReference
-            referenceTest={referenceText}
-            referenceTextTranslate={referenceTextTranslate}
           />
           <SpeakingTestRecord
             startUserRecording={startUserRecording}

@@ -305,7 +305,7 @@ const RestartRecordingIconStyled = styled(RestartRecordingIcon)`
 `;
 
 const RestartText = styled.p`
-  color: ${(props) => props.theme.colors.primary};
+  color: ${(props) => props.theme.colors.text04};
   font-size: 1rem;
   font-weight: bold;
   cursor: pointer;

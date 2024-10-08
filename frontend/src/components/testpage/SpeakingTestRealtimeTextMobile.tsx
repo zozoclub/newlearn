@@ -44,7 +44,7 @@ const SpeakingTestRealtimeText: React.FC<Props> = ({
   return (
     <>
       {!isExplainText ? (
-        <div>
+        <Container>
           {status === "recording" ? (
             <FixedModalContainer $isTop={isModalTop}>
               <ModalContent>
@@ -52,7 +52,7 @@ const SpeakingTestRealtimeText: React.FC<Props> = ({
                   <RecognizingText>
                     인식된 텍스트
                     <br />
-                    <FinalText>{userRecognizingText}</FinalText>
+                    <MiddleText>{userRecognizingText}</MiddleText>
                     <br />
                     <br />
                   </RecognizingText>
@@ -88,7 +88,7 @@ const SpeakingTestRealtimeText: React.FC<Props> = ({
               <Explain>녹음된 음성을 확인해주세요.</Explain>
             </RecognizedContainer>
           )}
-        </div>
+        </Container>
       ) : (
         <TipContainer>
           <Tip>Record Tips</Tip>
@@ -112,10 +112,10 @@ const FixedModalContainer = styled.div<{ $isTop: boolean }>`
   transform: translateX(-50%)
     translateY(${(props) => (props.$isTop ? "-100%" : "0%")});
   bottom: ${(props) => (props.$isTop ? "auto" : "10%")};
-  top: ${(props) => (props.$isTop ? "35%" : "auto")};
+  top: ${(props) => (props.$isTop ? "30%" : "auto")};
   transition: transform 0.5s ease, top 0.5s ease, bottom 0.5s ease; /* 부드러운 이동 애니메이션 */
   margin: auto;
-  width: 300px;
+  width: 80%;
   z-index: 1000;
   pointer-events: none;
 `;
@@ -132,20 +132,28 @@ const ModalContent = styled.div`
 const RecognizingText = styled.div`
   padding-top: 1rem;
   margin-bottom: 0.5rem;
-  color: ${(props) => props.theme.colors.text};
+  color: ${(props) => props.theme.colors.primary};
   font-size: 1.25rem;
   font-weight: 700;
   text-align: center;
 `;
 
+const MiddleText = styled.div`
+  margin: auto;
+  width: 88%;
+  color: ${(props) => props.theme.colors.text};
+  font-size: 1rem;
+  margin-top: 0.5rem;
+  font-weight: 600;
+  line-height: 1.3rem;
+`;
 const FinalText = styled.div`
   margin: auto;
   width: 88%;
   color: ${(props) => props.theme.colors.text};
   font-size: 1rem;
   font-weight: 600;
-  line-height: 1.5rem;
-  margin-top: 1.5rem;
+  line-height: 1.3rem;
 `;
 
 const Instructions = styled.ul`
@@ -187,6 +195,7 @@ const NoText = styled.div`
 
 const Tip = styled.div`
   margin-top: 1rem;
+  margin-left: 0.625rem;
   font-size: 1.125rem;
   font-weight: 700;
 `;
@@ -200,15 +209,18 @@ const TipContainer = styled.div`
 
 const RecognizedContainer = styled.div`
   width: 100%;
-  border-radius: 1rem;
-  background-color: ${(props) => props.theme.colors.highliting + "2A"};
 `;
 
 const ExplainText01 = styled.p`
   padding-bottom: 0.375rem;
   font-size: 0.75rem;
 `;
+
 const ExplainText02 = styled.p`
-  padding-bottom: 1%;
+  padding-bottom: 1rem;
   font-size: 0.75rem;
 `;
+
+const Container = styled.div`
+  width: 100%;
+`

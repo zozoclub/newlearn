@@ -4,9 +4,9 @@ import { useRecoilValue, useSetRecoilState } from "recoil";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
 
-import NewsDetailContent from "@components/newspage/NewsDetailContent";
-import NewsHeader from "@components/newspage/NewsHeader";
-import ProgressBar from "@components/newspage/ProgressBar";
+import NewsDetailContent from "@components/NewsDetailPage/NewsDetailContent";
+import NewsDetailHeader from "@components/NewsDetailPage/NewsDetailHeader";
+import ProgressBar from "@components/NewsDetailPage/ProgressBar";
 import Spinner from "@components/Spinner";
 import { getNewsDetail } from "@services/newsService";
 import userInfoState from "@store/userInfoState";
@@ -17,8 +17,8 @@ import lightThumbnailImage from "@assets/images/lightThumbnail.png";
 import darkThumbnailImage from "@assets/images/darkThumbnail.png";
 import BackArrow from "@assets/icons/BackArrow";
 import { DetailNewsType } from "types/newsType";
-import FilteredRecommendNews from "@components/newspage/FilteredRecommendNews";
-import RecentReadNews from "@components/newspage/RecentReadNews";
+import FilteredRecommendNews from "@components/NewsDetailPage/FilteredRecommendNews";
+import RecentReadNews from "@components/NewsDetailPage/RecentReadNews";
 
 const NewsDetailPage = () => {
   const userInfoData = useRecoilValue(userInfoState);
@@ -83,7 +83,7 @@ const NewsDetailPage = () => {
             <BackArrow height={30} width={30} />
           </div>
           <NewsContainer ref={newsContainerRef}>
-            <NewsHeader
+            <NewsDetailHeader
               difficulty={difficulty}
               engData={engData}
               engIsLoading={engIsLoading}

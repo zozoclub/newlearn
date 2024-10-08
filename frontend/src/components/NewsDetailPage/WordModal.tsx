@@ -59,27 +59,41 @@ const WordModal: React.FC<WordModalPropsType> = ({
   }, [selected.word, selected.engSentence, engData]);
 
   const handleSave = () => {
-    if (!isSaved) {
-      highlightingWord(
-        Number(newsId),
-        difficulty,
-        selected.word,
-        searchResult[0]
-          .slice(0, 5)
-          .map((mean) => mean.text)
-          .join("//"),
-        selected.engSentence,
-        selected.korSentence,
-        searchResult[1][0],
-        searchResult[1][1],
-        searchResult[2][0],
-        searchResult[2][1]
-      ).then(() => {
+    highlightingWord(
+      Number(newsId),
+      difficulty,
+      selected.word,
+      searchResult[0]
+        .slice(0, 5)
+        .map((mean) => mean.text)
+        .join("//"),
+      selected.engSentence,
+      selected.korSentence,
+      searchResult[1][0],
+      searchResult[1][1],
+      searchResult[2][0],
+      searchResult[2][1]
+    ).then((deleted: boolean) => {
+      if (deleted) {
         queryClient.setQueryData<DetailNewsType>(
           ["getEngNewsDetail", difficulty, newsId],
           (oldData) => {
             if (!oldData) return oldData;
 
+            return {
+              ...oldData,
+              words: oldData.words.filter((word) => {
+                return word.word !== selected.word;
+              }),
+            };
+          }
+        );
+      } else {
+        queryClient.setQueryData<DetailNewsType>(
+          ["getEngNewsDetail", difficulty, newsId],
+          (oldData) => {
+            if (!oldData) return oldData;
+            console.log(selected.engSentence, selected.word);
             return {
               ...oldData,
               words: [
@@ -89,10 +103,13 @@ const WordModal: React.FC<WordModalPropsType> = ({
             };
           }
         );
-        setIsJustSaved(true); // 저장됨 애니메이션 트리거
-        setTimeout(() => setIsJustSaved(false), 2000); // 애니메이션 2초 후 원래 상태로 복귀
-      });
-    }
+      }
+
+      console.log(engData);
+
+      setIsJustSaved(true); // 저장됨 애니메이션 트리거
+      setTimeout(() => setIsJustSaved(false), 2000); // 애니메이션 2초 후 원래 상태로 복귀
+    });
   };
 
   return (
@@ -197,7 +214,7 @@ const fadeInOut = keyframes`
 
 const SaveButton = styled.div<{ $isSaved: boolean; $isJustSaved: boolean }>`
   align-self: flex-end;
-  width: 5rem;
+  min-width: 5rem;
   height: 2rem;
   font-size: 1rem;
   text-align: center;

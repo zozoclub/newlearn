@@ -1,17 +1,17 @@
 import styled from "styled-components";
 
-import Recommand from "@components/newspage/Recommend";
-import NewsList from "@components/newspage/NewsList";
+import Recommand from "@components/NewsListPage/Recommend";
+import NewsList from "@components/NewsListPage/NewsList";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import Pagination from "@components/newspage/Pagination";
+import Pagination from "@components/NewsListPage/Pagination";
 import { useSetRecoilState } from "recoil";
 import locationState from "@store/locationState";
 import { useMediaQuery } from "react-responsive";
 
 import FullLogo from "@components/common/FullLogo";
 import newsSearchIcon from "@assets/icons/searchIcon.svg";
-import NewsListHeader from "@components/newspage/NewsListHeader";
+import NewsListHeader from "@components/NewsListPage/NewsListHeader";
 
 const NewsPage = () => {
   const { category, page } = useParams();

@@ -27,10 +27,12 @@ export function useRankings() {
     UseQueryResult<ReadRankingType[], Error>
   ];
 
-  const isLoading = results.some((result) => result.isLoading);
+  const [pointIsLoading, readIsLoading] = results.map(
+    (result) => result.isLoading
+  );
   const [pointRankingList, readRankingList] = results.map(
     (result) => result.data
   );
 
-  return { isLoading, pointRankingList, readRankingList };
+  return { pointIsLoading, readIsLoading, pointRankingList, readRankingList };
 }

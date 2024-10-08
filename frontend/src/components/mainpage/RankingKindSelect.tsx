@@ -31,7 +31,7 @@ const RankingKindContainer = styled.div<{ $type: "point" | "read" }>`
   display: flex;
   align-items: center;
   position: relative;
-  width: 10rem;
+  width: 10.5rem;
   height: 10%;
   margin: 0 auto;
   padding: 0 1rem;
@@ -51,7 +51,7 @@ const RankingKindContainer = styled.div<{ $type: "point" | "read" }>`
     transition: transform 0.5s;
     border-radius: 1rem;
     background-color: ${(props) => props.theme.colors.primary};
-    width: 4rem;
+    width: 4.5rem;
     padding: 0 1rem;
   }
 `;
@@ -67,5 +67,5 @@ const RankingKind = styled.div<{
   transition: color 0.5s;
   font-size: 1.125rem;
   text-align: center;
-  left: ${(props) => (props.$type === "point" ? "0.75rem" : "6.5rem")};
+  left: ${(props) => (props.$type === "point" ? "0.75rem" : "6.75rem")};
 `;

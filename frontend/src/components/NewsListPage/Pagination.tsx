@@ -98,5 +98,7 @@ const PageButton = styled.div<{ $active?: boolean }>`
   @media (max-width: 767px) {
     padding: 0.5rem;
     font-weight: normal;
+    font-family: "Righteous";
+    margin-bottom: 1rem;
   }
 `;

@@ -20,6 +20,7 @@ import com.newlearn.backend.user.model.Users;
 import com.newlearn.backend.word.dto.request.RestudyResultRequestDTO;
 import com.newlearn.backend.word.dto.request.WordRequestDto;
 import com.newlearn.backend.word.dto.response.RestudyWordResponseDTO;
+import com.newlearn.backend.word.dto.response.WordAddResponseDTO;
 import com.newlearn.backend.word.dto.response.WordDetailResponseDTO;
 import com.newlearn.backend.word.dto.response.WordResponseDTO;
 import com.newlearn.backend.word.model.Word;
@@ -43,7 +44,7 @@ public class WordServiceImpl implements WordService {
 
 	@Transactional
 	@Override
-	public Long addWord(WordRequestDto wordRequestDto, Users user) throws Exception {
+	public WordAddResponseDTO addWord(WordRequestDto wordRequestDto, Users user) throws Exception {
 
 		List<Word> words = wordRepository.findAllByWordAndUser(wordRequestDto.getWord(), user);
 		for(Word word : words) {
@@ -55,7 +56,7 @@ public class WordServiceImpl implements WordService {
 					word.setDelete(true);
 				}
 				wordRepository.save(word);
-				return word.getWordId();
+				return new WordAddResponseDTO(word.getWordId(), word.isDelete());
 			}
 		}
 
@@ -68,7 +69,7 @@ public class WordServiceImpl implements WordService {
 		WordSentence addWordSentence = wordRequestDto.toSentenceEntity(savedWord);
 		wordSentenceRepository.save(addWordSentence);
 
-		return savedWord.getWordId();
+		return new WordAddResponseDTO(savedWord.getWordId(), savedWord.isDelete());
 	}
 
 	@Override

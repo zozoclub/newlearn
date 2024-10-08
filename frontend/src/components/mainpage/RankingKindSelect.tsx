@@ -54,6 +54,10 @@ const RankingKindContainer = styled.div<{ $type: "point" | "read" }>`
     width: 4rem;
     padding: 0 1rem;
   }
+
+  @media (max-width: 767px) {
+    margin: 0;
+  }
 `;
 
 const RankingKind = styled.div<{

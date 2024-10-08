@@ -26,6 +26,8 @@ export const lightTheme: Theme = {
     readonly: "#ececec",
     placeholder: "#c1c1c1",
     highliting: "#0268ed",
+    mobileBorder: "#CECECE",
+    divider: "#ECECEC",
   },
   shadows: {
     xsmall: "0.125rem 0.125rem 0.125rem #4747477F",

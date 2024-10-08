@@ -183,7 +183,7 @@ const CategoryButton = styled.button`
     padding: 0.375rem 0rem;
     font-size: 0.875rem;
     background: none;
-    color: gray;
+    color: ${(props) => props.theme.colors.text04};
   }
 `;
 

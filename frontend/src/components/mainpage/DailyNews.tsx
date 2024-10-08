@@ -56,8 +56,8 @@ const Container = styled.div`
     overflow: hidden;
   }
   @media screen and (max-width: 767px) {
-    width: 100vw;
-    aspect-ratio: 1.5;
+    margin: 0 1rem 0.5rem;
+    max-width: calc(100vw-32px);
   }
 `;
 

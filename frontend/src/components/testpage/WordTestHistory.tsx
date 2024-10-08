@@ -430,6 +430,7 @@ const EmptyMessage = styled.p`
   margin-top: 5rem;
   justify-content: center;
   margin: auto;
+  padding-top: 10rem;
   text-align: center;
   font-size: 1.25rem;
   color: ${(props) => props.theme.colors.text04};

@@ -128,9 +128,8 @@ const AppContainer = styled.div`
   }
   @media screen and (max-width: 767px) {
     width: 100vw;
-    min-height: 100vh - 4rem;
-    height: calc(100vh - 4rem);
-    padding-bottom: 4rem;
+    min-height: 100vh;
+    height: 100vh;
   }
 `;
 

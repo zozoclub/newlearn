@@ -82,7 +82,26 @@ const MainPage = () => {
     return (
       <Container>
         <NewsContainer id="step2">
-          <Clock />
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <Clock />
+            <div
+              style={{
+                color: "gray",
+                fontFamily: "Righteous",
+                fontWeight: "400",
+                fontSize: "2rem",
+                marginRight: "1rem",
+              }}
+            >
+              Today's TOP 10
+            </div>
+          </div>
           <DailyNews />
         </NewsContainer>
         <WidgetContainer>

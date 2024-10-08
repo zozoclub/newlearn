@@ -31,7 +31,7 @@ const Clock = () => {
 const Container = styled.div`
   height: 5.5rem;
   font-size: 1.25rem;
-  font-weight: 200;
+  font-weight: 300;
 `;
 
 const FormattedTime = styled.div`

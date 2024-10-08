@@ -148,7 +148,7 @@ const TopRanking = () => {
         <LoadingDiv>
           <Spinner />
         </LoadingDiv>
-      ) : selectedType === "point" ? (
+      ) : selectedType === "p" ? (
         renderRankings(pointRankingList)
       ) : (
         renderRankings(readRankingList)

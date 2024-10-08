@@ -1,12 +1,6 @@
 import Button from "@components/Button";
-import {
-  CheckAction,
-  CheckActionObject,
-  SignUpAction,
-  SignUpActionObject,
-  SignUpStateType,
-} from "types/signUpType";
-import { Dispatch, useEffect } from "react";
+import { categoriesState } from "@store/signUpState";
+import { useRecoilState } from "recoil";
 import styled from "styled-components";
 
 const categories = [
@@ -18,46 +12,33 @@ const categories = [
   { name: "IT/과학" },
 ];
 
-type SelectCategoryProps = {
-  signUpState: SignUpStateType;
-  signUpDispatch: Dispatch<SignUpActionObject>;
-  checkDispatch: Dispatch<CheckActionObject>;
-};
-
-const SelectCategory: React.FC<SelectCategoryProps> = ({
-  signUpState,
-  signUpDispatch,
-  checkDispatch,
-}) => {
+const SelectCategory = () => {
+  const [categoriesValue, setCategoriesState] = useRecoilState(categoriesState);
   const handleCategoryClick = (categoryName: string) => {
-    signUpDispatch({
-      type: SignUpAction.CHANGE_CATEGORIES,
-      payload: categoryName,
+    setCategoriesState((prevCategories) => {
+      if (prevCategories.includes(categoryName)) {
+        // 이미 선택된 카테고리라면 제거
+        return prevCategories.filter((cat) => cat !== categoryName);
+      } else if (prevCategories.length < 3) {
+        // 카테고리가 3개 미만일 때만 추가
+        return [...prevCategories, categoryName];
+      }
+      return prevCategories; // 카테고리가 3개 이상이면 변경하지 않음
     });
   };
-
-  useEffect(() => {
-    checkDispatch({
-      type: CheckAction.CHECK_CATEGORIES,
-      payload: signUpState.categories,
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [signUpState.categories]);
 
   return (
     <div className="category">
       <div className="desc">
         관심 카테고리
-        <CategoryCount>{signUpState.categories.length}/3</CategoryCount>
+        <CategoryCount>{categoriesValue.length}/3</CategoryCount>
       </div>
       <div className="buttons">
         {categories.map((category) => (
           <Button
             key={category.name}
             $varient={
-              signUpState.categories.includes(category.name)
-                ? "primary"
-                : "cancel"
+              categoriesValue.includes(category.name) ? "primary" : "cancel"
             }
             size={"medium"}
             onClick={() => {

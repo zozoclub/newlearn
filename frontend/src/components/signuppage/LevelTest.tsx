@@ -1,12 +1,7 @@
-import { Dispatch, useEffect, useState } from "react";
+import { difficultyState } from "@store/signUpState";
+import { useEffect, useState } from "react";
+import { useSetRecoilState } from "recoil";
 import styled from "styled-components";
-import {
-  CheckAction,
-  CheckActionObject,
-  SignUpAction,
-  SignUpActionObject,
-  SignUpStateType,
-} from "types/signUpType";
 
 type WordType = {
   [key: string]: string;
@@ -176,21 +171,13 @@ const score: { [key: string]: number } = {
 
 type LevelTestProps = {
   setPageNum: (pageNum: number) => void;
-  signUpState: SignUpStateType;
-  signUpDispatch: Dispatch<SignUpActionObject>;
-  checkDispatch: Dispatch<CheckActionObject>;
 };
-const LevelTestPage: React.FC<LevelTestProps> = ({
-  setPageNum,
-  signUpState,
-  signUpDispatch,
-  checkDispatch,
-}) => {
+const LevelTestPage: React.FC<LevelTestProps> = ({ setPageNum }) => {
   const [words, setWords] = useState<WordWithLevel[]>([]);
   const [selectedWords, setSelectedWords] = useState<Set<string>>(new Set());
   const [totalScore, setTotalScore] = useState<number>(0);
   const [isTestComplete, setIsTestComplete] = useState<boolean>(false);
-  const [difficulty, setDifficulty] = useState<number>(1);
+  const setDifficultyState = useSetRecoilState(difficultyState);
 
   useEffect(() => {
     const randomizedWords = combinedData.sort(() => 0.5 - Math.random());
@@ -225,25 +212,13 @@ const LevelTestPage: React.FC<LevelTestProps> = ({
 
   useEffect(() => {
     const { value } = calDifficulty();
-    setDifficulty(value);
+    setDifficultyState(value);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [totalScore]);
 
-  const handleCompleteTest = (difficulty: number) => {
+  const handleCompleteTest = () => {
     setIsTestComplete(true);
-    signUpDispatch({
-      type: SignUpAction.CHANGE_DIFFICULTY,
-      payload: difficulty,
-    });
   };
-
-  useEffect(() => {
-    checkDispatch({
-      type: CheckAction.CHECK_DIFFICULTY,
-      payload: signUpState.difficulty,
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [signUpState.difficulty]);
 
   return (
     <PageContainer>
@@ -278,7 +253,7 @@ const LevelTestPage: React.FC<LevelTestProps> = ({
       ) : (
         <CompleteTestButton
           $isVisible={!isTestComplete}
-          onClick={() => handleCompleteTest(difficulty)}
+          onClick={handleCompleteTest}
         >
           선택 완료
         </CompleteTestButton>
@@ -336,11 +311,6 @@ const Difficulty = styled.span`
   font-size: 1.5rem;
   font-weight: bold;
 `;
-// const ResultContainer = styled.div`
-//   margin-top: 1.5rem;
-//   color: gray;
-//   font-size: 1.25rem;
-// `;
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -360,14 +330,6 @@ const Button = styled.button`
   cursor: pointer;
   transition: background-color 0.3s;
 `;
-
-// const CompleteTestButton = styled(Button)`
-//   margin-top: 3rem;
-//   background-color: ${(props) => props.theme.colors.primary};
-//   &:hover {
-//     background-color: ${(props) => props.theme.colors.primaryPress};
-//   }
-// `;
 
 const SubmitButton = styled(Button)`
   background-color: ${(props) => props.theme.colors.primary};

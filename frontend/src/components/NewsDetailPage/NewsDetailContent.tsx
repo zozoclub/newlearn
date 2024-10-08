@@ -1,6 +1,6 @@
 import styled from "styled-components";
-import LoadingDiv from "./LoadingDiv";
-import LoadingBar from "./LoadingBar";
+import LoadingDiv from "@components/common/LoadingDiv";
+import LoadingBar from "@components/common/LoadingBar";
 import { useWordSelection } from "@utils/wordSelection";
 import { searchDaumDictionary, SearchResult } from "@services/newsService";
 import { useRecoilValue } from "recoil";
@@ -39,7 +39,7 @@ const NewsDetailContent: React.FC<NewsDetailContentType> = ({
 }) => {
   const [engContent, setEngContent] = useState<string>("");
   const [korContent, setKorContent] = useState<string>("");
-  const { handleSelectionChange } = useWordSelection(engContent, korContent);
+  const { handleSelection } = useWordSelection(engContent, korContent);
   const languageData = useRecoilValue(languageState);
   const [searchResult, setSearchResult] =
     useState<[SearchResult[], string[], string[]]>();
@@ -56,6 +56,47 @@ const NewsDetailContent: React.FC<NewsDetailContentType> = ({
   const [slicedContent, setSlicedContent] = useState<
     { sentence: string; words: string[] }[]
   >([]);
+
+  const handleSelectionEnd = (event: React.TouchEvent | React.MouseEvent) => {
+    const result = handleSelection();
+    if (result) {
+      const prevWord = result.word;
+      // 선택된 단어에 대한 추가 정보를 외부 사전에서 조회
+      searchDaumDictionary(result.word)
+        .then((searchResult) => {
+          console.log("Daum Dictionary Result:", searchResult);
+          setSearchResult(searchResult);
+
+          setSelected({
+            word: result.word,
+            engSentence: result.englishSentence,
+            korSentence: result.koreanSentence,
+          });
+          if (prevWord !== selected.word) {
+            let x: number, y: number;
+
+            if ("touches" in event) {
+              // Touch event
+              const touch = event.changedTouches[0];
+              x = touch.clientX;
+              y = touch.clientY;
+            } else {
+              // Mouse event
+              x = (event as React.MouseEvent).clientX;
+              y = (event as React.MouseEvent).clientY;
+            }
+
+            setWordModalPosition({
+              x: window.innerWidth - x < 200 ? window.screenLeft + 200 : x,
+              y: y + 200,
+            });
+          }
+        })
+        .catch((error) => {
+          console.error("Error searching Daum Dictionary:", error);
+        });
+    }
+  };
 
   useEffect(() => {
     if (engData) {
@@ -128,38 +169,8 @@ const NewsDetailContent: React.FC<NewsDetailContentType> = ({
             maxWidth: "100%",
             flexWrap: "wrap",
           }}
-          onMouseUp={(event) => {
-            const result = handleSelectionChange();
-            if (result) {
-              const prevWord = result.word;
-              // 선택된 단어에 대한 추가 정보를 외부 사전에서 조회
-              searchDaumDictionary(result.word)
-                .then((searchResult) => {
-                  console.log("Daum Dictionary Result:", searchResult);
-                  setSearchResult(searchResult);
-
-                  setSelected({
-                    word: result.word,
-                    engSentence: result.englishSentence,
-                    korSentence: result.koreanSentence,
-                  });
-                  if (prevWord !== selected.word) {
-                    console.log(window.innerWidth);
-                    console.log(event.pageX);
-                    setWordModalPosition({
-                      x:
-                        window.innerWidth - event.pageX < 200
-                          ? window.screenLeft - 200
-                          : event.pageX - 200,
-                      y: event.pageY - 125,
-                    });
-                  }
-                })
-                .catch((error) => {
-                  console.error("Error searching Daum Dictionary:", error);
-                });
-            }
-          }}
+          onMouseUp={handleSelectionEnd}
+          onTouchEnd={handleSelectionEnd}
         >
           {languageData === "en"
             ? slicedContent.map((slice) =>
@@ -168,7 +179,16 @@ const NewsDetailContent: React.FC<NewsDetailContentType> = ({
                     key={index}
                     style={{
                       color: `${
-                        engData?.words.some((engWord) => engWord.word === word)
+                        engData?.words.some((engWord) => {
+                          const cleanWord = word.replace(
+                            /^[^\w]+|[^\w]+$/g,
+                            ""
+                          );
+                          return (
+                            engWord.word.toLowerCase() ===
+                            cleanWord.toLowerCase()
+                          );
+                        })
                           ? "red"
                           : ""
                       }`,

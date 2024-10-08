@@ -1,7 +1,7 @@
-import NewsSearch from "@components/newspage/NewsSearch";
+import NewsSearch from "@components/NewsListPage/NewsSearch";
 import { useLocation, useParams } from "react-router-dom";
 import styled from "styled-components";
-import NewsListItem from "@components/newspage/NewsListItem";
+import NewsListItem from "@components/NewsListPage/NewsListItem";
 import { searchNews } from "@services/searchService";
 import { useQuery } from "@tanstack/react-query";
 import { useRecoilValue } from "recoil";

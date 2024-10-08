@@ -15,9 +15,11 @@ import Spinner from "@components/Spinner";
 import { useRankings } from "@hooks/useRankings";
 
 const TopRanking = () => {
-  const { isLoading, pointRankingList, readRankingList } = useRankings();
+  const { pointIsLoading, readIsLoading, pointRankingList, readRankingList } =
+    useRankings();
   const [animate, setAnimate] = useState(false);
   const [selectedType] = useRecoilValue(selectedRankingState);
+  const isLoading = pointIsLoading || readIsLoading;
 
   // 랭킹 유형 변경 시 animation
   useEffect(() => {

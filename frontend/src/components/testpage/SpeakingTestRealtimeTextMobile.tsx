@@ -12,9 +12,9 @@ const SpeakingTestRealtimeText: React.FC<Props> = ({
   userRecognizingText,
   userRecognizedText,
   isExplainText,
-  status, // status 녹음 상태
+  status,
 }) => {
-  const [isModalTop, setIsModalTop] = useState(false); // 모달 위치를 관리하는 상태
+  const [isModalTop, setIsModalTop] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -22,12 +22,12 @@ const SpeakingTestRealtimeText: React.FC<Props> = ({
       console.log("Current scroll position:", scrollPosition); // 스크롤 위치 디버깅
 
       // 스크롤 위치에 따라 모달의 위치를 업데이트
-      if (scrollPosition > 200) {
-        setIsModalTop(true); // 스크롤 위치가 400px 이상일 경우 모달을 위로 이동
-        console.log('위로'); // 상태 변경 디버깅
+      if (scrollPosition > 300) {
+        setIsModalTop(true);
+        console.log("위로");
       } else {
-        setIsModalTop(false); // 그 외의 경우 모달을 아래에 위치
-        console.log('아래로'); // 상태 변경 디버깅
+        setIsModalTop(false);
+        console.log("아래로");
       }
     };
 
@@ -58,11 +58,14 @@ const SpeakingTestRealtimeText: React.FC<Props> = ({
                   </RecognizingText>
                 ) : (
                   <>
-                    <InstructionText>실시간 텍스트가 출력됩니다.</InstructionText>
+                    <InstructionText>
+                      실시간 텍스트가 출력됩니다.
+                    </InstructionText>
                     <br />
                     <br />
                     <Explain>
-                      발음 시 본 화면이 바뀌지 않는다면, 마이크 설정을 확인해 주세요.
+                      발음 시 본 화면이 바뀌지 않는다면, 마이크 설정을 확인해
+                      주세요.
                     </Explain>
                   </>
                 )}
@@ -81,22 +84,23 @@ const SpeakingTestRealtimeText: React.FC<Props> = ({
               ))}
             </FinalText>
           ) : (
-            <>
+            <RecognizedContainer>
               <NoText>최종 인식된 텍스트가 없습니다.</NoText>
               <br />
-              <Explain>
-                녹음된 음성을 들어보고, 소리가 나지 않는다면 마이크 상태를 확인해 주세요.
-              </Explain>
-            </>
+              <Explain>녹음된 음성을 확인해주세요.</Explain>
+            </RecognizedContainer>
           )}
         </div>
       ) : (
-        <Instructions>
-          <li>녹음이 시작된 후 1초 뒤에 발음을 시작하세요.</li>
-          <li>조용한 환경에서 녹음을 진행해 주세요.</li>
-          <li>녹음이 끝나면 정지 버튼을 눌러주세요.</li>
-          <li>소리가 감지되지 않으면 중지될 수 있습니다.</li>
-        </Instructions>
+        <TipContainer>
+          <Tip>Record Tips</Tip>
+          <Instructions>
+            <li>시작 후 1초 뒤에 발음을 시작하세요.</li>
+            <li>조용한 환경에서 녹음을 진행해 주세요.</li>
+            <li>녹음이 끝나면 정지 버튼을 눌러주세요.</li>
+            <li>음성이 감지되지 않으면 중지될 수 있습니다.</li>
+          </Instructions>
+        </TipContainer>
       )}
     </>
   );
@@ -107,16 +111,16 @@ export default SpeakingTestRealtimeText;
 const FixedModalContainer = styled.div<{ $isTop: boolean }>`
   position: fixed;
   left: 50%;
-  transform: translateX(-50%) translateY(${(props) => (props.$isTop ? '-100%' : '0%')});
-  bottom: ${(props) => (props.$isTop ? 'auto' : '10%')};
-  top: ${(props) => (props.$isTop ? '35%' : 'auto')};
+  transform: translateX(-50%)
+    translateY(${(props) => (props.$isTop ? "-100%" : "0%")});
+  bottom: ${(props) => (props.$isTop ? "auto" : "10%")};
+  top: ${(props) => (props.$isTop ? "35%" : "auto")};
   transition: transform 0.5s ease, top 0.5s ease, bottom 0.5s ease; /* 부드러운 이동 애니메이션 */
   margin: auto;
-  max-width: 500px;
+  width: 300px;
   z-index: 1000;
   pointer-events: none;
 `;
-
 
 const ModalContent = styled.div`
   background-color: ${(props) => props.theme.colors.background};
@@ -131,11 +135,13 @@ const RecognizingText = styled.div`
   margin-bottom: 0.5rem;
   color: ${(props) => props.theme.colors.text};
   font-size: 1.25rem;
-  font-weight: 700; 
+  font-weight: 700;
   text-align: center;
 `;
 
 const FinalText = styled.div`
+  margin: auto;
+  width: 90%;
   color: ${(props) => props.theme.colors.text};
   font-size: 1rem;
   font-weight: 600;
@@ -167,7 +173,7 @@ const Instructions = styled.ul`
       content: "✓";
       margin-right: 0.75rem;
       color: ${(props) => props.theme.colors.primary}; /* 초록색 체크마크 */
-      font-size: 1.25rem;
+      font-size: 1rem;
     }
   }
 `;
@@ -183,9 +189,28 @@ const Explain = styled.div`
 
 const NoText = styled.div`
   color: ${(props) => props.theme.colors.danger};
-  font-size: 1.25rem;
+  font-size: 1rem;
   font-weight: bold;
   text-align: center;
   margin-top: 1.5rem;
   padding: 1rem;
+`;
+
+const Tip = styled.div`
+  margin-top: 1rem;
+  font-size: 1.125rem;
+  font-weight: 700;
+`;
+
+const TipContainer = styled.div`
+  width: 80%;
+  padding: 0 1rem;
+  border-radius: 1rem;
+  background-color: ${(props) => props.theme.colors.highliting + "2A"};
+`;
+
+const RecognizedContainer = styled.div`
+  width: 100%;
+  border-radius: 1rem;
+  background-color: ${(props) => props.theme.colors.highliting + "2A"};
 `;

@@ -222,6 +222,7 @@ const StartButton = styled.button`
   border-radius: 2rem;
   border: none;
   color: white;
+  cursor: pointer;
   &:hover {
     background-color: ${(props) => props.theme.colors.primaryPress};
   }

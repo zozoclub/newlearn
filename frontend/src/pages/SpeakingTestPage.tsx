@@ -29,9 +29,6 @@ import { isExpModalState } from "@store/expState";
 import { useMediaQuery } from "react-responsive"; // 모바일 여부 감지
 import SpeakingTestRealtimeTextMobile from "@components/testpage/SpeakingTestRealtimeTextMobile";
 
-
-
-
 const SpeakingTestPage: React.FC = () => {
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const setExpModal = useSetRecoilState(isExpModalState);
@@ -181,7 +178,13 @@ const SpeakingTestPage: React.FC = () => {
       });
     }
   };
-
+  const handleScrollToTop = () => {
+    // 화면을 가장 위로 스크롤
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth", // 부드럽게 스크롤
+    });
+  };
   // react-media-recorder 녹음 관리
   const { startRecording, stopRecording, mediaBlobUrl, status } =
     useReactMediaRecorder({ audio: true });
@@ -191,6 +194,7 @@ const SpeakingTestPage: React.FC = () => {
     setRecognizingText("");
     startRecording();
     startRecognition();
+    handleScrollToTop();
   };
 
   const stopUserRecording = () => {
@@ -314,9 +318,9 @@ const SpeakingTestPage: React.FC = () => {
           setExpModal({
             isOpen: true,
             experience: 20,
-            action: "예문 스피킹 테스트  "
-          })
-        }
+            action: "예문 스피킹 테스트  ",
+          });
+        },
       });
       setIsSubmitLoading(false);
     };
@@ -343,6 +347,10 @@ const SpeakingTestPage: React.FC = () => {
             userRecognizingText={recognizingText}
             status={status}
           />
+          <SpeakingTestReference
+            referenceTest={referenceText}
+            referenceTextTranslate={referenceTextTranslate}
+          />
           <SpeakingTestRecord
             startUserRecording={startUserRecording}
             stopUserRecording={stopUserRecording}
@@ -353,18 +361,14 @@ const SpeakingTestPage: React.FC = () => {
             startRecordingModal={startRecordingModal}
             closeRecordingModal={closeRecordingModal}
           />
-          <SpeakingTestReference
-            referenceTest={referenceText}
-            referenceTextTranslate={referenceTextTranslate}
-          />
-        <SubmitButtonContainer>
-          <SubmitButton
-            onClick={handleRecordingDataSubmit}
-            disabled={isSubmitDisabled || !userRecognizedText}
-          >
-            {isSubmitLoading ? <Spinner></Spinner> : "제출하기"}
-          </SubmitButton>
-        </SubmitButtonContainer>
+          <SubmitButtonContainer>
+            <SubmitButton
+              onClick={handleRecordingDataSubmit}
+              disabled={isSubmitDisabled || !userRecognizedText}
+            >
+              {isSubmitLoading ? <Spinner></Spinner> : "제출하기"}
+            </SubmitButton>
+          </SubmitButtonContainer>
         </MobileContainer>
         <Modal
           isOpen={isSubmitModal}
@@ -382,7 +386,7 @@ const SpeakingTestPage: React.FC = () => {
           </ModalButtonContainer>
         </Modal>
       </>
-    )
+    );
   }
 
   return (
@@ -519,7 +523,7 @@ const SubmitButton = styled.button<{ disabled: boolean }>`
 
   &:hover {
     background-color: ${(props) =>
-    props.disabled ? "#ccc" : props.theme.colors.primaryPress};
+      props.disabled ? "#ccc" : props.theme.colors.primaryPress};
   }
 `;
 
@@ -565,7 +569,6 @@ const MobileContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.5rem;
+  gap: 1rem;
   padding-bottom: 5rem;
 `;
-

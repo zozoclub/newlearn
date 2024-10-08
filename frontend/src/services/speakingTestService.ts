@@ -82,6 +82,10 @@ export type PronounceTestResultListDto = {
   audioFileId: number;
   totalScore: number;
   createdAt: string;
+  accuracyScore: number;
+  fluencyScore: number;
+  completenessScore: number;
+  prosodyScore: number;
 };
 
 // 발음 테스트 결과 리스트 조회

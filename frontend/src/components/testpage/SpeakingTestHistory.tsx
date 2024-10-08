@@ -105,7 +105,7 @@ const SpeakingTestHistory: React.FC = () => {
       );
       const monthKey = `${(pastDate.getMonth() + 1)
         .toString()
-        .padStart(2, "0")}월`;
+        .padStart(2)}월`;
       labels.push(monthKey);
     }
     return labels;
@@ -178,6 +178,12 @@ const SpeakingTestHistory: React.FC = () => {
         },
         grid: {
           display: false, // X축 그리드 라인 숨기기
+        },
+        ticks: {
+          font: {
+            size: 16, // 폰트 크기 설정 
+          },
+          color: "#999",
         },
       },
       y: {
@@ -259,9 +265,13 @@ const SpeakingTestHistory: React.FC = () => {
             {data?.map((test: PronounceTestResultListDto, index: number) => (
               <SpeakingTestHistoryCardList
                 audioFileId={test.audioFileId}
-                score={test.totalScore}
                 date={formatDate(test.createdAt)}
                 key={index}
+                totalScore={test.totalScore}
+                accuracyScore={test.accuracyScore}
+                fluencyScore={test.fluencyScore}
+                prosodyScore={test.prosodyScore}
+                completenessScore={test.completenessScore}
               />
             ))}
           </ScrollableTestHistoryList>
@@ -330,9 +340,13 @@ const SpeakingTestHistory: React.FC = () => {
           {data?.map((test: PronounceTestResultListDto, index: number) => (
             <SpeakingTestHistoryCardList
               audioFileId={test.audioFileId}
-              score={test.totalScore}
               date={formatDate(test.createdAt)}
               key={index}
+              totalScore={test.totalScore}
+              accuracyScore={test.accuracyScore}
+              fluencyScore={test.fluencyScore}
+              prosodyScore={test.prosodyScore}
+              completenessScore={test.completenessScore}
             />
           ))}
         </ScrollableTestHistoryList>

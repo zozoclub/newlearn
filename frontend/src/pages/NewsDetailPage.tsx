@@ -19,6 +19,9 @@ import BackArrow from "@assets/icons/BackArrow";
 import { DetailNewsType } from "types/newsType";
 import FilteredRecommendNews from "@components/NewsDetailPage/FilteredRecommendNews";
 import RecentReadNews from "@components/NewsDetailPage/RecentReadNews";
+import goldMedal from "@assets/images/gold-medal.png";
+import silverMedal from "@assets/images/silver-medal.png";
+import bronzeMedal from "@assets/images/bronze-medal.png";
 
 const NewsDetailPage = () => {
   const userInfoData = useRecoilValue(userInfoState);
@@ -79,8 +82,23 @@ const NewsDetailPage = () => {
       />
       <Container>
         <News>
-          <div style={{ marginBottom: "1.5rem" }}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              marginBottom: "1.5rem",
+            }}
+          >
             <BackArrow height={30} width={30} />
+            <div style={{ minHeight: "3rem" }}>
+              {!engIsLoading && isRead && (
+                <>
+                  {isRead[2] && <Medal src={bronzeMedal} />}
+                  {isRead[1] && <Medal src={silverMedal} />}
+                  {isRead[0] && <Medal src={goldMedal} />}
+                </>
+              )}
+            </div>
           </div>
           <NewsContainer ref={newsContainerRef}>
             <NewsDetailHeader
@@ -230,15 +248,26 @@ const SubContainer = styled.div`
     }
   }
   .content-div {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     width: 52.5%;
-    padding: 0 2.5% 0 0;
-    font-size: 1.125rem;
-    line-height: 1.25rem;
-    height: 3.75rem;
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 3;
+    padding: 3% 1.5% 2%;
+    letter-spacing: 0.03rem;
+    .title {
+      font-size: 1.125rem;
+      line-height: 1.25rem;
+      height: 3.75rem;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 3;
+      @media screen and (min-width: 768px) and (max-width: 1279px) {
+        font-size: 1.5rem;
+        line-height: 1.75rem;
+        height: 5.25rem;
+      }
+    }
   }
   .thumbnail-div {
     position: relative;
@@ -259,6 +288,14 @@ const SubContainer = styled.div`
     .thumbnail-div {
       width: 30%;
     }
+  }
+`;
+
+const Medal = styled.img`
+  width: 3rem;
+  @media (max-width: 768px) {
+    width: 1.75rem;
+    height: 1.75rem;
   }
 `;
 

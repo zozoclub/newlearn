@@ -4,24 +4,44 @@ import goldMedal from "@assets/images/gold-medal.png";
 import silverMedal from "@assets/images/silver-medal.png";
 import bronzeMedal from "@assets/images/bronze-medal.png";
 import { usePageTransition } from "@hooks/usePageTransition";
-
+import lightThumbnailImage from "@assets/images/lightThumbnail.png";
+import darkThumbnailImage from "@assets/images/darkThumbnail.png";
+import { useMediaQuery } from "react-responsive";
 const NewsListItem: React.FC<{ news: ScrapNewsType }> = ({ news }) => {
   const transitionTo = usePageTransition();
+  const isTablet = useMediaQuery({ query: "(max-width: 1279px)" });
 
   return (
     <Container onClick={() => transitionTo(`/news/detail/${news.newsId}`)}>
-      <ThumbnailImage>
-        <img src={news.thumbnailImageUrl} alt="noThumbnail" />
-      </ThumbnailImage>
-      <div style={{ position: "relative" }}>
+      <ThumbnailImageDiv>
+        {news.thumbnailImageUrl ? (
+          <ThumbnailImage src={news.thumbnailImageUrl} />
+        ) : (
+          <>
+            <ThumbnailImage src={lightThumbnailImage} />
+            <DarkThumbnailImage src={darkThumbnailImage} />
+          </>
+        )}
+      </ThumbnailImageDiv>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+          position: "relative",
+        }}
+      >
         <Title>{news.title}</Title>
-        <Content>{news.content}</Content>
-        <Category>
+        {/* 데스크탑에서만 내용 표시 */}
+        {!isTablet && <Content>{news.content}</Content>}
+        <Footer>
           <CategoryButton>{news.category}</CategoryButton>
-        </Category>
-        {news.isRead[0] && <GoldMedal src={goldMedal} alt="" />}
-        {news.isRead[1] && <SilverMedal src={silverMedal} alt="" />}
-        {news.isRead[2] && <BronzeMedal src={bronzeMedal} alt="" />}
+          <div style={{ display: "flex", gap: "0.5rem" }}>
+            {news.isRead[2] && <Medal src={bronzeMedal} alt="" />}
+            {news.isRead[1] && <Medal src={silverMedal} alt="" />}
+            {news.isRead[0] && <Medal src={goldMedal} alt="" />}
+          </div>
+        </Footer>
       </div>
     </Container>
   );
@@ -30,66 +50,93 @@ const NewsListItem: React.FC<{ news: ScrapNewsType }> = ({ news }) => {
 const Container = styled.div`
   display: flex;
   height: 13rem;
-  padding: 2rem;
   margin: 1rem 0;
   border-radius: 1rem;
-  background-color: #0000003f;
+  background-color: ${(props) => props.theme.colors.newsItemBackground};
   overflow: hidden;
   transition: background-color 0.5s;
   cursor: pointer;
+  box-shadow: ${(props) => props.theme.shadows.small};
   &:hover {
-    background-color: #000000aa;
+    background-color: ${(props) => props.theme.colors.newsItemBackgroundPress};
   }
-
-  @media (max-width: 768px) {
-    height: 6.5rem;
-    padding: 1rem;
-    margin: 0;
+  @media screen and (min-width: 768px) {
+    padding: 2rem;
+  }
+  @media screen and (max-width: 1279px) {
+    height: 10rem;
+  }
+  @media (max-width: 767px) {
+    height: 100%;
     background-color: ${(props) => props.theme.colors.background};
-    border-radius: 5px;
-    border-bottom: 1px lightgray solid;
-    &:hover {
-      background-color: lightgray;
-    }
+    box-shadow: none;
+    border-radius: 2px;
+    margin: 0;
+    padding: 0.5rem;
+    border-bottom: 1px solid lightgray;
   }
 `;
 
-const ThumbnailImage = styled.div`
-  min-width: 20rem;
-  height: 13rem;
+const ThumbnailImageDiv = styled.div`
+  position: relative;
+  height: 100%;
   margin-right: 2.5rem;
-  img {
-    width: 20rem;
-    height: 13rem;
-    border-radius: 1rem;
-    object-fit: fill;
+  @media screen and (min-width: 1280px) {
+    min-width: 20rem;
+  }
+  @media screen and (max-width: 1279px) {
+    aspect-ratio: 1.6;
   }
   @media (max-width: 768px) {
     min-width: 10rem;
     height: 6.5rem;
     margin-right: 1rem;
-    img {
-      width: 10rem;
-      height: 6.5rem;
-      border-radius: 5px;
-    }
   }
 `;
 
+const ThumbnailImage = styled.img`
+  height: 100%;
+  border-radius: 1rem;
+  object-fit: fill;
+  @media screen and (min-width: 1280px) {
+    width: 20rem;
+  }
+  @media screen and (max-width: 1279px) {
+    aspect-ratio: 1.6;
+  }
+  @media (max-width: 768px) {
+    width: 10rem;
+    height: 6.5rem;
+    border-radius: 5px;
+  }
+`;
+
+const DarkThumbnailImage = styled(ThumbnailImage)`
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: ${(props) => (props.theme.mode === "dark" ? 1 : 0)};
+  transition: opacity 0.3s;
+`;
+
 const Title = styled.div`
-  width: 70%;
   margin-bottom: 1rem;
   font-size: 1.75rem;
   font-weight: 700;
   line-height: 2.5rem;
-  height: 2.5rem;
+  height: 5rem;
   overflow: hidden;
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
+  width: 100%;
   @media (max-width: 768px) {
-    font-size: 1.25rem;
+    height: auto;
+    font-weight: 500;
+    font-size: 1.125rem;
     line-height: 1.25rem;
+    margin-bottom: 0rem;
+    text-overflow: ellipsis;
   }
 `;
 
@@ -109,43 +156,37 @@ const Content = styled.div`
   }
 `;
 
-const Category = styled.div`
+const Footer = styled.div`
   display: flex;
+  justify-content: space-between;
+  @media (max-width: 768px) {
+    margin-right: 1rem;
+  }
 `;
 
 const CategoryButton = styled.div`
   padding: 0.5rem 1rem;
   border-radius: 0.5rem;
-  color: white;
+  color: #ffffff;
   background-color: ${(props) => props.theme.colors.primary};
   transition: background-color 0.5s;
   &:hover {
     background-color: ${(props) => props.theme.colors.primaryPress};
   }
+
+  @media (max-width: 768px) {
+    margin-bottom: 0.75rem;
+    padding: 0.375rem 0.5rem;
+    font-size: 0.75rem;
+  }
 `;
 
 const Medal = styled.img`
-  position: absolute;
-  top: 0;
+  width: 32px;
   @media (max-width: 768px) {
-    width: 2rem;
+    width: 1.75rem;
+    height: 1.75rem;
   }
-`;
-
-const GoldMedal = styled(Medal)`
-  right: 8rem;
-  @media (max-width: 768px) {
-    right: 4rem;
-  }
-`;
-const SilverMedal = styled(Medal)`
-  right: 3.75rem;
-  @media (max-width: 768px) {
-    right: 2rem;
-  }
-`;
-const BronzeMedal = styled(Medal)`
-  right: 0rem;
 `;
 
 export default NewsListItem;

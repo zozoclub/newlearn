@@ -1,4 +1,4 @@
-import { atom, selector, useRecoilValue } from "recoil";
+import { atom, selector, useRecoilValue, useSetRecoilState } from "recoil";
 import { getStudyProgress } from "@services/goalService";
 import { useQuery } from "@tanstack/react-query";
 import loginState from "@store/loginState";
@@ -24,19 +24,30 @@ export type StudyProgressType = {
 
 export const useStudyProgress = () => {
   const isLogin = useRecoilValue(loginState);
-  const { data: studyProgressData } = useQuery<StudyProgressType>({
+  const setGoalState = useSetRecoilState(goalState);
+
+  const {
+    data: studyProgressData,
+    refetch,
+    isLoading,
+  } = useQuery<StudyProgressType>({
     queryKey: ["getStudyProgress"],
     queryFn: getStudyProgress,
     enabled: isLogin,
+    refetchInterval: 30000, // 30초마다 자동으로 리프레시
+    refetchOnWindowFocus: true, // 윈도우가 포커스를 받을 때 리프레시
   });
 
   useEffect(() => {
     if (studyProgressData) {
-      // 데이터가 로드되면 goals를 업데이트
+      setGoalState({
+        ...studyProgressData,
+        isInitialized: true,
+      });
     }
-  }, [studyProgressData]);
+  }, [studyProgressData, setGoalState]);
 
-  return studyProgressData;
+  return { studyProgressData, refetch, isLoading };
 };
 
 export const goalState = atom<StudyProgressType>({

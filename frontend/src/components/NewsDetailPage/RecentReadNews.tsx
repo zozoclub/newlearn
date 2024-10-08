@@ -27,7 +27,9 @@ const RecentReadNews = () => {
   const MemoizedComponent = useMemo(() => {
     return (
       <>
-        <div className="header">최근 읽은 뉴스</div>
+        <div className="header" style={{ marginTop: "1.5rem" }}>
+          {languageData === "en" ? "Recently Viewed" : "최근 읽은 뉴스"}
+        </div>
         {isLoading ? (
           <div className="recent-news">
             {[...Array(5)].map((_, index) => (
@@ -68,9 +70,10 @@ const RecentReadNews = () => {
                 }}
               >
                 <div className="content-div">
-                  <div>
+                  <div className="title">
                     {languageData === "en" ? news.titleEn : news.titleKr}
                   </div>
+                  <div className="category">{news.category}</div>
                 </div>
                 <div className="thumbnail-div">
                   {news.thumbnailImageUrl ? (

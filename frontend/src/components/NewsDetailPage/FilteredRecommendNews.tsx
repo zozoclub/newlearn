@@ -27,7 +27,9 @@ const FilteredRecommendNews = () => {
   const MemoizedComponent = useMemo(() => {
     return (
       <>
-        <div className="header">이 뉴스와 비슷한 뉴스</div>
+        <div className="header">
+          {languageData === "en" ? "Related News" : "연관 뉴스"}
+        </div>
         {isLoading ? (
           <div className="recommand-news">
             {[...Array(5)].map((_, index) => (
@@ -68,9 +70,10 @@ const FilteredRecommendNews = () => {
                 }}
               >
                 <div className="content-div">
-                  <div>
+                  <div className="title">
                     {languageData === "en" ? news.titleEn : news.titleKr}
                   </div>
+                  <div className="category">{news.category}</div>
                 </div>
                 <div className="thumbnail-div">
                   {news.thumbnailImageUrl ? (

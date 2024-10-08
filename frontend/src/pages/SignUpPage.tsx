@@ -166,24 +166,7 @@ const SignUpPage = () => {
 const Container = styled.div<{ $pageNum: number }>`
   display: flex;
   flex-direction: column;
-  align-items: center;
   position: absolute;
-  left: 50%;
-  transform: translate(-50%, 0);
-  width: 27.25rem;
-  height: ${(props) => {
-    switch (props.$pageNum) {
-      case 1:
-        return "38rem";
-      case 2:
-        return "44rem";
-      case 3:
-        return "23rem";
-      default:
-        return "38rem";
-    }
-  }};
-  padding: 2rem;
   border-radius: 0.5rem;
   background-color: ${(props) => props.theme.colors.cardBackground + "7F"};
   backdrop-filter: blur(4px);
@@ -209,18 +192,53 @@ const Container = styled.div<{ $pageNum: number }>`
       margin: 1.5rem 0 3rem 0;
     }
   }
+  @media screen and (min-width: 768px) {
+    align-items: center;
+    left: 50%;
+    transform: translate(-50%, 0);
+    width: 27.25rem;
+    height: ${(props) => {
+      switch (props.$pageNum) {
+        case 1:
+          return "38rem";
+        case 2:
+          return "44rem";
+        case 3:
+          return "23rem";
+        default:
+          return "38rem";
+      }
+    }};
+    padding: 2rem;
+  }
+  @media screen and (max-width: 767px) {
+    width: calc(100vw);
+    height: calc(100vh);
+  }
 `;
 
 const PageContainer = styled.div`
   display: flex;
+  @media screen and (max-width: 767px) {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+  }
 `;
 
 const Page = styled.div<{ $pageNum: number }>`
   position: relative;
-  width: 25.25rem;
-  padding: 0 3rem;
-  transform: translateX(${(props) => -31.25 * (props.$pageNum - 2)}rem);
   transition: transform 0.5s;
+  @media screen and (min-width: 768px) {
+    transform: translateX(${(props) => -31.25 * (props.$pageNum - 2)}rem);
+    width: 25.25rem;
+    padding: 0 3rem;
+  }
+  @media screen and (max-width: 767px) {
+    transform: translateX(${(props) => -100 * (props.$pageNum - 1)}vw);
+    min-width: calc(100vw - 4rem);
+    padding: 2rem;
+  }
 `;
 
 export default SignUpPage;

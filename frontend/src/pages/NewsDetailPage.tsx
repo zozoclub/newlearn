@@ -37,6 +37,8 @@ const NewsDetailPage = () => {
   const [isFirstView, setIsFirstView] = useState<boolean>(true);
   const { newsId } = useParams();
 
+  console.log(newsId);
+
   const { isLoading: engIsLoading, data: engData } = useQuery<DetailNewsType>({
     queryKey: ["getEngNewsDetail", difficulty, Number(newsId)],
     queryFn: () => getNewsDetail(Number(newsId), difficulty, "en", isFirstView),
@@ -51,7 +53,7 @@ const NewsDetailPage = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, [languageData, difficulty]);
+  }, [languageData, difficulty, newsId]);
 
   useEffect(() => {
     setDifficulty(userInfoData.difficulty);

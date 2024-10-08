@@ -412,15 +412,17 @@ const StatItem = styled.p`
 `;
 
 const ScrollableTestHistoryList = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-around;
-  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
   max-height: 24rem;
   overflow-y: auto; /* 세로 스크롤 가능 */
   overflow-x: hidden; /* 좌우 스크롤 제거 */
   padding-top: 1rem;
   padding-right: 1rem;
+  @media (max-width: 767px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
 `;
 
 const ErrorText = styled.div`

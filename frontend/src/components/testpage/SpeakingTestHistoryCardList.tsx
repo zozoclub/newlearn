@@ -45,7 +45,12 @@ const SpeakingTestHistoryCardList: React.FC<Props> = ({
       <ListDetailContainer>
         <ScoreContainer>
           <RingChartContainer>
-            <SpeakingTestHistoryCardChart accuracyScore={accuracyScore} fluencyScore={fluencyScore} prosodyScore={prosodyScore} completenessScore={completenessScore} />
+            <SpeakingTestHistoryCardChart
+              accuracyScore={accuracyScore}
+              fluencyScore={fluencyScore}
+              prosodyScore={prosodyScore}
+              completenessScore={completenessScore}
+            />
           </RingChartContainer>
           <ScoreText>
             <ScoreSpan>{totalScore}</ScoreSpan> 점
@@ -135,15 +140,15 @@ const ScoreStamp = styled.div`
 const ScoreSpan = styled.span`
   font-size: 2rem;
   font-weight: 700;
-  margin: 0 0.25rem; 
+  margin: 0 0.25rem;
   color: ${(props) => props.theme.colors.primary};
 `;
 
 const RingChartContainer = styled.div`
-height:10rem;
-width: 12rem;
-`
+  height: 10rem;
+  width: 12rem;
+`;
 
 const ScoreText = styled.p`
-  margin-left:5%;
-`
+  margin-left: 5%;
+`;

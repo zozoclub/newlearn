@@ -56,7 +56,7 @@ const Container = styled.div`
   overflow: hidden;
   transition: background-color 0.5s;
   cursor: pointer;
-  box-shadow: ${(props) => props.theme.shadows.small};
+  box-shadow: ${(props) => props.theme.shadows.xsmall};
   &:hover {
     background-color: ${(props) => props.theme.colors.newsItemBackgroundPress};
   }

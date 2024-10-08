@@ -32,7 +32,8 @@ const WordTestHistoryCardList: React.FC<Props> = ({ date, score, quizId }) => {
     <MainContainer onClick={intoDetailHandler}>
       <ListDetailContainer>
         <ScoreContainer>
-          <ScoreSpan>{score}</ScoreSpan>점
+          <ScoreSpan>{score}</ScoreSpan>
+          <div style={{ marginBottom: "0.375rem" }}>점</div>
         </ScoreContainer>
       </ListDetailContainer>
       <DateContainer>{date}</DateContainer>
@@ -47,7 +48,7 @@ const MainContainer = styled.div`
   display: flex;
   flex-direction: column;
   position: relative;
-  width: 20%;
+  width: 80%;
   min-height: 8rem;
   margin: 0.625rem;
   padding: 0.625rem;
@@ -62,7 +63,7 @@ const MainContainer = styled.div`
   }
 
   @media (max-width: 768px) {
-    width: 30%;
+    width: 70%;
     min-height: 3rem;
     padding: 2rem 1.25rem;
   }
@@ -77,11 +78,13 @@ const ListDetailContainer = styled.div`
 `;
 
 const DateContainer = styled.div`
-  font-size: 0.875rem;
-  font-weight: 200;
+  font-size: 1rem;
+  font-weight: 300;
   position: absolute;
+  margin-bottom: 0.25rem;
   bottom: 0.5rem;
-  right: 1rem; 
+  right: 1rem;
+  color: gray;
   @media (max-width: 768px) {
     font-size: 0.75rem;
   }
@@ -89,10 +92,11 @@ const DateContainer = styled.div`
 
 const ScoreContainer = styled.div`
   display: flex;
-  padding-top: 30%;
-  padding-bottom: 20%;
+  padding: 25% 0;
   justify-content: center;
+  font-size: 1.125rem;
   align-items: end;
+  gap: 0.25rem;
 `;
 
 const ScoreStamp = styled.div`

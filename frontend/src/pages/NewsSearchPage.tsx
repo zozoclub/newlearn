@@ -4,12 +4,13 @@ import styled from "styled-components";
 import NewsListItem from "@components/NewsListPage/NewsListItem";
 import { searchNews } from "@services/searchService";
 import { useQuery } from "@tanstack/react-query";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import userInfoState from "@store/userInfoState";
 import MyPagePagination from "@components/mypage/MyPagePagination";
 import { useEffect, useState } from "react";
 import WordCloud from "@components/WordCloud";
 import { usePageTransition } from "@hooks/usePageTransition";
+import locationState from "@store/locationState";
 
 type SearchNewsType = {
   newsId: number;
@@ -35,6 +36,7 @@ const NewsSearchPage = () => {
   const userInfoData = useRecoilValue(userInfoState);
   const userDifficulty = userInfoData.difficulty;
   const [searchQuery, setSearchQuery] = useState(query || "");
+  const setLocationState = useSetRecoilState(locationState);
 
   useEffect(() => {
     setSearchQuery(query || "");
@@ -72,6 +74,13 @@ const NewsSearchPage = () => {
     transitionTo(`/news/search/${newQuery}`);
     refetch();
   };
+
+  useEffect(() => {
+    setLocationState("search");
+
+    return () => setLocationState("");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <Container>

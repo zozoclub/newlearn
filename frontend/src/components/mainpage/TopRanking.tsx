@@ -34,12 +34,12 @@ const TopRanking = () => {
       queryKey: ["getFirstUserAvatar", selectedType],
       queryFn: () =>
         getUserAvatar(
-          selectedType === "point"
+          selectedType === "p"
             ? pointRankingList![0].userId
             : readRankingList![0].userId
         ),
       enabled:
-        selectedType === "point"
+        selectedType === "p"
           ? pointRankingList !== undefined && pointRankingList.length > 0
           : readRankingList !== undefined && readRankingList.length > 0,
       staleTime: 5 * 60 * 1000,
@@ -50,15 +50,15 @@ const TopRanking = () => {
       queryKey: ["getSecondUserAvatar", selectedType],
       queryFn: () =>
         getUserAvatar(
-          selectedType === "point"
+          selectedType === "p"
             ? pointRankingList![1].userId
             : readRankingList![1].userId
         ),
       enabled:
-        selectedType === "point"
+        selectedType === "p"
           ? pointRankingList !== undefined && pointRankingList.length > 1
           : readRankingList !== undefined && readRankingList.length > 1,
-      staleTime: 5 * 60 * 1000,
+      staleTime: 0,
     });
 
   const { isLoading: thirdIsLoading, data: thirdUserAvatar } =
@@ -66,16 +66,17 @@ const TopRanking = () => {
       queryKey: ["getThirdUserAvatar", selectedType],
       queryFn: () =>
         getUserAvatar(
-          selectedType === "point"
+          selectedType === "p"
             ? pointRankingList![2].userId
             : readRankingList![2].userId
         ),
       enabled:
-        selectedType === "point"
+        selectedType === "p"
           ? pointRankingList !== undefined && pointRankingList.length > 2
           : readRankingList !== undefined && readRankingList.length > 2,
-      staleTime: 5 * 60 * 1000,
+      staleTime: 0,
     });
+
   const renderRankings = (
     rankings: PointRankingType[] | ReadRankingType[] | undefined
   ) => {
@@ -189,7 +190,6 @@ const popIn = keyframes`
 
 const RankStand = styled.div<{ $animate: boolean }>`
   text-align: center;
-  top: 1rem;
   position: absolute;
   width: 33%;
   height: 100%;
@@ -213,36 +213,9 @@ const FirstRank = styled(RankStand)`
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
-    bottom: 80%;
-    width: 120%;
-    text-align: center;
-    white-space: nowrap;
-    overflow: visible;
-  }
-  .avatar {
-    bottom: calc(50% - 2rem);
-  }
-  .user-info {
-    display: grid;
-    place-items: center;
-    position: absolute;
-    width: 100%;
-    height: 50%;
-    bottom: 0;
-    border: solid 2px;
-    border-bottom: 0px;
-  }
-`;
-
-const SecondRank = styled(RankStand)`
-  .nickname {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
     bottom: 70%;
     width: 120%;
     text-align: center;
-    white-space: nowrap;
     overflow: visible;
   }
   .avatar {
@@ -257,6 +230,32 @@ const SecondRank = styled(RankStand)`
     bottom: 0;
     border: solid 2px;
     border-bottom: 0px;
+  }
+`;
+
+const SecondRank = styled(RankStand)`
+  .nickname {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 60%;
+    width: 120%;
+    text-align: center;
+    white-space: nowrap;
+    overflow: visible;
+  }
+  .avatar {
+    bottom: calc(30% - 2rem);
+  }
+  .user-info {
+    display: grid;
+    place-items: center;
+    position: absolute;
+    width: 100%;
+    height: 30%;
+    bottom: 0;
+    border: solid 2px;
+    border-bottom: 0px;
     border-right: 0px;
   }
 `;
@@ -267,21 +266,21 @@ const ThirdRank = styled(RankStand)`
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
-    bottom: 65%;
+    bottom: 55%;
     width: 120%;
     text-align: center;
     white-space: nowrap;
     overflow: visible;
   }
   .avatar {
-    bottom: calc(35% - 2rem);
+    bottom: calc(25% - 2rem);
   }
   .user-info {
     display: grid;
     place-items: center;
     position: absolute;
     width: 100%;
-    height: 35%;
+    height: 25%;
     bottom: 0;
     border: solid 2px;
     border-bottom: 0px;

@@ -11,6 +11,7 @@ import { useMediaQuery } from "react-responsive";
 
 import FullLogo from "@components/common/FullLogo";
 import newsSearchIcon from "@assets/icons/searchIcon.svg";
+import NewsListHeader from "@components/newspage/NewsListHeader";
 
 const NewsPage = () => {
   const { category, page } = useParams();
@@ -47,26 +48,41 @@ const NewsPage = () => {
 
   const MobileRender = () => {
     return (
-      <>
+      <PageWrapper>
         <MobileMainHeader>
-          <FullLogo height={75} width={200} />
-          <img height={30} src={newsSearchIcon} />
+          <FullLogo height={70} width={200} />
+          <img
+            style={{ paddingRight: "1rem" }}
+            height={30}
+            src={newsSearchIcon}
+          />
         </MobileMainHeader>
-        <NewsContent>
-          {selectedCategory === 0 && <Recommand />}
-          <NewsList setTotalPages={setTotalPages} />
-        </NewsContent>
-        <Pagination
-          category={selectedCategory}
-          currentPage={selectedPage}
-          totalPages={totalPages}
-        />
-      </>
+        <ContentWrapper>
+          <NewsListHeader />
+          <NewsContent>
+            <NewsList setTotalPages={setTotalPages} />
+            <Pagination
+              category={selectedCategory}
+              currentPage={selectedPage}
+              totalPages={totalPages}
+            />
+          </NewsContent>
+        </ContentWrapper>
+      </PageWrapper>
     );
   };
 
   return isMobile ? <MobileRender /> : <DesktopRender />;
 };
+
+const PageWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
+`;
 
 const Container = styled.div`
   @media (min-width: 768px) {
@@ -77,9 +93,10 @@ const Container = styled.div`
     border-radius: 0.5rem;
   }
   @media (max-width: 767px) {
-    width: 95%;
-    margin: 0 0 10%;
-    padding: 0 2.5% 2.5%;
+    box-sizing: border-box;
+    margin: 0 0 70px;
+    padding: 0;
+    width: 100%;
   }
 `;
 
@@ -87,13 +104,31 @@ const NewsContent = styled.div`
   @media screen and (min-width: 768px) {
     padding: 2.5% 0;
   }
+
+  @media screen and (max-width: 767px) {
+    padding: 0 16px;
+    margin-bottom: 70px;
+  }
 `;
 
 const MobileMainHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 75px;
-  padding: 0 1.5rem 0 0;
+  height: 70px;
+  width: 100vw;
 `;
+
+const ContentWrapper = styled.main`
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  @media (max-width: 767px) {
+    width: 100%;
+    max-width: 100%;
+    height: calc(100vh-140px);
+    box-sizing: border-box;
+  }
+`;
+
 export default NewsPage;

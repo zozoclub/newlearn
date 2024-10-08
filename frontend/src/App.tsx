@@ -127,7 +127,7 @@ const AppContainer = styled.div`
     padding: 0 calc(2.5vw - 0.1875rem);
   }
   @media screen and (max-width: 767px) {
-    width: 100vw;
+    width: 100%;
     min-height: 100vh - 4rem;
     height: calc(100vh - 4rem);
     padding-bottom: 4rem;

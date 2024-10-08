@@ -171,6 +171,7 @@ const SearchContainer = styled.div`
 
   input {
     width: 100%;
+    min-width: 300px;
     height: 40px;
     padding: 0.5rem 1rem;
     background-color: transparent;

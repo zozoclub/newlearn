@@ -9,7 +9,7 @@ import {
 } from "@services/wordMemorize";
 import { useQuery } from "@tanstack/react-query";
 import Spinner from "@components/Spinner";
-import HeaderMobile from "@components/common/HeaderMobile";
+import MobileLogoHeader from "@components/common/MobileLogoHeader";
 
 type Word = {
   id: string;
@@ -64,14 +64,12 @@ const VocabularyPage: React.FC = () => {
   }, [wordList]);
 
   if (isLoading) return <Spinner />;
-
   if (error)
     return <ErrorText>에러가 발생했습니다. 다시 시도해 주세요.</ErrorText>;
 
   return (
     <>
-      <HeaderMobile title="My Voca" />
-
+      <MobileLogoHeader />
       <NavMenu>
         <NavButtonWrapper $active={currentView === "toStudy"}>
           <NavButton
@@ -120,7 +118,9 @@ const VocabularyPage: React.FC = () => {
 
           <WordListContainer>
             {learnedWords.length === 0 ? (
-              <EmptyMessage>외운 단어가 없습니다.</EmptyMessage>
+              <>
+                <EmptyMessage>외운 단어가 없습니다.</EmptyMessage>
+              </>
             ) : (
               learnedWords.map((word) => (
                 <WordItem key={word.id}>
@@ -144,7 +144,6 @@ const VocabularyPage: React.FC = () => {
 export default VocabularyPage;
 
 const MainLayout = styled.div`
-  display: flex;
   width: 100%;
   overflow: hidden;
 `;

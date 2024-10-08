@@ -30,7 +30,7 @@ const SubContainer = styled.div`
   display: flex;
   flex-direction: column;
 
-  min-height: 11rem;
+  min-height: 10rem;
 
   margin: 0.25rem;
   padding: 1.5rem;
@@ -42,7 +42,7 @@ const SubContainer = styled.div`
 
 const Title = styled.div`
   color: ${(props) => props.theme.colors.primary};
-  font-size: 1.5rem;
+  font-size: 1.375rem;
   font-weight: 700;
 `;
 
@@ -53,8 +53,8 @@ const Explain = styled.div`
 `;
 
 const Estimate = styled.div`
-  font-size: 1.125rem;
-  font-weight: 400;
+  font-size: 1rem;
+  font-weight: 300;
   line-height: 1.5;
 `;
 

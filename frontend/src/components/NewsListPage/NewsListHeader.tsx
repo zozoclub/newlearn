@@ -52,7 +52,7 @@ const HeaderContainer = styled.div`
     left: 0;
     width: 95%;
     margin: 0 auto;
-    padding: 1rem 0;
+    padding: 1.5rem 0;
     background-color: transparent;
     z-index: 10;
   }

@@ -22,7 +22,7 @@ const SpeakingTestRealtimeText: React.FC<Props> = ({
       console.log("Current scroll position:", scrollPosition); // 스크롤 위치 디버깅
 
       // 스크롤 위치에 따라 모달의 위치를 업데이트
-      if (scrollPosition > 300) {
+      if (scrollPosition > 200) {
         setIsModalTop(true);
         console.log("위로");
       } else {
@@ -112,7 +112,7 @@ const FixedModalContainer = styled.div<{ $isTop: boolean }>`
   transform: translateX(-50%)
     translateY(${(props) => (props.$isTop ? "-100%" : "0%")});
   bottom: ${(props) => (props.$isTop ? "auto" : "10%")};
-  top: ${(props) => (props.$isTop ? "30%" : "auto")};
+  top: ${(props) => (props.$isTop ? "27%" : "auto")};
   transition: transform 0.5s ease, top 0.5s ease, bottom 0.5s ease; /* 부드러운 이동 애니메이션 */
   margin: auto;
   width: 80%;

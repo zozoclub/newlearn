@@ -1,8 +1,12 @@
+import { useMediaQuery } from "react-responsive";
+
 interface EditIconProps {
   onClick: () => void;
 }
 
 const EditIcon: React.FC<EditIconProps> = ({ onClick }) => {
+  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
+
   return (
     <svg
       onClick={onClick}
@@ -17,8 +21,8 @@ const EditIcon: React.FC<EditIconProps> = ({ onClick }) => {
         e.currentTarget.style.transform = "scale(1)";
       }}
       xmlns="http://www.w3.org/2000/svg"
-      width="1.25rem"
-      height="1.25rem"
+      width={isMobile ? "1rem" : "1.25rem"}
+      height={isMobile ? "1rem" : "1.25rem"}
       viewBox="0 0 24 24"
     >
       <g

@@ -105,7 +105,7 @@ const SpeakingTestHistory: React.FC = () => {
       );
       const monthKey = `${(pastDate.getMonth() + 1)
         .toString()
-        .padStart(2, "0")}월`;
+        .padStart(2)}월`;
       labels.push(monthKey);
     }
     return labels;
@@ -139,7 +139,7 @@ const SpeakingTestHistory: React.FC = () => {
   const correctPercentagePerMonth = monthLabels.map(
     (month) =>
       recentSixMonthsData[month]?.totalScore /
-      recentSixMonthsData[month]?.totalCount || 0 // 데이터가 없으면 0으로 채움
+        recentSixMonthsData[month]?.totalCount || 0 // 데이터가 없으면 0으로 채움
   );
 
   // 현재 월 제외한 이전 5개월의 학습한 단어수(totalCnt) 평균 계산
@@ -152,8 +152,6 @@ const SpeakingTestHistory: React.FC = () => {
       setMonthAgoScoreAverage(Math.floor(totalAverage)); // 평균 값을 정수로 설정
     }
   }, [correctPercentagePerMonth]);
-
-
 
   const dateData = {
     labels: monthLabels, // X축
@@ -180,6 +178,12 @@ const SpeakingTestHistory: React.FC = () => {
         },
         grid: {
           display: false, // X축 그리드 라인 숨기기
+        },
+        ticks: {
+          font: {
+            size: 16, // 폰트 크기 설정 
+          },
+          color: "#999",
         },
       },
       y: {
@@ -209,36 +213,50 @@ const SpeakingTestHistory: React.FC = () => {
   if (isMobile) {
     return (
       <>
-        <InfoContainer>
-          <MobileTitleText>
-            최근 점수보다{" "}
-            {monthCurrentScoreAverage ? (
-              monthCurrentScoreAverage >= monthAgoScoreAverage ? (
-                <InfoTextEmphasizeBlue>증가</InfoTextEmphasizeBlue>
-              ) : (
-                <InfoTextEmphasizeRed>감소</InfoTextEmphasizeRed>
-              )
-            ) : null}{" "}
-            했어요.
-          </MobileTitleText>
-          <InfoText>
-            10월에 학습된 발음 평균 점수 :
-            {monthCurrentScoreAverage >= monthAgoScoreAverage ? (
-              <InfoTextEmphasizeBlue>{Math.floor(monthCurrentScoreAverage)}</InfoTextEmphasizeBlue>
-            ) : (
-              <InfoTextEmphasizeRed>{Math.floor(monthCurrentScoreAverage)}</InfoTextEmphasizeRed>
-            )}
-            점
-          </InfoText>
-          <StatsHistory>
-            <StatItem>이번 달 테스트 횟수: {currentCount}회</StatItem>
-            <StatItem>이번 달 평균 점수: {Math.floor(monthCurrentScoreAverage)}점</StatItem>
-            <StatItem>최근 평균 점수: {Math.floor(monthAgoScoreAverage)}점</StatItem>
-          </StatsHistory>
-        </InfoContainer>
-        <ChartContainer>
-          <Line data={dateData} options={options} />
-        </ChartContainer>
+        {data?.length === 0 ? (
+          <EmptyMessage>첫 테스트를 진행해보세요!</EmptyMessage>
+        ) : (
+          <>
+            <InfoContainer>
+              <MobileTitleText>
+                최근 점수보다{" "}
+                {monthCurrentScoreAverage ? (
+                  monthCurrentScoreAverage >= monthAgoScoreAverage ? (
+                    <InfoTextEmphasizeBlue>증가</InfoTextEmphasizeBlue>
+                  ) : (
+                    <InfoTextEmphasizeRed>감소</InfoTextEmphasizeRed>
+                  )
+                ) : null}{" "}
+                했어요.
+              </MobileTitleText>
+              <InfoText>
+                10월에 학습된 발음 평균 점수 :
+                {monthCurrentScoreAverage >= monthAgoScoreAverage ? (
+                  <InfoTextEmphasizeBlue>
+                    {Math.floor(monthCurrentScoreAverage)}
+                  </InfoTextEmphasizeBlue>
+                ) : (
+                  <InfoTextEmphasizeRed>
+                    {Math.floor(monthCurrentScoreAverage)}
+                  </InfoTextEmphasizeRed>
+                )}
+                점
+              </InfoText>
+              <StatsHistory>
+                <StatItem>이번 달 테스트 횟수: {currentCount}회</StatItem>
+                <StatItem>
+                  이번 달 평균 점수: {Math.floor(monthCurrentScoreAverage)}점
+                </StatItem>
+                <StatItem>
+                  최근 평균 점수: {Math.floor(monthAgoScoreAverage)}점
+                </StatItem>
+              </StatsHistory>
+            </InfoContainer>
+            <ChartContainer>
+              <Line data={dateData} options={options} />
+            </ChartContainer>
+          </>
+        )}
         {/* 고정된 높이 및 스크롤 가능한 영역 */}
         {cardData.length === 0 ? (
           <EmptyMessage>테스트 진행하면 리스트들이 출력됩니다.</EmptyMessage>
@@ -247,9 +265,13 @@ const SpeakingTestHistory: React.FC = () => {
             {data?.map((test: PronounceTestResultListDto, index: number) => (
               <SpeakingTestHistoryCardList
                 audioFileId={test.audioFileId}
-                score={test.totalScore}
                 date={formatDate(test.createdAt)}
                 key={index}
+                totalScore={test.totalScore}
+                accuracyScore={test.accuracyScore}
+                fluencyScore={test.fluencyScore}
+                prosodyScore={test.prosodyScore}
+                completenessScore={test.completenessScore}
               />
             ))}
           </ScrollableTestHistoryList>
@@ -257,8 +279,6 @@ const SpeakingTestHistory: React.FC = () => {
       </>
     );
   }
-
-
 
   return (
     <MainContainer>
@@ -291,14 +311,17 @@ const SpeakingTestHistory: React.FC = () => {
                       {Math.floor(monthCurrentScoreAverage)}
                     </InfoTextEmphasizeRed>
                   )
-                ) : null}점
+                ) : null}
+                점
               </InfoText>
               <StatsHistory>
                 <StatItem>이번 달 테스트 횟수: {currentCount}회</StatItem>
                 <StatItem>
                   이번 달 평균 점수: {Math.floor(monthCurrentScoreAverage)}점
                 </StatItem>
-                <StatItem>최근 평균 점수: {Math.floor(monthAgoScoreAverage)}점</StatItem>
+                <StatItem>
+                  최근 평균 점수: {Math.floor(monthAgoScoreAverage)}점
+                </StatItem>
               </StatsHistory>
             </InfoContainer>
 
@@ -317,9 +340,13 @@ const SpeakingTestHistory: React.FC = () => {
           {data?.map((test: PronounceTestResultListDto, index: number) => (
             <SpeakingTestHistoryCardList
               audioFileId={test.audioFileId}
-              score={test.totalScore}
               date={formatDate(test.createdAt)}
               key={index}
+              totalScore={test.totalScore}
+              accuracyScore={test.accuracyScore}
+              fluencyScore={test.fluencyScore}
+              prosodyScore={test.prosodyScore}
+              completenessScore={test.completenessScore}
             />
           ))}
         </ScrollableTestHistoryList>
@@ -407,8 +434,11 @@ const StatsHistory = styled.div`
 const StatItem = styled.p`
   font-size: 1rem;
   margin-bottom: 0.5rem;
-  @media (max-width: 768px) {
+  @media (max-width: 1280px) {
     font-size: 0.875rem;
+  }
+  @media (max-width: 768px) {
+    font-size: 0.75rem;
   }
 `;
 
@@ -438,7 +468,6 @@ const EmptyMessage = styled.p`
   font-size: 1.25rem;
   color: ${(props) => props.theme.colors.text04};
 `;
-
 
 // 모바일전용
 const MobileTitleText = styled.h1`

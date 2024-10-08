@@ -57,7 +57,7 @@ const Container = styled.div`
   border-radius: 0.75rem;
   cursor: pointer;
   @media (max-width: 767px) {
-    width: 9rem;
+    width: 8.25rem;
   }
 `;
 
@@ -70,7 +70,10 @@ const ToggleItem = styled.div<{ $difficulty: number }>`
   text-align: center;
   transition: color 0.3s;
   @media (max-width: 767px) {
-    width: 3rem;
+    width: 2.75rem;
+    height: 1.75rem;
+    line-height: 1.75rem;
+    font-size: 0.875rem;
   }
 `;
 
@@ -83,7 +86,7 @@ const MidDiv = styled(ToggleItem)`
   color: ${(props) => props.$difficulty === 2 && "white"};
   left: 3.5rem;
   @media (max-width: 767px) {
-    left: 3rem;
+    left: 2.75rem;
   }
 `;
 
@@ -91,7 +94,7 @@ const HighDiv = styled(ToggleItem)`
   color: ${(props) => props.$difficulty === 3 && "white"};
   left: 7rem;
   @media (max-width: 767px) {
-    left: 6rem;
+    left: 5.5rem;
   }
 `;
 
@@ -105,8 +108,8 @@ const SelectedDiv = styled.div<{ $difficulty: number }>`
   background-color: ${(props) => props.theme.colors.primary};
   border-radius: 0.75rem;
   @media (max-width: 767px) {
-    width: 3rem;
-    transform: translateX(${(props) => props.$difficulty * 3 - 3}rem);
+    width: 2.75rem;
+    transform: translateX(${(props) => props.$difficulty * 2.75 - 2.75}rem);
   }
 `;
 

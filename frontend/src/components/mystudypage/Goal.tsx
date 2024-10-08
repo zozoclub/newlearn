@@ -114,6 +114,7 @@ const GoalSettingDescription = styled.div`
 `;
 
 const GoalSettingButton = styled.button`
+  min-width: 150px;
   margin: 0 7rem;
   padding: 0.75rem 1.25rem;
   background: none;
@@ -126,5 +127,10 @@ const GoalSettingButton = styled.button`
   cursor: pointer;
   &:hover {
     background-color: ${(props) => props.theme.colors.primaryPress};
+  }
+
+  @media (max-width: 767px) {
+    font-size: 1rem;
+    padding: 0.75rem 1rem;
   }
 `;

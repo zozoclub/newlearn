@@ -358,6 +358,7 @@ const ImageTag = styled.div`
 display: flex;
 justify-content: center;
 margin-bottom: 2rem;
+margin-top: 1rem;
 `
 
 const MobileTipContainer = styled.div`

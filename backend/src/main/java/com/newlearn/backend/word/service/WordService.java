@@ -7,13 +7,14 @@ import com.newlearn.backend.user.model.Users;
 import com.newlearn.backend.word.dto.request.RestudyResultRequestDTO;
 import com.newlearn.backend.word.dto.request.WordRequestDto;
 import com.newlearn.backend.word.dto.response.RestudyWordResponseDTO;
+import com.newlearn.backend.word.dto.response.WordAddResponseDTO;
 import com.newlearn.backend.word.dto.response.WordDetailResponseDTO;
 import com.newlearn.backend.word.dto.response.WordResponseDTO;
 import com.newlearn.backend.word.model.Word;
 
 public interface WordService {
 
-	Long addWord(WordRequestDto wordRequestDto, Users user) throws Exception;
+	WordAddResponseDTO addWord(WordRequestDto wordRequestDto, Users user) throws Exception;
 
 	List<WordResponseDTO> getWords(Users user);
 

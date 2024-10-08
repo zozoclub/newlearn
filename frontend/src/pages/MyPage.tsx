@@ -18,7 +18,7 @@ import { logout, deleteUser } from "@services/userService";
 import { createGlobalStyle } from "styled-components";
 import { usePageTransition } from "@hooks/usePageTransition";
 import Modal from "@components/Modal";
-import backArrowIcon from "@assets/icons/mobile/backArrowIcon.svg";
+import BackArrowMobileIcon from "@assets/icons/mobile/BackArrowMobileIcon";
 import { useSetRecoilState } from "recoil";
 import locationState from "@store/locationState";
 
@@ -34,7 +34,6 @@ const MyPage = () => {
   const [isChartModalOpen, setIsChartModalOpen] = useState(false);
   const [isProgressModalOpen, setIsProgressModalOpen] = useState(false);
   const [isScrapNewsModalOpen, setIsScrapNewsModalOpen] = useState(false);
-  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [isDeleteUserModalOpen, setIsDeleteUserModalOpen] = useState(false);
   const setCurrentLocation = useSetRecoilState(locationState);
 
@@ -50,16 +49,10 @@ const MyPage = () => {
     setIsScrapNewsModalOpen(true);
   };
 
-  // 로그아웃
-  const handleLogoutClick = () => {
-    setIsLogoutModalOpen(true);
-  };
-
   const handleLogout = async () => {
     try {
       await logout();
       sessionStorage.removeItem("accessToken");
-      setIsLogoutModalOpen(false);
       history.pushState(null, "", location.href);
       window.onpopstate = function () {
         history.go(-2);
@@ -135,7 +128,7 @@ const MyPage = () => {
               <MenuTitle>내가 스크랩한 뉴스</MenuTitle>
               <img src={arrowIcon} alt="버튼" />
             </WidgetMenuContainer>
-            <UserButton onClick={handleLogoutClick}>로그아웃</UserButton>
+            <UserButton onClick={handleLogout}>로그아웃</UserButton>
             <UserButton onClick={handleDeleteClick}>회원탈퇴</UserButton>
           </MyPageContainer>
           {isChartModalOpen && (
@@ -148,7 +141,7 @@ const MyPage = () => {
                       setIsChartModalOpen(false);
                     }}
                   >
-                    <img src={backArrowIcon} alt="버튼" />
+                    <BackArrowMobileIcon url="/mypage" />
                   </BackButton>
                   <ModalTitle>마이 페이지</ModalTitle>
                 </ModalHeader>
@@ -174,7 +167,7 @@ const MyPage = () => {
                       setIsProgressModalOpen(false);
                     }}
                   >
-                    <img src={backArrowIcon} alt="버튼" />
+                    <BackArrowMobileIcon url="/mypage" />
                   </BackButton>
                   <ModalTitle>마이 페이지</ModalTitle>
                 </ModalHeader>
@@ -194,7 +187,7 @@ const MyPage = () => {
                       setIsScrapNewsModalOpen(false);
                     }}
                   >
-                    <img src={backArrowIcon} alt="버튼" />
+                    <BackArrowMobileIcon url="/mypage" />
                   </BackButton>
                   <ModalTitle>마이 페이지</ModalTitle>
                 </ModalHeader>
@@ -204,18 +197,6 @@ const MyPage = () => {
               </FullScreenModal>
             </>
           )}
-          <Modal
-            isOpen={isLogoutModalOpen}
-            onClose={() => setIsLogoutModalOpen(false)}
-            title=""
-          >
-            <LogoutModalContent>
-              <p>로그아웃 하시겠습니까?</p>
-              <ButtonContainer>
-                <ConfirmButton onClick={handleLogout}>확인</ConfirmButton>
-              </ButtonContainer>
-            </LogoutModalContent>
-          </Modal>
           <Modal
             isOpen={isDeleteUserModalOpen}
             onClose={() => setIsDeleteUserModalOpen(false)}
@@ -333,7 +314,7 @@ const WidgetContainer = styled.div`
 
   @media (max-width: 767px) {
     box-shadow: none;
-    border: 1px solid ${(props) => props.theme.colors.cancelPress};
+    border: 1px solid ${(props) => props.theme.colors.mobileBorder};
     margin: 1rem 0;
     padding: 1rem;
   }
@@ -426,11 +407,11 @@ const ItemTitle = styled.div`
   color: ${(props) => props.theme.colors.text03};
   font-size: 1.25rem;
   font-weight: 600;
-  margin: 0.5rem 1rem;
+  margin: 1rem 0.5rem;
 `;
 
 const Divider = styled.hr`
-  color: lightgray;
+  color: ${(props) => props.theme.colors.mobileBorder};
   margin: 1.5rem 0;
 `;
 

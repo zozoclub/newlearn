@@ -8,7 +8,7 @@ import vocaMenuBg from "@assets/images/background-vocamenu.png";
 import speakingMenuBg from "@assets/images/background-speakingtest.png";
 
 import { usePageTransition } from "@hooks/usePageTransition";
-import HeaderMobile from "@components/common/HeaderMobile";
+import MobileLogoHeader from "@components/common/MobileLogoHeader";
 
 const MyStudyPage = () => {
   const isTablet = useMediaQuery({ query: "(max-width: 1280px)" });
@@ -32,11 +32,7 @@ const MyStudyPage = () => {
 
   return (
     <>
-      {isMobile && (
-        <Header>
-          <HeaderMobile title="Study" />
-        </Header>
-      )}
+      {isMobile && <MobileLogoHeader />}
       <Container>
         {!isTablet && <Goal />}
         <MenuContainer>
@@ -96,7 +92,7 @@ const MenuItemBase = styled.div`
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  box-shadow: ${(props) => props.theme.shadows.medium};
+  box-shadow: ${(props) => props.theme.shadows.small};
   box-sizing: border-box;
 
   border-radius: 12px;
@@ -183,8 +179,4 @@ const VocaMenu = styled(MenuItemBase)`
 
 const WordMenu = styled(MenuItemBase)`
   background-image: url(${speakingMenuBg});
-`;
-
-const Header = styled.div`
-  width: 100%;
 `;

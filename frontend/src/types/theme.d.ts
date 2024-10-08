@@ -24,6 +24,8 @@ export type Theme = {
     readonly: string;
     placeholder: string;
     highliting: string;
+    mobileBorder: string;
+    divider: string;
   };
   shadows: {
     xsmall: string;

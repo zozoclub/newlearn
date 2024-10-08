@@ -9,6 +9,7 @@ import DifficultyToggleBtn from "./DifficultyToggleBtn";
 import Bookmark from "./Bookmark";
 import { useParams } from "react-router-dom";
 import { DetailNewsType } from "types/newsType";
+import { useMediaQuery } from "react-responsive";
 
 type NewsHeaderPropsType = {
   engIsLoading: boolean;
@@ -30,6 +31,7 @@ const NewsDetailHeader: React.FC<NewsHeaderPropsType> = ({
   setDifficulty,
   setIsReadFinished,
 }) => {
+  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const { newsId } = useParams();
   const languageData = useRecoilValue(languageState);
   const [isScrapped, setIsScrapped] = useState(false);
@@ -49,88 +51,153 @@ const NewsDetailHeader: React.FC<NewsHeaderPropsType> = ({
     }
   }, [engData]);
 
-  return (
-    <Container>
-      <NewsCategory>
-        {engIsLoading || korIsLoading ? (
-          <LoadingDiv>
-            <LoadingBar />
-          </LoadingDiv>
-        ) : (
-          <>{engData?.category}</>
-        )}
-      </NewsCategory>
-      <NewsTitle>
-        {engIsLoading || korIsLoading ? (
-          <LoadingDiv>
-            <LoadingBar />
-          </LoadingDiv>
-        ) : (
-          <>{languageData === "en" ? engData?.title : korData?.title}</>
-        )}
-      </NewsTitle>
-      {engIsLoading || korIsLoading ? (
-        <>
-          <LoadingDiv>
-            <LoadingBar />
-          </LoadingDiv>
-        </>
-      ) : (
-        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-          <NewsDate>
-            {languageData === "en"
-              ? engData?.publishedDate
-              : korData?.publishedDate}
-          </NewsDate>
-          <OriginalUrlButton
-            onClick={() => window.open(`${engData?.originalUrl}`, "_blank")}
-          >
-            기사원문
-          </OriginalUrlButton>
-        </div>
-      )}
-
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          position: "relative",
-          gap: "0.5rem",
-          marginTop: "0.5rem",
-        }}
-      >
-        {engIsLoading || korIsLoading ? (
-          <div style={{ width: "calc(100% - 20rem)" }}>
+  const MobileRender = () => {
+    return (
+      <Container>
+        <NewsCategory>
+          {engIsLoading || korIsLoading ? (
             <LoadingDiv>
               <LoadingBar />
             </LoadingDiv>
-          </div>
+          ) : (
+            <>{engData?.category}</>
+          )}
+        </NewsCategory>
+        <NewsTitle>
+          {engIsLoading || korIsLoading ? (
+            <LoadingDiv>
+              <LoadingBar />
+            </LoadingDiv>
+          ) : (
+            <>{languageData === "en" ? engData?.title : korData?.title}</>
+          )}
+        </NewsTitle>
+        {engIsLoading || korIsLoading ? (
+          <>
+            <LoadingDiv>
+              <LoadingBar />
+            </LoadingDiv>
+          </>
         ) : (
-          <SecondaryDiv>
-            <div>{engData?.press}</div>
-            <div>|</div>
-            <div>{engData?.journalist}</div>
-            <div>조회 {engData?.hit}</div>
-          </SecondaryDiv>
+          <DateContainer>
+            <NewsDate>
+              {languageData === "en"
+                ? engData?.publishedDate
+                : korData?.publishedDate}
+            </NewsDate>
+            <SecondaryDiv>
+              <div>{engData?.press}</div>
+              <div> | </div>
+              <div>{engData?.journalist}</div>
+              <div>조회 {engData?.hit}</div>
+            </SecondaryDiv>
+          </DateContainer>
         )}
-        <SettingDiv>
-          <DifficultyToggleBtn
-            difficulty={difficulty}
-            setDifficulty={setDifficulty}
-            isRead={engData?.isRead[difficulty - 1]}
-            setIsReadFinished={setIsReadFinished}
-          />
-          <div
-            style={{ display: "grid", placeItems: "center" }}
-            onClick={handleScrap}
-          >
-            <Bookmark isScrapped={isScrapped} />
-          </div>
-        </SettingDiv>
-      </div>
-    </Container>
-  );
+
+        <SettingContainer>
+          {engIsLoading || korIsLoading ? (
+            <div style={{ width: "calc(100% - 20rem)" }}>
+              <LoadingDiv>
+                <LoadingBar />
+              </LoadingDiv>
+            </div>
+          ) : (
+            <OriginalUrlButton
+              onClick={() => window.open(`${engData?.originalUrl}`, "_blank")}
+            >
+              기사원문
+            </OriginalUrlButton>
+          )}
+          <SettingDiv>
+            <DifficultyToggleBtn
+              difficulty={difficulty}
+              setDifficulty={setDifficulty}
+              isRead={engData?.isRead[difficulty - 1]}
+              setIsReadFinished={setIsReadFinished}
+            />
+            <BookmarkContainer onClick={handleScrap}>
+              <Bookmark isScrapped={isScrapped} />
+            </BookmarkContainer>
+          </SettingDiv>
+        </SettingContainer>
+      </Container>
+    );
+  };
+
+  const DesktopRender = () => {
+    return (
+      <Container>
+        <NewsCategory>
+          {engIsLoading || korIsLoading ? (
+            <LoadingDiv>
+              <LoadingBar />
+            </LoadingDiv>
+          ) : (
+            <>{engData?.category}</>
+          )}
+        </NewsCategory>
+        <NewsTitle>
+          {engIsLoading || korIsLoading ? (
+            <LoadingDiv>
+              <LoadingBar />
+            </LoadingDiv>
+          ) : (
+            <>{languageData === "en" ? engData?.title : korData?.title}</>
+          )}
+        </NewsTitle>
+        {engIsLoading || korIsLoading ? (
+          <>
+            <LoadingDiv>
+              <LoadingBar />
+            </LoadingDiv>
+          </>
+        ) : (
+          <DateContainer>
+            <NewsDate>
+              {languageData === "en"
+                ? engData?.publishedDate
+                : korData?.publishedDate}
+            </NewsDate>
+            <OriginalUrlButton
+              onClick={() => window.open(`${engData?.originalUrl}`, "_blank")}
+            >
+              기사원문
+            </OriginalUrlButton>
+          </DateContainer>
+        )}
+
+        <SettingContainer>
+          {engIsLoading || korIsLoading ? (
+            <div style={{ width: "calc(100% - 20rem)" }}>
+              <LoadingDiv>
+                <LoadingBar />
+              </LoadingDiv>
+            </div>
+          ) : (
+            <SecondaryDiv>
+              <div>{engData?.press}</div>
+              <div> | </div>
+              <div>{engData?.journalist}</div>
+              <div>조회 {engData?.hit}</div>
+            </SecondaryDiv>
+          )}
+          <SettingDiv>
+            <DifficultyToggleBtn
+              difficulty={difficulty}
+              setDifficulty={setDifficulty}
+              isRead={engData?.isRead[difficulty - 1]}
+              setIsReadFinished={setIsReadFinished}
+            />
+            <BookmarkContainer onClick={handleScrap}>
+              <Bookmark isScrapped={isScrapped} />
+            </BookmarkContainer>
+          </SettingDiv>
+        </SettingContainer>
+      </Container>
+    );
+  };
+
+  return isMobile ? <MobileRender /> : <DesktopRender />;
 };
 
 export default NewsDetailHeader;
@@ -162,6 +229,7 @@ const NewsDate = styled.div`
   color: ${(props) => props.theme.colors.text03};
   @media (max-width: 767px) {
     font-size: 0.875rem;
+    letter-spacing: 0.01rem;
   }
 `;
 
@@ -178,7 +246,7 @@ const SecondaryDiv = styled.div`
   gap: 0.5rem;
   color: ${(props) => props.theme.colors.text03};
   @media (max-width: 767px) {
-    font-size: 0.75rem;
+    font-size: 0.875rem;
     gap: 0.25rem;
   }
 `;
@@ -190,5 +258,33 @@ const SettingDiv = styled.div`
   right: 0;
   @media (max-width: 767px) {
     gap: 1.5rem;
+  }
+`;
+
+const DateContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  @media (max-width: 767px) {
+    flex-direction: column;
+    align-items: start;
+  }
+`;
+
+const SettingContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+`;
+
+const BookmarkContainer = styled.div`
+  display: grid;
+  place-items: center;
+  @media (max-width: 767px) {
+    scale: 0.8;
   }
 `;

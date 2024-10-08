@@ -50,20 +50,8 @@ const LoginPage = () => {
       <LogoDiv>
         <FullLogo width={360} height={60} />
       </LogoDiv>
-      <img
-        src={NavarButton}
-        alt="naver"
-        width="400"
-        height="55"
-        onClick={naverLogin}
-      />
-      <img
-        src={KakaoButton}
-        alt="kakao"
-        width="400"
-        height="55"
-        onClick={kakaoLogin}
-      />
+      <LoginButton src={NavarButton} alt="naver" onClick={naverLogin} />
+      <LoginButton src={KakaoButton} alt="kakao" onClick={kakaoLogin} />
     </Container>
   );
 };
@@ -77,19 +65,24 @@ const Container = styled.div`
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  width: 25rem;
+  width: 20rem;
   height: 20rem;
-  :nth-child(2) {
-    margin-bottom: 0.5rem;
-    cursor: pointer;
-  }
-  :nth-child(3) {
-    cursor: pointer;
-  }
 `;
 
 const LogoDiv = styled.div`
   margin-bottom: 3rem;
+  margin: 1rem 0 2rem 0;
+`;
+
+const LoginButton = styled.img`
+  cursor: pointer;
+  margin-bottom: 1rem;
+  @media screen and (min-width: 768px) {
+    width: 25rem;
+  }
+  @media screen and (max-width: 767px) {
+    width: 21rem;
+  }
 `;
 
 export default LoginPage;

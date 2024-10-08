@@ -19,8 +19,8 @@ import { getHybridNews } from "@services/newsService";
 import languageState from "@store/languageState";
 import lightThumbnailImage from "@assets/images/lightThumbnail.png";
 import darkThumbnailImage from "@assets/images/darkThumbnail.png";
-import LoadingDiv from "@components/newspage/LoadingDiv";
-import LoadingBar from "@components/newspage/LoadingBar";
+import LoadingDiv from "@components/common/LoadingDiv";
+import LoadingBar from "@components/common/LoadingBar";
 import Spinner from "@components/Spinner";
 
 const MainPage = () => {

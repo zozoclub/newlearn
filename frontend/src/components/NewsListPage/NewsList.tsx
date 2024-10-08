@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import styled from "styled-components";
 
-import NewsListItem from "@components/newspage/NewsListItem";
+import NewsListItem from "@components/NewsListPage/NewsListItem";
 import { useQuery } from "@tanstack/react-query";
 import { getCategoryNewsList, getTotalNewsList } from "@services/newsService";
 import { useRecoilValue } from "recoil";

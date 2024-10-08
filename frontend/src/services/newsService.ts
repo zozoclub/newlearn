@@ -180,7 +180,7 @@ export const highlightingWord = async (
   pronounceUk: string,
   audioUs: string,
   audioUk: string
-) => {
+): Promise<boolean> => {
   try {
     const response = await axiosInstance.post(`word`, {
       newsId,
@@ -195,6 +195,7 @@ export const highlightingWord = async (
       audioUk,
     });
     console.log(response);
+    return response.data.data.deleted;
   } catch (error) {
     console.error(error);
     throw error;

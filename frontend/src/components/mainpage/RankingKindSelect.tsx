@@ -63,10 +63,9 @@ const RankingKind = styled.div<{
   position: absolute;
   z-index: 1;
   width: 5rem;
-  padding: 0 0.75rem;
   color: ${(props) => (props.$isSelected ? "white" : "black")};
   transition: color 0.5s;
   font-size: 1.125rem;
   text-align: center;
-  left: ${(props) => (props.$type === "point" ? 0 : "6rem")};
+  left: ${(props) => (props.$type === "point" ? "0.75rem" : "6.5rem")};
 `;

@@ -119,7 +119,9 @@ const CategoryChart: React.FC = () => {
 export default CategoryChart;
 
 const ChartContainer = styled.div`
-  width: 95%;
+  display: grid;
+  place-items: center;
+  width: 100%;
   @media (max-width: 768px) {
     width: 80%;
     background-color: ${(props) => props.theme.colors.background};

@@ -85,12 +85,12 @@ const Container = styled.div`
 
 const Ranking = styled.div`
   display: flex;
-  justify-items: center;
+  justify-content: space-evenly;
   align-items: center;
+  height: 100%;
   text-align: center;
-  margin-bottom: 1rem;
-  font-weight: 600;
-  font-size: 1.125rem;
+  font-weight: 500;
+  font-size: 1rem;
   animation: ${slideIn} 0.5s ease-out forwards;
   opacity: 0;
 

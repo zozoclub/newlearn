@@ -102,17 +102,7 @@ const MainPage = () => {
             }}
           >
             <Clock />
-            <div
-              style={{
-                color: "gray",
-                fontFamily: "Righteous",
-                fontWeight: "400",
-                fontSize: "2rem",
-                marginRight: "1rem",
-              }}
-            >
-              Today's TOP 10
-            </div>
+            <TopNewsContainer>Today's TOP 10</TopNewsContainer>
           </div>
           <DailyNews />
         </NewsContainer>
@@ -191,4 +181,12 @@ const WidgetContainer = styled.div`
     width: 32.5%;
     min-width: 30rem;
   }
+`;
+
+const TopNewsContainer = styled.div`
+  color: ${(props) => props.theme.colors.text02};
+  font-family: "Righteous";
+  font-weight: 400;
+  font-size: 2rem;
+  margin-right: 1rem;
 `;

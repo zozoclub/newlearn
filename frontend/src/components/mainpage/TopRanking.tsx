@@ -92,7 +92,9 @@ const TopRanking = () => {
                   size={32}
                 />
               </div>
-              <div>{rankings[0].nickname}</div>
+              <div style={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}>
+                {rankings[0].nickname}
+              </div>
             </div>
             <div className="avatar">
               <Avatar avatar={firstUserAvatar!} size={4} />
@@ -111,7 +113,9 @@ const TopRanking = () => {
                   size={32}
                 />
               </div>
-              <div>{rankings[1].nickname}</div>
+              <div style={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}>
+                {rankings[1].nickname}
+              </div>
             </div>
             <div className="avatar">
               <Avatar avatar={secondUserAvatar!} size={4} />
@@ -130,7 +134,9 @@ const TopRanking = () => {
                   size={32}
                 />
               </div>
-              <div>{rankings[2].nickname}</div>
+              <div style={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}>
+                {rankings[2].nickname}
+              </div>
             </div>
             <div className="avatar">
               <Avatar avatar={thirdUserAvatar!} size={4} />
@@ -194,6 +200,7 @@ const RankStand = styled.div<{ $animate: boolean }>`
   width: 33%;
   height: 100%;
   font-size: 0.875rem;
+  font-weight: bold;
   text-align: center;
 
   .avatar {
@@ -215,7 +222,6 @@ const FirstRank = styled(RankStand)`
     transform: translateX(-50%);
     bottom: 70%;
     width: 120%;
-    font-weight: 400;
     text-align: center;
     overflow: visible;
   }

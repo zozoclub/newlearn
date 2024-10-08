@@ -58,15 +58,13 @@ const SpeakingTestRealtimeText: React.FC<Props> = ({
                   </RecognizingText>
                 ) : (
                   <>
-                    <InstructionText>
+                    <RecognizingText>
                       실시간 텍스트가 출력됩니다.
-                    </InstructionText>
+                    </RecognizingText>
                     <br />
                     <br />
-                    <Explain>
-                      발음 시 본 화면이 바뀌지 않는다면, 마이크 설정을 확인해
-                      주세요.
-                    </Explain>
+                    <ExplainText01>텍스트가 출력되지 않는다면</ExplainText01>
+                    <ExplainText02>마이크 설정을 확인 해주세요.</ExplainText02>
                   </>
                 )}
               </ModalContent>
@@ -132,6 +130,7 @@ const ModalContent = styled.div`
 `;
 
 const RecognizingText = styled.div`
+  padding-top: 1rem;
   margin-bottom: 0.5rem;
   color: ${(props) => props.theme.colors.text};
   font-size: 1.25rem;
@@ -141,22 +140,12 @@ const RecognizingText = styled.div`
 
 const FinalText = styled.div`
   margin: auto;
-  width: 90%;
+  width: 88%;
   color: ${(props) => props.theme.colors.text};
   font-size: 1rem;
   font-weight: 600;
   line-height: 1.5rem;
   margin-top: 1.5rem;
-`;
-
-const InstructionText = styled.p`
-  color: ${(props) => props.theme.colors.text01};
-  font-size: 1.125rem;
-  font-weight: 500;
-  text-align: center;
-  padding: 0.75rem;
-  border-radius: 0.5rem;
-  margin-bottom: 1.5rem;
 `;
 
 const Instructions = styled.ul`
@@ -179,12 +168,12 @@ const Instructions = styled.ul`
 `;
 
 const Explain = styled.div`
-  margin-bottom: 1.25rem;
-  font-size: 1rem; /* 폰트 크기 약간 크게 */
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
   color: ${(props) => props.theme.colors.text04};
   padding: 1rem;
-  border-radius: 0.5rem; /* 모서리 둥글게 */
-  text-align: center; /* 가운데 정렬 */
+  border-radius: 0.5rem;
+  text-align: center;
 `;
 
 const NoText = styled.div`
@@ -213,4 +202,13 @@ const RecognizedContainer = styled.div`
   width: 100%;
   border-radius: 1rem;
   background-color: ${(props) => props.theme.colors.highliting + "2A"};
+`;
+
+const ExplainText01 = styled.p`
+  padding-bottom: 0.375rem;
+  font-size: 0.75rem;
+`;
+const ExplainText02 = styled.p`
+  padding-bottom: 1%;
+  font-size: 0.75rem;
 `;

@@ -62,7 +62,7 @@ const SentenceArea = styled.div`
 
   @media (max-width: 768px) {
     padding: 0%;
-    width: 90%;
+    width: 88%;
   }
 `;
 

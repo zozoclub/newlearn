@@ -168,7 +168,7 @@ export const getUserAvatar = async (userId: number): Promise<AvatarType> => {
 
 export const deleteUser = async () => {
   try {
-    const response = await axiosInstance.post(`user/delete`, "");
+    const response = await axiosInstance.delete("user/delete");
     console.log(response);
   } catch (error) {
     console.error("user delete failed: ", error);

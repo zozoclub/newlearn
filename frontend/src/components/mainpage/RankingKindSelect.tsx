@@ -74,6 +74,7 @@ const RankingKind = styled.div<{
   color: ${(props) => (props.$isSelected ? "white" : "black")};
   transition: color 0.5s;
   font-size: 1rem;
+  font-weight: 500;
   text-align: center;
   left: ${(props) => (props.$type === "point" ? "0.5rem" : "6rem")};
 `;

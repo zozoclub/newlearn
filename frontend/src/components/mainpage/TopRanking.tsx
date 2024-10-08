@@ -215,6 +215,7 @@ const FirstRank = styled(RankStand)`
     transform: translateX(-50%);
     bottom: 70%;
     width: 120%;
+    font-weight: 400;
     text-align: center;
     overflow: visible;
   }

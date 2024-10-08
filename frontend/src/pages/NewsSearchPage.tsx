@@ -11,6 +11,8 @@ import { useEffect, useState } from "react";
 import WordCloud from "@components/WordCloud";
 import { usePageTransition } from "@hooks/usePageTransition";
 import locationState from "@store/locationState";
+import { useMediaQuery } from "react-responsive";
+import MobileLogoHeader from "@components/common/MobileLogoHeader";
 
 type SearchNewsType = {
   newsId: number;
@@ -30,6 +32,7 @@ type SearchResponseType = {
 
 const NewsSearchPage = () => {
   const transitionTo = usePageTransition();
+  const isMobile = useMediaQuery({ query: "(max-width: 767px)" });
   const { query } = useParams<{ query?: string }>();
   const { page } = useParams();
   const [selectedPage, setSelectedPage] = useState(Number(page) || 0);
@@ -37,13 +40,15 @@ const NewsSearchPage = () => {
   const userDifficulty = userInfoData.difficulty;
   const [searchQuery, setSearchQuery] = useState(query || "");
   const setLocationState = useSetRecoilState(locationState);
+  const elementValue = isMobile ? 6 : 5;
 
   useEffect(() => {
     setSearchQuery(query || "");
   }, [query]);
   const { data: searchResultData, refetch } = useQuery<SearchResponseType>({
     queryKey: ["searchNews", query, userDifficulty, selectedPage],
-    queryFn: () => searchNews(query || "", userDifficulty, selectedPage, 5),
+    queryFn: () =>
+      searchNews(query || "", userDifficulty, selectedPage, elementValue),
   });
 
   const searchResultList = searchResultData?.searchResult || [];
@@ -82,50 +87,96 @@ const NewsSearchPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return (
-    <Container>
-      <SearchBarContainer>
-        <NewsSearch initialQuery={searchQuery} onSearch={handleSearch} />
-      </SearchBarContainer>
-      <NewsListContainer>
-        {searchResultList.length > 0 ? (
-          searchResultList.map((news) => (
-            <NewsListItem key={news.newsId} news={news} />
-          ))
-        ) : showNoResultMessage ? (
-          <NoResult>검색 결과가 없습니다.</NoResult>
-        ) : (
-          <WordCloudContainer>
-            {/* <WordCloudTitle>HOT한 키워드</WordCloudTitle> */}
-            <WordCloud />
-          </WordCloudContainer>
+  const MobileRender = () => {
+    return (
+      <PageWrapper>
+        <MobileLogoHeader />
+        <ContentWrapper>
+          <SearchBarContainer>
+            <NewsSearch initialQuery={searchQuery} onSearch={handleSearch} />
+          </SearchBarContainer>
+          <NewsListContainer>
+            {searchResultList.length > 0 ? (
+              searchResultList.map((news) => (
+                <NewsListItem key={news.newsId} news={news} />
+              ))
+            ) : showNoResultMessage ? (
+              <NoResult>검색 결과가 없습니다.</NoResult>
+            ) : (
+              <WordCloudContainer>
+                <WordCloud />
+              </WordCloudContainer>
+            )}
+          </NewsListContainer>
+          {searchResultList.length > 0 && (
+            <MyPagePagination
+              currentPage={selectedPage + 1} // 사용자에게 보여줄 페이지 번호
+              totalPages={totalPages}
+              showElement={elementValue}
+              onPageChange={handlePageChange} // 페이지 변경 핸들러 전달
+              onNextPage={handleNextPage} // 다음 페이지 핸들러 전달
+            />
+          )}
+        </ContentWrapper>
+      </PageWrapper>
+    );
+  };
+
+  const DesktopRender = () => {
+    return (
+      <Container>
+        <SearchBarContainer>
+          <NewsSearch initialQuery={searchQuery} onSearch={handleSearch} />
+        </SearchBarContainer>
+        <NewsListContainer>
+          {searchResultList.length > 0 ? (
+            searchResultList.map((news) => (
+              <NewsListItem key={news.newsId} news={news} />
+            ))
+          ) : showNoResultMessage ? (
+            <NoResult>검색 결과가 없습니다.</NoResult>
+          ) : (
+            <WordCloudContainer>
+              <WordCloud />
+            </WordCloudContainer>
+          )}
+        </NewsListContainer>
+        {searchResultList.length > 0 && (
+          <MyPagePagination
+            currentPage={selectedPage + 1} // 사용자에게 보여줄 페이지 번호
+            totalPages={totalPages}
+            showElement={elementValue}
+            onPageChange={handlePageChange} // 페이지 변경 핸들러 전달
+            onNextPage={handleNextPage} // 다음 페이지 핸들러 전달
+          />
         )}
-      </NewsListContainer>
-      {searchResultList.length > 0 && (
-        <MyPagePagination
-          currentPage={selectedPage + 1} // 사용자에게 보여줄 페이지 번호
-          totalPages={totalPages}
-          showElement={5}
-          onPageChange={handlePageChange} // 페이지 변경 핸들러 전달
-          onNextPage={handleNextPage} // 다음 페이지 핸들러 전달
-        />
-      )}
-    </Container>
-  );
+      </Container>
+    );
+  };
+
+  return isMobile ? <MobileRender /> : <DesktopRender />;
 };
+
 const Container = styled.div`
   border-radius: 0.75rem;
   padding-bottom: 5rem;
 `;
 
 const SearchBarContainer = styled.div`
-  padding: 0 20rem;
+  padding: 0 20%;
   margin-bottom: 2rem;
+  @media (max-width: 767px) {
+    padding: 0 5%;
+    margin-bottom: 1rem;
+  }
 `;
 
 const NewsListContainer = styled.div`
   column-gap: 0.5rem;
   padding: 0 12rem;
+  @media (max-width: 767px) {
+    padding: 0 0.5rem;
+  }
 `;
 
 const NoResult = styled.div`
@@ -136,19 +187,33 @@ const NoResult = styled.div`
   font-size: 2rem;
 `;
 
-// const WordCloudTitle = styled.div`
-//   font-weight: bold;
-//   font-size: 2rem;
-//   margin-top: 1rem;
-//   color: gray;
-// `;
-
 const WordCloudContainer = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   padding-top: 2rem;
+`;
+
+const PageWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
+`;
+
+const ContentWrapper = styled.main`
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  @media (max-width: 767px) {
+    width: 100%;
+    max-width: 100%;
+    height: calc(100vh-140px);
+    box-sizing: border-box;
+  }
 `;
 
 export default NewsSearchPage;

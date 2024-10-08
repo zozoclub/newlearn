@@ -126,6 +126,7 @@ const WordCloudContainer = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  padding-top: 2rem;
 `;
 
 export default NewsSearchPage;

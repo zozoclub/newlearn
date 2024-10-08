@@ -67,6 +67,12 @@ const Container = styled.div`
   @media screen and (max-width: 1279px) {
     height: 10rem;
   }
+  @media (max-width: 767px) {
+    height: 100%;
+    background-color: ${(props) => props.theme.colors.background};
+    box-shadow: none;
+    border-radius: 5px;
+  }
 `;
 
 const ThumbnailImageDiv = styled.div`
@@ -79,6 +85,11 @@ const ThumbnailImageDiv = styled.div`
   @media screen and (max-width: 1279px) {
     aspect-ratio: 1.6;
   }
+  @media (max-width: 768px) {
+    min-width: 10rem;
+    height: 6.5rem;
+    margin-right: 1rem;
+  }
 `;
 
 const ThumbnailImage = styled.img`
@@ -90,6 +101,11 @@ const ThumbnailImage = styled.img`
   }
   @media screen and (max-width: 1279px) {
     aspect-ratio: 1.6;
+  }
+  @media (max-width: 768px) {
+    width: 10rem;
+    height: 6.5rem;
+    border-radius: 5px;
   }
 `;
 
@@ -112,6 +128,14 @@ const Title = styled.div`
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
   width: 100%;
+  @media (max-width: 768px) {
+    height: auto;
+    font-weight: 500;
+    font-size: 1.125rem;
+    line-height: 1.25rem;
+    margin-bottom: 0rem;
+    text-overflow: ellipsis;
+  }
 `;
 
 const Content = styled.div`
@@ -125,11 +149,17 @@ const Content = styled.div`
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
+  @media (max-width: 768px) {
+    display: none;
+  }
 `;
 
 const Footer = styled.div`
   display: flex;
   justify-content: space-between;
+  @media (max-width: 768px) {
+    margin-right: 1rem;
+  }
 `;
 
 const CategoryButton = styled.div`
@@ -141,10 +171,20 @@ const CategoryButton = styled.div`
   &:hover {
     background-color: ${(props) => props.theme.colors.primaryPress};
   }
+
+  @media (max-width: 768px) {
+    margin-bottom: 1rem;
+    padding: 0.375rem 0.5rem;
+    font-size: 0.75rem;
+  }
 `;
 
 const Medal = styled.img`
   width: 32px;
+  @media (max-width: 768px) {
+    width: 1.75rem;
+    height: 1.75rem;
+  }
 `;
 
 export default NewsListItem;

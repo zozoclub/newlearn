@@ -18,7 +18,7 @@ type Props = {
   completenessScore: number;
 };
 
-const SpeakingTestHistoryCardList: React.FC<Props> = ({
+const SpeakingTestHistoryCardListMobile: React.FC<Props> = ({
   date,
   totalScore,
   audioFileId,
@@ -58,7 +58,7 @@ const SpeakingTestHistoryCardList: React.FC<Props> = ({
   );
 };
 
-export default SpeakingTestHistoryCardList;
+export default SpeakingTestHistoryCardListMobile;
 
 const ResponsiveIcon = styled.div`
   width: 3rem;
@@ -140,10 +140,9 @@ const ScoreSpan = styled.span`
 `;
 
 const RingChartContainer = styled.div`
-height:10rem;
+margin-left: 6rem;
+height:6rem;
 width: 12rem;
 `
-
 const ScoreText = styled.p`
-  margin-left:5%;
 `

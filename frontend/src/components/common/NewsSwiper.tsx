@@ -10,6 +10,7 @@ import { usePageTransition } from "@hooks/usePageTransition";
 import styled from "styled-components";
 import { useRecoilValue } from "recoil";
 import languageState from "@store/languageState";
+import { useMediaQuery } from "react-responsive";
 
 type NewsSwiperProps = {
   variety: "daily" | "hybrid";
@@ -24,6 +25,9 @@ const NewsSwiper: React.FC<NewsSwiperProps> = ({
 }) => {
   const transitionTo = usePageTransition();
   const languageData = useRecoilValue(languageState);
+  const isTablet = useMediaQuery({
+    query: "(min-width: 768px) and (max-width: 1279px)",
+  });
 
   return (
     <Container>
@@ -36,14 +40,14 @@ const NewsSwiper: React.FC<NewsSwiperProps> = ({
         spaceBetween={-50} // 음수 값을 주어 슬라이드가 겹치도록 설정
         speed={500}
         mousewheel={true}
-        pagination={true}
+        pagination={isTablet ? false : true}
         modules={[Pagination, Mousewheel]} // EffectCoverflow 제거
         className="mySwiper"
       >
         {newsList?.map((news) => (
           <SwiperSlide
             key={news.newsId}
-            style={{ width: "100%", aspectRatio: 1.6 }}
+            style={{ width: "100%", aspectRatio: isTablet ? 2 : 1.6 }}
             onClick={() => transitionTo(`/news/detail/${news.newsId}`)}
           >
             <NewsSlide

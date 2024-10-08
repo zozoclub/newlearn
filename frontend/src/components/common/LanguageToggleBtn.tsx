@@ -24,7 +24,8 @@ const LanguageToggleBtn = () => {
     currentLocationData === "login" ||
     currentLocationData === "signUp" ||
     currentLocationData === "notFound" ||
-    currentLocationData === "myPage"
+    currentLocationData === "myPage" ||
+    currentLocationData === "search"
   )
     return null;
 

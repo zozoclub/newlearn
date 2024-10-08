@@ -139,7 +139,7 @@ const SpeakingTestHistory: React.FC = () => {
   const correctPercentagePerMonth = monthLabels.map(
     (month) =>
       recentSixMonthsData[month]?.totalScore /
-      recentSixMonthsData[month]?.totalCount || 0 // 데이터가 없으면 0으로 채움
+        recentSixMonthsData[month]?.totalCount || 0 // 데이터가 없으면 0으로 채움
   );
 
   // 현재 월 제외한 이전 5개월의 학습한 단어수(totalCnt) 평균 계산
@@ -152,8 +152,6 @@ const SpeakingTestHistory: React.FC = () => {
       setMonthAgoScoreAverage(Math.floor(totalAverage)); // 평균 값을 정수로 설정
     }
   }, [correctPercentagePerMonth]);
-
-
 
   const dateData = {
     labels: monthLabels, // X축
@@ -209,36 +207,50 @@ const SpeakingTestHistory: React.FC = () => {
   if (isMobile) {
     return (
       <>
-        <InfoContainer>
-          <MobileTitleText>
-            최근 점수보다{" "}
-            {monthCurrentScoreAverage ? (
-              monthCurrentScoreAverage >= monthAgoScoreAverage ? (
-                <InfoTextEmphasizeBlue>증가</InfoTextEmphasizeBlue>
-              ) : (
-                <InfoTextEmphasizeRed>감소</InfoTextEmphasizeRed>
-              )
-            ) : null}{" "}
-            했어요.
-          </MobileTitleText>
-          <InfoText>
-            10월에 학습된 발음 평균 점수 :
-            {monthCurrentScoreAverage >= monthAgoScoreAverage ? (
-              <InfoTextEmphasizeBlue>{Math.floor(monthCurrentScoreAverage)}</InfoTextEmphasizeBlue>
-            ) : (
-              <InfoTextEmphasizeRed>{Math.floor(monthCurrentScoreAverage)}</InfoTextEmphasizeRed>
-            )}
-            점
-          </InfoText>
-          <StatsHistory>
-            <StatItem>이번 달 테스트 횟수: {currentCount}회</StatItem>
-            <StatItem>이번 달 평균 점수: {Math.floor(monthCurrentScoreAverage)}점</StatItem>
-            <StatItem>최근 평균 점수: {Math.floor(monthAgoScoreAverage)}점</StatItem>
-          </StatsHistory>
-        </InfoContainer>
-        <ChartContainer>
-          <Line data={dateData} options={options} />
-        </ChartContainer>
+        {data?.length === 0 ? (
+          <EmptyMessage>첫 테스트를 진행해보세요!</EmptyMessage>
+        ) : (
+          <>
+            <InfoContainer>
+              <MobileTitleText>
+                최근 점수보다{" "}
+                {monthCurrentScoreAverage ? (
+                  monthCurrentScoreAverage >= monthAgoScoreAverage ? (
+                    <InfoTextEmphasizeBlue>증가</InfoTextEmphasizeBlue>
+                  ) : (
+                    <InfoTextEmphasizeRed>감소</InfoTextEmphasizeRed>
+                  )
+                ) : null}{" "}
+                했어요.
+              </MobileTitleText>
+              <InfoText>
+                10월에 학습된 발음 평균 점수 :
+                {monthCurrentScoreAverage >= monthAgoScoreAverage ? (
+                  <InfoTextEmphasizeBlue>
+                    {Math.floor(monthCurrentScoreAverage)}
+                  </InfoTextEmphasizeBlue>
+                ) : (
+                  <InfoTextEmphasizeRed>
+                    {Math.floor(monthCurrentScoreAverage)}
+                  </InfoTextEmphasizeRed>
+                )}
+                점
+              </InfoText>
+              <StatsHistory>
+                <StatItem>이번 달 테스트 횟수: {currentCount}회</StatItem>
+                <StatItem>
+                  이번 달 평균 점수: {Math.floor(monthCurrentScoreAverage)}점
+                </StatItem>
+                <StatItem>
+                  최근 평균 점수: {Math.floor(monthAgoScoreAverage)}점
+                </StatItem>
+              </StatsHistory>
+            </InfoContainer>
+            <ChartContainer>
+              <Line data={dateData} options={options} />
+            </ChartContainer>
+          </>
+        )}
         {/* 고정된 높이 및 스크롤 가능한 영역 */}
         {cardData.length === 0 ? (
           <EmptyMessage>테스트 진행하면 리스트들이 출력됩니다.</EmptyMessage>
@@ -257,8 +269,6 @@ const SpeakingTestHistory: React.FC = () => {
       </>
     );
   }
-
-
 
   return (
     <MainContainer>
@@ -291,14 +301,17 @@ const SpeakingTestHistory: React.FC = () => {
                       {Math.floor(monthCurrentScoreAverage)}
                     </InfoTextEmphasizeRed>
                   )
-                ) : null}점
+                ) : null}
+                점
               </InfoText>
               <StatsHistory>
                 <StatItem>이번 달 테스트 횟수: {currentCount}회</StatItem>
                 <StatItem>
                   이번 달 평균 점수: {Math.floor(monthCurrentScoreAverage)}점
                 </StatItem>
-                <StatItem>최근 평균 점수: {Math.floor(monthAgoScoreAverage)}점</StatItem>
+                <StatItem>
+                  최근 평균 점수: {Math.floor(monthAgoScoreAverage)}점
+                </StatItem>
               </StatsHistory>
             </InfoContainer>
 
@@ -438,7 +451,6 @@ const EmptyMessage = styled.p`
   font-size: 1.25rem;
   color: ${(props) => props.theme.colors.text04};
 `;
-
 
 // 모바일전용
 const MobileTitleText = styled.h1`

@@ -57,8 +57,8 @@ const NewsPage = () => {
             src={newsSearchIcon}
           />
         </MobileMainHeader>
+        <NewsListHeader />
         <ContentWrapper>
-          <NewsListHeader />
           <NewsContent>
             <NewsList setTotalPages={setTotalPages} />
             <Pagination

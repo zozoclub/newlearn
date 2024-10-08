@@ -56,6 +56,9 @@ const Container = styled.div`
   background-color: ${(props) => props.theme.colors.readonly};
   border-radius: 0.75rem;
   cursor: pointer;
+  @media (max-width: 767px) {
+    width: 9rem;
+  }
 `;
 
 const ToggleItem = styled.div<{ $difficulty: number }>`
@@ -66,6 +69,9 @@ const ToggleItem = styled.div<{ $difficulty: number }>`
   line-height: 2rem;
   text-align: center;
   transition: color 0.3s;
+  @media (max-width: 767px) {
+    width: 3rem;
+  }
 `;
 
 const LowDiv = styled(ToggleItem)`
@@ -76,11 +82,17 @@ const LowDiv = styled(ToggleItem)`
 const MidDiv = styled(ToggleItem)`
   color: ${(props) => props.$difficulty === 2 && "white"};
   left: 3.5rem;
+  @media (max-width: 767px) {
+    left: 3rem;
+  }
 `;
 
 const HighDiv = styled(ToggleItem)`
   color: ${(props) => props.$difficulty === 3 && "white"};
   left: 7rem;
+  @media (max-width: 767px) {
+    left: 6rem;
+  }
 `;
 
 const SelectedDiv = styled.div<{ $difficulty: number }>`
@@ -92,6 +104,10 @@ const SelectedDiv = styled.div<{ $difficulty: number }>`
   transition: transform 0.5s;
   background-color: ${(props) => props.theme.colors.primary};
   border-radius: 0.75rem;
+  @media (max-width: 767px) {
+    width: 3rem;
+    transform: translateX(${(props) => props.$difficulty * 3 - 3}rem);
+  }
 `;
 
 export default DifficultyToggleBtn;

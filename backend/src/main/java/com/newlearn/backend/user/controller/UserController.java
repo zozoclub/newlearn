@@ -94,13 +94,11 @@ public class UserController {
 	//로그아웃
 	@PostMapping("/logout")
 	public ApiResponse<?> logout(HttpServletRequest request, HttpServletResponse response) {
-		System.out.println("들어온다 이십부레");
 		try {
 			String refreshToken = extractRefreshToken(request);
 			System.out.println(refreshToken);
 			if (refreshToken != null && jwtTokenProvider.validateToken(refreshToken)) {
 				tokenService.blacklistRefreshToken(refreshToken);
-				System.out.println("hell 들어오냐?ㅅ비");
 				Cookie cookie = new Cookie("refreshToken", null);
 				cookie.setMaxAge(0);
 				cookie.setPath("/");

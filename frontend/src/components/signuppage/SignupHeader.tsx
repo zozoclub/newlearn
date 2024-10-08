@@ -29,11 +29,18 @@ const Container = styled.div`
   font-size: 1.75rem;
   justify-content: center;
   align-items: center;
+  @media screen and (max-width: 767px) {
+    position: absolute;
+    top: 2rem;
+  }
 `;
 
 const BackArrowDiv = styled.div`
   position: absolute;
   left: 0;
+  @media screen and (max-width: 767px) {
+    left: 2rem;
+  }
 `;
 
 const PrevButton = styled.div`
@@ -41,6 +48,9 @@ const PrevButton = styled.div`
   right: 0;
   font-size: 1rem;
   cursor: pointer;
+  @media screen and (max-width: 767px) {
+    right: 2rem;
+  }
 `;
 
 export default SignupHeader;

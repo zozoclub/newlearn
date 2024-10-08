@@ -22,7 +22,7 @@ const Button: React.FC<ButtonProps> = ({
 };
 
 const StyledButton = styled.button<ButtonProps>`
-  width: ${(props) => props.size === "large" && "25rem"};
+  width: ${(props) => props.size === "large" && "100%"};
   padding: ${(props) => {
     switch (props.size) {
       case "small":

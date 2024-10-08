@@ -51,9 +51,9 @@ const Input = styled.input<{
   $isNicknameAvailable: boolean;
   $isNicknameDuplicated: boolean;
 }>`
-  width: 21rem;
+  width: calc(100% - 4rem);
   height: 1.75rem;
-  margin: 0 0 3rem 0;
+  margin-bottom: 3rem;
   padding: 1rem 2rem;
   color: ${(props) => props.theme.colors.text};
   background-color: ${(props) => props.theme.colors.background + "3F"};

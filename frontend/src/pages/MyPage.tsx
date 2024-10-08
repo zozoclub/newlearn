@@ -302,7 +302,7 @@ const MyPageContainer = styled.div`
   @media (max-width: 767px) {
     min-height: calc(100vh - 70px);
     padding: 0 1.125rem;
-    background-color: ${(props) => props.theme.colors.background};
+    background-color: transparent;
   }
 `;
 
@@ -324,7 +324,7 @@ const WidgetContainer = styled.div`
   width: 100%;
   height: 100%;
   padding: 1.75rem;
-  background-color: transparent;
+  background-color: ${(props) => props.theme.colors.cardBackground + "BF"};
   border-radius: 12px;
   transition: box-shadow 0.5s;
   backdrop-filter: blur(4px);

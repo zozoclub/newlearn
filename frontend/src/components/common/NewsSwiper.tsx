@@ -30,7 +30,7 @@ const NewsSwiper: React.FC<NewsSwiperProps> = ({
   });
 
   return (
-    <Container>
+    <Container id="step2">
       <Swiper
         loop={true}
         effect={"slide"} // coverflow 대신 기본 slide 효과 사용

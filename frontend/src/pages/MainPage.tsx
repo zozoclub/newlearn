@@ -18,11 +18,23 @@ const MainPage = () => {
   const startTutorial = () => {
     setTutorialTip({
       steps: [
-        { selector: "#step1", content: "첫 번째 단계입니다." },
-        { selector: "#step2", content: "두 번째 단계입니다." },
-        { selector: "#step3", content: "세 번째 단계입니다." },
-        { selector: "#step4", content: "네 번째 단계입니다." },
-        { selector: "#step5", content: "다섯 번째 단계입니다." },
+        { selector: "#step1", content: "한글/영어 토글 버튼입니다." },
+        {
+          selector: "#step2",
+          content: "오늘의 Top 10 뉴스입니다.",
+        },
+        {
+          selector: "#step3",
+          content: "학습 현황입니다. 최초에는 설정이 필요합니다.",
+        },
+        {
+          selector: "#step4",
+          content: "사용자가 읽은 뉴스의 카테고리를 차트로 볼 수 있습니다.",
+        },
+        {
+          selector: "#step5",
+          content: "포인트, 읽은 뉴스 수의 랭킹을 확인할 수 있습니다.",
+        },
       ],
       isActive: true,
       onComplete: () => {
@@ -81,7 +93,7 @@ const MainPage = () => {
   const DesktopRender = () => {
     return (
       <Container>
-        <NewsContainer id="step2">
+        <NewsContainer>
           <Clock />
           <DailyNews />
         </NewsContainer>

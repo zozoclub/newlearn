@@ -21,9 +21,10 @@ const TutorialTip = () => {
           width: `${rect.width}px`,
           height: `${rect.height}px`,
         });
+
         setContentStyle({
-          top: `${rect.top - 64}px`,
-          left: `${rect.left + rect.width + 16}px`,
+          top: `${rect.top - 96}px`,
+          left: `${rect.left}px`,
         });
       }
     }

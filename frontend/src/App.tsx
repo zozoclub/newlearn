@@ -92,7 +92,7 @@ const App: React.FC = () => {
       <TutorialTip />
       <GlobalStyle />
       <Background />
-      <AppContainer className="app-container">
+      <AppContainer id="app-container">
         {!isMobile && <Header />}
         <TransitionContent>
           <Outlet />

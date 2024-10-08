@@ -52,7 +52,7 @@ const NewsPage = () => {
   const DesktopRender = () => {
     return (
       <Container>
-        <NewsContent id="step6">
+        <NewsContent>
           {selectedCategory === 0 && <Recommand />}
           <NewsList setTotalPages={setTotalPages} />
         </NewsContent>
@@ -71,7 +71,7 @@ const NewsPage = () => {
         <MobileLogoHeader />
         <NewsListHeader />
         <ContentWrapper>
-          <NewsContent>
+          <NewsContent id="step9">
             <NewsList setTotalPages={setTotalPages} />
             <Pagination
               category={selectedCategory}

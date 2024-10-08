@@ -103,7 +103,8 @@ public class UserController {
 				System.out.println("hell 들어오냐?ㅅ비");
 				Cookie cookie = new Cookie("refreshToken", null);
 				cookie.setMaxAge(0);
-				cookie.setPath("/");
+				cookie.setPath("/"); // 생성 시와 동일한 경로 설정
+				cookie.setDomain("j11d105.p.ssafy.io"); // 생성 시와 동일한 도메인 설정
 				response.addCookie(cookie);
 
 			}
@@ -260,7 +261,8 @@ public class UserController {
 
 				Cookie cookie = new Cookie("refreshToken", null);
 				cookie.setMaxAge(0);
-				cookie.setPath("/");
+				cookie.setPath("/"); // 생성 시와 동일한 경로 설정
+				cookie.setDomain("j11d105.p.ssafy.io"); // 생성 시와 동일한 도메인 설정
 				response.addCookie(cookie);
 			} else {
 				return ApiResponse.createError(ErrorCode.INVALID_JWT_TOKEN);

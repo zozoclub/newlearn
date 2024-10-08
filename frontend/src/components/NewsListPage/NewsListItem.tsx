@@ -69,12 +69,12 @@ const Container = styled.div`
   }
   @media (max-width: 767px) {
     height: 100%;
-    background-color: ${(props) => props.theme.colors.background};
     box-shadow: none;
     border-radius: 2px;
     margin: 0;
-    padding: 0.5rem;
-    border-bottom: 1px solid lightgray;
+    padding: 0.75rem 0.5rem;
+    background-color: transparent;
+    border-bottom: 1px solid ${(props) => props.theme.colors.readonly};
   }
 `;
 
@@ -89,8 +89,8 @@ const ThumbnailImageDiv = styled.div`
     aspect-ratio: 1.6;
   }
   @media (max-width: 768px) {
-    min-width: 10rem;
-    height: 6.5rem;
+    min-width: 7rem;
+    height: 4.5rem;
     margin-right: 1rem;
   }
 `;
@@ -106,9 +106,10 @@ const ThumbnailImage = styled.img`
     aspect-ratio: 1.6;
   }
   @media (max-width: 768px) {
-    width: 10rem;
-    height: 6.5rem;
+    width: 7rem;
+    height: 4.5rem;
     border-radius: 5px;
+    object-fit: cover;
   }
 `;
 
@@ -133,8 +134,8 @@ const Title = styled.div`
   width: 100%;
   @media (max-width: 768px) {
     height: auto;
-    font-weight: 500;
-    font-size: 1.125rem;
+    font-weight: 600;
+    font-size: 1rem;
     line-height: 1.25rem;
     margin-bottom: 0rem;
     text-overflow: ellipsis;
@@ -166,9 +167,9 @@ const Footer = styled.div`
 `;
 
 const CategoryButton = styled.button`
+  min-height: 2.5rem;
   padding: 0 1rem;
   border-radius: 0.75rem;
-  min-height: 2.5rem;
   color: #ffffff;
   background-color: ${(props) => props.theme.colors.primary};
   transition: background-color 0.5s;
@@ -178,9 +179,11 @@ const CategoryButton = styled.button`
   }
 
   @media (max-width: 768px) {
-    margin-bottom: 0.75rem;
-    padding: 0.375rem 0.5rem;
-    font-size: 0.75rem;
+    min-height: 1.5rem;
+    padding: 0.375rem 0rem;
+    font-size: 0.875rem;
+    background: none;
+    color: gray;
   }
 `;
 

@@ -11,11 +11,18 @@ import Avatar, { AvatarType } from "@components/common/Avatar";
 import { changeNickname, changeAvatar } from "@services/mypageService";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import LevelIcon from "@components/common/LevelIcon";
-import { checkNicknameDup, getUserInfo } from "@services/userService";
+import {
+  checkNicknameDup,
+  getUserInfo,
+  deleteUser,
+} from "@services/userService";
+import { usePageTransition } from "@hooks/usePageTransition";
+
 const MyPageProfile: React.FC = () => {
   const queryClient = useQueryClient();
   const userInfo = useRecoilValue(userInfoState);
   const setUserInfo = useSetRecoilState(userInfoState);
+  const transitionTo = usePageTransition();
 
   const [nickname, setNickname] = useState(userInfo.nickname);
   const [tempNickname, setTempNickname] = useState(userInfo.nickname);
@@ -29,6 +36,7 @@ const MyPageProfile: React.FC = () => {
   const [isNicknameDuplicate, setIsNicknameDuplicate] = useState<
     boolean | null
   >(null);
+  const [isDeleteUserModalOpen, setIsDeleteUserModalOpen] = useState(false);
 
   // 경험치
   const calculatedExperience = calculateExperience(userInfo.experience);
@@ -196,6 +204,18 @@ const MyPageProfile: React.FC = () => {
       setIsValidNickname(true);
     }
   }, [tempNickname, nickname]);
+
+  // 회원 탈퇴
+  const handleDeleteUser = async () => {
+    try {
+      await deleteUser();
+      sessionStorage.removeItem("accessToken");
+      transitionTo("/login");
+    } catch (error) {
+      console.log("회원 탈퇴 실패", error);
+    }
+  };
+
   return (
     <div>
       <Container>
@@ -223,7 +243,23 @@ const MyPageProfile: React.FC = () => {
             {name}
             {social === "naver" ? <SocialNaver /> : <SocialKakao />}
             {email}
+            <DeleteUserButton onClick={() => setIsDeleteUserModalOpen(true)}>
+              회원탈퇴
+            </DeleteUserButton>
           </SocialInfoContainer>
+          <Modal
+            isOpen={isDeleteUserModalOpen}
+            onClose={() => setIsDeleteUserModalOpen(false)}
+            title=""
+          >
+            <ModalContent>
+              <h2>정말로 회원 탈퇴를 하시겠습니까?</h2>
+              <h2>이 작업은 되돌릴 수 없습니다.</h2>
+            </ModalContent>
+            <ModalButtonContainer>
+              <DeleteButton onClick={handleDeleteUser}>확인</DeleteButton>
+            </ModalButtonContainer>
+          </Modal>
         </ProfileInfoContainer>
         {/* 아바타 및 닉네임 수정 모달 */}
         <Modal
@@ -384,7 +420,7 @@ const SaveButton = styled(CustomButton)`
 
 // 경험치
 const ExperienceContainer = styled.div`
-  width: 90%;
+  width: 93%;
   display: flex;
   gap: 1rem;
 `;
@@ -418,6 +454,15 @@ const SocialInfoContainer = styled.div`
   gap: 0.5rem;
 `;
 
+const DeleteUserButton = styled.button`
+  border: none;
+  border-radius: 1rem;
+  background-color: ${(props) => props.theme.colors.newsItemBackground};
+  color: ${(props) => props.theme.colors.text};
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+`;
 // 아바타
 const AvatarSettingContainer = styled.div`
   position: relative;
@@ -467,4 +512,34 @@ const NicknameValidationMessage = styled.div<{ isValid: boolean }>`
   font-size: 1rem;
   text-align: center;
   margin-bottom: 1rem;
+`;
+
+const ModalContent = styled.div`
+  text-align: center;
+  margin-bottom: 1rem;
+
+  h2 {
+    margin: 0.5rem 0;
+    font-size: 1.25rem;
+    font-weight: 500;
+  }
+`;
+
+const ModalButtonContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+`;
+
+const ModalButton = styled.button`
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 0.25rem;
+  font-size: 1rem;
+  cursor: pointer;
+`;
+
+const DeleteButton = styled(ModalButton)`
+  background-color: ${(props) => props.theme.colors.danger};
+  color: white;
 `;

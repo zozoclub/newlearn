@@ -81,10 +81,7 @@ const MyPage = () => {
       await deleteUser();
       sessionStorage.removeItem("accessToken");
       setIsDeleteUserModalOpen(false);
-      history.pushState(null, "", location.href);
-      window.onpopstate = function () {
-        history.go(-2);
-      };
+
       transitionTo("/login");
     } catch (error) {
       console.log("로그아웃 오류 발생", error);

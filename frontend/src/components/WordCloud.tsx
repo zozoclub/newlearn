@@ -5,6 +5,7 @@ import Wordcloud from "@visx/wordcloud/lib/Wordcloud";
 import { useQuery } from "@tanstack/react-query";
 import { getWordCloud } from "@services/searchService";
 import { useSpring, animated, config } from "react-spring";
+import { usePageTransition } from "@hooks/usePageTransition";
 
 interface WordCloudItem {
   keyword: string;
@@ -29,6 +30,16 @@ const colors = [
 const AnimatedText = animated(Text);
 
 const WordCloud: React.FC = () => {
+  // 단어 클릭 시 검색
+  const transitionTo = usePageTransition();
+  const handleWordClick = (word: string) => {
+    if (word) {
+      const encodedWord = encodeURIComponent(word);
+      transitionTo(`/news/search/${encodedWord}`);
+    }
+  };
+
+  // 워드 클라우드 단어 가져오기
   const { data, isLoading, error } = useQuery<WordCloudItem[]>({
     queryKey: ["wordCloud"],
     queryFn: getWordCloud,
@@ -100,6 +111,8 @@ const WordCloud: React.FC = () => {
               fontSize={w.size}
               fontFamily={w.font}
               fontWeight={500}
+              cursor="pointer"
+              onClick={() => handleWordClick(w.text || "")}
             >
               {w.text}
             </AnimatedText>

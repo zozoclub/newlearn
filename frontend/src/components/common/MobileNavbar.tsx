@@ -48,7 +48,6 @@ const NavItem = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
   p {
     font-size: 0.75rem;
     margin-top: 0.25rem;

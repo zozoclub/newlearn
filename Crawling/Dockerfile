@@ -9,6 +9,7 @@ RUN apt-get update && apt-get install -y \
     gcc \
     python3-dev \
     libpq-dev \
+    dos2unix \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -19,10 +20,23 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # 소스 코드 및 .env 파일 복사
 COPY . .
-COPY .env .env
+
+# Python 경로 설정 (Crawling 모듈을 찾을 수 있도록)
+ENV PYTHONPATH=/app:$PYTHONPATH
 
 # Django 환경 변수 설정
 ENV DJANGO_SETTINGS_MODULE=Crawling.settings
+ENV ENV_FILE=/app/.env
 
-# 컨테이너 시작 시 실행할 명령어를 scheduler.py로 변경
-CMD ["python", "scheduler.py"]
+# entrypoint.sh 복사 및 실행 권한 부여
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+# .env 파일의 줄바꿈 형식을 UNIX 스타일로 변환
+RUN dos2unix /app/.env
+
+# entrypoint 설정
+ENTRYPOINT ["/entrypoint.sh"]
+
+# 스케줄러 스크립트 실행
+CMD ["python", "crawled_data/scheduler.py"]

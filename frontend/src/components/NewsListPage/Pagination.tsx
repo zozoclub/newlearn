@@ -95,4 +95,10 @@ const PageButton = styled.div<{ $active?: boolean }>`
   &:hover {
     color: ${(props) => props.theme.colors.primaryPress};
   }
+  @media (max-width: 767px) {
+    padding: 0.5rem;
+    font-weight: normal;
+    font-family: "Righteous";
+    margin-bottom: 1rem;
+  }
 `;

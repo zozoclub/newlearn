@@ -1,7 +1,7 @@
-import NewsSearch from "@components/newspage/NewsSearch";
+import NewsSearch from "@components/NewsListPage/NewsSearch";
 import { useLocation, useParams } from "react-router-dom";
 import styled from "styled-components";
-import NewsListItem from "@components/newspage/NewsListItem";
+import NewsListItem from "@components/NewsListPage/NewsListItem";
 import { searchNews } from "@services/searchService";
 import { useQuery } from "@tanstack/react-query";
 import { useRecoilValue } from "recoil";
@@ -74,7 +74,7 @@ const NewsSearchPage = () => {
           <NoResult>검색 결과가 없습니다.</NoResult>
         ) : (
           <WordCloudContainer>
-            <WordCloudTitle>HOT한 키워드</WordCloudTitle>
+            {/* <WordCloudTitle>HOT한 키워드</WordCloudTitle> */}
             <WordCloud />
           </WordCloudContainer>
         )}
@@ -114,18 +114,19 @@ const NoResult = styled.div`
   font-size: 2rem;
 `;
 
-const WordCloudTitle = styled.div`
-  font-weight: bold;
-  font-size: 2rem;
-  margin-top: 1rem;
-  color: gray;
-`;
+// const WordCloudTitle = styled.div`
+//   font-weight: bold;
+//   font-size: 2rem;
+//   margin-top: 1rem;
+//   color: gray;
+// `;
 
 const WordCloudContainer = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  padding-top: 2rem;
 `;
 
 export default NewsSearchPage;

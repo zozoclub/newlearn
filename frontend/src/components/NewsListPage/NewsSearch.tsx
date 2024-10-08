@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import searchIcon from "@assets/icons/searchIcon.svg";
 import { searchAutoNews } from "@services/searchService";
@@ -17,6 +17,7 @@ type NewsSearchProps = {
 const NewsSearch: React.FC<NewsSearchProps> = ({ initialQuery = "" }) => {
   const transitionTo = usePageTransition();
   const inputRef = useRef<HTMLInputElement>(null);
+  const debounceRef = useRef<NodeJS.Timeout | null>(null);
 
   const [searchValue, setSearchValue] = useState(initialQuery);
   const [searchResults, setSearchResults] = useState<SearchAutoNews[]>([]);
@@ -24,36 +25,43 @@ const NewsSearch: React.FC<NewsSearchProps> = ({ initialQuery = "" }) => {
   const [clickedNewsId, setClickedNewsId] = useState<number | null>(null);
   const clickTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // 검색 페이지에서 검색 창에 검색어 나타나게 함
-  useEffect(() => {
-    if (initialQuery) {
-      handleInputChange({
-        target: { value: initialQuery },
-      } as React.ChangeEvent<HTMLInputElement>);
+  const debouncedSearch = useCallback((query: string) => {
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [initialQuery]);
 
-  // input change를 감지해 api 호출
-  const handleInputChange = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const query = event.target.value;
-    setSearchValue(query);
-
-    // 한글 또는 영어가 포함된 경우 요청을 보냄
-    if (query && !isMixedLanguage(query)) {
-      try {
-        const results = await searchAutoNews(query);
-        setSearchResults(results);
-      } catch (error) {
-        console.error("Error fetching search results:", error);
+    debounceRef.current = setTimeout(async () => {
+      console.log("Sending API request for:", query);
+      if (query && !isMixedLanguage(query)) {
+        try {
+          const results = await searchAutoNews(query);
+          setSearchResults(results);
+        } catch (error) {
+          console.error("Error fetching search results:", error);
+          setSearchResults([]);
+        }
+      } else {
         setSearchResults([]);
       }
-    } else {
-      // 입력 값이 없을 경우 검색 결과를 비워줌
-      setSearchResults([]);
+    }, 200);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (initialQuery) {
+      debouncedSearch(initialQuery);
     }
+    return () => {
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+      }
+    };
+  }, [initialQuery, debouncedSearch]);
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = event.target.value;
+    setSearchValue(newValue);
+    debouncedSearch(newValue);
   };
 
   // 검색 결과 창 클릭 시 focus out 대신 디테일 페이지로 클릭 가능하도록 함
@@ -126,7 +134,7 @@ const NewsSearch: React.FC<NewsSearchProps> = ({ initialQuery = "" }) => {
         ref={inputRef}
         placeholder="검색어를 입력해 주세요."
         value={searchValue}
-        onChange={handleInputChange}
+        onChange={handleChange}
         onFocus={() => setIsInputFocused(true)}
         onBlur={() => {
           // Delay hiding results to allow click to register
@@ -171,6 +179,7 @@ const SearchContainer = styled.div`
 
   input {
     width: 100%;
+    min-width: 300px;
     height: 40px;
     padding: 0.5rem 1rem;
     background-color: transparent;

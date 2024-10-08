@@ -46,7 +46,18 @@ const HeaderContainer = styled.div`
     left: 5%;
     width: 80vw;
   }
+  @media (max-width: 767px) {
+    position: sticky;
+    top: 0;
+    left: 0;
+    width: 95%;
+    margin: 0 1rem;
+    padding: 1rem 0;
+    background-color: ${(props) => props.theme.colors.background};
+    z-index: 10;
+  }
 `;
+
 const Container = styled.div`
   position: relative;
   width: 100%;
@@ -66,5 +77,9 @@ const CategoryItem = styled.div<{ $isSelected?: boolean }>`
   white-space: nowrap;
   color: ${(props) =>
     props.$isSelected ? props.theme.colors.primary : props.theme.colors.text};
+
+  @media (max-width: 767px) {
+    font-size: 1rem;
+  }
 `;
 export default NewsListHeader;

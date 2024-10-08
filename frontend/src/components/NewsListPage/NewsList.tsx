@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import styled from "styled-components";
 
-import NewsListItem from "@components/newspage/NewsListItem";
+import NewsListItem from "@components/NewsListPage/NewsListItem";
 import { useQuery } from "@tanstack/react-query";
 import { getCategoryNewsList, getTotalNewsList } from "@services/newsService";
 import { useRecoilValue } from "recoil";
@@ -68,6 +68,9 @@ const Container = styled.div`
 
 const NewsListContainer = styled.div`
   column-gap: 0.5rem;
+  @media (max-width: 767px) {
+    gap: 0rem;
+  }
 `;
 
 export default NewsList;

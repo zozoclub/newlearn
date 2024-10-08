@@ -130,9 +130,9 @@ const MenuItemBase = styled.div`
     transform: scale();
   }
 
-    @media (max-width: 768px) {
+  @media (max-width: 768px) {
     &::before {
-      filter: none; 
+      filter: none;
     }
   }
 `;

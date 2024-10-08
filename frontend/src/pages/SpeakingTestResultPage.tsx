@@ -121,8 +121,9 @@ const SpeakingTestResultPage: React.FC = () => {
           <BackArrow width={48} height={48} url="/speakingtesthistory" />
           평가 리스트로 돌아가기
         </BackHeader>
-
-        <SpeakingTestResultCharts results={results} />
+        <ChartContainer>
+          <SpeakingTestResultCharts results={results} />
+        </ChartContainer>
 
         <GridContainer>
           <SpeakingTestResultInfoWidget
@@ -167,7 +168,7 @@ const MainContainer = styled.div`
   justify-content: center;
   flex-direction: column;
   width: 90%;
-  min-height: 50rem;
+  height: 50rem;
   margin: 0 0.5rem;
   padding: 0.5rem;
   background-color: ${(props) => props.theme.colors.cardBackground + "5A"};
@@ -203,6 +204,11 @@ const ErrorText = styled.div`
   color: ${(props) => props.theme.colors.danger};
   font-size: 1.25rem;
   text-align: center;
+`;
+
+const ChartContainer = styled.div`
+  display: flex;
+  margin: 2rem;
 `;
 
 const MobileContainer = styled.div`

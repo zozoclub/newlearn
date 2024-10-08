@@ -403,8 +403,11 @@ const StatsHistory = styled.div`
 const StatItem = styled.p`
   font-size: 1rem;
   margin-bottom: 0.5rem;
-  @media (max-width: 768px) {
+  @media (max-width: 1280px) {
     font-size: 0.875rem;
+  }
+  @media (max-width: 768px) {
+    font-size: 0.75rem;
   }
 `;
 
@@ -430,6 +433,7 @@ const EmptyMessage = styled.p`
   margin-top: 5rem;
   justify-content: center;
   margin: auto;
+  padding-top: 10rem;
   text-align: center;
   font-size: 1.25rem;
   color: ${(props) => props.theme.colors.text04};

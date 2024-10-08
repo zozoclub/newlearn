@@ -275,7 +275,7 @@ const SpeakingTestPage: React.FC = () => {
         // 인식 불가 혹은 많이 다를 때
       } else if (e.result.reason === sdk.ResultReason.NoMatch) {
         console.log("No speech could be recognized.");
-        alert("No speech was recognized. Please try again.");
+        alert("인식할 수 없는 음성입니다. 소음을 최소화 해주세요!");
       }
     };
     // 에러 코드 반환

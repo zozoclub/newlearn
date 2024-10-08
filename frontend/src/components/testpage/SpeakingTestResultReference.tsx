@@ -152,6 +152,10 @@ const EnglishSentence = styled.div`
   font-weight: 300;
   letter-spacing: 0.01rem; 
   line-height: 1.5;
+  @media (max-width: 1280px) {
+    font-size: 1.25rem;
+    line-height: 1.4;
+  }
 `;
 
 const KoreanSentence = styled.div`
@@ -161,6 +165,10 @@ const KoreanSentence = styled.div`
   margin-top: 0.5rem;
   letter-spacing: 0.01rem; 
   line-height: 1.5;
+  @media (max-width: 1280px) {
+    font-size: 1.125rem;
+    line-height: 1.4;
+  }
 `;
 
 const SentenceBlock = styled.div`

@@ -8,14 +8,18 @@ import BadStamp from "@assets/icons/BadStamp";
 import { useNavigate } from "react-router-dom";
 
 type Props = {
-  score: number;
   date: string;
   audioFileId: number;
+  totalScore: number;
+  accuracyScore: number;
+  fluencyScore: number;
+  prosodyScore: number;
+  completenessScore: number;
 };
 
 const SpeakingTestHistoryCardList: React.FC<Props> = ({
   date,
-  score,
+  totalScore,
   audioFileId,
 }) => {
   const navigate = useNavigate();
@@ -25,9 +29,9 @@ const SpeakingTestHistoryCardList: React.FC<Props> = ({
   };
 
   const renderStamp = () => {
-    if (score > 90) return <ResponsiveIcon as={PerfectStamp} />;
-    if (score > 80) return <ResponsiveIcon as={GreatStamp} />;
-    if (score > 70) return <ResponsiveIcon as={GoodStamp} />;
+    if (totalScore > 90) return <ResponsiveIcon as={PerfectStamp} />;
+    if (totalScore > 80) return <ResponsiveIcon as={GreatStamp} />;
+    if (totalScore > 70) return <ResponsiveIcon as={GoodStamp} />;
     return <ResponsiveIcon as={BadStamp} />;
   };
 
@@ -35,7 +39,7 @@ const SpeakingTestHistoryCardList: React.FC<Props> = ({
     <MainContainer onClick={intoDetailHandler}>
       <ListDetailContainer>
         <ScoreContainer>
-          <ScoreSpan>{score}</ScoreSpan>점
+          종합 <ScoreSpan>{totalScore}</ScoreSpan> 점
         </ScoreContainer>
       </ListDetailContainer>
       <DateContainer>{date}</DateContainer>
@@ -100,13 +104,12 @@ const DateContainer = styled.div`
   font-weight: 200;
   position: absolute;
   bottom: 0.5rem;
-  right: 1rem; 
+  right: 1rem;
 `;
 
 const ScoreContainer = styled.div`
   display: flex;
-  justify-content: center;
-  align-items: center;
+  align-items: end;
 `;
 
 const ScoreStamp = styled.div`
@@ -123,6 +126,6 @@ const ScoreStamp = styled.div`
 const ScoreSpan = styled.span`
   font-size: 2rem;
   font-weight: 700;
+  margin: 0 0.25rem; 
   color: ${(props) => props.theme.colors.primary};
 `;
-

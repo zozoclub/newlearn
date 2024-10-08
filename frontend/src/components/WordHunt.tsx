@@ -22,17 +22,24 @@ type EngDataProps = {
 
 const WordHunt: React.FC<EngDataProps> = ({ engData }) => {
   const text =
-    engData || `Facing mounting pressure following a contentious draw against Palestine in their most recent World Cup qualifier, South Korea's national football team has arrived in Oman, their next destination in the arduous quest for a coveted spot in the 2026 FIFA World Cup. In a somber press conference upon their arrival in Muscat, Head Coach Hong Myung-bo acknowledged the palpable frustration of the South Korean fan base, acknowledging the criticism directed at both the team's performance and the Korean Football Association's overall direction.
+    engData ||
+    `Facing mounting pressure following a contentious draw against Palestine in their most recent World Cup qualifier, South Korea's national football team has arrived in Oman, their next destination in the arduous quest for a coveted spot in the 2026 FIFA World Cup. In a somber press conference upon their arrival in Muscat, Head Coach Hong Myung-bo acknowledged the palpable frustration of the South Korean fan base, acknowledging the criticism directed at both the team's performance and the Korean Football Association's overall direction.
     While expressing empathy for the fans' disillusionment, Hong Myung-bo asserted that he would bear the brunt of the criticism, urging the public to rally behind the players, who he believes are striving to overcome adversity and deliver a strong performance on the pitch. Hong Myung-bo's plea for fan support comes amidst mounting controversy surrounding the national team's recent performance, with questions arising regarding the team's tactical approach and player selection.
-    The match against Oman, scheduled for October 10th at the Sultan Qaboos Sports Complex, holds significant weight in South Korea's qualification hopes, as a victory would be crucial to maintaining momentum in Group B. Hong Myung-bo's words, imbued with a mixture of introspection and determination, reflect the immense pressure facing the South Korean squad as they embark on this critical juncture in their World Cup qualifying journey.`
+    The match against Oman, scheduled for October 10th at the Sultan Qaboos Sports Complex, holds significant weight in South Korea's qualification hopes, as a victory would be crucial to maintaining momentum in Group B. Hong Myung-bo's words, imbued with a mixture of introspection and determination, reflect the immense pressure facing the South Korean squad as they embark on this critical juncture in their World Cup qualifying journey.`;
 
   const setExpModal = useSetRecoilState(isExpModalState);
   const [grid, setGrid] = useState<string[][]>([]);
-  const [selectedPositions, setSelectedPositions] = useState<[number, number][]>([]);
+  const [selectedPositions, setSelectedPositions] = useState<
+    [number, number][]
+  >([]);
   const [incorrectSelection, setIncorrectSelection] = useState<boolean>(false);
   const [placedWords, setPlacedWords] = useState<string[]>([]);
-  const [placedWordPositions, setPlacedWordPositions] = useState<{ word: string; positions: [number, number][] }[]>([]);
-  const [correctSelections, setCorrectSelections] = useState<[number, number][]>([]);
+  const [placedWordPositions, setPlacedWordPositions] = useState<
+    { word: string; positions: [number, number][] }[]
+  >([]);
+  const [correctSelections, setCorrectSelections] = useState<
+    [number, number][]
+  >([]);
   const [showAnswer, setShowAnswer] = useState<boolean>(false);
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -102,7 +109,9 @@ const WordHunt: React.FC<EngDataProps> = ({ engData }) => {
   };
 
   if (errorMessage) {
-    return <ErrorText>{errorMessage}</ErrorText>;
+    return (
+      <ErrorMessage>WordHunt 단어가 부족합니다. 다른 기사로 시도해보세요!</ErrorMessage>
+    )
   }
 
   return (
@@ -110,11 +119,16 @@ const WordHunt: React.FC<EngDataProps> = ({ engData }) => {
       <CustomhrTag />
       <Container>
         <Title>Word Hunt Game</Title>
-        <Explain>왼쪽에 주어진 단어 리스트를 게임판에서 찾아 드래그 해보세요.</Explain>
+        <Explain>
+          왼쪽에 주어진 단어 리스트를 게임판에서 찾아 드래그 해보세요.
+        </Explain>
         <WordHuntLayout>
           <WordList>
             <h2>Word List</h2>
-            <p>Number of words remaining: {placedWords.length - correctWords.length}</p>
+            <p>
+              Number of words remaining:{" "}
+              {placedWords.length - correctWords.length}
+            </p>
             <ul>
               {placedWords.map((word, index) => (
                 <WordItem key={index} $isCorrect={correctWords.includes(word)}>
@@ -127,12 +141,21 @@ const WordHunt: React.FC<EngDataProps> = ({ engData }) => {
             <Grid>
               {grid.map((row, rowIndex) =>
                 row.map((letter, colIndex) => {
-                  const isSelected = selectedPositions.some(([r, c]) => r === rowIndex && c === colIndex);
-                  const isCorrect = correctSelections.some(([r, c]) => r === rowIndex && c === colIndex);
-                  const isIncorrect = incorrectSelection && isSelected && !isCorrect;
-                  const isAnswer = showAnswer && placedWordPositions.some(({ positions }) =>
-                    positions.some(([r, c]) => r === rowIndex && c === colIndex)
+                  const isSelected = selectedPositions.some(
+                    ([r, c]) => r === rowIndex && c === colIndex
                   );
+                  const isCorrect = correctSelections.some(
+                    ([r, c]) => r === rowIndex && c === colIndex
+                  );
+                  const isIncorrect =
+                    incorrectSelection && isSelected && !isCorrect;
+                  const isAnswer =
+                    showAnswer &&
+                    placedWordPositions.some(({ positions }) =>
+                      positions.some(
+                        ([r, c]) => r === rowIndex && c === colIndex
+                      )
+                    );
 
                   return (
                     <Cell
@@ -191,11 +214,19 @@ const WordHunt: React.FC<EngDataProps> = ({ engData }) => {
             {showAnswer ? `You Got ${correctWordsCount} Words` : "Show Answer"}
           </Button>
         </ButtonLayout>
-        <Modal isOpen={isCheckModal} onClose={closeSubmitModal} title="Word Hunt">
+        <Modal
+          isOpen={isCheckModal}
+          onClose={closeSubmitModal}
+          title="Word Hunt"
+        >
           <p>정답을 보게 되면 더이상 점수를 얻을 수 없습니다.</p>
           <ModalButtonContainer>
-            <ModalCancelButton onClick={closeSubmitModal}>취소</ModalCancelButton>
-            <ModalConfirmButton onClick={handleSubmitConfirm}>확인</ModalConfirmButton>
+            <ModalCancelButton onClick={closeSubmitModal}>
+              취소
+            </ModalCancelButton>
+            <ModalConfirmButton onClick={handleSubmitConfirm}>
+              확인
+            </ModalConfirmButton>
           </ModalButtonContainer>
         </Modal>
       </Container>
@@ -289,12 +320,12 @@ const Cell = styled.div<{
     props.$isAnswer
       ? props.theme.colors.primary
       : props.$isCorrect
-        ? props.theme.colors.primary
-        : props.$isIncorrect
-          ? props.theme.colors.danger
-          : props.$isSelected
-            ? "yellow"
-            : props.theme.colors.cardBackground01};
+      ? props.theme.colors.primary
+      : props.$isIncorrect
+      ? props.theme.colors.danger
+      : props.$isSelected
+      ? "yellow"
+      : props.theme.colors.cardBackground01};
   color: ${(props) =>
     props.$isCorrect || props.$isIncorrect || props.$isAnswer
       ? "white"
@@ -309,13 +340,6 @@ const WordItem = styled.li<{ $isCorrect: boolean }>`
   color: ${(props) =>
     props.$isCorrect ? props.theme.colors.primary : props.theme.colors.text};
   font-family: "Righteous";
-`;
-
-const ErrorText = styled.p`
-  font-size: 1.5rem;
-  color: ${(props) => props.theme.colors.danger};
-  text-align: center;
-  margin-top: 2rem;
 `;
 
 const Explain = styled.div`
@@ -361,3 +385,11 @@ const CustomhrTag = styled.hr`
   border-bottom: 1px solid ${(props) => props.theme.colors.placeholder};
   margin: 3rem 0.1rem;
 `;
+
+const ErrorMessage = styled.div`
+  margin-top: 5rem;
+  text-align: center;
+  margin-bottom: 1rem;
+  font-size: 1.125rem;
+  color: ${(props) => props.theme.colors.text04};
+`

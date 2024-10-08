@@ -68,14 +68,14 @@ const MyPageScrapNews = () => {
               key={difficulty.name}
               onClick={() => {
                 setSelectedDifficulty(index + 1);
-                setSelectedPage(0); // 난이도 변경 시 1페이지로 초기화
-                refetch(); // 데이터 재요청
+                setSelectedPage(0);
+                refetch();
               }}
+              $isSelected={selectedDifficulty === index + 1}
             >
               {difficulty.name}
             </DifficultyItem>
           ))}
-          <FocusEffect $difficultyId={selectedDifficulty - 1} />
         </DifficultyContainer>
       </HeaderContainer>
       <NewsListContainer>
@@ -141,32 +141,22 @@ const DifficultyContainer = styled.div`
   }
 `;
 
-const DifficultyItem = styled.div`
-  position: relative;
+const DifficultyItem = styled.div<{ $isSelected: boolean }>`
   width: 33.3%;
   font-size: 1.25rem;
-  font-weight: 600;
+  font-weight: ${(props) => (props.$isSelected ? "800" : "600")};
   text-align: center;
   cursor: pointer;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: clip;
+  color: ${(props) =>
+    props.$isSelected ? props.theme.colors.primary : "inherit"};
+  transition: font-weight 0.3s, color 0.3s;
   @media (max-width: 768px) {
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;
   }
-`;
-
-const FocusEffect = styled.div<{ $difficultyId: number }>`
-  position: absolute;
-  left: ${(props) => (100 / 3) * props.$difficultyId}%;
-  bottom: 0;
-  transform: translate(62%, 0);
-  width: 15%;
-  height: 1rem;
-  transition: left 0.3s;
-  border-bottom: 0.175rem ${(props) => props.theme.colors.primary + "AA"};
-  box-shadow: 0 0.75rem 0.25rem -0.25rem ${(props) => props.theme.colors.primary + "AA"};
 `;
 
 const NewsListContainer = styled.div`

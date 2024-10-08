@@ -64,6 +64,7 @@ const VocabularyPage: React.FC = () => {
   }, [wordList]);
 
   if (isLoading) return <Spinner />;
+
   if (error)
     return <ErrorText>에러가 발생했습니다. 다시 시도해 주세요.</ErrorText>;
 
@@ -197,7 +198,9 @@ const NavButtonWrapper = styled.div<{ $active: boolean }>`
 const NavButton = styled.button<{ $active: boolean }>`
   background-color: transparent;
   color: ${(props) =>
-    props.$active ? props.theme.colors.primary : props.theme.colors.placeholder};
+    props.$active
+      ? props.theme.colors.primary
+      : props.theme.colors.placeholder};
   font-size: 1.125rem;
   font-weight: ${(props) => (props.$active ? "700" : "500")};
   cursor: pointer;

@@ -46,8 +46,6 @@ const VocaCollapsible: React.FC<VocaCollapsibleProps> = ({
   });
 
   const toggleExpand = () => {
-    console.log(id);
-
     setExpanded((prev) => !prev);
   };
 
@@ -234,7 +232,8 @@ export default VocaCollapsible;
 const ListItem = styled.div`
   letter-spacing: 0.1px;
 
-  width: 100%;
+  width: 95%;
+  margin: 0 auto;
   border-radius: 0.5rem;
   margin-bottom: 1rem;
   padding: 0.125rem;
@@ -283,11 +282,12 @@ const TitleWord = styled.span`
 
 const TitleProcessMeaning = styled.span<{ $isExpanded: boolean }>`
   color: ${(props) => props.theme.colors.text04};
-  font-weight: 400;
+  font-weight: 500;
   font-size: 0.875rem;
   opacity: ${({ $isExpanded }) => ($isExpanded ? 1 : 0)};
   overflow: hidden;
   transition: opacity 0.3s ease, max-height 0.3s ease;
+  padding-right: 0.5rem;
 
   @media (max-width: 1280px) {
     font-size: 0.75rem;

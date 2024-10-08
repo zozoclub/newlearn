@@ -12,8 +12,8 @@ const MobileNavbar = () => {
   const iconList = [
     { Component: HomeIcon, alt: "홈", link: "/" },
     { Component: NewsIcon, alt: "뉴스", link: "/news/0/1" },
-    { Component: StudyIcon, alt: "스터디", link: "/mystudy" },
     { Component: VocaIcon, alt: "단어장", link: "/voca" },
+    { Component: StudyIcon, alt: "스터디", link: "/mystudy" },
     { Component: MyPageIcon, alt: "마이페이지", link: "/mypage" },
   ];
 

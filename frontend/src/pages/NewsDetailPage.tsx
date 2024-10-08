@@ -16,14 +16,18 @@ import WordHunt from "@components/WordHunt";
 import lightThumbnailImage from "@assets/images/lightThumbnail.png";
 import darkThumbnailImage from "@assets/images/darkThumbnail.png";
 import BackArrow from "@assets/icons/BackArrow";
+import BackArrowMobileIcon from "@assets/icons/mobile/BackArrowMobileIcon";
 import { DetailNewsType } from "types/newsType";
 import FilteredRecommendNews from "@components/NewsDetailPage/FilteredRecommendNews";
 import RecentReadNews from "@components/NewsDetailPage/RecentReadNews";
 import goldMedal from "@assets/images/gold-medal.png";
 import silverMedal from "@assets/images/silver-medal.png";
 import bronzeMedal from "@assets/images/bronze-medal.png";
+import { useMediaQuery } from "react-responsive";
 
 const NewsDetailPage = () => {
+  const isMobile = useMediaQuery({ maxWidth: 768 });
+
   const userInfoData = useRecoilValue(userInfoState);
   const languageData = useRecoilValue(languageState);
   const [difficulty, setDifficulty] = useState<number>(userInfoData.difficulty);
@@ -90,7 +94,36 @@ const NewsDetailPage = () => {
               justifyContent: "space-between",
             }}
           >
-            <BackArrow height={30} width={30} />
+            {isMobile ? (
+              <div
+                style={{
+                  display: "flex",
+                  gap: "1rem",
+                  marginLeft: "0.25rem",
+                  marginTop: "0.25rem",
+                }}
+              >
+                <BackArrowMobileIcon />
+                <div
+                  style={{
+                    fontWeight: "bold",
+                    fontSize: "1.25rem",
+                  }}
+                >
+                  뉴스
+                </div>
+              </div>
+            ) : (
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                }}
+              >
+                <BackArrow height={30} width={30} />
+              </div>
+            )}
+
             <div style={{ minHeight: "3rem" }}>
               {!engIsLoading && isRead && (
                 <>
@@ -326,4 +359,5 @@ const WordHuntContainer = styled.div`
     display: none;
   }
 `;
+
 export default NewsDetailPage;

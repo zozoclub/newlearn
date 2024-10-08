@@ -172,6 +172,9 @@ const NoNewsContent = styled.div`
   color: gray;
   font-weight: bold;
   font-size: 2rem;
+  @media (max-width: 767px) {
+    font-size: 1.5rem;
+  }
 `;
 
 const GoNewsButton = styled.button`

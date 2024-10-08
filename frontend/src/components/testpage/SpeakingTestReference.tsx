@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import { useMediaQuery } from "react-responsive"; // 모바일 여부 감지
 
 type Props = {
   referenceTest: string;
@@ -10,7 +11,7 @@ const SpeakingTestReference: React.FC<Props> = ({
   referenceTest,
   referenceTextTranslate,
 }) => {
-  // 마침표를 기준으로 문장을 나누고 공백을 제거
+  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const englishSentences = referenceTest
     .split(". ")
     .map((sentence) => sentence.trim());
@@ -28,14 +29,23 @@ const SpeakingTestReference: React.FC<Props> = ({
               {index !== englishSentences.length && "."}
               <br />
             </EnglishSentence>
+            {isMobile && (
+              <>
+                <br />
+              </>
+            )}
             <KoreanSentence>
               {koreanSentences[index]}
               {index !== koreanSentences.length && "."}
             </KoreanSentence>
             <br />
             <br />
-            <br />
-            <br />
+            {!isMobile && (
+              <>
+                <br />
+                <br />
+              </>
+            )}
           </div>
         ))}
       </SentenceArea>
@@ -49,13 +59,23 @@ const SentenceArea = styled.div`
   width: 100%;
   margin: 0.75rem;
   padding: 3%;
+
+  @media (max-width: 768px) {
+    padding: 0%;
+    width: 88%;
+  }
 `;
 
 const EnglishSentence = styled.div`
   font-size: 1.375rem;
   font-weight: 500;
-  letter-spacing: 0.0001rem; 
+  letter-spacing: 0.0001rem;
   line-height: 1.5;
+
+  @media (max-width: 768px) {
+    font-size: 1.125rem;
+    line-height: 1.4;
+  }
 `;
 
 const KoreanSentence = styled.div`
@@ -63,6 +83,12 @@ const KoreanSentence = styled.div`
   color: ${(props) => props.theme.colors.text04};
   font-weight: 400;
   margin-top: 0.5rem;
-  letter-spacing: 0.002rem; 
+  letter-spacing: 0.002rem;
   line-height: 1.5;
+
+  @media (max-width: 768px) {
+    font-size: 1rem;
+    line-height: 1.4;
+    margin-top: 0.25rem;
+  }
 `;

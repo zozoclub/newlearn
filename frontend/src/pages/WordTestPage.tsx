@@ -17,7 +17,6 @@ import Modal from "@components/Modal";
 import { isExpModalState } from "@store/expState";
 import HeaderMobile from "@components/common/HeaderMobile";
 
-
 const WordTestPage: React.FC = () => {
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const [searchParams] = useSearchParams();
@@ -223,9 +222,7 @@ const WordTestPage: React.FC = () => {
 
   return (
     <>
-      {isMobile &&
-        <HeaderMobile title="단어 빈칸 테스트"/>
-      }
+      {isMobile && <HeaderMobile title="Word Test" url="/wordtesthistory" />}
       <MainContainer>
         {/* 테스트 퇴장 모달 */}
         <Modal
@@ -238,7 +235,9 @@ const WordTestPage: React.FC = () => {
             <ModalCancelButton onClick={() => setIsExitModalOpen(false)}>
               취소
             </ModalCancelButton>
-            <ModalConfirmButton onClick={handleExitTest}>확인</ModalConfirmButton>
+            <ModalConfirmButton onClick={handleExitTest}>
+              확인
+            </ModalConfirmButton>
           </ModalButtonContainer>
         </Modal>
 
@@ -247,14 +246,22 @@ const WordTestPage: React.FC = () => {
           <WordCount>
             <RemainCountContainer>
               <RemainCount>
-                남은 문제 <InfoTextNormal>{quiz.length - answeredWordsCount}</InfoTextNormal>개
+                남은 문제{" "}
+                <InfoTextNormal>
+                  {quiz.length - answeredWordsCount}
+                </InfoTextNormal>
+                개
               </RemainCount>
               <RemainCount>
-                지금까지 푼 문제 {" "}
+                지금까지 푼 문제{" "}
                 {answeredWordsCount < quiz.length ? (
-                  <InfoTextEmphasizeRed>{answeredWordsCount}</InfoTextEmphasizeRed>
+                  <InfoTextEmphasizeRed>
+                    {answeredWordsCount}
+                  </InfoTextEmphasizeRed>
                 ) : (
-                  <InfoTextEmphasizeBlue>{answeredWordsCount}</InfoTextEmphasizeBlue>
+                  <InfoTextEmphasizeBlue>
+                    {answeredWordsCount}
+                  </InfoTextEmphasizeBlue>
                 )}
                 개
               </RemainCount>
@@ -278,7 +285,8 @@ const WordTestPage: React.FC = () => {
                             type="text"
                             ref={(el) => (inputRefs.current[index][i] = el)}
                             value={
-                              userAnswers[indexOfFirstQuestion + index]?.[i] || ""
+                              userAnswers[indexOfFirstQuestion + index]?.[i] ||
+                              ""
                             }
                             onChange={(e) =>
                               handleInputChange(index, i, e.target.value)
@@ -319,7 +327,13 @@ const WordTestPage: React.FC = () => {
               </PageButton>
             </ButtonContainer>
           )}
-          {error && <ErrorMessage>영어만 입력 가능합니다</ErrorMessage>}
+          {error ? (
+            <ErrorMessage>영어만 입력 가능합니다</ErrorMessage>
+          ) : (
+            <ErrorMessage style={{ visibility: "hidden" }}>
+              에러 메시지 공간 유지
+            </ErrorMessage>
+          )}
           <SubmitButtonContainer>
             {currentPage === Math.ceil(quiz.length / questionsPerPage) ? (
               <SubmitButton onClick={handleWordDataSubmit}>제출</SubmitButton>
@@ -335,7 +349,9 @@ const WordTestPage: React.FC = () => {
         >
           <p>정말로 제출하시겠습니까?</p>
           <ModalButtonContainer>
-            <ModalCancelButton onClick={closeSubmitModal}>취소</ModalCancelButton>
+            <ModalCancelButton onClick={closeSubmitModal}>
+              취소
+            </ModalCancelButton>
             <ModalConfirmButton onClick={handleSubmit}>확인</ModalConfirmButton>
           </ModalButtonContainer>
         </Modal>
@@ -368,8 +384,8 @@ const MainContainer = styled.div`
     margin: 0;
     width: 100%;
     padding-top: 3rem;
-    padding-left:0rem;
-    padding-right:0rem;
+    padding-left: 0rem;
+    padding-right: 0rem;
     padding-bottom: 6rem;
   }
 `;
@@ -647,16 +663,16 @@ const InfoTextNormal = styled.span`
   }
 `;
 const RemainCountContainer = styled.div`
-position: absolute;
-top: 2rem;
-@media (max-width: 768px) {
-  top: 5rem;
+  position: absolute;
+  top: 2rem;
+  @media (max-width: 768px) {
+    top: 5rem;
   }
-`
+`;
 
 const RemainCount = styled.div`
   margin-bottom: 1rem;
-@media (max-width: 768px) {
+  @media (max-width: 768px) {
     margin: 0.5rem 1rem;
   }
-`
+`;

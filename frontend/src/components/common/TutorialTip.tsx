@@ -1,20 +1,27 @@
 import { tutorialTipState } from "@store/tutorialState";
+import { allowScroll, preventScroll } from "@utils/preventScroll";
 import { useEffect, useState } from "react";
-import { useRecoilValue } from "recoil";
+import { useRecoilState } from "recoil";
 import styled from "styled-components";
 
 const TutorialTip = () => {
-  const tutorialTip = useRecoilValue(tutorialTipState);
+  const [tutorialTip, setTutorialTip] = useRecoilState(tutorialTipState);
   const { steps, isActive, onComplete } = tutorialTip;
   const [currentStep, setCurrentStep] = useState(0);
   const [highlightStyle, setHighlightStyle] = useState({});
   const [contentStyle, setContentStyle] = useState({});
+  const appContainer = document
+    .querySelector("#app-container")
+    ?.getBoundingClientRect();
 
   const updateHighlightStyle = () => {
     if (isActive && steps[currentStep]) {
       const element = document.querySelector(steps[currentStep].selector);
-      if (element) {
+      if (element && appContainer) {
+        const { top: appTop, right: appRight } = appContainer;
+        console.log(appTop, appRight);
         const rect = element.getBoundingClientRect();
+        console.log(rect.left, rect.left + (appRight - (rect.left + 128)));
         setHighlightStyle({
           top: `${rect.top}px`,
           left: `${rect.left}px`,
@@ -23,8 +30,8 @@ const TutorialTip = () => {
         });
 
         setContentStyle({
-          top: `${rect.top - 96}px`,
-          left: `${rect.left}px`,
+          top: `${rect.top - 128 < appTop ? rect.bottom : rect.top - 96}px`,
+          left: `${rect.left + 128 > appRight ? rect.left - 128 : rect.left}px`,
         });
       }
     }
@@ -55,6 +62,26 @@ const TutorialTip = () => {
     }
   };
 
+  const handleSkipButton = () => {
+    setTutorialTip({
+      steps: [],
+      isActive: false,
+      onComplete: () => {
+        console.log("튜토리얼 스킵!");
+      },
+    });
+    setCurrentStep(0);
+  };
+
+  // 튜토리얼 창이 열려있는 동안 스크롤 방지
+  useEffect(() => {
+    if (isActive) {
+      preventScroll();
+    } else {
+      allowScroll();
+    }
+  }, [isActive]);
+
   if (!isActive) return null;
 
   return (
@@ -65,6 +92,7 @@ const TutorialTip = () => {
             style={highlightStyle}
             onClick={() => handleNext()}
           ></Overlay>
+          <SkipButton onClick={handleSkipButton}>Skip</SkipButton>
           <Content style={contentStyle} onClick={() => handleNext()}>
             <div>{steps[currentStep].content}</div>
             <div style={{ display: "flex", justifyContent: "end" }}>
@@ -118,4 +146,23 @@ const StepButton = styled.div`
   background-color: ${(props) => props.theme.colors.primary};
   border-radius: 0.5rem;
   cursor: pointer;
+`;
+
+const SkipButton = styled.div`
+  position: fixed;
+  z-index: 502;
+  bottom: 5%;
+  right: 5%;
+  width: 4rem;
+  padding: 1rem;
+  font-size: 1.25rem;
+  text-align: center;
+  background-color: ${(props) => props.theme.colors.primary};
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  box-shadow: ${(props) => props.theme.shadows.small};
+  &:hover {
+    background-color: ${(props) => props.theme.colors.primaryPress};
+  }
 `;

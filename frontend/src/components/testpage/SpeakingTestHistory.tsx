@@ -383,6 +383,8 @@ const ChartContainer = styled.div`
   padding-top: 1rem;
   margin-bottom: 2rem;
   justify-content: center;
+  font-family:"Pretendard";
+  letter-spacing: 0.1px;
 `;
 
 const TitleText = styled.h1`

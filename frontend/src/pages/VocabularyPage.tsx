@@ -266,8 +266,7 @@ const MainContainer = styled.div`
   flex-direction: column;
   width: 46%;
   padding: 1rem;
-  min-height: 40rem;
-  max-height: 50rem;
+  height: 45rem;
   background-color: ${(props) => `${props.theme.colors.cardBackground01}`};
   border-radius: 0.75rem;
 

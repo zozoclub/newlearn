@@ -110,6 +110,8 @@ const NewsPage = () => {
   return isMobile ? <MobileRender /> : <DesktopRender />;
 };
 
+export default NewsPage;
+
 const PageWrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -124,7 +126,7 @@ const Container = styled.div`
     width: 80%;
     height: 85%;
     margin: 0 5% 10%;
-    padding: 0 5% 2.5%;
+    padding: 0 5% 10%;
     border-radius: 0.5rem;
   }
   @media (max-width: 767px) {
@@ -158,5 +160,3 @@ const ContentWrapper = styled.main`
     box-sizing: border-box;
   }
 `;
-
-export default NewsPage;

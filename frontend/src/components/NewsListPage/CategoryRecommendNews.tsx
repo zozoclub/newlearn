@@ -1,4 +1,3 @@
-import Spinner from "@components/Spinner";
 import { getCategoryRecommandNewsList } from "@services/newsService";
 import userInfoState from "@store/userInfoState";
 import { useQuery } from "@tanstack/react-query";
@@ -9,6 +8,8 @@ import lightThumbnailImage from "@assets/images/lightThumbnail.png";
 import darkThumbnailImage from "@assets/images/darkThumbnail.png";
 import languageState from "@store/languageState";
 import { usePageTransition } from "@hooks/usePageTransition";
+import LoadingBar from "@components/common/LoadingBar";
+import Spinner from "@components/Spinner";
 
 const CategoryRecommendNews = () => {
   const userInfoData = useRecoilValue(userInfoState);
@@ -24,9 +25,38 @@ const CategoryRecommendNews = () => {
     return (
       <Container>
         {isLoading ? (
-          <div>
-            <Spinner />
-          </div>
+          <>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "baseline",
+                fontSize: "1.25rem",
+              }}
+            >
+              <LoadingBar />
+            </div>
+            <NewsListDiv id="step8">
+              {[...Array(3)].map((_, index) => (
+                <NewsDiv key={index}>
+                  <NewsInfoDiv>
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "0.25rem",
+                      }}
+                    >
+                      <LoadingBar />
+                      <LoadingBar />
+                    </div>
+                  </NewsInfoDiv>
+                  <ThumbnailDiv>
+                    <Spinner />
+                  </ThumbnailDiv>
+                </NewsDiv>
+              ))}
+            </NewsListDiv>
+          </>
         ) : (
           <>
             <div

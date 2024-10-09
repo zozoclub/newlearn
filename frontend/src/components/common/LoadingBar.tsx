@@ -1,12 +1,26 @@
 import styled from "styled-components";
 
 const LoadingBar = () => {
-  return <Container></Container>;
+  return (
+    <Container>
+      <BarAnimation></BarAnimation>
+    </Container>
+  );
 };
 
 export default LoadingBar;
 
 const Container = styled.div`
+  position: relative;
+  width: 100%;
+  height: 0.5rem;
+  margin: 0.45rem;
+  background-color: ${(props) => props.theme.colors.readonly};
+  border-radius: 0.75rem;
+  overflow: hidden;
+`;
+
+const BarAnimation = styled.div`
   position: absolute;
   height: 0.5rem;
   border-radius: 0.75rem;

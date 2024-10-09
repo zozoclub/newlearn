@@ -6,7 +6,6 @@ import { useParams } from "react-router-dom";
 import { useRecoilValue } from "recoil";
 import { useTheme } from "styled-components";
 import Spinner from "@components/Spinner";
-import LoadingDiv from "../common/LoadingDiv";
 import LoadingBar from "../common/LoadingBar";
 import LightThumbnailImage from "@assets/images/lightThumbnail.png";
 import DarkThumbnailImage from "@assets/images/darkThumbnail.png";
@@ -43,15 +42,9 @@ const FilteredRecommendNews = () => {
                     minHeight: "7.5rem",
                   }}
                 >
-                  <LoadingDiv>
-                    <LoadingBar />
-                  </LoadingDiv>
-                  <LoadingDiv>
-                    <LoadingBar />
-                  </LoadingDiv>
-                  <LoadingDiv>
-                    <LoadingBar />
-                  </LoadingDiv>
+                  <LoadingBar />
+                  <LoadingBar />
+                  <LoadingBar />
                 </div>
                 <div className="thumbnail-div">
                   <Spinner />

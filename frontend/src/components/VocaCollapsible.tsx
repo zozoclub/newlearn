@@ -14,7 +14,7 @@ import SpeakerIcon from "@assets/icons/SpeakerIcon";
 import { useMediaQuery } from "react-responsive";
 
 type VocaCollapsibleProps = {
-  ids: string[]; 
+  ids: string[];
   title: string;
   meaning: string;
   isExpanded: boolean;
@@ -49,11 +49,13 @@ const VocaCollapsible: React.FC<VocaCollapsibleProps> = ({
     setExpanded((prev) => !prev);
   };
 
-  const { mutate: toggleMemorizeMutation } = useMutation<void, Error, number[]>({
-    mutationFn: (wordIds: number[]) => postMemorizeWord(wordIds), // wordIds로 수정
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: ["memorizeWordList"] }),
-  });
+  const { mutate: toggleMemorizeMutation } = useMutation<void, Error, number[]>(
+    {
+      mutationFn: (wordIds: number[]) => postMemorizeWord(wordIds), // wordIds로 수정
+      onSuccess: () =>
+        queryClient.invalidateQueries({ queryKey: ["memorizeWordList"] }),
+    }
+  );
 
   const [isDeleteModal, setIsDeleteModal] = useState<boolean>(false);
   const openDeleteModal = () => setIsDeleteModal(true);
@@ -241,6 +243,10 @@ const ListItem = styled.div`
   overflow: hidden;
   transition: all 0.3s ease-in-out;
   background-color: ${(props) => props.theme.colors.newsItemBackground};
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
 `;
 
 const Title = styled.div`

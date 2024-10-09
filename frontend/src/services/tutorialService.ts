@@ -2,10 +2,25 @@ import axiosInstance from "./axiosInstance";
 
 /*
   메인 페이지 : 0
+  뉴스 목록 페이지 : 1
 */
 export const completeTutorial = async (page: number) => {
   try {
     const response = await axiosInstance.post(`user/tutorial/complete`, null, {
+      params: {
+        page: page,
+      },
+    });
+    console.log(response);
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const cancelTutorial = async (page: number) => {
+  try {
+    const response = await axiosInstance.post(`user/tutorial/cancel`, null, {
       params: {
         page: page,
       },

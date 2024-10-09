@@ -22,7 +22,7 @@ const CategoryRecommendNews = () => {
 
   const MemoizedComponent = useMemo(() => {
     return (
-      <Container id="step8">
+      <Container>
         {isLoading ? (
           <div>
             <Spinner />
@@ -46,7 +46,7 @@ const CategoryRecommendNews = () => {
               </div>
               에 관한 뉴스
             </div>
-            <NewsListDiv>
+            <NewsListDiv id="step8">
               {data?.map((news) => (
                 <NewsDiv
                   key={news.newsId}

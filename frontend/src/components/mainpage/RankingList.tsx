@@ -9,9 +9,9 @@ import LevelIcon from "@components/common/LevelIcon";
 import { useRankings } from "@hooks/useRankings";
 
 const RankingList = () => {
+  const selectedType = useRecoilValue(selectedRankingState);
   const { pointIsLoading, readIsLoading, pointRankingList, readRankingList } =
     useRankings();
-  const selectedType = useRecoilValue(selectedRankingState);
   const [animate, setAnimate] = useState(false);
   const isLoading = pointIsLoading || readIsLoading;
 

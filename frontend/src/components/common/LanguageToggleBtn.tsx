@@ -62,6 +62,7 @@ const Container = styled.div<{
   width: 4rem;
   height: 4rem;
   border-radius: 100%;
+  font-size: 1.5rem;
   color: #ffffff;
   background-color: ${(props) => props.theme.colors.primary};
   transform: rotateY(
@@ -88,6 +89,7 @@ const Container = styled.div<{
   }
 
   @media screen and (max-width: 767px) {
+    font-size: 1.25rem;
     right: 3rem;
     bottom: 6rem;
   }

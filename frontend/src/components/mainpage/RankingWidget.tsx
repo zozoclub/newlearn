@@ -2,6 +2,9 @@ import styled from "styled-components";
 import RankingList from "./RankingList";
 import TopRanking from "./TopRanking";
 import RankingKindSelect from "./RankingKindSelect";
+import { useRankings } from "@hooks/useRankings";
+import { useRecoilValue } from "recoil";
+import { selectedRankingState } from "@store/selectedRankingState";
 
 type RankingType = {
   userId: number;
@@ -19,16 +22,30 @@ export type ReadRankingType = RankingType & {
 };
 
 const RankingWidget = () => {
+  const selectedType = useRecoilValue(selectedRankingState);
+  const { pointIsLoading, readIsLoading, pointRankingList, readRankingList } =
+    useRankings();
   return (
     <Container>
       <RankingKindSelect />
       <HorizontalLayout>
-        <TopRankingWrapper>
-          <TopRanking />
-        </TopRankingWrapper>
-        <RankingWidgetWrapper>
-          <RankingList />
-        </RankingWidgetWrapper>
+        {(selectedType === "point" &&
+          !pointIsLoading &&
+          pointRankingList?.length === 0) ||
+        (selectedType === "read" &&
+          !readIsLoading &&
+          readRankingList?.length === 0) ? (
+          <NoRankingListDiv>랭킹 정보가 없습니다.</NoRankingListDiv>
+        ) : (
+          <>
+            <TopRankingWrapper>
+              <TopRanking />
+            </TopRankingWrapper>
+            <RankingWidgetWrapper>
+              <RankingList />
+            </RankingWidgetWrapper>
+          </>
+        )}
       </HorizontalLayout>
     </Container>
   );
@@ -51,6 +68,13 @@ const HorizontalLayout = styled.div`
   justify-content: space-between;
   width: 100%;
   height: 90%;
+`;
+
+const NoRankingListDiv = styled.div`
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
 `;
 
 const TopRankingWrapper = styled.div`

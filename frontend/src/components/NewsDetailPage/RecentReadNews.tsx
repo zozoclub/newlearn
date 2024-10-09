@@ -60,7 +60,7 @@ const RecentReadNews = () => {
             ))}
           </div>
         ) : (
-          <div className="recent-news">
+          <div id="step4" className="recent-news">
             {data?.map((news) => (
               <div
                 className="news-div"

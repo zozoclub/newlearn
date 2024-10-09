@@ -10,41 +10,52 @@ import RestudyQuiz from "@components/RestudyQuiz";
 import MainMobilePage from "./mobile/MainMobilePage";
 import { tutorialTipState } from "@store/tutorialState";
 import { useResetRecoilState, useSetRecoilState } from "recoil";
+import {
+  completeTutorial,
+  getCompletedTutorial,
+} from "@services/tutorialService";
 
 const MainPage = () => {
   // 페이지마다 튜토리얼 추가해주시면 됩니다.
   const setTutorialTip = useSetRecoilState(tutorialTipState);
   const resetTutorialTip = useResetRecoilState(tutorialTipState);
-  const startTutorial = () => {
-    setTutorialTip({
-      steps: [
-        { selector: "#step1", content: "한글/영어 토글 버튼입니다." },
-        {
-          selector: "#step2",
-          content: "오늘의 Top 10 뉴스입니다.",
+  const startTutorial = async () => {
+    const response = await getCompletedTutorial(0);
+    if (!response) {
+      setTutorialTip({
+        steps: [
+          { selector: "#step1", content: "한글/영어 토글 버튼입니다." },
+          {
+            selector: "#step2",
+            content: "오늘의 Top 10 뉴스입니다.",
+          },
+          {
+            selector: "#step3",
+            content: "학습 현황입니다. 최초에는 설정이 필요합니다.",
+          },
+          {
+            selector: "#step4",
+            content: "사용자가 읽은 뉴스의 카테고리를 차트로 볼 수 있습니다.",
+          },
+          {
+            selector: "#step5",
+            content: "포인트, 읽은 뉴스 수의 랭킹을 확인할 수 있습니다.",
+          },
+        ],
+        isActive: true,
+        onComplete: async () => {
+          console.log("튜토리얼 완료!");
+          await completeTutorial(0);
+          resetTutorialTip();
         },
-        {
-          selector: "#step3",
-          content: "학습 현황입니다. 최초에는 설정이 필요합니다.",
-        },
-        {
-          selector: "#step4",
-          content: "사용자가 읽은 뉴스의 카테고리를 차트로 볼 수 있습니다.",
-        },
-        {
-          selector: "#step5",
-          content: "포인트, 읽은 뉴스 수의 랭킹을 확인할 수 있습니다.",
-        },
-      ],
-      isActive: true,
-      onComplete: () => {
-        console.log("튜토리얼 완료!");
-        resetTutorialTip();
-      },
-    });
+      });
+    }
   };
+
   useEffect(() => {
-    startTutorial();
+    if (!isMobile) {
+      startTutorial();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

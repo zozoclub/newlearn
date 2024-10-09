@@ -48,7 +48,7 @@ const NewsList: React.FC<{
   }, [totalNewsList, categoryNewsList]);
 
   return (
-    <Container>
+    <Container id="step9">
       <NewsListContainer>
         {selectedCategory === 0
           ? totalNewsList?.newsList?.map((news) => (

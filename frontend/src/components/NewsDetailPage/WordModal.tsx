@@ -135,15 +135,15 @@ const WordModal: React.FC<WordModalPropsType> = ({
         style={{
           display: "flex",
           flexWrap: "wrap",
-          gap: "0.5rem",
           marginBottom: "0.5rem",
         }}
       >
         {searchResult[2][0] && (
           <div
             style={{
+              marginRight: "0.5rem",
               fontSize: "1rem",
-              lineHeight: "2rem",
+              lineHeight: "1.5rem",
               whiteSpace: "nowrap",
             }}
           >
@@ -162,7 +162,7 @@ const WordModal: React.FC<WordModalPropsType> = ({
           <div
             style={{
               fontSize: "1rem",
-              lineHeight: "2rem",
+              lineHeight: "1.5rem",
               whiteSpace: "nowrap",
             }}
           >
@@ -251,5 +251,6 @@ const Word = styled.div`
 `;
 
 const WordMeaning = styled.div`
+  min-width: 12rem;
   font-size: 1rem;
 `;

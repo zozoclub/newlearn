@@ -46,10 +46,10 @@ const ProgressBar: React.FC<ProgressBarPropsType> = ({
     isLoadingRef.current = engIsLoading || korIsLoading;
   }, [engIsLoading, korIsLoading]);
 
-  // 상세 페이지에 들어오고 15초 동안은 읽음 처리를 하지 않음 + 한글일 때는 읽음 처리를 하지 않음
+  // 상세 페이지에 들어오고 10초 동안은 읽음 처리를 하지 않음 + 한글일 때는 읽음 처리를 하지 않음
   useEffect(() => {
     isActiveRef.current = false;
-    let leftTime = 15;
+    let leftTime = 10;
     setScrollProgress(0);
 
     const startTimer = () => {
@@ -177,6 +177,7 @@ const ProgressBar: React.FC<ProgressBarPropsType> = ({
       style={{
         width: `${isReadFinished ? 100 : scrollProgress}%`,
       }}
+      id="step1"
     />
   );
 };

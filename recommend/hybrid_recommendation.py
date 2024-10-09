@@ -8,19 +8,30 @@ from datetime import datetime, timedelta
 import locale
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.preprocessing import OneHotEncoder
 from functools import lru_cache
+from konlpy.tag import Okt
 
 # 한글 로케일 설정
 locale.setlocale(locale.LC_TIME, 'ko_KR.UTF-8')
+
+# Okt 형태소 분석기 초기화
+okt = Okt()
+
+# 원-핫 인코더 초기화
+encoder = OneHotEncoder(sparse_output=False)
 
 #####################################
 # 1. 사용자 데이터 가져오기
 #####################################
 @lru_cache(maxsize=1024)
-def get_user_categories(user_id: int, db: Session) -> Set[int]:
-    """해당 유저의 UserCategory (MySQL) 가져오기"""
+def get_user_categories(user_id: int, db: Session) -> np.ndarray:
+    """해당 유저의 UserCategory (MySQL) 가져오기 및 원-핫 인코딩"""
     categories = db.query(UserCategory.category_id).filter(UserCategory.user_id == user_id).all()
-    return set(category[0] for category in categories)
+    category_ids = np.array([category[0] for category in categories]).reshape(-1, 1)
+
+    # 카테고리를 원-핫 인코딩하여 반환
+    return encoder.fit_transform(category_ids)
 
 @lru_cache(maxsize=1024)
 def get_user_difficulty(user_id: int, db: Session):
@@ -55,10 +66,19 @@ def get_popular_news_ids(limit: int = 1000) -> List[int]:
 # 2. 데이터 전처리 및 유사도 계산
 #####################################
 @lru_cache(maxsize=1)
+def tokenize_korean(text: str) -> List[str]:
+    """한국어 텍스트를 형태소 분석하여 토큰화"""
+    return okt.nouns(text)  # 명사만 추출하여 단순화, 필요에 따라 다른 형태소도 사용 가능
+
+@lru_cache(maxsize=1)
 def vectorize_titles(titles_tuple: Tuple[str, ...]) -> Tuple[np.ndarray, TfidfVectorizer]:
-    """뉴스 제목을 벡터화하고 TF-IDF 벡터라이저 반환"""
-    vectorizer = TfidfVectorizer()
-    return vectorizer.fit_transform(titles_tuple).toarray(), vectorizer
+    """뉴스 제목을 벡터화하고 TF-IDF 벡터라이저 반환 (KoNLPy 사용)"""
+    # KoNLPy를 사용한 형태소 분석을 통해 토큰화
+    tokenized_titles = [' '.join(tokenize_korean(title)) for title in titles_tuple]
+
+    # TF-IDF 벡터화
+    vectorizer = TfidfVectorizer(tokenizer=lambda x: x.split(), token_pattern=None)  # 이미 공백으로 분리된 토큰 사용
+    return vectorizer.fit_transform(tokenized_titles).toarray(), vectorizer
 
 #####################################
 # 3. 유사한 유저 찾기
@@ -86,7 +106,6 @@ def find_similar_users(user_id: int, db: Session, limit: int = 100, top_k: int =
 
     # 상위 K개의 유사한 사용자 선택
     top_similar_indices = np.argsort(similarities)[-top_k:][::-1]
-
     return [other_user_ids[i] for i in top_similar_indices if similarities[i] > 0]
 
 #####################################
@@ -165,8 +184,8 @@ def get_user_time_pattern(user_id: int, db: Session) -> Dict[str, float]:
         UserNewsScrap.scraped_date >= one_week_ago
     ).all()
 
+    total_reads = len(user_scraps)
     time_pattern = {'아침': 0, '오후': 0, '저녁': 0, '밤': 0}
-    total_scraps = len(user_scraps)
 
     for scrap in user_scraps:
         hour = scrap.scraped_date.hour
@@ -179,9 +198,10 @@ def get_user_time_pattern(user_id: int, db: Session) -> Dict[str, float]:
         else:
             time_pattern['밤'] += 1
 
-    if total_scraps > 0:
+    # 비율로 변환
+    if total_reads > 0:
         for key in time_pattern:
-            time_pattern[key] /= total_scraps
+            time_pattern[key] = time_pattern[key] / total_reads
 
     return time_pattern
 

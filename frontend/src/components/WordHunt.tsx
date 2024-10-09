@@ -47,6 +47,25 @@ const WordHunt: React.FC<EngDataProps> = ({ engData }) => {
   const [correctWords, setCorrectWords] = useState<string[]>([]);
   const [correctWordsCount, setCorrectWordsCount] = useState<number>(0);
 
+  const resetState = () => {
+    setGrid([]);
+    setSelectedPositions([]);
+    setIncorrectSelection(false);
+    setPlacedWords([]);
+    setPlacedWordPositions([]);
+    setCorrectSelections([]);
+    setShowAnswer(false);
+    setIsDisabled(false);
+    setErrorMessage(null);
+    setIsCheckModal(false);
+    setCorrectWords([]);
+    setCorrectWordsCount(0);
+  };
+
+  useEffect(() => {
+    resetState();
+  }, [engData]);
+
   // useMemo를 사용해 text 변경 시에만 단어 처리
   const processedWords = useMemo(() => {
     const words = extractWords(text);

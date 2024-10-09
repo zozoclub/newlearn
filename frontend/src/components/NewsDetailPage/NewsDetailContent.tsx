@@ -1,5 +1,4 @@
-import styled from "styled-components";
-import LoadingDiv from "@components/common/LoadingDiv";
+import styled, { useTheme } from "styled-components";
 import LoadingBar from "@components/common/LoadingBar";
 import { useWordSelection } from "@utils/wordSelection";
 import { searchDaumDictionary, SearchResult } from "@services/newsService";
@@ -56,6 +55,7 @@ const NewsDetailContent: React.FC<NewsDetailContentType> = ({
   const [slicedContent, setSlicedContent] = useState<
     { sentence: string; words: string[] }[]
   >([]);
+  const theme = useTheme();
 
   const contentRef = useRef<HTMLDivElement>(null);
 
@@ -126,24 +126,6 @@ const NewsDetailContent: React.FC<NewsDetailContentType> = ({
     }
   }, [korData]);
 
-  // wordModal 외의 영역을 클릭했을 때 modal이 닫히는 event 추가
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        wordModalRef.current &&
-        !wordModalRef.current.contains(event.target as Node)
-      ) {
-        setSelected({ ...selected, word: "" });
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   // 영어 Content를 단어 별로 찢음
   useEffect(() => {
     if (engData) {
@@ -167,25 +149,15 @@ const NewsDetailContent: React.FC<NewsDetailContentType> = ({
             gap: "0.25rem",
           }}
         >
-          <LoadingDiv>
-            <LoadingBar />
-          </LoadingDiv>
-          <LoadingDiv>
-            <LoadingBar />
-          </LoadingDiv>
-          <LoadingDiv>
-            <LoadingBar />
-          </LoadingDiv>
+          <LoadingBar />
+          <LoadingBar />
+          <LoadingBar />
         </div>
       ) : (
-        <div
+        <NewsContentDiv
           ref={contentRef}
           style={{
-            display: "flex",
-            gap: "0.25rem",
-            maxWidth: "100%",
-            flexWrap: "wrap",
-            position: "relative", // 추가
+            cursor: `url(/src/assets/icons/highlighter.svg) -30 30, auto`,
           }}
           onMouseUp={handleSelectionEnd}
           onTouchEnd={handleSelectionEnd}
@@ -207,7 +179,7 @@ const NewsDetailContent: React.FC<NewsDetailContentType> = ({
                             cleanWord.toLowerCase()
                           );
                         })
-                          ? "#ffff00a4"
+                          ? `${theme.mode === "dark" ? "#aaaa00" : "#ffff008b"}`
                           : ""
                       }`,
                     }}
@@ -228,7 +200,7 @@ const NewsDetailContent: React.FC<NewsDetailContentType> = ({
               wordModalRef={wordModalRef}
             />
           )}
-        </div>
+        </NewsContentDiv>
       )}
     </Container>
   );
@@ -243,5 +215,16 @@ const Container = styled.div`
   @media (max-width: 767px) {
     font-size: 1.1rem;
     line-height: 1.5rem;
+  }
+`;
+
+const NewsContentDiv = styled.div`
+  display: flex;
+  gap: 0.25rem;
+  max-width: 100%;
+  flex-wrap: wrap;
+  position: relative;
+  ::selection {
+    background-color: #ffff008b;
   }
 `;

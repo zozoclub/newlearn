@@ -3,6 +3,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import { DetailNewsType } from "types/newsType";
 import { useEffect, useState } from "react";
 import styled, { keyframes, css } from "styled-components";
+import { useRecoilState } from "recoil";
+import userInfoState from "@store/userInfoState";
 
 type SelectedType = {
   word: string;
@@ -39,6 +41,7 @@ const WordModal: React.FC<WordModalPropsType> = ({
   };
   const [isSaved, setIsSaved] = useState<boolean>(false);
   const [isJustSaved, setIsJustSaved] = useState<boolean>(false); // 저장 애니메이션을 위한 추가 상태
+  const [userInfoValue, setUserInfoState] = useRecoilState(userInfoState);
   const queryClient = useQueryClient();
   const engData: DetailNewsType | undefined = queryClient.getQueryData([
     "getEngNewsDetail",
@@ -88,6 +91,10 @@ const WordModal: React.FC<WordModalPropsType> = ({
             };
           }
         );
+        setUserInfoState({
+          ...userInfoValue,
+          savedWordCount: userInfoValue.savedWordCount - 1,
+        });
       } else {
         queryClient.setQueryData<DetailNewsType>(
           ["getEngNewsDetail", difficulty, newsId],
@@ -103,6 +110,10 @@ const WordModal: React.FC<WordModalPropsType> = ({
             };
           }
         );
+        setUserInfoState({
+          ...userInfoValue,
+          savedWordCount: userInfoValue.savedWordCount + 1,
+        });
       }
 
       console.log(engData);

@@ -8,7 +8,6 @@ import { usePageTransition } from "@hooks/usePageTransition";
 import { useMemo } from "react";
 import { useTheme } from "styled-components";
 import LoadingBar from "../common/LoadingBar";
-import LoadingDiv from "../common/LoadingDiv";
 import Spinner from "@components/Spinner";
 import LightThumbnailImage from "@assets/images/lightThumbnail.png";
 import DarkThumbnailImage from "@assets/images/darkThumbnail.png";
@@ -43,15 +42,9 @@ const RecentReadNews = () => {
                     minHeight: "7.5rem",
                   }}
                 >
-                  <LoadingDiv>
-                    <LoadingBar />
-                  </LoadingDiv>
-                  <LoadingDiv>
-                    <LoadingBar />
-                  </LoadingDiv>
-                  <LoadingDiv>
-                    <LoadingBar />
-                  </LoadingDiv>
+                  <LoadingBar />
+                  <LoadingBar />
+                  <LoadingBar />
                 </div>
                 <div className="thumbnail-div">
                   <Spinner />

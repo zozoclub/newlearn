@@ -54,10 +54,10 @@ const RankingWidget = () => {
 const Container = styled.div`
   display: flex;
   position: relative;
-  width: 90%;
+  width: 95%;
   min-height: 95%;
   height: 95%;
-  padding: 2.5% 5%;
+  padding: 2.5%;
   flex-direction: column;
   align-items: center;
 `;
@@ -82,7 +82,7 @@ const TopRankingWrapper = styled.div`
 `;
 
 const RankingWidgetWrapper = styled.div`
-  width: 45%; // 필요에 따라 조정
+  width: 50%; // 필요에 따라 조정
   margin-top: 1rem;
 `;
 

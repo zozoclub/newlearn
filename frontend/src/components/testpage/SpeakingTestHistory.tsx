@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styled, { useTheme } from "styled-components";
 import { Line } from "react-chartjs-2";
-import SpeakingTestHistoryCardList from "@components/testpage/SpeakingTestHistoryCardListMobile";
+import SpeakingTestHistoryCardList from "@components/testpage/SpeakingTestHistoryCardList";
 import Spinner from "@components/Spinner";
 import {
   getPronounceTestResultList,
@@ -20,7 +20,6 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import SpeakingTestHistoryCardListMobile from "@components/testpage/SpeakingTestHistoryCardListMobile";
 
 ChartJS.register(
   LineElement,
@@ -47,8 +46,8 @@ const SpeakingTestHistory: React.FC = () => {
 
   const chartformatDate = (createdAt: string) => {
     const date = new Date(createdAt);
-    const month = (date.getMonth() + 1).toString().padStart(2, "0"); // 월을 2자리로 표시
-    return `${month}월`; // 예: 09월
+    const month = (date.getMonth() + 1).toString().padStart(2); // 월을 2자리로 표시
+    return `${month}월`;
   };
 
   // 최근 6개월 데이터 필터링
@@ -104,9 +103,7 @@ const SpeakingTestHistory: React.FC = () => {
         currentDate.getMonth() - i,
         1
       );
-      const monthKey = `${(pastDate.getMonth() + 1)
-        .toString()
-        .padStart(2)}월`;
+      const monthKey = `${(pastDate.getMonth() + 1).toString().padStart(2)}월`;
       labels.push(monthKey);
     }
     return labels;
@@ -119,13 +116,12 @@ const SpeakingTestHistory: React.FC = () => {
   // 시간 포맷
   const formatDate = (createdAt: string) => {
     const date = new Date(createdAt);
-    const year = date.getFullYear();
     const month = ("0" + (date.getMonth() + 1)).slice(-2);
     const day = ("0" + date.getDate()).slice(-2);
     const hours = ("0" + date.getHours()).slice(-2);
     const minutes = ("0" + date.getMinutes()).slice(-2);
 
-    return `${year}.${month}.${day} ${hours}:${minutes}`;
+    return `${month}.${day} ${hours}:${minutes}`;
   };
 
   // 데이터를 carddata 형식으로 변환
@@ -182,9 +178,10 @@ const SpeakingTestHistory: React.FC = () => {
         },
         ticks: {
           font: {
-            size: 16, // 폰트 크기 설정 
+            family: "Pretendard",
+            size: 14, // 폰트 크기를 조정할 수 있습니다
           },
-          color: "#999",
+          color: theme.colors.text, // 레이블의 색상을 지정
         },
       },
       y: {
@@ -231,7 +228,7 @@ const SpeakingTestHistory: React.FC = () => {
                 했어요.
               </MobileTitleText>
               <InfoText>
-                10월에 학습된 발음 평균 점수 :
+                {new Date().getMonth() + 1}에 학습된 발음 평균 점수 :
                 {monthCurrentScoreAverage >= monthAgoScoreAverage ? (
                   <InfoTextEmphasizeBlue>
                     {Math.floor(monthCurrentScoreAverage)}
@@ -264,7 +261,7 @@ const SpeakingTestHistory: React.FC = () => {
         ) : (
           <ScrollableTestHistoryList>
             {data?.map((test: PronounceTestResultListDto, index: number) => (
-              <SpeakingTestHistoryCardListMobile
+              <SpeakingTestHistoryCardList
                 audioFileId={test.audioFileId}
                 date={formatDate(test.createdAt)}
                 key={index}
@@ -301,7 +298,7 @@ const SpeakingTestHistory: React.FC = () => {
                 했어요.
               </TitleText>
               <InfoText>
-                10월에 학습된 발음 평균 점수 :
+                {new Date().getMonth() + 1}에 학습된 발음 평균 점수 :
                 {monthCurrentScoreAverage ? (
                   monthCurrentScoreAverage >= monthAgoScoreAverage ? (
                     <InfoTextEmphasizeBlue>
@@ -386,6 +383,8 @@ const ChartContainer = styled.div`
   padding-top: 1rem;
   margin-bottom: 2rem;
   justify-content: center;
+  font-family:"Pretendard";
+  letter-spacing: 0.1px;
 `;
 
 const TitleText = styled.h1`
@@ -414,7 +413,7 @@ const InfoTextEmphasizeRed = styled.span`
   color: ${(props) => props.theme.colors.danger};
 
   @media (max-width: 1280px) {
-    font-size: 1.255rem; /* 1280px 이하일 때 글씨 크기를 줄임 */
+    font-size: 1.5rem; /* 1280px 이하일 때 글씨 크기를 줄임 */
   }
 `;
 
@@ -424,7 +423,7 @@ const InfoTextEmphasizeBlue = styled.span`
   color: ${(props) => props.theme.colors.primary};
 
   @media (max-width: 1280px) {
-    font-size: 1.25rem; /* 1280px 이하일 때 글씨 크기를 줄임 */
+    font-size: 1.5rem; /* 1280px 이하일 때 글씨 크기를 줄임 */
   }
 `;
 const StatsHistory = styled.div`
@@ -472,7 +471,7 @@ const EmptyMessage = styled.p`
 
 // 모바일전용
 const MobileTitleText = styled.h1`
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   font-weight: 700;
   margin-top: 2rem;
   margin-bottom: 1rem;

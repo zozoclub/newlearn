@@ -139,8 +139,8 @@ const ModalTitle = styled.div`
   margin-left: 1rem;
   font-size: 1.75rem;
   font-weight: bold;
-  @media (max-width: 768) {
-    font-size: 1.75rem;
+  @media (max-width: 768px) {
+    font-size: 1.5rem;
   }
 `;
 

@@ -52,13 +52,13 @@ const SpeakingTestRealtimeText: React.FC<Props> = ({
               </Explain>
               <RecognizedText>
 
-              {splitRecognizedText.map((sentence, index) => (
-                <span key={index}>
-                  {sentence}
-                  {index !== splitRecognizedText.length - 1 && "."}
-                  <br />
-                </span>
-              ))}
+                {splitRecognizedText.map((sentence, index) => (
+                  <span key={index}>
+                    {sentence}
+                    {index !== splitRecognizedText.length - 1 && "."}
+                    <br />
+                  </span>
+                ))}
               </RecognizedText>
             </FinalText>
           ) : (
@@ -74,7 +74,7 @@ const SpeakingTestRealtimeText: React.FC<Props> = ({
         </div>
       ) : (
         <>
-          <RecognizingText>Tips</RecognizingText>
+          <Tip>Tips</Tip>
           <Instructions>
             <li>녹음이 시작된 후 1초 뒤에 발음을 시작하세요.</li>
             <li>주변 소음을 최소화해주세요.</li>
@@ -94,6 +94,13 @@ const RecognizingText = styled.p`
   color: ${(props) => props.theme.colors.text};
   font-size: 1.75rem;
   font-weight: 700;
+  text-align: center;
+`;
+const Tip = styled.p`
+  margin-top: 0.5rem;
+  color: ${(props) => props.theme.colors.text};
+  font-size: 1.5rem;
+  font-weight: 600;
   text-align: center;
 `;
 

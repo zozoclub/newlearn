@@ -51,54 +51,65 @@ export const handleMouseUp = (
   grid: string[][],
   selectedPositions: [number, number][],
   placedWordPositions: { word: string; positions: [number, number][] }[],
-  setCorrectSelections: React.Dispatch<
-    React.SetStateAction<[number, number][]>
-  >,
+  setCorrectSelections: React.Dispatch<React.SetStateAction<[number, number][]>>,
   setIncorrectSelection: React.Dispatch<React.SetStateAction<boolean>>,
-  setSelectedPositions: React.Dispatch<
-    React.SetStateAction<[number, number][]>
-  >,
+  setSelectedPositions: React.Dispatch<React.SetStateAction<[number, number][]>>,
   setIsDisabled: React.Dispatch<React.SetStateAction<boolean>>,
   updateCorrectWord: (word: string) => void,
   setCorrectWordsCount: React.Dispatch<React.SetStateAction<number>>
 ) => {
   if (selectedPositions.length === 0) return;
 
-  // 빈칸에서 마우스를 뗐을 때 선택된 셀 초기화
+  // 선택된 셀 초기화 조건 추가
   const [lastRow, lastCol] = selectedPositions[selectedPositions.length - 1];
   if (grid[lastRow][lastCol] === "") {
     setSelectedPositions([]); // 선택 상태 초기화
     return;
   }
 
+  // 선택된 단어와 뒤집힌 단어 생성
   const selectedWord = selectedPositions
     .map(([row, col]) => grid[row][col])
     .join("")
     .toUpperCase();
 
+  const reversedSelectedWord = selectedWord.split("").reverse().join("");
+
   const isCorrect = placedWordPositions.some(({ word, positions }) => {
-    return (
-      word === selectedWord &&
-      positions.length === selectedPositions.length &&
-      positions.every(
-        ([row, col], idx) =>
-          row === selectedPositions[idx][0] && col === selectedPositions[idx][1]
-      )
-    );
+    const isMatchingWord =
+      (word === selectedWord || word === reversedSelectedWord) &&
+      positions.length === selectedPositions.length;
+
+    const isMatchingPositions =
+      (word === selectedWord &&
+        positions.every(
+          ([row, col], idx) =>
+            row === selectedPositions[idx][0] &&
+            col === selectedPositions[idx][1]
+        )) ||
+      (word === reversedSelectedWord &&
+        positions.every(
+          ([row, col], idx) =>
+            row === selectedPositions[selectedPositions.length - 1 - idx][0] &&
+            col === selectedPositions[selectedPositions.length - 1 - idx][1]
+        ));
+
+    return isMatchingWord && isMatchingPositions;
   });
-  // 정답일 경우
+
+  // 정답 처리 로직
   if (isCorrect) {
-    setCorrectSelections((prev) => [...prev, ...selectedPositions]); // 정답이면 파란색 유지
-    updateCorrectWord(selectedWord); // 정답 단어 업데이트
-    setCorrectWordsCount((prev) => (prev += 1));
-    setSelectedPositions([]); // 선택된 셀 초기화
+    setCorrectSelections((prev) => [...prev, ...selectedPositions]);
+    updateCorrectWord(selectedWord);
+    setCorrectWordsCount((prev) => prev + 1);
+    setSelectedPositions([]);
   } else {
-    setIncorrectSelection(true); // 틀리면 빨간색으로 표시
-    setIsDisabled(true); // 드래그 비활성화
+    setIncorrectSelection(true);
+    setIsDisabled(true);
     setTimeout(() => {
-      setIncorrectSelection(false); // 1초 후 다시 복구
-      setSelectedPositions([]); // 선택된 셀 초기화
-      setIsDisabled(false); // 드래그 다시 활성화
+      setIncorrectSelection(false);
+      setSelectedPositions([]);
+      setIsDisabled(false);
     }, 1000);
   }
 };

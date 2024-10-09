@@ -144,8 +144,9 @@ public class UserServiceImpl implements UserService{
 
 		Long unCount = wordRepository.countIncompleteWordsByUser(user);
 		Long Count = wordRepository.countCompleteWordsByUser(user);
+		Long savedWordCount= wordRepository.countSavedWordsByUser(user);
 		Long userRank = getUserRank(userId);
-		return new UserProfileResponseDTO(user, unCount, Count, userRank);
+		return new UserProfileResponseDTO(user, unCount, Count, savedWordCount, userRank);
 
 	}
 
@@ -174,10 +175,7 @@ public class UserServiceImpl implements UserService{
 	/* 마이페이지 */
 
 	@Override
-	public Page<UserScrapedNewsResponseDTO> getScrapedNewsList(Long userId, NewsPagenationRequestDTO newsPagenationRequestDTO, int difficulty) {
-		Users user = userRepository.findById(userId)
-			.orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
-
+	public Page<UserScrapedNewsResponseDTO> getScrapedNewsList(Users user, NewsPagenationRequestDTO newsPagenationRequestDTO, int difficulty) {
 		// 1. UserNewsScrapRepository에서 사용자가 스크랩한 뉴스 가져오기
 		// 전체조회 (유저) : 난이도 별 조회 (유저 & difficulty)
 		Page<UserNewsScrap> newsList = (difficulty == 0)
@@ -199,10 +197,7 @@ public class UserServiceImpl implements UserService{
 	}
 
 	@Override
-	public List<UserGrassResponseDTO> getGrass(Long userId) {
-		Users user = userRepository.findById(userId)
-			.orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
-
+	public List<UserGrassResponseDTO> getGrass(Users user) {
 		LocalDate endDate = LocalDate.now();
 		LocalDate startDate = endDate.minusMonths(6);
 
@@ -217,9 +212,7 @@ public class UserServiceImpl implements UserService{
 	}
 
 	@Override
-	public UserCategoryChartResponseDTO getCategoryChart(long userId) {
-		Users user = userRepository.findById(userId)
-			.orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
+	public UserCategoryChartResponseDTO getCategoryChart(Users user) {
 		Long[] counts = new Long[6];
 		for (int i = 0; i < 6; i++) {
 			counts[i] = userNewsReadRepository.countByUserAndCategoryId(user, i + 1L);

@@ -12,7 +12,7 @@ import com.newlearn.backend.user.model.Users;
 @Entity
 @Builder
 @AllArgsConstructor
-public class Word {
+public class 		Word {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

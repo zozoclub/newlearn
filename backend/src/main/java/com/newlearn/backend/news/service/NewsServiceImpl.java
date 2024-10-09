@@ -27,6 +27,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -63,7 +65,7 @@ public class NewsServiceImpl implements NewsService{
     @Override
     public Page<NewsResponseDTO> getAllNews(Users user, NewsListRequestDTO newsRequestDTO) {
         // 1. NewsRepository에서 전체 뉴스 가져오기
-        Page<News> allNewsList = newsRepository.findAllByOrderByNewsIdDesc(newsRequestDTO.getPageable());
+        Page<News> allNewsList = newsRepository.findAllByOrderByPublishedDateDesc(newsRequestDTO.getPageable());
 
         // 2. 현재 사용자의 모든 UserNewsRead 정보 가져오기
         List<UserNewsRead> userNewsReads = userNewsReadRepository.findAllByUser(user);
@@ -155,7 +157,9 @@ public class NewsServiceImpl implements NewsService{
         boolean isScrapped = userNewsScrapRepository.existsByUserAndNewsAndDifficulty(user, news, newsDetailRequestDTO.getDifficulty());
 
         // 해당 뉴스(newsId)에 사용자가 하이라이팅한 단어 & 문장 가져오기
-        Set<Word> wordList = user.getWords();
+        Set<Word> wordList = user.getWords().stream()
+                .filter(word -> !word.isDelete())
+                .collect(Collectors.toSet());;
         List<Long> wordIds = wordList.stream().map(Word::getWordId).collect(Collectors.toList());
         List<WordSentence> wordSentences = wordSentenceRepository
                 .findByNewsIdAndWordIdsAndDifficulty(
@@ -199,36 +203,45 @@ public class NewsServiceImpl implements NewsService{
                 .orElseThrow(() -> new EntityNotFoundException("뉴스를 찾을 수 없습니다."));
 
         // 유저의 뉴스 읽음 처리
-        UserNewsRead userNewsRead = userNewsReadRepository.findByUserAndNews(user, news)
-                .orElseGet(() -> UserNewsRead.builder()
-                        .user(user)
-                        .news(news)
-                        .categoryId(news.getCategory().getCategoryId())
-                        .build());
+        // (1) 이미 다른 난이도로 한 번 이상 읽은 적 있는 경우
+        // (2) 유저가 해당 뉴스를 처음 읽는 경우
+        UserNewsRead userNewsRead = userNewsReadRepository.findByUserAndNews(user, news) // (1)
+                .orElseGet(() -> {  // (2)
+                    UserNewsRead newUserNewsRead = UserNewsRead.builder()
+                                    .user(user)
+                                    .news(news)
+                                    .categoryId(news.getCategory().getCategoryId())
+                                    .build();
 
-        userNewsRead.markAsRead(newsReadRequestDTO.getDifficulty());
+                    // 사용자 뉴스 읽음 +1
+//                    user.incrementNewsReadCnt(); // 단순 +1
+                    user.updateUserTotalNewsReadCnt(userNewsReadRepository.countByUser(user) + 1); //userNewsRead에서 개수 가져옴. 아직 userNewsRead레파지토리.save하기 전이기 때문에 +1 해줘야함
+
+                    // 사용자 뉴스 읽음 (데일리) 테이블 업데이트
+                    LocalDate today = LocalDate.now();
+                    UserDailyNewsRead dailyRead = userDailyNewsReadRepository.findByUserAndTodayDate(user, today)
+                            .orElseGet(() -> UserDailyNewsRead.createForToday(user));
+
+                    dailyRead.incrementNewsReadCount();
+                    userDailyNewsReadRepository.save(dailyRead);
+
+                    Optional<Goal> optionalGoal = studyRepository.findByUserId(user.getUserId());
+                    if (optionalGoal.isPresent()) {
+                        Goal goal = optionalGoal.get();
+                        goal.setCurrentReadNewsCount(goal.getCurrentReadNewsCount() + 1);
+                        studyRepository.save(goal);
+                    }
+
+                    return newUserNewsRead;
+                });
+
+        // -- 난이도 별 처리 -- //
+        userNewsRead.markAsRead(newsReadRequestDTO.getDifficulty()); //난이도 읽음 처리
         userNewsReadRepository.save(userNewsRead);
 
-        // 사용자 뉴스 읽음 +1
         // 사용자 경험치  +10
-        user.incrementNewsReadCnt();
         user.incrementExperience(10L);
         userRepository.save(user);
-
-        // 사용자 뉴스 읽음 오늘 테이블 업데이트
-        LocalDate today = LocalDate.now();
-        UserDailyNewsRead dailyRead = userDailyNewsReadRepository.findByUserAndTodayDate(user, today)
-                .orElseGet(() -> UserDailyNewsRead.createForToday(user));
-
-        dailyRead.incrementNewsReadCount();
-        userDailyNewsReadRepository.save(dailyRead);
-
-        Optional<Goal> optionalGoal = studyRepository.findByUserId(user.getUserId());
-        if (optionalGoal.isPresent()) {
-            Goal goal = optionalGoal.get();
-            goal.setCurrentReadNewsCount(goal.getCurrentReadNewsCount() + 1);
-            studyRepository.save(goal);
-        }
     }
 
     @Override
@@ -256,9 +269,8 @@ public class NewsServiceImpl implements NewsService{
             userNewsScrapRepository.save(userNewsScrap);
 
             // 사용자 스크랩수 +1
-            user.incrementScrapCount();
-//            Long userScrapedCnt = userNewsScrapRepository.countByUser(user);
-//            user.setScrapCount(++userScrapedCnt);
+//            user.incrementScrapCount(); //단순 +1
+            user.updateUserTotalScrapCount(userNewsScrapRepository.countByUser(user));
             userRepository.save(user);
 
         }
@@ -276,9 +288,8 @@ public class NewsServiceImpl implements NewsService{
         userNewsScrapRepository.delete(scrapedNews);
 
         // 사용자 스크랩수 -1
-        user.decrementScrapCount();
-//        Long userScrapedCnt = userNewsScrapRepository.countByUser(user);
-//        user.setScrapCount(--userScrapedCnt);
+//        user.decrementScrapCount(); // 단순 -1
+        user.updateUserTotalScrapCount(userNewsScrapRepository.countByUser(user));
         userRepository.save(user);
     }
 
@@ -289,12 +300,12 @@ public class NewsServiceImpl implements NewsService{
         if (isKorean && isEnglish) {
             return null;
         }
-
+        Pageable pageable = PageRequest.of(0, 10);
         List<News> newsList;
         if (isKorean) {
-            newsList = newsRepository.findByTitleContaining(query);
+            newsList = newsRepository.findByTitleContaining(query, pageable).getContent();
         } else {
-            newsList = newsRepository.findByTitleEngContaining(query);
+            newsList = newsRepository.findByTitleEngContaining(query, pageable).getContent();
         }
 
         return newsList.stream()

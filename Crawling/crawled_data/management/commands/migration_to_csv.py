@@ -9,6 +9,7 @@ import logging
 from Crawling import settings
 from django.core.management.base import BaseCommand
 from sqlalchemy import create_engine
+import requests
 
 # 로깅 설정
 logger = logging.getLogger(__name__)
@@ -71,13 +72,14 @@ class Command(BaseCommand):
         else:
             logger.error("S3 업로드에 실패했습니다.")
 
+        #엘라스틱 먼저 비우기
+        call_spring_delete_api()
+
         # MySQL 작업
         df.to_sql(name='news', con=db, if_exists='append', index=False)
         logger.info("MySQL에 데이터 저장 완료")
 
-        #몽고디비 저장
         clear_mongodb_collection()
-
 
         # CSV 삭제
         shutil.rmtree(base_folder, ignore_errors=True)
@@ -139,3 +141,14 @@ def clear_mongodb_collection():
         logger.info("MongoDB 컬렉션을 성공적으로 비웠습니다.")
     except Exception as e:
         logger.error(f"MongoDB 컬렉션 비우기 오류: {e}")
+
+def call_spring_delete_api():
+    try:
+        response = requests.delete('http://localhost:8080/api/search/delete')
+
+        if response.status_code == 200:
+            logger.info("제대로 삭제되었씁니다.")
+        else:
+            logger.info("삭제 실패")
+    except Exception as e:
+        logger.error(e)

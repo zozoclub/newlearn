@@ -1,6 +1,7 @@
 package com.newlearn.backend.user.dto.response;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -25,13 +26,14 @@ public class UserProfileResponseDTO {
 	private Long totalNewsReadCount;
 	private Long unCompleteWordCount;
 	private Long completeWordCount;
+	private Long savedWordCount;
 	private Long scrapCount;
 
 	private Long skin;
 	private Long eyes;
 	private Long mask;
 
-	public UserProfileResponseDTO(Users user, Long unCompleteWordCount, Long completeWordCount, Long userRank) {
+	public UserProfileResponseDTO(Users user, Long unCompleteWordCount, Long completeWordCount, Long savedWordCount, Long userRank) {
 		this.userId = user.getUserId();
 		this.email = user.getEmail();
 		this.nickname = user.getNickname();
@@ -43,6 +45,7 @@ public class UserProfileResponseDTO {
 		this.totalNewsReadCount = user.getTotalNewsReadCount();
 		this.unCompleteWordCount = unCompleteWordCount;
 		this.completeWordCount = completeWordCount;
+		this.savedWordCount = savedWordCount;
 		this.scrapCount = user.getScrapCount();
 		this.skin = user.getAvatar().getSkin();
 		this.eyes = user.getAvatar().getEyes();
@@ -54,5 +57,6 @@ public class UserProfileResponseDTO {
 		for (Category category : set) {
 			this.categories.add(category.getCategoryName());
 		}
+		Collections.sort(categories);
 	}
 }

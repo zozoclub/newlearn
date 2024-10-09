@@ -148,16 +148,19 @@ public class StudyServiceImpl implements StudyService{
         quiz.setCorrectCount(correctCount);
         wordQuizRepository.save(quiz); // 퀴즈 저장 (정답 수 갱신)
 
+        System.out.println("correctCount : " + correctCount);
+
         // 단어 시험 후 경험치 갱신
         // (정답*2)점
-        user.incrementExperience(correctCount*2);
+        long score = correctCount*2;
+        user.incrementExperience(score);
         userRepository.save(user);
 
         // 목표 업데이트
-        long score = correctCount*20;
+        long finalCorrectCount = correctCount;
         studyRepository.findByUserId(user.getUserId()).ifPresent(userGoal -> {
             // 현재 단어 테스트 점수 업데이트
-            long updatedScore = userGoal.getCurrentCompleteWord() + score;
+            long updatedScore = userGoal.getCurrentCompleteWord() + finalCorrectCount;
             userGoal.setCurrentCompleteWord(updatedScore);
             studyRepository.save(userGoal);
         });
@@ -247,6 +250,7 @@ public class StudyServiceImpl implements StudyService{
                     .newsId(wordSentence.getNewsId())
                     .questionId(question.getWordQuizQuestionId())
                     .answer(answer)
+                    .difficulty(wordSentence.getDifficulty())
                     .correctAnswer(question.getCorrectAnswer())
                     .sentence(question.getSentence())
                     .sentenceMeaning(question.getSentenceMeaning())
@@ -362,6 +366,10 @@ public class StudyServiceImpl implements StudyService{
                         .audioFileId(file.getAudioFileId())
                         .totalScore(file.getTotalScore())
                         .createdAt(file.getCreatedAt())
+                        .accuracyScore(file.getAccuracyScore())
+                        .fluencyScore(file.getFluencyScore())
+                        .completenessScore(file.getCompletenessScore())
+                        .prosodyScore(file.getProsodyScore())
                         .build())
                 .collect(Collectors.toList());
 

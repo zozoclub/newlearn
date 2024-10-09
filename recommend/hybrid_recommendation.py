@@ -295,7 +295,7 @@ def content_based_filtering(user_id: int, db: Session, limit: int = 100) -> List
                     weight += 1
 
             # 추천 뉴스 리스트에 추가
-            recommended_news.append((news.news_id, news.title, weight, news.published_date, news.hit))
+            recommended_news.append((news.news_id, news.title, news.category_id, weight, news.published_date, news.hit))
 
     # 가중치 기준으로 뉴스 정렬
     return sorted(recommended_news, key=lambda x: x[2], reverse=True)[:20]

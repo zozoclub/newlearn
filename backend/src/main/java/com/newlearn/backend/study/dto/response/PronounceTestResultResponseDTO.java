@@ -12,5 +12,8 @@ public class PronounceTestResultResponseDTO {
     private long audioFileId;
     private long totalScore;
     private LocalDateTime createdAt;
-
+    private long accuracyScore;
+    private long fluencyScore;
+    private long completenessScore;
+    private long prosodyScore;
 }

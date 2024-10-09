@@ -178,6 +178,13 @@ const WordTestHistory: React.FC = () => {
         grid: {
           display: false, // X축 그리드 라인 숨기기
         },
+        ticks: {
+          font: {
+            family: "Pretendard",
+            size: 14, // 폰트 크기를 조정할 수 있습니다
+          },
+          color: theme.colors.text, // 레이블의 색상을 지정
+        },
       },
       y: {
         display: false, // Y축 숨기기

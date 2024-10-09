@@ -179,9 +179,10 @@ const SpeakingTestHistory: React.FC = () => {
         },
         ticks: {
           font: {
-            size: 16, // 폰트 크기 설정
+            family: "Pretendard",
+            size: 14, // 폰트 크기를 조정할 수 있습니다
           },
-          color: "#999",
+          color: theme.colors.text, // 레이블의 색상을 지정
         },
       },
       y: {

@@ -320,4 +320,19 @@ public class UserController {
 			return ApiResponse.createError(ErrorCode.USER_UPDATE_FAILED);
 		}
 	}
+
+	@PostMapping("/tutorial/cancel")
+	public ApiResponse<?> cancelTutorial(Authentication authentication, @RequestParam Long page) {
+		try {
+			Users user = userService.findByEmail(authentication.getName());
+			if (user == null) {
+				return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
+			}
+			userTutorialService.cancelTutorialPage(user, page);
+			return ApiResponse.createSuccess(null, "성공적으로 저장했습니다");
+
+		} catch (Exception e) {
+			return ApiResponse.createError(ErrorCode.USER_UPDATE_FAILED);
+		}
+	}
 }

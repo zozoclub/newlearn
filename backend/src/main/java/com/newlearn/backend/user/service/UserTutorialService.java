@@ -29,4 +29,14 @@ public class UserTutorialService {
 		return userTutorialRepository.existsByUserAndTutorialPageAndIsCompleted(user, page, true);
 
 	}
+
+	public void cancelTutorialPage(Users user, Long page) {
+
+		boolean isCompleted = userTutorialRepository.existsByUserAndTutorialPageAndIsCompleted(user, page, true);
+
+		if (isCompleted) {
+			UserTutorial userTutorial = UserTutorial.builder().user(user).tutorialPage(page).isCompleted(false).build();
+			userTutorialRepository.save(userTutorial);
+		}
+	}
 }

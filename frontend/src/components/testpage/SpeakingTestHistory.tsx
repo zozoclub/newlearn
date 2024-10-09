@@ -414,7 +414,7 @@ const InfoTextEmphasizeRed = styled.span`
   color: ${(props) => props.theme.colors.danger};
 
   @media (max-width: 1280px) {
-    font-size: 1.255rem; /* 1280px 이하일 때 글씨 크기를 줄임 */
+    font-size: 1.5rem; /* 1280px 이하일 때 글씨 크기를 줄임 */
   }
 `;
 
@@ -424,7 +424,7 @@ const InfoTextEmphasizeBlue = styled.span`
   color: ${(props) => props.theme.colors.primary};
 
   @media (max-width: 1280px) {
-    font-size: 1.25rem; /* 1280px 이하일 때 글씨 크기를 줄임 */
+    font-size: 1.5rem; /* 1280px 이하일 때 글씨 크기를 줄임 */
   }
 `;
 const StatsHistory = styled.div`
@@ -472,7 +472,7 @@ const EmptyMessage = styled.p`
 
 // 모바일전용
 const MobileTitleText = styled.h1`
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   font-weight: 700;
   margin-top: 2rem;
   margin-bottom: 1rem;

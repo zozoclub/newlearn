@@ -368,7 +368,8 @@ const MainContainer = styled.div`
   align-items: center;
   justify-content: center;
   width: 90%;
-  min-height: 50rem;
+  min-height: 40rem;
+  max-height: 50rem;
   margin: auto;
   padding: 0.625rem;
   background-color: ${(props) => props.theme.colors.cardBackground + "5A"};

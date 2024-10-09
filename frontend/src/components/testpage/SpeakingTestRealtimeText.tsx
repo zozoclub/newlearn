@@ -14,7 +14,6 @@ const SpeakingTestRealtimeText: React.FC<Props> = ({
   isExplainText,
   status, // status 녹음 상태
 }) => {
-  // userRecognizedText를 '. ' 기준으로 나눔
   const splitRecognizedText = userRecognizedText
     .split(". ")
     .map((sentence) => sentence.trim());
@@ -28,9 +27,7 @@ const SpeakingTestRealtimeText: React.FC<Props> = ({
               <RecognizingText>
                 인식된 텍스트
                 <br />
-                <FinalText>
-                  {userRecognizingText}
-                </FinalText>
+                <RecognizedText>{userRecognizingText}</RecognizedText>
                 <br />
                 <br />
               </RecognizingText>
@@ -53,21 +50,27 @@ const SpeakingTestRealtimeText: React.FC<Props> = ({
                 <br />
                 문단이 제대로 나누어지지 않아도 점수에는 큰 영향 없습니다.
               </Explain>
+              <RecognizedText>
+
               {splitRecognizedText.map((sentence, index) => (
                 <span key={index}>
                   {sentence}
                   {index !== splitRecognizedText.length - 1 && "."}
                   <br />
-                  <br />
                 </span>
               ))}
+              </RecognizedText>
             </FinalText>
-          ) : <>
-            <NoText>최종 인식된 텍스트가 없습니다.</NoText>
-            <br />
-            <Explain>녹음된 음성을 들어보고, 소리가 나지 않는다면 마이크 상태를 확인해 주세요.</Explain>
-          </>
-          }
+          ) : (
+            <>
+              <NoText>최종 인식된 텍스트가 없습니다.</NoText>
+              <br />
+              <Explain>
+                녹음된 음성을 들어보고, 소리가 나지 않는다면 마이크 상태를
+                확인해 주세요.
+              </Explain>
+            </>
+          )}
         </div>
       ) : (
         <>
@@ -89,14 +92,14 @@ export default SpeakingTestRealtimeText;
 const RecognizingText = styled.p`
   margin-bottom: 0.5rem;
   color: ${(props) => props.theme.colors.text};
-  font-size: 1.75rem; 
-  font-weight: 700; 
+  font-size: 1.75rem;
+  font-weight: 700;
   text-align: center;
 `;
 
 const FinalText = styled.div`
   color: ${(props) => props.theme.colors.text};
-  font-size: 1.125rem; 
+  font-size: 1.125rem;
   font-weight: 600;
   line-height: 1.75rem;
   margin-top: 1.5rem;
@@ -147,4 +150,9 @@ const NoText = styled.div`
   text-align: center;
   margin-top: 2rem; /* 상단 여백을 더 추가 */
   padding: 1rem;
+`;
+
+const RecognizedText = styled.div`
+  padding: 1rem;
+  font-size: 1.25rem;
 `;

@@ -210,6 +210,5 @@ const BarChartContainer = styled.div`
 `;
 
 const StyledCanvas = styled.canvas`
-  width: 100% !important;
-  height: auto !important;
+  letter-spacing: 0.03rem;
 `;

@@ -111,8 +111,7 @@ const RestudyQuizList: React.FC<RestudyQuizListProps> = ({
       setUpdatedLevel(question.wordNowLevel);
     } else {
       // 오답일 경우 레벨을 -1 감소시키지만 최소 레벨은 1로 유지
-      const newLevel = 1;
-      setUpdatedLevel(newLevel);
+      setUpdatedLevel(1);
     }
 
     // 문제 결과 저장
@@ -130,6 +129,8 @@ const RestudyQuizList: React.FC<RestudyQuizListProps> = ({
     setTimeout(() => {
       // 1초 후 다음 문제로 넘어감
       setShowDetails(false); // 세부 정보 숨김
+      setSelectedOption(null); // 선택된 옵션 초기화
+      setCorrectAnswer(null); // 정답 초기화
       if (currentPage === newRestudyData!.length - 1) {
         const updatedResults = [
           ...results,
@@ -186,10 +187,31 @@ const RestudyQuizList: React.FC<RestudyQuizListProps> = ({
     await postSkipCurveWord(question.wordId);
     setSkippedWords((prev) => [...prev, question.wordId]);
 
-    if (currentPage < newRestudyData!.length - 1) {
-      setCurrentPage((prevPage) => prevPage + 1);
+    // 마지막 문제인지 확인
+    const isLastQuestion = currentPage === newRestudyData!.length - 1;
+
+    if (isLastQuestion) {
+      // 마지막 문제일 경우 즉시 결과를 제출
+      const updatedResults = [
+        ...results,
+        {
+          wordId: question.wordId,
+          isDoing: false,
+          isCorrect: false,
+        },
+      ];
+      const filteredResults = updatedResults.filter(
+        (result) => !skippedWords.includes(result.wordId)
+      );
+
+      submitResultsMutation.mutate(filteredResults, {
+        onSuccess: () => {
+          setCurrentPage(newRestudyData!.length);
+        },
+      });
     } else {
-      setCurrentPage(newRestudyData!.length);
+      // 마지막 문제가 아닌 경우 다음 문제로 이동
+      setCurrentPage((prevPage) => prevPage + 1);
     }
   };
 
@@ -273,7 +295,12 @@ const RestudyQuizList: React.FC<RestudyQuizListProps> = ({
                 ))}
               </OptionsWrapper>
               <ActionButton onClick={() => handleSkip(question)} disabled={showDetails}>
-                {showDetails ? getLevelMessage(updatedLevel!) : "Skip"}
+                {selectedOption === null
+                  ? "Skip" // 첫 랜더링 시 "Skip" 표시
+                  : selectedOption === correctAnswer // 정답을 맞췄을 경우
+                    ? getLevelMessage(updatedLevel!)
+                    : "1일 뒤 출제됩니다." // 틀렸을 경우 "1일 뒤 출제됩니다."
+                }
               </ActionButton>
             </QuizWrapper>
           </QuestionWrapper>
@@ -288,6 +315,9 @@ const RestudyQuizList: React.FC<RestudyQuizListProps> = ({
               <>
                 <ResultText>퀴즈 완료! </ResultText>
                 <ResultText>{`${newRestudyData.length}문제 중 ${score}문제 맞혔습니다.`}</ResultText>
+                <ResultSkipText>
+                  Skip한 문제는 다음 날 등장합니다.
+                </ResultSkipText>
               </>
             ) : (
               <>

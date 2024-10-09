@@ -1,11 +1,11 @@
 import { tutorialTipState } from "@store/tutorialState";
 import { allowScroll, preventScroll } from "@utils/preventScroll";
 import { useEffect, useState } from "react";
-import { useRecoilState } from "recoil";
+import { useRecoilValue } from "recoil";
 import styled from "styled-components";
 
 const TutorialTip = () => {
-  const [tutorialTip, setTutorialTip] = useRecoilState(tutorialTipState);
+  const tutorialTip = useRecoilValue(tutorialTipState);
   const { steps, isActive, onComplete } = tutorialTip;
   const [currentStep, setCurrentStep] = useState(0);
   const [highlightStyle, setHighlightStyle] = useState({});
@@ -19,9 +19,7 @@ const TutorialTip = () => {
       const element = document.querySelector(steps[currentStep].selector);
       if (element && appContainer) {
         const { top: appTop, right: appRight } = appContainer;
-        console.log(appTop, appRight);
         const rect = element.getBoundingClientRect();
-        console.log(rect.left, rect.left + (appRight - (rect.left + 128)));
         setHighlightStyle({
           top: `${rect.top}px`,
           left: `${rect.left}px`,
@@ -63,13 +61,7 @@ const TutorialTip = () => {
   };
 
   const handleSkipButton = () => {
-    setTutorialTip({
-      steps: [],
-      isActive: false,
-      onComplete: () => {
-        console.log("튜토리얼 스킵!");
-      },
-    });
+    onComplete();
     setCurrentStep(0);
   };
 

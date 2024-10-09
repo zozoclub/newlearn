@@ -61,7 +61,6 @@ const PrivateRoute = () => {
   }, []);
 
   if (isLoading) {
-    // You can replace this with a loading spinner or component
     return <div>Loading...</div>;
   }
 

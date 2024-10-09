@@ -40,8 +40,12 @@ const TopRanking = () => {
         ),
       enabled:
         selectedType === "p"
-          ? pointRankingList !== undefined && pointRankingList.length > 0
-          : readRankingList !== undefined && readRankingList.length > 0,
+          ? pointRankingList !== null &&
+            pointRankingList !== undefined &&
+            pointRankingList.length > 0
+          : readRankingList !== null &&
+            readRankingList !== undefined &&
+            readRankingList.length > 0,
       staleTime: 5 * 60 * 1000,
     });
 
@@ -56,8 +60,12 @@ const TopRanking = () => {
         ),
       enabled:
         selectedType === "p"
-          ? pointRankingList !== undefined && pointRankingList.length > 1
-          : readRankingList !== undefined && readRankingList.length > 1,
+          ? pointRankingList !== null &&
+            pointRankingList !== undefined &&
+            pointRankingList.length > 1
+          : readRankingList !== null &&
+            readRankingList !== undefined &&
+            readRankingList.length > 1,
       staleTime: 0,
     });
 
@@ -72,8 +80,12 @@ const TopRanking = () => {
         ),
       enabled:
         selectedType === "p"
-          ? pointRankingList !== undefined && pointRankingList.length > 2
-          : readRankingList !== undefined && readRankingList.length > 2,
+          ? pointRankingList !== null &&
+            pointRankingList !== undefined &&
+            pointRankingList.length > 2
+          : readRankingList !== null &&
+            readRankingList !== undefined &&
+            readRankingList.length > 2,
       staleTime: 0,
     });
 

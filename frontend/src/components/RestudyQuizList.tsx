@@ -262,48 +262,52 @@ const RestudyQuizList: React.FC<RestudyQuizListProps> = ({
 
       <QuizContainer $currentPage={currentPage}>
         {newRestudyData!.map((question, index) => (
-          <QuestionWrapper key={index} $currentPage={currentPage} $index={index}>
-            <QuizWrapper>
-              {/* 레벨 메시지 표시 */}
-              <LevelMessage>
-                {question.wordNowLevel === 2
-                  ? "3일 전에 출제됐어요."
-                  : question.wordNowLevel === 3
-                    ? "7일 전에 출제됐어요."
-                    : question.wordNowLevel === 4
-                      ? "30일 전에 출제됐어요."
-                      : question.wordNowLevel === 5
-                        ? "60일 전에 출제됐어요."
-                        : ""}
-              </LevelMessage>
-              <QuestionText>
-                {question.sentence.replace(question.word, "_______")}
-              </QuestionText>
-              <SentenceMeaning>{`${question.sentenceMeaning}`}</SentenceMeaning>
-              <OptionsWrapper>
-                {options[index]?.map((option, idx) => (
-                  <OptionButton
-                    key={idx}
-                    onClick={() => handleAnswerSelection(option, question)}
-                    style={{
-                      backgroundColor: getButtonColor(option),
-                      color: getButtonTest(option),
-                    }}
-                  >
-                    {option}
-                  </OptionButton>
-                ))}
-              </OptionsWrapper>
-              <ActionButton onClick={() => handleSkip(question)} disabled={showDetails}>
-                {selectedOption === null
-                  ? "Skip" // 첫 랜더링 시 "Skip" 표시
-                  : selectedOption === correctAnswer // 정답을 맞췄을 경우
-                    ? getLevelMessage(updatedLevel!)
-                    : "1일 뒤 출제됩니다." // 틀렸을 경우 "1일 뒤 출제됩니다."
-                }
-              </ActionButton>
-            </QuizWrapper>
-          </QuestionWrapper>
+          <>
+            <QuestionWrapper key={index} $currentPage={currentPage} $index={index}>
+              <QuizWrapper>
+                {/* 레벨 메시지 표시 */}
+                <QuestionText>
+                <LevelMessage>
+                  {question.wordNowLevel === 2
+                    ? "3일 전에 출제됐어요."
+                    : question.wordNowLevel === 3
+                      ? "7일 전에 출제됐어요."
+                      : question.wordNowLevel === 4
+                        ? "30일 전에 출제됐어요."
+                        : question.wordNowLevel === 5
+                          ? "60일 전에 출제됐어요."
+                          : ""}
+                </LevelMessage>
+                  {question.sentence.replace(question.word, "_______")}
+                </QuestionText>
+                <SentenceMeaning>{`${question.sentenceMeaning}`}</SentenceMeaning>
+                <OptionsWrapper>
+                  {options[index]?.map((option, idx) => (
+                    <OptionButton
+                      key={idx}
+                      onClick={() => handleAnswerSelection(option, question)}
+                      style={{
+                        backgroundColor: getButtonColor(option),
+                        color: getButtonTest(option),
+                      }}
+                    >
+                      {option}
+                    </OptionButton>
+                  ))}
+                </OptionsWrapper>
+              </QuizWrapper>
+            </QuestionWrapper>
+            {(currentPage !== newRestudyData.length) &&
+            <NextButton onClick={() => handleSkip(question)} disabled={showDetails}>
+              {selectedOption === null
+                ? "Skip"
+                : selectedOption === correctAnswer // 정답을 맞췄을 경우
+                  ? getLevelMessage(updatedLevel!)
+                  : "1일 뒤 출제됩니다." // 틀렸을 경우 1일 뒤 출제
+              }
+            </NextButton>
+      }
+          </>
         ))}
 
         <QuestionWrapper
@@ -313,7 +317,6 @@ const RestudyQuizList: React.FC<RestudyQuizListProps> = ({
           <ResultPage>
             {results.length ? (
               <>
-                <ResultText>퀴즈 완료! </ResultText>
                 <ResultText>{`${newRestudyData.length}문제 중 ${score}문제 맞혔습니다.`}</ResultText>
                 <ResultSkipText>
                   Skip한 문제는 다음 날 등장합니다.
@@ -345,10 +348,12 @@ const RestudyQuizList: React.FC<RestudyQuizListProps> = ({
                 </ResultCard>
               ))}
             </ScrollableResultContainer>
-            <ActionButton onClick={handleQuizExit}>종료</ActionButton>
           </ResultPage>
         </QuestionWrapper>
       </QuizContainer>
+      {(currentPage === newRestudyData.length) &&
+        <EndButton onClick={handleQuizExit}>종료</EndButton>
+      }
     </Container>
   );
 };
@@ -389,7 +394,7 @@ const SkipAllButton = styled.button`
 const QuizContainer = styled.div<{ $currentPage: number }>`
   display: flex;
   width: 100%;
-  height: 100%;
+  height: 95%;
   overflow: hidden;
   position: relative;
 `;
@@ -414,7 +419,6 @@ const ModalRightHeader = styled.div`
 const QuestionWrapper = styled.div<{ $currentPage: number; $index: number }>`
   position: absolute;
   width: 100%;
-  height: 80%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -432,23 +436,27 @@ const QuizWrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: 100%;
+  max-height: 50vh; /* 전체 높이를 줄이기 위해 max-height 설정 */
   padding: 0 1.25rem;
   border-radius: 1rem;
+  overflow-y: auto; /* 내용이 길 경우 세로 스크롤 추가 */
 `;
 
 const QuestionText = styled.p`
   font-size: 1.5rem;
   color: ${({ theme }) => theme.colors.text};
+  margin-top: 2rem;
   margin-bottom: 1rem;
   line-height: 1.2;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
   @media (max-width: 1280px) {
     font-size: 1.25rem;
     line-height: 1.1;
+    margin-top: 1.5rem;
   }
   @media (max-width: 768px) {
     font-size: 1.125rem;
+    margin-top: 0rem;
   }
 `;
 
@@ -480,9 +488,8 @@ const OptionButton = styled.button`
   }
 `;
 
-const ActionButton = styled.button`
-  width: 16rem;
-  margin: 0 auto;
+const EndButton = styled.button`
+  margin-bottom: 1.75rem;
   margin-top: 1rem;
   padding: 0.75rem 2rem;
   border: none;
@@ -505,6 +512,37 @@ const ActionButton = styled.button`
     font-size: 1rem;
   }
 `;
+
+const NextButton = styled.button`
+  position: absolute; /* 버튼을 QuizWrapper 하단에 고정 */
+  bottom: 1rem; /* 하단에서 1rem 위로 띄움 */
+  left: 50%; /* 가로 중앙 정렬 */
+  transform: translateX(-50%); /* 가로 중앙 정렬을 위한 transform */
+  width: 12rem;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  background-color: #42b883;
+  color: white;
+  font-size: 1.125rem;
+  font-weight: bold;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.3s, box-shadow 0.3s;
+
+  &:hover {
+    background-color: #38a76d;
+  }
+
+  &:active {
+    background-color: #2c8f5e;
+  }
+
+  @media (max-width: 1280px) {
+    font-size: 1rem;
+  }
+`;
+
+
 
 const ResultPage = styled.div`
   display: flex;
@@ -529,7 +567,6 @@ const ResultSkipTitle = styled.div`
   align-items: center;
   justify-content: center;
   width: 100%;
-  height: 20%;
   border-radius: 1rem;
   background-color: ${({ theme }) => theme.colors.cardBackground};
   @media (max-width: 768px) {
@@ -538,21 +575,24 @@ const ResultSkipTitle = styled.div`
   }
 `;
 const ResultSkipText = styled.div`
-  font-size: 1.125rem;
+  font-size: 1rem;
   color: ${({ theme }) => theme.colors.text04};
+  @media (max-width: 768px) {
+    font-size: 0.875rem;
+  }
 `;
 
 const ResultText = styled.p`
-  font-size: 1.75rem;
+  font-size: 1.5rem;
   font-weight: bold;
   color: ${({ theme }) => theme.colors.text};
   margin-bottom: 1.5rem;
   text-align: center;
   @media (max-width: 1280px) {
-    font-size: 1.625rem;
+    font-size: 1.375rem;
   }
   @media (max-width: 768px) {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     margin-bottom: 1rem;
   }
 `;
@@ -587,7 +627,7 @@ const ErrorText = styled.p`
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  height: 60vh;
+  height: 50vh;
   align-items: center;
   justify-content: center;
   @media (max-width: 768px) {
@@ -599,9 +639,9 @@ const ScrollableResultContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  margin-top: 2rem;
+  margin-top: 1rem;
   width: 100%;
-  max-height: 30rem;
+  max-height: 20rem;
   overflow-y: auto;
   padding-right: 1rem;
 `;
@@ -660,21 +700,31 @@ const AnswerMeanText = styled.p`
   @media (max-width: 1280px) {
     font-size: 0.875rem;
   }
+  @media (max-width: 768px) {
+    font-size: 0.75rem;
+  }
 `;
 const RemainingQuestions = styled.div`
   margin-top: 0.25rem;
   text-align: center;
-  font-size: 1.125rem;
-  font-weight: bold;
+  font-size: 1rem;
+  font-weight: 400;
   color: ${({ theme }) => theme.colors.text04};
   @media (max-width: 1280px) {
     font-size: 0.875rem;
-    font-weight: 400;
+  }
+  @media (max-width: 768px) {
+    font-size: 0.75rem;
   }
 `;
 
 const LevelMessage = styled.p`
   font-size: 1rem;
   color: ${({ theme }) => theme.colors.primary};
-  margin-bottom: 0.5rem;
+  @media (max-width: 1280px) {
+    font-size: 0.875rem;
+  }
+  @media (max-width: 768px) {
+    font-size: 0.75rem;
+  }
 `;

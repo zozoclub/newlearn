@@ -24,9 +24,11 @@ export const getMemorizeWordList = async (): Promise<
 };
 
 // 단어 외움 처리 토글
-export const postMemorizeWord = async (wordId: number): Promise<void> => {
+export const postMemorizeWord = async (wordIds: number[]): Promise<void> => {
+  console.log({wordIds});
+
   try {
-    await axiosInstance.post(`word/${wordId}/complete`);
+    await axiosInstance.post(`word/complete`, { wordIds });
     console.log("단어 상태 토글 성공");
   } catch (error) {
     console.error("토글 오류", error);
@@ -35,9 +37,13 @@ export const postMemorizeWord = async (wordId: number): Promise<void> => {
 };
 
 // 단어 삭제
-export const deleteMemorizeWord = async (wordId: number): Promise<void> => {
+export const deleteMemorizeWord = async (wordIds: number[]): Promise<void> => {
+  console.log({ wordIds });
+
   try {
-    await axiosInstance.delete(`word/${wordId}`);
+    await axiosInstance.delete(`word`, {
+      data: { wordIds }, // data 속성을 사용하여 요청 본문에 포함
+    });
     console.log("단어 삭제 성공");
   } catch (error) {
     console.error("단어 삭제 오류", error);
@@ -55,10 +61,10 @@ export type WordDetailResponseDto = {
     sentence: string;
     sentenceMeaning: string;
     url: string;
-    pronounceUs: string
-    pronounceUk: string
-    audioUs: string
-    audioUk: string
+    pronounceUs: string;
+    pronounceUk: string;
+    audioUs: string;
+    audioUk: string;
   }>;
 };
 

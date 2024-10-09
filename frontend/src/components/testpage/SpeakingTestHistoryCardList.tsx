@@ -53,7 +53,7 @@ const SpeakingTestHistoryCardList: React.FC<Props> = ({
             />
           </RingChartContainer>
           <ScoreText>
-            <ScoreSpan>{totalScore}</ScoreSpan> 점
+            총합<ScoreSpan>{totalScore}</ScoreSpan> 점
           </ScoreText>
         </ScoreContainer>
       </ListDetailContainer>
@@ -114,11 +114,15 @@ const ListDetailContainer = styled.div`
 `;
 
 const DateContainer = styled.div`
-  font-size: 0.875rem;
-  font-weight: 200;
+  font-size: 1rem;
+  font-weight: 300;
   position: absolute;
   bottom: 0.5rem;
   right: 1rem;
+  color: gray;
+  @media (max-width: 768px) {
+   font-size: 0.875rem; 
+  }
 `;
 
 const ScoreContainer = styled.div`
@@ -129,26 +133,49 @@ const ScoreContainer = styled.div`
 const ScoreStamp = styled.div`
   position: absolute;
   top: -1.125rem;
-  right: -1.125rem;
-
-  @media (max-width: 768px) {
-    top: 0.5rem;
-    left: 0.5rem;
-  }
+  right: -0.5rem;
 `;
 
 const ScoreSpan = styled.span`
+  margin: 0 0.5rem;
   font-size: 2rem;
   font-weight: 700;
-  margin: 0 0.25rem;
   color: ${(props) => props.theme.colors.primary};
 `;
 
 const RingChartContainer = styled.div`
-  height: 10rem;
-  width: 12rem;
+  margin-left: 2rem;
+  margin-right: 2rem;
+  height: 7rem;
+  @media (max-width: 1280px) {
+    height: 6rem;
+    margin-left: 1rem;
+    margin-right: 1rem;
+  }
+  @media (max-width: 768px) {
+    height: 5rem;
+  }
+  @media (max-width: 500px) {
+    height: 4rem;
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
+  }
 `;
-
 const ScoreText = styled.p`
-  margin-left: 5%;
+  align-items: end; /* 세로 중앙 정렬 */
+  font-size: 1.5rem;
+  font-weight: 600;
+  padding-right: 11rem;
+  margin: auto;
+  @media (max-width: 1280px) {
+    font-size: 1.25rem;
+    padding-right: 8rem;
+  }
+  @media (max-width: 768px) {
+    font-size: 1.125rem;
+    padding-right: 7rem;
+  }
+  @media (max-width: 500px) {
+    padding-right: 5rem;
+  }
 `;

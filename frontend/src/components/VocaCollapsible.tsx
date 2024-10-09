@@ -14,7 +14,7 @@ import SpeakerIcon from "@assets/icons/SpeakerIcon";
 import { useMediaQuery } from "react-responsive";
 
 type VocaCollapsibleProps = {
-  id: string;
+  ids: string[]; 
   title: string;
   meaning: string;
   isExpanded: boolean;
@@ -22,7 +22,7 @@ type VocaCollapsibleProps = {
 };
 
 const VocaCollapsible: React.FC<VocaCollapsibleProps> = ({
-  id,
+  ids,
   title,
   meaning,
   isExpanded,
@@ -34,8 +34,8 @@ const VocaCollapsible: React.FC<VocaCollapsibleProps> = ({
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  const { mutate: deleteMutation } = useMutation<void, Error, number>({
-    mutationFn: (wordId: number) => deleteMemorizeWord(wordId),
+  const { mutate: deleteMutation } = useMutation<void, Error, number[]>({
+    mutationFn: (wordIds: number[]) => deleteMemorizeWord(wordIds), // wordIds로 수정
     onSuccess: () =>
       queryClient.invalidateQueries({ queryKey: ["memorizeWordList"] }),
   });
@@ -46,13 +46,11 @@ const VocaCollapsible: React.FC<VocaCollapsibleProps> = ({
   });
 
   const toggleExpand = () => {
-    console.log(id);
-
     setExpanded((prev) => !prev);
   };
 
-  const { mutate: toggleMemorizeMutation } = useMutation<void, Error, number>({
-    mutationFn: (wordId: number) => postMemorizeWord(wordId),
+  const { mutate: toggleMemorizeMutation } = useMutation<void, Error, number[]>({
+    mutationFn: (wordIds: number[]) => postMemorizeWord(wordIds), // wordIds로 수정
     onSuccess: () =>
       queryClient.invalidateQueries({ queryKey: ["memorizeWordList"] }),
   });
@@ -62,13 +60,18 @@ const VocaCollapsible: React.FC<VocaCollapsibleProps> = ({
   const closeDeleteModal = () => setIsDeleteModal(false);
 
   const handleDeleteConfirm = () => {
-    console.log(id);
-    deleteMutation(Number(id));
+    const wordIds = ids.map((id) => Number(id)); // ids 배열로 처리
+    deleteMutation(wordIds);
     closeDeleteModal();
   };
 
   const handleNewsLinkClick = (newsId: number) => {
     navigate(`/news/detail/${newsId}`);
+  };
+
+  const handleToggleWordState = (wordIds: string[]) => {
+    const wordIdNumbers = wordIds.map((id) => Number(id));
+    toggleMemorizeMutation(wordIdNumbers); // 여러 개의 ID를 함께 처리
   };
 
   const processMeaning = (meaning: string) => {
@@ -113,9 +116,6 @@ const VocaCollapsible: React.FC<VocaCollapsibleProps> = ({
       .catch((error) => {
         console.error("Error during audio playback:", error);
       });
-  };
-  const handleToggleWordState = (wordId: string) => {
-    toggleMemorizeMutation(Number(wordId));
   };
 
   const currentHeight = expanded ? contentRef.current?.scrollHeight : 0;
@@ -199,7 +199,7 @@ const VocaCollapsible: React.FC<VocaCollapsibleProps> = ({
                     {isMobile && (
                       <MobileActionButtonContainer>
                         <MobileActionButton
-                          onClick={() => handleToggleWordState(id)}
+                          onClick={() => handleToggleWordState(ids)}
                         >
                           {isState ? "To Study" : "Learned"}
                         </MobileActionButton>
@@ -230,7 +230,6 @@ const VocaCollapsible: React.FC<VocaCollapsibleProps> = ({
 };
 
 export default VocaCollapsible;
-
 const ListItem = styled.div`
   letter-spacing: 0.1px;
 
@@ -294,8 +293,8 @@ const TitleProcessMeaning = styled.span<{ $isExpanded: boolean }>`
   @media (max-width: 1280px) {
     font-size: 0.75rem;
   }
-  @media (max-width: 500px) {
-    visibility: hidden;
+  @media (max-width: 650px) {
+    display: none;
   }
 `;
 
@@ -346,6 +345,7 @@ const Content = styled.div`
 
   @media (max-width: 768px) {
     font-size: 0.75rem;
+    position: relative;
   }
 `;
 
@@ -542,5 +542,7 @@ const MobileActionButton = styled.button`
 `;
 
 const MobileActionButtonContainer = styled.div`
-  margin-left: auto;
+  position: absolute; /* 절대 위치 지정 */
+  top: 0.25rem; /* Content 내부의 우측 상단에 배치 */
+  right: 1rem;
 `;

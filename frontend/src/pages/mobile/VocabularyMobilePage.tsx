@@ -12,7 +12,7 @@ import Spinner from "@components/Spinner";
 import MobileLogoHeader from "@components/common/MobileLogoHeader";
 
 type Word = {
-  id: string;
+  ids: string[];
   title: string;
   content: string;
   isExpanded: boolean;
@@ -42,22 +42,43 @@ const VocabularyPage: React.FC = () => {
 
   useEffect(() => {
     if (wordList) {
-      const toStudy = wordList
-        .filter((word) => !word.complete)
-        .map((word) => ({
-          id: word.wordId.toString(),
-          title: word.word,
-          content: word.wordMeaning,
-          isExpanded: false,
-        }));
-      const learned = wordList
-        .filter((word) => word.complete)
-        .map((word) => ({
-          id: word.wordId.toString(),
-          title: word.word,
-          content: word.wordMeaning,
-          isExpanded: false,
-        }));
+      const toStudyMap = new Map<string, Word>(); // title을 키로 사용하여 단어 정보를 저장하는 Map 생성
+      const learnedMap = new Map<string, Word>();
+
+      wordList.forEach((word) => {
+        if (!word.complete) {
+          if (toStudyMap.has(word.word)) {
+            // 이미 존재하는 단어라면 id를 추가
+            toStudyMap.get(word.word)!.ids.push(word.wordId.toString());
+          } else {
+            // 새로운 단어라면 Map에 추가
+            toStudyMap.set(word.word, {
+              ids: [word.wordId.toString()],
+              title: word.word,
+              content: word.wordMeaning,
+              isExpanded: false,
+            });
+          }
+        } else {
+          if (learnedMap.has(word.word)) {
+            // 이미 존재하는 단어라면 id를 추가
+            learnedMap.get(word.word)!.ids.push(word.wordId.toString());
+          } else {
+            // 새로운 단어라면 Map에 추가
+            learnedMap.set(word.word, {
+              ids: [word.wordId.toString()],
+              title: word.word,
+              content: word.wordMeaning,
+              isExpanded: false,
+            });
+          }
+        }
+      });
+  
+      // Map을 배열로 변환
+      const toStudy = Array.from(toStudyMap.values());
+      const learned = Array.from(learnedMap.values());
+  
       setToStudyWords(toStudy);
       setLearnedWords(learned);
     }
@@ -103,9 +124,9 @@ const VocabularyPage: React.FC = () => {
               <EmptyMessage>공부할 단어가 없습니다.</EmptyMessage>
             ) : (
               toStudyWords.map((word) => (
-                <WordItem key={word.id}>
+                <WordItem key={word.ids.join(",")}>
                   <VocaCollapsible
-                    id={word.id}
+                    ids={word.ids} // id 대신 ids로 변경
                     title={word.title}
                     meaning={word.content}
                     isExpanded={word.isExpanded}
@@ -123,9 +144,9 @@ const VocabularyPage: React.FC = () => {
               </>
             ) : (
               learnedWords.map((word) => (
-                <WordItem key={word.id}>
+                <WordItem key={word.ids.join(",")}>
                   <VocaCollapsible
-                    id={word.id}
+                    ids={word.ids} // id 대신 ids로 변경
                     title={word.title}
                     meaning={word.content}
                     isExpanded={word.isExpanded}

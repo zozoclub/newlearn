@@ -92,11 +92,14 @@ const DateContainer = styled.div`
 
 const ScoreContainer = styled.div`
   display: flex;
-  padding: 25% 0;
+  padding: 40% 0;
   justify-content: center;
   font-size: 1.125rem;
   align-items: end;
   gap: 0.25rem;
+  @media (max-width: 1280px) {
+    font-size: 1rem;
+  }
 `;
 
 const ScoreStamp = styled.div`
@@ -112,6 +115,9 @@ const ScoreSpan = styled.span`
   font-size: 3rem;
   font-weight: 700;
   color: ${(props) => props.theme.colors.primary};
+  @media (max-width: 1280px) {
+    font-size: 2rem;
+  }
   @media (max-width: 768px) {
     font-size: 2rem;
   }

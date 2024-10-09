@@ -150,7 +150,7 @@ const WordHunt: React.FC<EngDataProps> = ({ engData }) => {
             </p>
             <ul>
               {placedWords.map((word, index) => (
-                <WordItem key={index} $isCorrect={correctWords.includes(word)}>
+                <WordItem key={index} $isCorrect={correctWords.includes(word) || correctWords.includes(word.split("").reverse().join(""))}>
                   {word}
                 </WordItem>
               ))}
@@ -339,12 +339,12 @@ const Cell = styled.div<{
     props.$isAnswer
       ? props.theme.colors.primary
       : props.$isCorrect
-      ? props.theme.colors.primary
-      : props.$isIncorrect
-      ? props.theme.colors.danger
-      : props.$isSelected
-      ? "yellow"
-      : props.theme.colors.cardBackground01};
+        ? props.theme.colors.primary
+        : props.$isIncorrect
+          ? props.theme.colors.danger
+          : props.$isSelected
+            ? "yellow"
+            : props.theme.colors.cardBackground01};
   color: ${(props) =>
     props.$isCorrect || props.$isIncorrect || props.$isAnswer
       ? "white"

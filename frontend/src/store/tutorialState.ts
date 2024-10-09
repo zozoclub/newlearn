@@ -3,6 +3,7 @@ import { atom } from "recoil";
 interface TutorialStep {
   selector: string;
   content: string;
+  isNeedToGo?: boolean;
 }
 
 type TutorialTipType = {

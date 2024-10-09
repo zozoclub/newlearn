@@ -60,7 +60,7 @@ const FilteredRecommendNews = () => {
             ))}
           </div>
         ) : (
-          <div className="recommand-news">
+          <div id="step3" className="recommand-news">
             {data?.slice(0, Math.min(data?.length, 5)).map((news) => (
               <div
                 className="news-div"

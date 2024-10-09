@@ -149,13 +149,13 @@ const SpeakingTestResultPage: React.FC = () => {
         </GridContainer>
       </MainContainer>
 
-      <MainContainer>
+      <SubContainer>
         <SpeakingTestResultReference
           referenceTest={referenceTest}
           referenceTextTranslate={referenceTextTranslate}
           audioUrl={testDetail.audioFileUrl}
         />
-      </MainContainer>
+      </SubContainer>
     </MainLayout>
   );
 };
@@ -167,7 +167,18 @@ const MainContainer = styled.div`
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  width: 90%;
+  width: 80%;
+  height: 50rem;
+  margin: 0 0.5rem;
+  padding: 0.5rem;
+  background-color: ${(props) => props.theme.colors.cardBackground + "5A"};
+  box-shadow: ${(props) => props.theme.shadows.small};
+  border-radius: 0.75rem;
+  transition: box-shadow 0.5s;
+  backdrop-filter: blur(0.25rem);
+`;
+const SubContainer = styled.div`
+  width: 80%;
   height: 50rem;
   margin: 0 0.5rem;
   padding: 0.5rem;

@@ -127,6 +127,8 @@ const MainContainer = styled.div`
   max-height: 45rem;
   margin: 0 0.5rem;
   padding: 0.5rem;
+  min-height: 40rem;
+  max-height: 50rem;
   background-color: ${(props) => props.theme.colors.cardBackground01};
   box-shadow: ${(props) => props.theme.shadows.small};
   border-radius: 0.75rem;

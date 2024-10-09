@@ -266,10 +266,10 @@ const MainContainer = styled.div`
   flex-direction: column;
   width: 46%;
   padding: 1rem;
+  height: 45rem;
   background-color: ${(props) => `${props.theme.colors.cardBackground01}`};
   border-radius: 0.75rem;
-  min-height: 800px;
-  max-height: 800px;
+
   overflow-y: auto;
   box-shadow: ${(props) => props.theme.shadows.small};
   transition: box-shadow 0.5s;

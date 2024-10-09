@@ -91,7 +91,6 @@ export const handleMouseUp = (
     setCorrectSelections((prev) => [...prev, ...selectedPositions]); // 정답이면 파란색 유지
     updateCorrectWord(selectedWord); // 정답 단어 업데이트
     setCorrectWordsCount((prev) => (prev += 1));
-    // 추가해야할 api 통신
     setSelectedPositions([]); // 선택된 셀 초기화
   } else {
     setIncorrectSelection(true); // 틀리면 빨간색으로 표시

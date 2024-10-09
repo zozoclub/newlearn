@@ -17,9 +17,10 @@ import { createGlobalStyle } from "styled-components";
 import { usePageTransition } from "@hooks/usePageTransition";
 import Modal from "@components/Modal";
 import BackArrowMobileIcon from "@assets/icons/mobile/BackArrowMobileIcon";
-import { useSetRecoilState } from "recoil";
+import { useResetRecoilState, useSetRecoilState } from "recoil";
 import locationState from "@store/locationState";
 import MobileLogoHeader from "@components/common/MobileLogoHeader";
+import { tutorialTipState } from "@store/tutorialState";
 
 const BodyScrollLock = createGlobalStyle`
   body {
@@ -36,6 +37,46 @@ const MyPage = () => {
   const [isDeleteUserModalOpen, setIsDeleteUserModalOpen] = useState(false);
   const setCurrentLocation = useSetRecoilState(locationState);
 
+  // 페이지마다 튜토리얼 추가해주시면 됩니다.
+  const setTutorialTip = useSetRecoilState(tutorialTipState);
+  const resetTutorialTip = useResetRecoilState(tutorialTipState);
+  const startTutorial = () => {
+    setTutorialTip({
+      steps: [
+        {
+          selector: "#step1",
+          content: "아바타, 닉네임을 수정할 수 있어요.",
+        },
+        {
+          selector: "#step2",
+          content: "영어 난이도, 관심 카테고리를 수정할 수 있어요.",
+        },
+        {
+          selector: "#step3",
+          content: "나의 활동 내역을 확인할 수 있어요",
+        },
+        {
+          selector: "#step4",
+          content: "내가 읽은 뉴스들의 카테고리 분포를 확인할 수 있어요",
+        },
+        {
+          selector: "#step5",
+          content: "매일 뉴스를 읽고 잔디를 채워보세요.",
+        },
+      ],
+      isActive: true,
+      onComplete: () => {
+        console.log("튜토리얼 완료!");
+        resetTutorialTip();
+      },
+    });
+  };
+  useEffect(() => {
+    startTutorial();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // 모바일 버전 모달
   const handleChartModal = () => {
     setIsChartModalOpen(true);
   };
@@ -48,6 +89,7 @@ const MyPage = () => {
     setIsScrapNewsModalOpen(true);
   };
 
+  // 로그아웃
   const handleLogout = async () => {
     try {
       await logout();
@@ -215,29 +257,29 @@ const MyPage = () => {
     return (
       <MyPageContainer>
         <FlexContainer>
-          <FlexItem $flex={5}>
+          <FlexItem $flex={5} id="step1">
             <WidgetContainer>
               <MyPageProfile />
             </WidgetContainer>
           </FlexItem>
-          <FlexItem $flex={4}>
+          <FlexItem $flex={4} id="step2">
             <WidgetContainer>
               <MyPageInfo />
             </WidgetContainer>
           </FlexItem>
-          <FlexItem $flex={3}>
+          <FlexItem $flex={3} id="step3">
             <WidgetContainer>
               <MyPageCount />
             </WidgetContainer>
           </FlexItem>
         </FlexContainer>
         <FlexContainer>
-          <FlexItem $flex={7}>
+          <FlexItem $flex={7} id="step4">
             <WidgetContainer>
               <MyPageCategory />
             </WidgetContainer>
           </FlexItem>
-          <FlexItem $flex={8}>
+          <FlexItem $flex={8} id="step5">
             <WidgetContainer>
               <MyPageGrass />
             </WidgetContainer>
@@ -302,7 +344,7 @@ const WidgetContainer = styled.div`
   width: 100%;
   height: 100%;
   padding: 1.75rem;
-  background-color: ${(props) => props.theme.colors.cardBackground + "BF"};
+  background-color: ${(props) => props.theme.colors.cardBackground01};
   border-radius: 12px;
   transition: box-shadow 0.5s;
   backdrop-filter: blur(4px);

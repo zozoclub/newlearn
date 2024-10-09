@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import LoadingBar from "../common/LoadingBar";
 import { deleteScrapNews, scrapNews } from "@services/newsService";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import languageState from "@store/languageState";
 import DifficultyToggleBtn from "./DifficultyToggleBtn";
 import Bookmark from "./Bookmark";
@@ -10,6 +10,7 @@ import { useParams } from "react-router-dom";
 import { DetailNewsType } from "types/newsType";
 import { useMediaQuery } from "react-responsive";
 import readCountIcon from "@assets/icons/readCountIcon.svg";
+import userInfoState from "@store/userInfoState";
 
 type NewsHeaderPropsType = {
   engIsLoading: boolean;
@@ -34,14 +35,23 @@ const NewsDetailHeader: React.FC<NewsHeaderPropsType> = ({
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const { newsId } = useParams();
   const languageData = useRecoilValue(languageState);
+  const [userInfoValue, setUserInfoState] = useRecoilState(userInfoState);
   const [isScrapped, setIsScrapped] = useState(false);
-  const handleScrap = async () => {
+  const handleScrap = () => {
     if (isScrapped) {
-      deleteScrapNews(Number(newsId), difficulty).then(() =>
-        setIsScrapped(false)
-      );
+      deleteScrapNews(Number(newsId), difficulty).then(() => {
+        setIsScrapped(false);
+        setUserInfoState({
+          ...userInfoValue,
+          scrapCount: userInfoValue.scrapCount - 1,
+        });
+      });
     } else {
       scrapNews(Number(newsId), difficulty).then(() => setIsScrapped(true));
+      setUserInfoState({
+        ...userInfoValue,
+        scrapCount: userInfoValue.scrapCount + 1,
+      });
     }
   };
 

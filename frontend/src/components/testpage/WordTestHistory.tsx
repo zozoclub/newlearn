@@ -39,7 +39,7 @@ const WordTestHistory: React.FC = () => {
   const [monthAverage, setMonthAverage] = useState(0); // 이전 5개월간 단어 학습 평균 갯수
   const theme = useTheme();
 
-  const { isLoading, data, error } = useQuery({
+  const { isLoading, data, error, refetch } = useQuery({
     queryKey: ["wordTestHistory"],
     queryFn: () => getWordTestResultList(),
   });
@@ -52,7 +52,10 @@ const WordTestHistory: React.FC = () => {
 
     return `${month}.${day} ${hours}:${minutes}`;
   };
-
+  useEffect(() => {
+    refetch(); // 페이지에 진입할 때마다 강제로 데이터를 가져옴
+  }, [refetch]);
+  
   // 데이터를 carddata 형식으로 변환
   const cardData =
     data?.map((quiz) => ({

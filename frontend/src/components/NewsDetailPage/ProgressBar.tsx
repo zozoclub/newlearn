@@ -177,6 +177,7 @@ const ProgressBar: React.FC<ProgressBarPropsType> = ({
       style={{
         width: `${isReadFinished ? 100 : scrollProgress}%`,
       }}
+      id="step1"
     />
   );
 };

@@ -8,7 +8,7 @@ const DifficultyToggleBtn: React.FC<{
   setIsReadFinished: React.Dispatch<React.SetStateAction<boolean>>;
 }> = ({ difficulty, setDifficulty, isRead, setIsReadFinished }) => {
   return (
-    <Container>
+    <Container id="step2">
       <LowDiv
         $difficulty={difficulty}
         onClick={() => {

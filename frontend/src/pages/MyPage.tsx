@@ -7,8 +7,6 @@ import MyPageCategory from "@components/mypage/MyPageCategory";
 import MyPageGrass from "@components/mypage/MyPageGrass";
 import MyPageScrapNews from "@components/mypage/MyPageScrapNews";
 
-import FullLogo from "@components/common/FullLogo";
-
 import arrowIcon from "@assets/icons/mobile/arrowIcon.svg";
 import MyPageProfileMobile from "@components/mypage/mobile/MyPageProfileMobile";
 import MyPageCountMobile from "@components/mypage/mobile/MyPageCountMobile";
@@ -18,9 +16,11 @@ import { logout, deleteUser } from "@services/userService";
 import { createGlobalStyle } from "styled-components";
 import { usePageTransition } from "@hooks/usePageTransition";
 import Modal from "@components/Modal";
-import backArrowIcon from "@assets/icons/mobile/backArrowIcon.svg";
-import { useSetRecoilState } from "recoil";
+import BackArrowMobileIcon from "@assets/icons/mobile/BackArrowMobileIcon";
+import { useResetRecoilState, useSetRecoilState } from "recoil";
 import locationState from "@store/locationState";
+import MobileLogoHeader from "@components/common/MobileLogoHeader";
+import { tutorialTipState } from "@store/tutorialState";
 
 const BodyScrollLock = createGlobalStyle`
   body {
@@ -34,10 +34,49 @@ const MyPage = () => {
   const [isChartModalOpen, setIsChartModalOpen] = useState(false);
   const [isProgressModalOpen, setIsProgressModalOpen] = useState(false);
   const [isScrapNewsModalOpen, setIsScrapNewsModalOpen] = useState(false);
-  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [isDeleteUserModalOpen, setIsDeleteUserModalOpen] = useState(false);
   const setCurrentLocation = useSetRecoilState(locationState);
 
+  // 페이지마다 튜토리얼 추가해주시면 됩니다.
+  const setTutorialTip = useSetRecoilState(tutorialTipState);
+  const resetTutorialTip = useResetRecoilState(tutorialTipState);
+  const startTutorial = () => {
+    setTutorialTip({
+      steps: [
+        {
+          selector: "#step1",
+          content: "아바타, 닉네임을 수정할 수 있어요.",
+        },
+        {
+          selector: "#step2",
+          content: "영어 난이도, 관심 카테고리를 수정할 수 있어요.",
+        },
+        {
+          selector: "#step3",
+          content: "나의 활동 내역을 확인할 수 있어요",
+        },
+        {
+          selector: "#step4",
+          content: "내가 읽은 뉴스들의 카테고리 분포를 확인할 수 있어요",
+        },
+        {
+          selector: "#step5",
+          content: "매일 뉴스를 읽고 잔디를 채워보세요.",
+        },
+      ],
+      isActive: true,
+      onComplete: () => {
+        console.log("튜토리얼 완료!");
+        resetTutorialTip();
+      },
+    });
+  };
+  useEffect(() => {
+    startTutorial();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // 모바일 버전 모달
   const handleChartModal = () => {
     setIsChartModalOpen(true);
   };
@@ -51,15 +90,10 @@ const MyPage = () => {
   };
 
   // 로그아웃
-  const handleLogoutClick = () => {
-    setIsLogoutModalOpen(true);
-  };
-
   const handleLogout = async () => {
     try {
       await logout();
       sessionStorage.removeItem("accessToken");
-      setIsLogoutModalOpen(false);
       history.pushState(null, "", location.href);
       window.onpopstate = function () {
         history.go(-2);
@@ -111,9 +145,7 @@ const MyPage = () => {
   const MobileRender = () => {
     return (
       <PageWrapper>
-        <MobileMainHeader>
-          <FullLogo width={200} height={75} />
-        </MobileMainHeader>
+        <MobileLogoHeader />
         <ContentWrapper>
           <MyPageContainer>
             <MyPageProfileMobile />
@@ -135,7 +167,7 @@ const MyPage = () => {
               <MenuTitle>내가 스크랩한 뉴스</MenuTitle>
               <img src={arrowIcon} alt="버튼" />
             </WidgetMenuContainer>
-            <UserButton onClick={handleLogoutClick}>로그아웃</UserButton>
+            <UserButton onClick={handleLogout}>로그아웃</UserButton>
             <UserButton onClick={handleDeleteClick}>회원탈퇴</UserButton>
           </MyPageContainer>
           {isChartModalOpen && (
@@ -148,7 +180,7 @@ const MyPage = () => {
                       setIsChartModalOpen(false);
                     }}
                   >
-                    <img src={backArrowIcon} alt="버튼" />
+                    <BackArrowMobileIcon url="/mypage" />
                   </BackButton>
                   <ModalTitle>마이 페이지</ModalTitle>
                 </ModalHeader>
@@ -174,7 +206,7 @@ const MyPage = () => {
                       setIsProgressModalOpen(false);
                     }}
                   >
-                    <img src={backArrowIcon} alt="버튼" />
+                    <BackArrowMobileIcon url="/mypage" />
                   </BackButton>
                   <ModalTitle>마이 페이지</ModalTitle>
                 </ModalHeader>
@@ -194,7 +226,7 @@ const MyPage = () => {
                       setIsScrapNewsModalOpen(false);
                     }}
                   >
-                    <img src={backArrowIcon} alt="버튼" />
+                    <BackArrowMobileIcon url="/mypage" />
                   </BackButton>
                   <ModalTitle>마이 페이지</ModalTitle>
                 </ModalHeader>
@@ -204,18 +236,6 @@ const MyPage = () => {
               </FullScreenModal>
             </>
           )}
-          <Modal
-            isOpen={isLogoutModalOpen}
-            onClose={() => setIsLogoutModalOpen(false)}
-            title=""
-          >
-            <LogoutModalContent>
-              <p>로그아웃 하시겠습니까?</p>
-              <ButtonContainer>
-                <ConfirmButton onClick={handleLogout}>확인</ConfirmButton>
-              </ButtonContainer>
-            </LogoutModalContent>
-          </Modal>
           <Modal
             isOpen={isDeleteUserModalOpen}
             onClose={() => setIsDeleteUserModalOpen(false)}
@@ -237,29 +257,29 @@ const MyPage = () => {
     return (
       <MyPageContainer>
         <FlexContainer>
-          <FlexItem $flex={5}>
+          <FlexItem $flex={5} id="step1">
             <WidgetContainer>
               <MyPageProfile />
             </WidgetContainer>
           </FlexItem>
-          <FlexItem $flex={4}>
+          <FlexItem $flex={4} id="step2">
             <WidgetContainer>
               <MyPageInfo />
             </WidgetContainer>
           </FlexItem>
-          <FlexItem $flex={3}>
+          <FlexItem $flex={3} id="step3">
             <WidgetContainer>
               <MyPageCount />
             </WidgetContainer>
           </FlexItem>
         </FlexContainer>
         <FlexContainer>
-          <FlexItem $flex={7}>
+          <FlexItem $flex={7} id="step4">
             <WidgetContainer>
               <MyPageCategory />
             </WidgetContainer>
           </FlexItem>
-          <FlexItem $flex={8}>
+          <FlexItem $flex={8} id="step5">
             <WidgetContainer>
               <MyPageGrass />
             </WidgetContainer>
@@ -324,7 +344,7 @@ const WidgetContainer = styled.div`
   width: 100%;
   height: 100%;
   padding: 1.75rem;
-  background-color: ${(props) => props.theme.colors.cardBackground + "BF"};
+  background-color: ${(props) => props.theme.colors.cardBackground01};
   border-radius: 12px;
   transition: box-shadow 0.5s;
   backdrop-filter: blur(4px);
@@ -333,7 +353,7 @@ const WidgetContainer = styled.div`
 
   @media (max-width: 767px) {
     box-shadow: none;
-    border: 1px solid ${(props) => props.theme.colors.cancelPress};
+    border: 1px solid ${(props) => props.theme.colors.mobileBorder};
     margin: 1rem 0;
     padding: 1rem;
   }
@@ -377,26 +397,6 @@ const fadeOut = keyframes`
   }
 `;
 
-// const HeaderContainer = styled.header`
-//   position: fixed;
-//   top: 0;
-//   left: 0;
-//   right: 0;
-//   display: flex;
-//   align-items: center;
-//   height: 70px;
-//   background-color: ${(props) => props.theme.colors.background};
-//   z-index: 1000;
-// `;
-
-const MobileMainHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 70px;
-  padding: 0 1.5rem 0 0;
-`;
-
 const FullScreenModal = styled.div<{ $isVisible: boolean }>`
   position: fixed;
   top: 0;
@@ -426,11 +426,11 @@ const ItemTitle = styled.div`
   color: ${(props) => props.theme.colors.text03};
   font-size: 1.25rem;
   font-weight: 600;
-  margin: 0.5rem 1rem;
+  margin: 1rem 0.5rem;
 `;
 
 const Divider = styled.hr`
-  color: lightgray;
+  color: ${(props) => props.theme.colors.mobileBorder};
   margin: 1.5rem 0;
 `;
 

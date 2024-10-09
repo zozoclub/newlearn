@@ -30,7 +30,9 @@ const StartSpeakingTestWidget: React.FC<Props> = ({ posibleWords }) => {
         <ImageTag>
           <img src={speakingTestIcon} alt="speakingTestIcon" width={200} />
         </ImageTag>
-        <MobileExplain>제시되는 기사 예문을 읽고 내 발음 점수를 확인 해보세요.</MobileExplain>
+        <MobileExplain>
+          제시되는 기사 예문을 읽고 내 발음 점수를 확인 해보세요.
+        </MobileExplain>
         <MobileExplain>
           테스트 진행하는 문장 개수는
           <ExplainNumber>3</ExplainNumber>문항 입니다.
@@ -38,7 +40,9 @@ const StartSpeakingTestWidget: React.FC<Props> = ({ posibleWords }) => {
         <StartButton onClick={handleStartTest}>테스트 시작</StartButton>
         <MobileTipContainer>
           <MobileTip>단어장에 저장된 단어의 예문이 출제됩니다.</MobileTip>
-          <MobileTip>저장된 단어가 3개 미만일 경우에 문항수가 제한됩니다.</MobileTip>
+          <MobileTip>
+            저장된 단어가 3개 미만일 경우에 문항수가 제한됩니다.
+          </MobileTip>
         </MobileTipContainer>
         <Modal isOpen={isWarningModal} onClose={closewarningModal} title="알림">
           <p>단어장보다 테스트 개수가 많을 수 없습니다.</p>
@@ -49,13 +53,13 @@ const StartSpeakingTestWidget: React.FC<Props> = ({ posibleWords }) => {
           </ModalButtonContainer>
         </Modal>
       </MobileWidgetContainer>
-    )
+    );
   }
 
   return (
     <WidgetContainer>
       <ImageTag>
-        <img src={speakingTestIcon} alt="speakingTestIcon" width={200} />
+        <img src={speakingTestIcon} alt="speakingTestIcon" width={280} />
       </ImageTag>
       <Title>문장 발음 테스트</Title>
       <Explain>제시되는 기사 예문을 읽고 내 발음 점수를 확인 해보세요.</Explain>
@@ -148,24 +152,24 @@ const Tip = styled.p`
   margin-bottom: 1rem;
   text-align: center;
   color: ${(props) => props.theme.colors.placeholder};
-`
+`;
 
 // 모바일 전용
 
 const MobileWidgetContainer = styled.div`
-display: flex;
-flex-direction: column;
+  display: flex;
+  flex-direction: column;
 `;
 
 const ImageTag = styled.div`
-display: flex;
-justify-content: center;
-margin-bottom: 2rem;
-`
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2rem;
+`;
 
 const MobileTipContainer = styled.div`
   margin: 1.5rem 0;
-`
+`;
 const MobileExplain = styled.p`
   font-size: 0.875rem;
   margin-bottom: 1rem;
@@ -174,7 +178,7 @@ const MobileExplain = styled.p`
 
 const MobileTip = styled.p`
   font-size: 0.875rem;
-  margin-top : 0.5rem;
+  margin-top: 0.5rem;
   text-align: center;
   color: ${(props) => props.theme.colors.text04};
-`
+`;

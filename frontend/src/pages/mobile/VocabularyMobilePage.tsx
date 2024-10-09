@@ -9,7 +9,7 @@ import {
 } from "@services/wordMemorize";
 import { useQuery } from "@tanstack/react-query";
 import Spinner from "@components/Spinner";
-import HeaderMobile from "@components/common/HeaderMobile";
+import MobileLogoHeader from "@components/common/MobileLogoHeader";
 
 type Word = {
   ids: string[];
@@ -90,8 +90,7 @@ const VocabularyPage: React.FC = () => {
 
   return (
     <>
-      <HeaderMobile title="My Voca" />
-
+      <MobileLogoHeader />
       <NavMenu>
         <NavButtonWrapper $active={currentView === "toStudy"}>
           <NavButton

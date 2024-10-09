@@ -20,9 +20,9 @@ const HybridRecommendNews = () => {
   const MemoizedComponent = useMemo(
     () => {
       return (
-        <Container>
+        <Container id="step7">
           {isLoading ? (
-            <div>
+            <div style={{ aspectRatio: 1.6 }}>
               <Spinner />
             </div>
           ) : (

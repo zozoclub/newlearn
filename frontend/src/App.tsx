@@ -92,7 +92,7 @@ const App: React.FC = () => {
       <TutorialTip />
       <GlobalStyle />
       <Background />
-      <AppContainer className="no_scroll">
+      <AppContainer id="app-container">
         {!isMobile && <Header />}
         <TransitionContent>
           <Outlet />

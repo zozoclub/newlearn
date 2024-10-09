@@ -8,9 +8,8 @@ import Pagination from "@components/NewsListPage/Pagination";
 import { useResetRecoilState, useSetRecoilState } from "recoil";
 import locationState from "@store/locationState";
 import { useMediaQuery } from "react-responsive";
+import MobileLogoHeader from "@components/common/MobileLogoHeader";
 
-import FullLogo from "@components/common/FullLogo";
-import newsSearchIcon from "@assets/icons/searchIcon.svg";
 import NewsListHeader from "@components/NewsListPage/NewsListHeader";
 import { tutorialTipState } from "@store/tutorialState";
 
@@ -53,7 +52,7 @@ const NewsPage = () => {
   const DesktopRender = () => {
     return (
       <Container>
-        <NewsContent id="step6">
+        <NewsContent>
           {selectedCategory === 0 && <Recommand />}
           <NewsList setTotalPages={setTotalPages} />
         </NewsContent>
@@ -69,17 +68,10 @@ const NewsPage = () => {
   const MobileRender = () => {
     return (
       <PageWrapper>
-        <MobileMainHeader>
-          <FullLogo height={70} width={200} />
-          <img
-            style={{ paddingRight: "1rem" }}
-            height={30}
-            src={newsSearchIcon}
-          />
-        </MobileMainHeader>
+        <MobileLogoHeader />
         <NewsListHeader />
         <ContentWrapper>
-          <NewsContent>
+          <NewsContent id="step9">
             <NewsList setTotalPages={setTotalPages} />
             <Pagination
               category={selectedCategory}
@@ -130,14 +122,6 @@ const NewsContent = styled.div`
     padding: 0 8px;
     margin-bottom: 70px;
   }
-`;
-
-const MobileMainHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 70px;
-  width: 100vw;
 `;
 
 const ContentWrapper = styled.main`

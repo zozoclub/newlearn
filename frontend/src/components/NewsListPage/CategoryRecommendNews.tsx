@@ -22,7 +22,7 @@ const CategoryRecommendNews = () => {
 
   const MemoizedComponent = useMemo(() => {
     return (
-      <Container>
+      <Container id="step8">
         {isLoading ? (
           <div>
             <Spinner />

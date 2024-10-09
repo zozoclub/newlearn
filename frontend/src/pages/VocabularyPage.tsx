@@ -175,10 +175,10 @@ const VocabularyPage: React.FC = () => {
         <Droppable droppableId="toStudy">
           {(provided) => (
             <MainContainer ref={provided.innerRef} {...provided.droppableProps}>
-              <Title>
-                공부해야 될 단어 리스트{" "}
+              <TitleContainer>
+                <Title>공부해야 될 단어 리스트</Title>
                 <WordCount>({toStudyWords.length})</WordCount>
-              </Title>
+              </TitleContainer>
               {toStudyWords.length === 0 ? (
                 <EmptyMessage>공부할 단어가 없습니다.</EmptyMessage>
               ) : (
@@ -211,9 +211,10 @@ const VocabularyPage: React.FC = () => {
         <Droppable droppableId="learned">
           {(provided) => (
             <MainContainer ref={provided.innerRef} {...provided.droppableProps}>
-              <Title>
-                외운 단어 리스트 <WordCount>({learnedWords.length})</WordCount>
-              </Title>
+              <TitleContainer>
+                <Title>외운 단어 리스트</Title>
+                <WordCount>({learnedWords.length})</WordCount>
+              </TitleContainer>
               {learnedWords.length === 0 ? (
                 <EmptyMessage>외운 단어가 없습니다.</EmptyMessage>
               ) : (
@@ -261,6 +262,8 @@ const MainLayout = styled.div`
 `;
 
 const MainContainer = styled.div`
+  display: flex;
+  flex-direction: column;
   width: 46%;
   padding: 1rem;
   background-color: ${(props) => `${props.theme.colors.cardBackground01}`};
@@ -280,20 +283,27 @@ const MainContainer = styled.div`
   }
 `;
 
+const TitleContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 1rem 0 2rem;
+`;
+
 const Title = styled.h2`
   text-align: center;
-  font-size: 2rem;
+  align-items: center;
+  font-size: 1.75rem;
   font-weight: 700;
-  margin-top: 1rem;
-  margin-bottom: 1.5rem;
 
   @media (max-width: 1280px) {
     font-size: 1.75rem;
   }
 `;
 
-const WordCount = styled.span`
-  font-size: 1rem;
+const WordCount = styled.div`
+  font-size: 1.25rem;
+  font-weight: bold;
   color: ${(props) => props.theme.colors.text04};
   margin-left: 0.5rem;
 

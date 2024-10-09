@@ -45,6 +45,7 @@ const TitleContainer = styled.div`
   align-items: center;
   margin: 1rem 0 2rem;
   font-size: 1.25rem;
+  gap: 0.5rem;
   @media (max-width: 768px) {
     display: none;
   }

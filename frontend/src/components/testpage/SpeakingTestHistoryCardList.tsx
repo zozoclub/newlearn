@@ -6,6 +6,7 @@ import GreatStamp from "@assets/icons/GreatStamp";
 import GoodStamp from "@assets/icons/GoodStamp";
 import BadStamp from "@assets/icons/BadStamp";
 import { useNavigate } from "react-router-dom";
+import SpeakingTestHistoryCardChart from "./SpeakingTestHistoryCardChart";
 
 type Props = {
   date: string;
@@ -21,6 +22,10 @@ const SpeakingTestHistoryCardList: React.FC<Props> = ({
   date,
   totalScore,
   audioFileId,
+  accuracyScore,
+  fluencyScore,
+  prosodyScore,
+  completenessScore,
 }) => {
   const navigate = useNavigate();
 
@@ -39,7 +44,17 @@ const SpeakingTestHistoryCardList: React.FC<Props> = ({
     <MainContainer onClick={intoDetailHandler}>
       <ListDetailContainer>
         <ScoreContainer>
-          종합 <ScoreSpan>{totalScore}</ScoreSpan> 점
+          <RingChartContainer>
+            <SpeakingTestHistoryCardChart
+              accuracyScore={accuracyScore}
+              fluencyScore={fluencyScore}
+              prosodyScore={prosodyScore}
+              completenessScore={completenessScore}
+            />
+          </RingChartContainer>
+          <ScoreText>
+            <ScoreSpan>{totalScore}</ScoreSpan> 점
+          </ScoreText>
         </ScoreContainer>
       </ListDetailContainer>
       <DateContainer>{date}</DateContainer>
@@ -92,7 +107,6 @@ const MainContainer = styled.div`
 `;
 
 const ListDetailContainer = styled.div`
-  display: flex;
   flex-direction: column;
   align-items: center;
   position: relative;
@@ -109,7 +123,7 @@ const DateContainer = styled.div`
 
 const ScoreContainer = styled.div`
   display: flex;
-  align-items: end;
+  align-items: center;
 `;
 
 const ScoreStamp = styled.div`
@@ -126,6 +140,15 @@ const ScoreStamp = styled.div`
 const ScoreSpan = styled.span`
   font-size: 2rem;
   font-weight: 700;
-  margin: 0 0.25rem; 
+  margin: 0 0.25rem;
   color: ${(props) => props.theme.colors.primary};
+`;
+
+const RingChartContainer = styled.div`
+  height: 10rem;
+  width: 12rem;
+`;
+
+const ScoreText = styled.p`
+  margin-left: 5%;
 `;

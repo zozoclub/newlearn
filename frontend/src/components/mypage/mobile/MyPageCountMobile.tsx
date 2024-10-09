@@ -74,6 +74,6 @@ const ContentContainer = styled.div`
 const Divider = styled.div`
   height: 2.5rem;
   width: 1px;
-  background-color: lightgray;
+  background-color: ${(props) => props.theme.colors.mobileBorder};
   margin: 0 0.5rem;
 `;

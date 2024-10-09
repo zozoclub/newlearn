@@ -63,12 +63,12 @@ const Profile = () => {
           <ReadStatusNum>{userInfo.totalNewsReadCount}</ReadStatusNum>
         </div>
         <div>
-          <ReadStatusTag>Speak</ReadStatusTag>
-          <ReadStatusNum>0</ReadStatusNum>
+          <ReadStatusTag>Word</ReadStatusTag>
+          <ReadStatusNum>{userInfo.savedWordCount}</ReadStatusNum>
         </div>
         <div>
           <ReadStatusTag>Scrap</ReadStatusTag>
-          <ReadStatusNum>0</ReadStatusNum>
+          <ReadStatusNum>{userInfo.scrapCount}</ReadStatusNum>
         </div>
       </ReadStatus>
     </>
@@ -147,12 +147,14 @@ const ReadStatus = styled.div`
 const ReadStatusTag = styled.div`
   margin: 0.75rem 0 0.75rem 0;
   text-align: center;
-  font-size: 1.125rem;
+  font-size: 1.25rem;
   font-weight: 500;
 `;
 
 const ReadStatusNum = styled.div`
   text-align: center;
+  font-size: 1.125rem;
+  font-weight: bold;
 `;
 
 export default Profile;

@@ -24,7 +24,7 @@ const Header = () => {
   }, [currentLocation]);
 
   return (
-    <HeaderContainer $isVisible={isVisible} $isNewsPage={isNewsPage}>
+    <HeaderContainer id="step6" $isVisible={isVisible} $isNewsPage={isNewsPage}>
       {/* 페이지 정보 없을 때 Logo 표시 안 함 */}
       {isVisible && (
         <Logo

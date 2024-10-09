@@ -66,13 +66,14 @@ const ChartContainer = styled.div`
   flex-direction: column;
   align-items: center;
   width: 90%;
+  padding: 3% 0;
 `;
 
 const TitleContainer = styled.div`
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  margin-bottom: 1rem;
+  margin-bottom: 0.25rem;
   font-size: 1.25rem;
   font-weight: bold;
 `;
@@ -85,6 +86,7 @@ const BarTitle = styled.div`
   display: flex;
   justify-content: space-between;
   margin: 0 0.25rem;
+  max-height: 40px;
 `;
 
 const BarContent = styled.div`
@@ -98,6 +100,7 @@ const BarLabel = styled(BarContent)`
 `;
 
 const BarNumber = styled(BarContent)`
+  min-width: 70px;
   text-align: right;
 `;
 

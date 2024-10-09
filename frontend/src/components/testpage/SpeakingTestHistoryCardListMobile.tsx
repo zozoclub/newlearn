@@ -5,35 +5,51 @@ import PerfectStamp from "@assets/icons/PerfectStamp";
 import GreatStamp from "@assets/icons/GreatStamp";
 import GoodStamp from "@assets/icons/GoodStamp";
 import BadStamp from "@assets/icons/BadStamp";
-
 import { useNavigate } from "react-router-dom";
+import SpeakingTestHistoryCardChart from "./SpeakingTestHistoryCardChart";
 
 type Props = {
-  score: number;
   date: string;
-  quizId?: number;
+  audioFileId: number;
+  totalScore: number;
+  accuracyScore: number;
+  fluencyScore: number;
+  prosodyScore: number;
+  completenessScore: number;
 };
 
-const WordTestHistoryCardList: React.FC<Props> = ({ date, score, quizId }) => {
+const SpeakingTestHistoryCardListMobile: React.FC<Props> = ({
+  date,
+  totalScore,
+  audioFileId,
+  accuracyScore,
+  fluencyScore,
+  prosodyScore,
+  completenessScore,
+}) => {
   const navigate = useNavigate();
 
   const intoDetailHandler = () => {
-    navigate(`/word/result/${quizId}`);
+    navigate(`/speaking/result/${audioFileId}`);
   };
-  // 이후 prop 받아서 클릭될 Id 값
+
   const renderStamp = () => {
-    if (score > 90) return <PerfectStamp />;
-    if (score > 80) return <GreatStamp />;
-    if (score > 70) return <GoodStamp />;
-    return <BadStamp />;
+    if (totalScore > 90) return <ResponsiveIcon as={PerfectStamp} />;
+    if (totalScore > 80) return <ResponsiveIcon as={GreatStamp} />;
+    if (totalScore > 70) return <ResponsiveIcon as={GoodStamp} />;
+    return <ResponsiveIcon as={BadStamp} />;
   };
 
   return (
     <MainContainer onClick={intoDetailHandler}>
       <ListDetailContainer>
         <ScoreContainer>
-          <ScoreSpan>{score}</ScoreSpan>
-          <div style={{ marginBottom: "0.375rem" }}>점</div>
+          <RingChartContainer>
+            <SpeakingTestHistoryCardChart accuracyScore={accuracyScore} fluencyScore={fluencyScore} prosodyScore={prosodyScore} completenessScore={completenessScore} />
+          </RingChartContainer>
+          <ScoreText>
+            <ScoreSpan>{totalScore}</ScoreSpan> 점
+          </ScoreText>
         </ScoreContainer>
       </ListDetailContainer>
       <DateContainer>{date}</DateContainer>
@@ -42,13 +58,30 @@ const WordTestHistoryCardList: React.FC<Props> = ({ date, score, quizId }) => {
   );
 };
 
-export default WordTestHistoryCardList;
+export default SpeakingTestHistoryCardListMobile;
+
+const ResponsiveIcon = styled.div`
+  width: 3rem;
+  height: 3rem;
+
+  @media (max-width: 768px) {
+    width: 2rem;
+    height: 2rem;
+  }
+
+  @media (max-width: 480px) {
+    width: 1rem;
+    height: 1rem;
+  }
+`;
 
 const MainContainer = styled.div`
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
   position: relative;
-  width: 80%;
+  width: 90%;
   min-height: 8rem;
   margin: 0.625rem;
   padding: 0.625rem;
@@ -63,14 +96,12 @@ const MainContainer = styled.div`
   }
 
   @media (max-width: 768px) {
-    width: 70%;
-    min-height: 3rem;
-    padding: 2rem 1.25rem;
+    width: 100%;
+    min-height: 4rem;
   }
 `;
 
 const ListDetailContainer = styled.div`
-  display: flex;
   flex-direction: column;
   align-items: center;
   position: relative;
@@ -78,25 +109,16 @@ const ListDetailContainer = styled.div`
 `;
 
 const DateContainer = styled.div`
-  font-size: 1rem;
-  font-weight: 300;
+  font-size: 0.875rem;
+  font-weight: 200;
   position: absolute;
-  margin-bottom: 0.25rem;
   bottom: 0.5rem;
   right: 1rem;
-  color: gray;
-  @media (max-width: 768px) {
-    font-size: 0.75rem;
-  }
 `;
 
 const ScoreContainer = styled.div`
   display: flex;
-  padding: 25% 0;
-  justify-content: center;
-  font-size: 1.125rem;
-  align-items: end;
-  gap: 0.25rem;
+  align-items: center;
 `;
 
 const ScoreStamp = styled.div`
@@ -105,14 +127,22 @@ const ScoreStamp = styled.div`
   right: -1.125rem;
 
   @media (max-width: 768px) {
+    top: 0.5rem;
+    left: 0.5rem;
   }
 `;
 
 const ScoreSpan = styled.span`
-  font-size: 3rem;
+  font-size: 2rem;
   font-weight: 700;
+  margin: 0 0.25rem; 
   color: ${(props) => props.theme.colors.primary};
-  @media (max-width: 768px) {
-    font-size: 2rem;
-  }
 `;
+
+const RingChartContainer = styled.div`
+margin-left: 6rem;
+height:6rem;
+width: 12rem;
+`
+const ScoreText = styled.p`
+`

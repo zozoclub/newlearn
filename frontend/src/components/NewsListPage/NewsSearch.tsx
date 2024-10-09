@@ -135,36 +135,44 @@ const NewsSearch: React.FC<NewsSearchProps> = ({ initialQuery, onSearch }) => {
 
   return (
     <SearchContainer>
-      <input
-        ref={inputRef}
-        placeholder="검색어를 입력해 주세요."
-        value={searchValue}
-        onChange={handleChange}
-        onFocus={() => setIsInputFocused(true)}
-        onBlur={() => {
-          // Delay hiding results to allow click to register
-          setTimeout(() => setIsInputFocused(false), 200);
-        }}
-        onKeyDown={handleKeyDown}
-      />
-      <img src={searchIcon} alt="Search Icon" onClick={handleSearchIconClick} />
+      <InputWrapper>
+        <input
+          ref={inputRef}
+          placeholder="검색어를 입력해 주세요."
+          value={searchValue}
+          onChange={handleChange}
+          onFocus={() => setIsInputFocused(true)}
+          onBlur={() => {
+            // Delay hiding results to allow click to register
+            setTimeout(() => setIsInputFocused(false), 200);
+          }}
+          onKeyDown={handleKeyDown}
+        />
 
-      {isInputFocused && searchResults.length > 0 && (
-        <ResultsContainer>
-          {searchResults.map((result) => (
-            <ResultItem
-              key={result.newsId}
-              onMouseDown={() => handleResultMouseDown(result.newsId)}
-              onClick={() => handleResultClick(result.newsId)}
-            >
-              {highlightSearchTerm(
-                getAppropriateTitle(result, searchValue),
-                searchValue
-              )}
-            </ResultItem>
-          ))}
-        </ResultsContainer>
-      )}
+        {isInputFocused && searchResults.length > 0 && (
+          <ResultsContainer>
+            {searchResults.map((result) => (
+              <ResultItem
+                key={result.newsId}
+                onMouseDown={() => handleResultMouseDown(result.newsId)}
+                onClick={() => handleResultClick(result.newsId)}
+              >
+                {highlightSearchTerm(
+                  getAppropriateTitle(result, searchValue),
+                  searchValue
+                )}
+              </ResultItem>
+            ))}
+          </ResultsContainer>
+        )}
+      </InputWrapper>
+      <SearchIconWrapper>
+        <img
+          src={searchIcon}
+          alt="Search Icon"
+          onClick={handleSearchIconClick}
+        />
+      </SearchIconWrapper>
     </SearchContainer>
   );
 };
@@ -174,17 +182,15 @@ const SearchContainer = styled.div`
   align-items: center;
   flex-grow: 1;
   position: relative;
+`;
 
-  img {
-    margin-left: 0.5rem;
-    width: 2rem;
-    height: 2rem;
-    cursor: pointer;
-  }
+const InputWrapper = styled.div`
+  position: relative;
+  flex-grow: 1;
 
   input {
-    width: 100%;
-    min-width: 300px;
+    width: calc(100% - 2rem);
+    min-width: 200px;
     height: 40px;
     padding: 0.5rem 1rem;
     background-color: transparent;
@@ -202,6 +208,16 @@ const SearchContainer = styled.div`
   }
 `;
 
+const SearchIconWrapper = styled.div`
+  margin-left: 0.5rem;
+
+  img {
+    width: 2rem;
+    height: 2rem;
+    cursor: pointer;
+  }
+`;
+
 const ResultsContainer = styled.div`
   position: absolute;
   top: calc(100%);
@@ -210,7 +226,7 @@ const ResultsContainer = styled.div`
   max-height: 400px;
   background-color: ${(props) => props.theme.colors.cardBackground};
   border: 1px solid ${(props) => props.theme.colors.text03};
-  border-radius: 8px;
+  border-radius: 4px;
   z-index: 100;
   overflow-y: auto;
 `;

@@ -182,6 +182,7 @@ const BackHeader = styled.div`
   display: flex;
   width: 100%;
   align-items: center;
+  gap: 1rem;
   padding-left: 1rem;
   font-size: 1.5rem;
   font-weight: 700;

@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getWordCloud } from "@services/searchService";
 import { useSpring, animated, config } from "react-spring";
 import { usePageTransition } from "@hooks/usePageTransition";
+import { useMediaQuery } from "react-responsive";
 
 interface WordCloudItem {
   keyword: string;
@@ -30,6 +31,34 @@ const colors = [
 const AnimatedText = animated(Text);
 
 const WordCloud: React.FC = () => {
+  // 반응형
+  const isMobile = useMediaQuery({ query: "(max-width: 767px)" });
+  const isTablet = useMediaQuery({
+    query: "(min-width: 768px) and (max-width: 1279px)",
+  });
+
+  const responseObj = [
+    {
+      range: [10, 100],
+      width: 1200,
+      height: 600,
+      fontSize: 1.2,
+    },
+    {
+      range: [8, 90],
+      width: 800,
+      height: 400,
+      fontSize: 1,
+    },
+    {
+      range: [6, 80],
+      width: 450,
+      height: 500,
+      fontSize: 0.8,
+    },
+  ];
+
+  const value = isMobile ? 2 : isTablet ? 1 : 0;
   // 단어 클릭 시 검색
   const transitionTo = usePageTransition();
   const handleWordClick = (word: string) => {
@@ -63,7 +92,7 @@ const WordCloud: React.FC = () => {
           Math.min(...words.map((w) => w.value)),
           Math.max(...words.map((w) => w.value)),
         ],
-        range: [10, 100],
+        range: responseObj[value].range,
       }),
     [words]
   );
@@ -84,12 +113,17 @@ const WordCloud: React.FC = () => {
   if (error) return <div>An error occurred: {(error as Error).message}</div>;
 
   return (
-    <div style={{ width: "1200px", height: "600px" }}>
+    <div
+      style={{
+        width: `${responseObj[value].width}px`,
+        height: `${responseObj[value].height}px`,
+      }}
+    >
       <Wordcloud
         words={words}
-        width={1200}
-        height={600}
-        fontSize={(d) => fontScale(d.value) * 1.2}
+        width={responseObj[value].width}
+        height={responseObj[value].height}
+        fontSize={(d) => fontScale(d.value) * responseObj[value].fontSize}
         font={"Righteous"}
         spiral={"archimedean"}
         rotate={0}

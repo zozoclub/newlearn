@@ -21,9 +21,10 @@ const TutorialTip = () => {
           width: `${rect.width}px`,
           height: `${rect.height}px`,
         });
+
         setContentStyle({
-          top: `${rect.top - 64}px`,
-          left: `${rect.left + rect.width + 16}px`,
+          top: `${rect.top - 96}px`,
+          left: `${rect.left}px`,
         });
       }
     }
@@ -60,11 +61,14 @@ const TutorialTip = () => {
     <>
       {
         <>
-          <Overlay style={highlightStyle}></Overlay>
-          <Content style={contentStyle}>
+          <Overlay
+            style={highlightStyle}
+            onClick={() => handleNext()}
+          ></Overlay>
+          <Content style={contentStyle} onClick={() => handleNext()}>
             <div>{steps[currentStep].content}</div>
             <div style={{ display: "flex", justifyContent: "end" }}>
-              <StepButton onClick={() => handleNext()}>
+              <StepButton>
                 {currentStep + 1}/{steps.length}
               </StepButton>
             </div>
@@ -80,9 +84,18 @@ export default TutorialTip;
 const Overlay = styled.div`
   position: fixed;
   z-index: 500;
-  outline: 3000px solid black;
-  opacity: 0.7;
-  pointer-events: none;
+  outline: 3000px solid rgba(0, 0, 0, 0.7); /* 검은색 바깥 부분 */
+  pointer-events: none; /* 기본적으로 클릭을 허용하지 않음 */
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: -3000px;
+    bottom: -3000px;
+    left: -3000px;
+    right: -3000px;
+    pointer-events: auto; /* 바깥 outline 부분만 클릭 막기 */
+  }
 `;
 
 const Content = styled.div`
@@ -95,6 +108,7 @@ const Content = styled.div`
   background-color: white;
   padding: 1rem;
   border-radius: 0.5rem;
+  pointer-events: auto; /* 콘텐츠 부분은 클릭 가능 */
 `;
 
 const StepButton = styled.div`

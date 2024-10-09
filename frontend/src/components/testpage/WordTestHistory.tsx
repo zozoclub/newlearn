@@ -39,20 +39,22 @@ const WordTestHistory: React.FC = () => {
   const [monthAverage, setMonthAverage] = useState(0); // 이전 5개월간 단어 학습 평균 갯수
   const theme = useTheme();
 
-  const { isLoading, data, error } = useQuery({
+  const { isLoading, data, error, refetch } = useQuery({
     queryKey: ["wordTestHistory"],
     queryFn: () => getWordTestResultList(),
   });
   const formatDate = (createdAt: string) => {
     const date = new Date(createdAt);
-    const year = date.getFullYear();
     const month = ("0" + (date.getMonth() + 1)).slice(-2);
     const day = ("0" + date.getDate()).slice(-2);
     const hours = ("0" + date.getHours()).slice(-2);
     const minutes = ("0" + date.getMinutes()).slice(-2);
 
-    return `${year}.${month}.${day} ${hours}:${minutes}`;
+    return `${month}.${day} ${hours}:${minutes}`;
   };
+  useEffect(() => {
+    refetch(); // 페이지에 진입할 때마다 강제로 데이터를 가져옴
+  }, [refetch]);
 
   // 데이터를 carddata 형식으로 변환
   const cardData =
@@ -63,8 +65,8 @@ const WordTestHistory: React.FC = () => {
     })) || [];
   const chartformatDate = (createdAt: string) => {
     const date = new Date(createdAt);
-    const month = (date.getMonth() + 1).toString().padStart(2, "0"); // 월을 2자리로 표시
-    return `${month}월`; // 예: 09월
+    const month = (date.getMonth() + 1).toString().padStart(2); // 월을 2자리로 표시
+    return `${month}월`;
   };
 
   // 최근 6개월 데이터 필터링
@@ -124,7 +126,7 @@ const WordTestHistory: React.FC = () => {
       );
       const monthKey = `${(pastDate.getMonth() + 1)
         .toString()
-        .padStart(2, "0")}월`;
+        .padStart(2)}월`;
       labels.push(monthKey);
     }
     return labels;
@@ -175,6 +177,13 @@ const WordTestHistory: React.FC = () => {
         },
         grid: {
           display: false, // X축 그리드 라인 숨기기
+        },
+        ticks: {
+          font: {
+            family: "Pretendard",
+            size: 14, // 폰트 크기를 조정할 수 있습니다
+          },
+          color: theme.colors.text, // 레이블의 색상을 지정
         },
       },
       y: {
@@ -381,7 +390,7 @@ const InfoTextEmphasizeRed = styled.span`
   color: ${(props) => props.theme.colors.danger};
 
   @media (max-width: 1280px) {
-    font-size: 1.255rem; /* 1280px 이하에서 글씨 크기를 줄임 */
+    font-size: 1.25rem; /* 1280px 이하에서 글씨 크기를 줄임 */
   }
 `;
 

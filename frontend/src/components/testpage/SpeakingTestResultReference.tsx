@@ -149,7 +149,7 @@ const TextBlock = styled.div`
 
 const EnglishSentence = styled.div`
   font-size: 1.375rem;
-  font-weight: 300;
+  font-weight: 400;
   letter-spacing: 0.01rem; 
   line-height: 1.5;
   @media (max-width: 1280px) {

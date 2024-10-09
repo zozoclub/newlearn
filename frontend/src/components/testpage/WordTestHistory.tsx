@@ -45,13 +45,12 @@ const WordTestHistory: React.FC = () => {
   });
   const formatDate = (createdAt: string) => {
     const date = new Date(createdAt);
-    const year = date.getFullYear();
     const month = ("0" + (date.getMonth() + 1)).slice(-2);
     const day = ("0" + date.getDate()).slice(-2);
     const hours = ("0" + date.getHours()).slice(-2);
     const minutes = ("0" + date.getMinutes()).slice(-2);
 
-    return `${year}.${month}.${day} ${hours}:${minutes}`;
+    return `${month}.${day} ${hours}:${minutes}`;
   };
 
   // 데이터를 carddata 형식으로 변환
@@ -381,7 +380,7 @@ const InfoTextEmphasizeRed = styled.span`
   color: ${(props) => props.theme.colors.danger};
 
   @media (max-width: 1280px) {
-    font-size: 1.255rem; /* 1280px 이하에서 글씨 크기를 줄임 */
+    font-size: 1.25rem; /* 1280px 이하에서 글씨 크기를 줄임 */
   }
 `;
 

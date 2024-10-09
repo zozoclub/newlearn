@@ -10,8 +10,9 @@ import java.util.List;
 public interface RankService {
 
     void updateRankings();
-    void saveRankings(List<UserRankDTO> ranks, String rankType);
+    List<PointsRankDTO> getRealtimeTopPointUsers();
+    List<ReadingRankDTO> getRealtimeTopReaderUsers();
+    void updateUserPoints(Long userId, int points);
+    void updateUserReadCount(Long userId, int readCount);
 
-    List<PointsRankDTO> getTopPointUsers();
-    List<ReadingRankDTO> getTopReaderUsers();
 }

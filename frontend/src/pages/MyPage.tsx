@@ -81,7 +81,9 @@ const MyPage = () => {
   };
 
   useEffect(() => {
-    startTutorial();
+    if (!isMobile) {
+      startTutorial();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

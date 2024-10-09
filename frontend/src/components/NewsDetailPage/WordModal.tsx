@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import styled, { keyframes, css } from "styled-components";
 import { useRecoilState } from "recoil";
 import userInfoState from "@store/userInfoState";
+import SpeakerIcon from "@assets/icons/SpeakerIcon";
 
 type SelectedType = {
   word: string;
@@ -31,13 +32,17 @@ const WordModal: React.FC<WordModalPropsType> = ({
   newsId,
   difficulty,
 }) => {
-  const handlePlayAudio = (
-    event: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
-    url: string
-  ) => {
-    event.preventDefault(); // 링크 이동 막기
-    const audio = new Audio(url); // Audio 객체 생성
-    audio.play(); // 음성 파일 재생
+  const handlePlayPronounceAudio = (audioUrl: string) => {
+    const newAudioPlayer = new Audio(audioUrl);
+
+    newAudioPlayer
+      .play()
+      .then(() => {
+        console.log("Audio playback started.");
+      })
+      .catch((error) => {
+        console.error("Error during audio playback:", error);
+      });
   };
   const [isSaved, setIsSaved] = useState<boolean>(false);
   const [isJustSaved, setIsJustSaved] = useState<boolean>(false); // 저장 애니메이션을 위한 추가 상태
@@ -159,13 +164,13 @@ const WordModal: React.FC<WordModalPropsType> = ({
             }}
           >
             미국 {searchResult[1][0]}{" "}
-            <a
-              href={searchResult[2][0]} // 음성 파일 링크
-              onClick={(event) => handlePlayAudio(event, searchResult[2][0])}
-              className="btn_voice"
-            >
-              듣기
-            </a>
+            <SpeakerWrapper>
+              <SpeakerIcon
+                width="20px"
+                height="20px"
+                onClick={() => handlePlayPronounceAudio(searchResult[2][0])}
+              />
+            </SpeakerWrapper>
           </div>
         )}
 
@@ -178,13 +183,13 @@ const WordModal: React.FC<WordModalPropsType> = ({
             }}
           >
             영국 {searchResult[1][1]}{" "}
-            <a
-              href={searchResult[2][1]} // 음성 파일 링크
-              onClick={(event) => handlePlayAudio(event, searchResult[2][1])}
-              className="btn_voice"
-            >
-              듣기
-            </a>
+            <SpeakerWrapper>
+              <SpeakerIcon
+                width="20px"
+                height="20px"
+                onClick={() => handlePlayPronounceAudio(searchResult[2][1])}
+              />
+            </SpeakerWrapper>
           </div>
         )}
       </div>
@@ -264,4 +269,10 @@ const Word = styled.div`
 const WordMeaning = styled.div`
   min-width: 12rem;
   font-size: 1rem;
+`;
+
+const SpeakerWrapper = styled.div`
+  display: inline-block;
+  position: relative;
+  top: 3px;
 `;

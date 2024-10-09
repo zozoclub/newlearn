@@ -9,6 +9,7 @@ import locale
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from functools import lru_cache
+from konlpy.tag import Okt
 
 # 한글 로케일 설정
 locale.setlocale(locale.LC_TIME, 'ko_KR.UTF-8')
@@ -54,11 +55,24 @@ def get_popular_news_ids(limit: int = 1000) -> List[int]:
 #####################################
 # 2. 데이터 전처리 및 유사도 계산
 #####################################
+
+# Okt 형태소 분석기 초기화
+okt = Okt()
+
+@lru_cache(maxsize=1)
+def tokenize_korean(text: str) -> List[str]:
+    """한국어 텍스트를 형태소 분석하여 토큰화"""
+    return okt.nouns(text)  # 명사만 추출하여 단순화, 필요에 따라 다른 형태소도 사용 가능
+
 @lru_cache(maxsize=1)
 def vectorize_titles(titles_tuple: Tuple[str, ...]) -> Tuple[np.ndarray, TfidfVectorizer]:
-    """뉴스 제목을 벡터화하고 TF-IDF 벡터라이저 반환"""
-    vectorizer = TfidfVectorizer()
-    return vectorizer.fit_transform(titles_tuple).toarray(), vectorizer
+    """뉴스 제목을 벡터화하고 TF-IDF 벡터라이저 반환 (KoNLPy 사용)"""
+    # KoNLPy를 사용한 형태소 분석을 통해 토큰화
+    tokenized_titles = [' '.join(tokenize_korean(title)) for title in titles_tuple]
+
+    # TF-IDF 벡터화
+    vectorizer = TfidfVectorizer(tokenizer=lambda x: x.split())  # 이미 공백으로 분리된 토큰 사용
+    return vectorizer.fit_transform(tokenized_titles).toarray(), vectorizer
 
 #####################################
 # 3. 유사한 유저 찾기

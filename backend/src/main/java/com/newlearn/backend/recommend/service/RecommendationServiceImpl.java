@@ -76,6 +76,7 @@ public class RecommendationServiceImpl implements RecommendationService {
             if (responseEntity.getStatusCode().is2xxSuccessful() && responseEntity.getBody() != null) {
                 List<List<Object>> rawData = objectMapper.readValue(responseEntity.getBody(),
                         new TypeReference<List<List<Object>>>() {});
+                System.out.println(rawData);
                 return convertToNewsRecommendationDTOList(rawData);
             } else {
                 log.error("Failed to retrieve recommendations: {}", responseEntity.getStatusCode());

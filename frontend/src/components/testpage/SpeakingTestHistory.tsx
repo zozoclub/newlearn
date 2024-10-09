@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styled, { useTheme } from "styled-components";
 import { Line } from "react-chartjs-2";
-import SpeakingTestHistoryCardList from "@components/testpage/SpeakingTestHistoryCardListMobile";
+import SpeakingTestHistoryCardList from "@components/testpage/SpeakingTestHistoryCardList";
 import Spinner from "@components/Spinner";
 import {
   getPronounceTestResultList,
@@ -20,7 +20,6 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import SpeakingTestHistoryCardListMobile from "@components/testpage/SpeakingTestHistoryCardListMobile";
 
 ChartJS.register(
   LineElement,
@@ -264,7 +263,7 @@ const SpeakingTestHistory: React.FC = () => {
         ) : (
           <ScrollableTestHistoryList>
             {data?.map((test: PronounceTestResultListDto, index: number) => (
-              <SpeakingTestHistoryCardListMobile
+              <SpeakingTestHistoryCardList
                 audioFileId={test.audioFileId}
                 date={formatDate(test.createdAt)}
                 key={index}
@@ -301,7 +300,7 @@ const SpeakingTestHistory: React.FC = () => {
                 했어요.
               </TitleText>
               <InfoText>
-              {new Date().getMonth() + 1}에 학습된 발음 평균 점수 :
+                {new Date().getMonth() + 1}에 학습된 발음 평균 점수 :
                 {monthCurrentScoreAverage ? (
                   monthCurrentScoreAverage >= monthAgoScoreAverage ? (
                     <InfoTextEmphasizeBlue>

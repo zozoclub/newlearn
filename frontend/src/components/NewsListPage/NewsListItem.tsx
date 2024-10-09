@@ -30,6 +30,7 @@ const NewsListItem: React.FC<{ news: NewsType }> = ({ news }) => {
           flexDirection: "column",
           justifyContent: "space-between",
           position: "relative",
+          width: "100%",
         }}
       >
         <Title>{news.title}</Title>
@@ -80,8 +81,10 @@ const Container = styled.div`
 
 const ThumbnailImageDiv = styled.div`
   position: relative;
+  width: 25%;
   height: 100%;
   margin-right: 2.5rem;
+  object-fit: cover;
   @media screen and (min-width: 1280px) {
     min-width: 20rem;
   }
@@ -96,6 +99,7 @@ const ThumbnailImageDiv = styled.div`
 `;
 
 const ThumbnailImage = styled.img`
+  width: 100%;
   height: 100%;
   border-radius: 1rem;
   object-fit: fill;
@@ -115,8 +119,7 @@ const ThumbnailImage = styled.img`
 
 const DarkThumbnailImage = styled(ThumbnailImage)`
   position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 0;
   opacity: ${(props) => (props.theme.mode === "dark" ? 1 : 0)};
   transition: opacity 0.3s;
 `;

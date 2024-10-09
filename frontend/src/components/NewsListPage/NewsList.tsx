@@ -31,7 +31,12 @@ const NewsList: React.FC<{
 
   const { isLoading: categoryIsLoading, data: categoryNewsList } =
     useQuery<NewsListType>({
-      queryKey: ["categoryNewsList", selectedCategory, selectedPage],
+      queryKey: [
+        "categoryNewsList",
+        selectedCategory,
+        selectedPage,
+        languageData,
+      ],
       queryFn: () =>
         getCategoryNewsList(
           difficulty,

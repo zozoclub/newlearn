@@ -82,7 +82,7 @@ const ProgressBar: React.FC<ProgressBarPropsType> = ({
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [difficulty, languageData]);
+  }, [difficulty, languageData, newsId]);
 
   const calculateProgress = () => {
     if (!isActiveRef.current) {

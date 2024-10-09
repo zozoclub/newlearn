@@ -100,7 +100,7 @@ public class WordServiceImpl implements WordService {
 		List<WordResponseDTO> response = new ArrayList<>();
 
 		for(Word word : findAllWords) {
-			if(!word.isComplete()) {
+			if(!word.isDelete()) {
 				WordResponseDTO wordResponseDTO = new WordResponseDTO(word.getWordId(), word.getWord(),
 					word.getWordMeaning(), word.isComplete());
 				response.add(wordResponseDTO);

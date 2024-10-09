@@ -21,6 +21,10 @@ import { useResetRecoilState, useSetRecoilState } from "recoil";
 import locationState from "@store/locationState";
 import MobileLogoHeader from "@components/common/MobileLogoHeader";
 import { tutorialTipState } from "@store/tutorialState";
+import {
+  completeTutorial,
+  getCompletedTutorial,
+} from "@services/tutorialService";
 
 const BodyScrollLock = createGlobalStyle`
   body {
@@ -40,39 +44,46 @@ const MyPage = () => {
   // 페이지마다 튜토리얼 추가해주시면 됩니다.
   const setTutorialTip = useSetRecoilState(tutorialTipState);
   const resetTutorialTip = useResetRecoilState(tutorialTipState);
-  const startTutorial = () => {
-    setTutorialTip({
-      steps: [
-        {
-          selector: "#step1",
-          content: "아바타, 닉네임을 수정할 수 있어요.",
+  const startTutorial = async () => {
+    const response = await getCompletedTutorial(5);
+    if (!response) {
+      setTutorialTip({
+        steps: [
+          {
+            selector: "#step1",
+            content: "아바타, 닉네임을 수정할 수 있어요.",
+          },
+          {
+            selector: "#step2",
+            content: "영어 난이도, 관심 카테고리를 수정할 수 있어요.",
+          },
+          {
+            selector: "#step3",
+            content: "나의 활동 내역을 확인할 수 있어요",
+          },
+          {
+            selector: "#step4",
+            content: "내가 읽은 뉴스들의 카테고리 분포를 확인할 수 있어요",
+          },
+          {
+            selector: "#step5",
+            content: "매일 뉴스를 읽고 잔디를 채워보세요.",
+          },
+        ],
+        isActive: true,
+        onComplete: async () => {
+          console.log("튜토리얼 완료!");
+          await completeTutorial(5);
+          resetTutorialTip();
         },
-        {
-          selector: "#step2",
-          content: "영어 난이도, 관심 카테고리를 수정할 수 있어요.",
-        },
-        {
-          selector: "#step3",
-          content: "나의 활동 내역을 확인할 수 있어요",
-        },
-        {
-          selector: "#step4",
-          content: "내가 읽은 뉴스들의 카테고리 분포를 확인할 수 있어요",
-        },
-        {
-          selector: "#step5",
-          content: "매일 뉴스를 읽고 잔디를 채워보세요.",
-        },
-      ],
-      isActive: true,
-      onComplete: () => {
-        console.log("튜토리얼 완료!");
-        resetTutorialTip();
-      },
-    });
+      });
+    }
   };
+
   useEffect(() => {
-    startTutorial();
+    if (!isMobile) {
+      startTutorial();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

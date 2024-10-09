@@ -3,6 +3,8 @@ import axiosInstance from "./axiosInstance";
 /*
   메인 페이지 : 0
   뉴스 목록 페이지 : 1
+  뉴스 상세 페이지 : 2
+  마이 페이지 : 5
 */
 export const completeTutorial = async (page: number) => {
   try {

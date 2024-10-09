@@ -53,11 +53,12 @@ const BackButton = styled.button`
 const ModalTitle = styled.h2`
   margin: 0;
   margin-left: 0.5rem;
-  font-size: 1.25rem;
+  font-size: 1.5rem;
   font-weight: bold;
 `;
 
 const ArrowIcon = styled.svg`
+padding-left:0.5rem;
   width: 12px;
   height: 20px;
   fill: ${(props) => props.theme.colors.text};

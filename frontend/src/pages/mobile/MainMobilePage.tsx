@@ -8,7 +8,6 @@ import styled, { useTheme } from "styled-components";
 import MobileLogoHeader from "@components/common/MobileLogoHeader";
 import DailyNews from "@components/mainpage/DailyNews";
 import Spinner from "@components/Spinner";
-import LoadingDiv from "@components/common/LoadingDiv";
 import LoadingBar from "@components/common/LoadingBar";
 import lightThumbnailImage from "@assets/images/lightThumbnail.png";
 import darkThumbnailImage from "@assets/images/darkThumbnail.png";
@@ -42,15 +41,9 @@ const MainMobilePage = () => {
                 <div className="img-space">
                   <Spinner />
                 </div>
-                <LoadingDiv>
-                  <LoadingBar />
-                </LoadingDiv>
-                <LoadingDiv>
-                  <LoadingBar />
-                </LoadingDiv>
-                <LoadingDiv>
-                  <LoadingBar />
-                </LoadingDiv>
+                <LoadingBar />
+                <LoadingBar />
+                <LoadingBar />
               </RecommandNewsDiv>
             ))
           ) : (

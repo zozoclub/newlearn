@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import LoadingDiv from "../common/LoadingDiv";
 import LoadingBar from "../common/LoadingBar";
 import { deleteScrapNews, scrapNews } from "@services/newsService";
 import { useRecoilValue } from "recoil";
@@ -56,27 +55,21 @@ const NewsDetailHeader: React.FC<NewsHeaderPropsType> = ({
       <Container>
         <NewsCategory>
           {engIsLoading || korIsLoading ? (
-            <LoadingDiv>
-              <LoadingBar />
-            </LoadingDiv>
+            <LoadingBar />
           ) : (
             <>{engData?.category}</>
           )}
         </NewsCategory>
         <NewsTitle>
           {engIsLoading || korIsLoading ? (
-            <LoadingDiv>
-              <LoadingBar />
-            </LoadingDiv>
+            <LoadingBar />
           ) : (
             <>{languageData === "en" ? engData?.title : korData?.title}</>
           )}
         </NewsTitle>
         {engIsLoading || korIsLoading ? (
           <>
-            <LoadingDiv>
-              <LoadingBar />
-            </LoadingDiv>
+            <LoadingBar />
           </>
         ) : (
           <DateContainer>
@@ -97,9 +90,7 @@ const NewsDetailHeader: React.FC<NewsHeaderPropsType> = ({
         <SettingContainer>
           {engIsLoading || korIsLoading ? (
             <div style={{ width: "calc(100% - 20rem)" }}>
-              <LoadingDiv>
-                <LoadingBar />
-              </LoadingDiv>
+              <LoadingBar />
             </div>
           ) : (
             <OriginalUrlButton
@@ -129,27 +120,21 @@ const NewsDetailHeader: React.FC<NewsHeaderPropsType> = ({
       <Container>
         <NewsCategory>
           {engIsLoading || korIsLoading ? (
-            <LoadingDiv>
-              <LoadingBar />
-            </LoadingDiv>
+            <LoadingBar />
           ) : (
             <>{engData?.category}</>
           )}
         </NewsCategory>
         <NewsTitle>
           {engIsLoading || korIsLoading ? (
-            <LoadingDiv>
-              <LoadingBar />
-            </LoadingDiv>
+            <LoadingBar />
           ) : (
             <>{languageData === "en" ? engData?.title : korData?.title}</>
           )}
         </NewsTitle>
         {engIsLoading || korIsLoading ? (
           <>
-            <LoadingDiv>
-              <LoadingBar />
-            </LoadingDiv>
+            <LoadingBar />
           </>
         ) : (
           <DateContainer>
@@ -169,9 +154,7 @@ const NewsDetailHeader: React.FC<NewsHeaderPropsType> = ({
         <SettingContainer>
           {engIsLoading || korIsLoading ? (
             <div style={{ width: "calc(100% - 20rem)" }}>
-              <LoadingDiv>
-                <LoadingBar />
-              </LoadingDiv>
+              <LoadingBar />
             </div>
           ) : (
             <SecondaryDiv>

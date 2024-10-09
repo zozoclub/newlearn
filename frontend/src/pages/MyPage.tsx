@@ -45,7 +45,7 @@ const MyPage = () => {
   const setTutorialTip = useSetRecoilState(tutorialTipState);
   const resetTutorialTip = useResetRecoilState(tutorialTipState);
   const startTutorial = async () => {
-    const response = await getCompletedTutorial(5);
+    const response = await getCompletedTutorial(6);
     if (!response) {
       setTutorialTip({
         steps: [
@@ -73,7 +73,7 @@ const MyPage = () => {
         isActive: true,
         onComplete: async () => {
           console.log("튜토리얼 완료!");
-          await completeTutorial(5);
+          await completeTutorial(6);
           resetTutorialTip();
         },
       });

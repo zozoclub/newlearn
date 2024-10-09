@@ -10,6 +10,7 @@ import Bookmark from "./Bookmark";
 import { useParams } from "react-router-dom";
 import { DetailNewsType } from "types/newsType";
 import { useMediaQuery } from "react-responsive";
+import readCountIcon from "@assets/icons/readCountIcon.svg";
 
 type NewsHeaderPropsType = {
   engIsLoading: boolean;
@@ -89,7 +90,15 @@ const NewsDetailHeader: React.FC<NewsHeaderPropsType> = ({
               <div>{engData?.press}</div>
               <div> | </div>
               <div>{engData?.journalist}</div>
-              <div>조회 {engData?.hit}</div>
+              <div
+                style={{
+                  display: "flex",
+                  gap: "0.25rem",
+                  alignItems: "center",
+                }}
+              >
+                <img src={readCountIcon} /> <div>{engData?.hit}</div>
+              </div>
             </SecondaryDiv>
           </DateContainer>
         )}
@@ -178,7 +187,15 @@ const NewsDetailHeader: React.FC<NewsHeaderPropsType> = ({
               <div>{engData?.press}</div>
               <div> | </div>
               <div>{engData?.journalist}</div>
-              <div>조회 {engData?.hit}</div>
+              <div
+                style={{
+                  display: "flex",
+                  gap: "0.25rem",
+                  alignItems: "center",
+                }}
+              >
+                <img src={readCountIcon} /> <div>{engData?.hit}</div>
+              </div>
             </SecondaryDiv>
           )}
           <SettingDiv>

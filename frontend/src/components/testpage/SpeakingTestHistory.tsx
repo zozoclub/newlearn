@@ -46,8 +46,8 @@ const SpeakingTestHistory: React.FC = () => {
 
   const chartformatDate = (createdAt: string) => {
     const date = new Date(createdAt);
-    const month = (date.getMonth() + 1).toString().padStart(2, "0"); // 월을 2자리로 표시
-    return `${month}월`; // 예: 09월
+    const month = (date.getMonth() + 1).toString().padStart(2); // 월을 2자리로 표시
+    return `${month}월`;
   };
 
   // 최근 6개월 데이터 필터링
@@ -103,9 +103,7 @@ const SpeakingTestHistory: React.FC = () => {
         currentDate.getMonth() - i,
         1
       );
-      const monthKey = `${(pastDate.getMonth() + 1)
-        .toString()
-        .padStart(2)}월`;
+      const monthKey = `${(pastDate.getMonth() + 1).toString().padStart(2)}월`;
       labels.push(monthKey);
     }
     return labels;
@@ -181,7 +179,7 @@ const SpeakingTestHistory: React.FC = () => {
         },
         ticks: {
           font: {
-            size: 16, // 폰트 크기 설정 
+            size: 16, // 폰트 크기 설정
           },
           color: "#999",
         },
@@ -230,7 +228,7 @@ const SpeakingTestHistory: React.FC = () => {
                 했어요.
               </MobileTitleText>
               <InfoText>
-              {new Date().getMonth() + 1}에 학습된 발음 평균 점수 :
+                {new Date().getMonth() + 1}에 학습된 발음 평균 점수 :
                 {monthCurrentScoreAverage >= monthAgoScoreAverage ? (
                   <InfoTextEmphasizeBlue>
                     {Math.floor(monthCurrentScoreAverage)}

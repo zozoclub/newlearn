@@ -55,7 +55,7 @@ const WordTestHistory: React.FC = () => {
   useEffect(() => {
     refetch(); // 페이지에 진입할 때마다 강제로 데이터를 가져옴
   }, [refetch]);
-  
+
   // 데이터를 carddata 형식으로 변환
   const cardData =
     data?.map((quiz) => ({
@@ -65,8 +65,8 @@ const WordTestHistory: React.FC = () => {
     })) || [];
   const chartformatDate = (createdAt: string) => {
     const date = new Date(createdAt);
-    const month = (date.getMonth() + 1).toString().padStart(2, "0"); // 월을 2자리로 표시
-    return `${month}월`; // 예: 09월
+    const month = (date.getMonth() + 1).toString().padStart(2); // 월을 2자리로 표시
+    return `${month}월`;
   };
 
   // 최근 6개월 데이터 필터링
@@ -126,7 +126,7 @@ const WordTestHistory: React.FC = () => {
       );
       const monthKey = `${(pastDate.getMonth() + 1)
         .toString()
-        .padStart(2, "0")}월`;
+        .padStart(2)}월`;
       labels.push(monthKey);
     }
     return labels;

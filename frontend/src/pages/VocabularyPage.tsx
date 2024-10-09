@@ -22,7 +22,7 @@ import { useMediaQuery } from "react-responsive";
 import VocabularyMobilePage from "./mobile/VocabularyMobilePage";
 
 type Word = {
-  id: string;
+  ids: string[];
   title: string;
   content: string;
   isExpanded: boolean;
@@ -49,30 +49,53 @@ const VocabularyPage: React.FC = () => {
   const [toStudyWords, setToStudyWords] = useState<Word[]>([]);
   const [learnedWords, setLearnedWords] = useState<Word[]>([]);
 
-  const { mutate: toggleMemorizeMutation } = useMutation<void, Error, number>({
-    mutationFn: (wordId: number) => postMemorizeWord(wordId),
+  const { mutate: toggleMemorizeMutation } = useMutation<void, Error, number[]>({
+    mutationFn: (wordIds: number[]) => postMemorizeWord(wordIds),
     onSuccess: () =>
       queryClient.invalidateQueries({ queryKey: ["memorizeWordList"] }),
   });
 
   useEffect(() => {
+    console.log(wordList);
+  
     if (wordList) {
-      const toStudy = wordList
-        .filter((word) => !word.complete)
-        .map((word) => ({
-          id: word.wordId.toString(),
-          title: word.word,
-          content: word.wordMeaning,
-          isExpanded: false,
-        }));
-      const learned = wordList
-        .filter((word) => word.complete)
-        .map((word) => ({
-          id: word.wordId.toString(),
-          title: word.word,
-          content: word.wordMeaning,
-          isExpanded: false,
-        }));
+      const toStudyMap = new Map<string, Word>(); // title을 키로 사용하여 단어 정보를 저장하는 Map 생성
+      const learnedMap = new Map<string, Word>();
+  
+      wordList.forEach((word) => {
+        if (!word.complete) {
+          if (toStudyMap.has(word.word)) {
+            // 이미 존재하는 단어라면 id를 추가
+            toStudyMap.get(word.word)!.ids.push(word.wordId.toString());
+          } else {
+            // 새로운 단어라면 Map에 추가
+            toStudyMap.set(word.word, {
+              ids: [word.wordId.toString()],
+              title: word.word,
+              content: word.wordMeaning,
+              isExpanded: false,
+            });
+          }
+        } else {
+          if (learnedMap.has(word.word)) {
+            // 이미 존재하는 단어라면 id를 추가
+            learnedMap.get(word.word)!.ids.push(word.wordId.toString());
+          } else {
+            // 새로운 단어라면 Map에 추가
+            learnedMap.set(word.word, {
+              ids: [word.wordId.toString()],
+              title: word.word,
+              content: word.wordMeaning,
+              isExpanded: false,
+            });
+          }
+        }
+      });
+  
+      // Map을 배열로 변환
+      const toStudy = Array.from(toStudyMap.values());
+      const learned = Array.from(learnedMap.values());
+  
       setToStudyWords(toStudy);
       setLearnedWords(learned);
     }
@@ -91,11 +114,12 @@ const VocabularyPage: React.FC = () => {
       setList(reorderedItems);
     } else {
       // 외움 상태 변경 API 호출
-      const wordId =
-        source.droppableId === "toStudy"
-          ? toStudyWords[source.index].id
-          : learnedWords[source.index].id;
-      toggleMemorizeMutation(Number(wordId));
+      const wordIds =
+      source.droppableId === "toStudy"
+        ? toStudyWords[source.index].ids
+        : learnedWords[source.index].ids;
+
+        toggleMemorizeMutation(wordIds.map(Number));
 
       if (source.droppableId === "toStudy") {
         moveItemBetweenLists(toStudyWords, learnedWords, source, destination);
@@ -159,7 +183,7 @@ const VocabularyPage: React.FC = () => {
                 <EmptyMessage>공부할 단어가 없습니다.</EmptyMessage>
               ) : (
                 toStudyWords.map((data, index) => (
-                  <Draggable key={data.id} draggableId={data.id} index={index}>
+                  <Draggable key={data.ids.join('-')} draggableId={data.ids.join('-')} index={index}>
                     {(provided, snapshot) => (
                       <Item
                         ref={provided.innerRef}
@@ -168,7 +192,7 @@ const VocabularyPage: React.FC = () => {
                         $isDragging={snapshot.isDragging}
                       >
                         <VocaCollapsible
-                          id={data.id}
+                          ids={data.ids}
                           title={data.title}
                           meaning={data.content}
                           isExpanded={data.isExpanded}
@@ -194,7 +218,7 @@ const VocabularyPage: React.FC = () => {
                 <EmptyMessage>외운 단어가 없습니다.</EmptyMessage>
               ) : (
                 learnedWords.map((data, index) => (
-                  <Draggable key={data.id} draggableId={data.id} index={index}>
+                  <Draggable key={data.ids.join('-')} draggableId={data.ids.join('-')} index={index}>
                     {(provided, snapshot) => (
                       <Item
                         ref={provided.innerRef}
@@ -203,7 +227,7 @@ const VocabularyPage: React.FC = () => {
                         $isDragging={snapshot.isDragging}
                       >
                         <VocaCollapsible
-                          id={data.id}
+                          ids={data.ids}
                           title={data.title}
                           meaning={data.content}
                           isExpanded={data.isExpanded}

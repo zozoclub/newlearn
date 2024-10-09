@@ -94,14 +94,14 @@ const NewsDetailContent: React.FC<NewsDetailContentType> = ({
           if (prevWord !== selected.word) {
             const position = getSelectionPosition();
             if (position) {
-              const modalWidth = 200; // 모달의 예상 너비
+              const modalWidth = 300; // 모달의 예상 너비
 
               let x = position.x;
               const y = position.y + 30;
 
               // 컨테이너의 오른쪽 경계를 넘어가지 않도록 조정
               if (x + modalWidth > (contentRef.current?.offsetWidth || 0)) {
-                x = x - modalWidth;
+                x = (contentRef.current?.offsetWidth || 0) - modalWidth;
               }
 
               setWordModalPosition({ x, y });

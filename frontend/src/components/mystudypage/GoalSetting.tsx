@@ -294,6 +294,8 @@ const Tooltip = styled.div`
   text-align: center;
   z-index: 1000;
   margin-bottom: 0.5rem;
+  line-height: 1.25rem;
+  letter-spacing: 0.01em;
 
   &::after {
     content: "";

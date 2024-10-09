@@ -20,6 +20,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Spinner from "@components/Spinner";
 import { useMediaQuery } from "react-responsive";
 import VocabularyMobilePage from "./mobile/VocabularyMobilePage";
+import QuestionMark from "@assets/icons/QuestionMark";
 
 type Word = {
   id: string;
@@ -32,7 +33,8 @@ const VocabularyPage: React.FC = () => {
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const setCurrentLocation = useSetRecoilState(locationState);
   const queryClient = useQueryClient();
-
+  const [showUncompletedTooltip, setShowUncompletedTooltip] = useState(false);
+  const [showCompletedTooltip, setShowCOmpletedTooltip] = useState(false);
   useEffect(() => {
     setCurrentLocation("Word Test Page");
   }, [setCurrentLocation]);
@@ -153,6 +155,18 @@ const VocabularyPage: React.FC = () => {
             <MainContainer ref={provided.innerRef} {...provided.droppableProps}>
               <TitleContainer>
                 <Title>공부해야 될 단어 리스트</Title>
+                <TooltipContainer>
+                  <QuestionMark
+                    onMouseEnter={() => setShowUncompletedTooltip(true)}
+                    onMouseLeave={() => setShowUncompletedTooltip(false)}
+                  />
+                  {showUncompletedTooltip && (
+                    <Tooltip>
+                      이 단어들을 기반으로 Word Test와 Pronounce Test가
+                      출제됩니다.
+                    </Tooltip>
+                  )}
+                </TooltipContainer>
                 <WordCount>({toStudyWords.length})</WordCount>
               </TitleContainer>
               {toStudyWords.length === 0 ? (
@@ -189,6 +203,18 @@ const VocabularyPage: React.FC = () => {
             <MainContainer ref={provided.innerRef} {...provided.droppableProps}>
               <TitleContainer>
                 <Title>외운 단어 리스트</Title>
+                <TooltipContainer>
+                  <QuestionMark
+                    onMouseEnter={() => setShowCOmpletedTooltip(true)}
+                    onMouseLeave={() => setShowCOmpletedTooltip(false)}
+                  />
+                  {showCompletedTooltip && (
+                    <Tooltip>
+                      이 단어들을 기반으로 Pronounce Test와 Pop Quiz가
+                      출제됩니다.
+                    </Tooltip>
+                  )}
+                </TooltipContainer>
                 <WordCount>({learnedWords.length})</WordCount>
               </TitleContainer>
               {learnedWords.length === 0 ? (
@@ -310,5 +336,42 @@ const ErrorText = styled.div`
 
   @media (max-width: 1280px) {
     font-size: 1rem;
+  }
+`;
+
+const TooltipContainer = styled.div`
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  margin-left: 0.5rem;
+`;
+
+const Tooltip = styled.div`
+  position: absolute;
+
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #333;
+  color: white;
+  padding: 0.5rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  width: 200px;
+  text-align: center;
+  z-index: 1000;
+  margin-top: 0.5rem;
+  line-height: 1.25rem;
+  letter-spacing: 0.01em;
+
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent transparent #333 transparent;
   }
 `;

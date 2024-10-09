@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import LoadingDiv from "@components/common/LoadingDiv";
 import LoadingBar from "@components/common/LoadingBar";
 import { useWordSelection } from "@utils/wordSelection";
 import { searchDaumDictionary, SearchResult } from "@services/newsService";
@@ -167,15 +166,9 @@ const NewsDetailContent: React.FC<NewsDetailContentType> = ({
             gap: "0.25rem",
           }}
         >
-          <LoadingDiv>
-            <LoadingBar />
-          </LoadingDiv>
-          <LoadingDiv>
-            <LoadingBar />
-          </LoadingDiv>
-          <LoadingDiv>
-            <LoadingBar />
-          </LoadingDiv>
+          <LoadingBar />
+          <LoadingBar />
+          <LoadingBar />
         </div>
       ) : (
         <div

@@ -6,6 +6,7 @@ import goalState from "@store/goalState";
 import { useParams } from "react-router-dom";
 import languageState from "@store/languageState";
 import { isExpModalState } from "@store/expState";
+import userInfoState from "@store/userInfoState";
 
 type ProgressBarPropsType = {
   engIsLoading: boolean;
@@ -34,6 +35,7 @@ const ProgressBar: React.FC<ProgressBarPropsType> = ({
 }) => {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [userProgress, setUserProgress] = useRecoilState(goalState);
+  const setUserInfoState = useSetRecoilState(userInfoState);
   const languageData = useRecoilValue(languageState);
   const { newsId } = useParams();
   const isLoadingRef = useRef<boolean>(engIsLoading || korIsLoading);
@@ -143,6 +145,10 @@ const ProgressBar: React.FC<ProgressBarPropsType> = ({
       setUserProgress((prevProgress) => ({
         ...prevProgress,
         currentReadNewsCount: prevProgress.currentReadNewsCount + 1,
+      }));
+      setUserInfoState((prevProgress) => ({
+        ...prevProgress,
+        totalNewsReadCount: prevProgress.totalNewsReadCount + 1,
       }));
 
       // 경험치 모달

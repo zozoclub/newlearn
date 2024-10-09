@@ -117,22 +117,22 @@ LOGGING = {
     'handlers': {
         'console': {
             'class': 'logging.StreamHandler',
-            'level': 'DEBUG',  # crawled_data 로거의 로그를 출력하기 위해 DEBUG로 유지
+            'level': 'DEBUG',  # 모든 디버그 로그를 출력하기 위해 DEBUG로 설정
         },
     },
     'root': {
         'handlers': ['console'],
-        'level': 'ERROR',  # 루트 로거의 레벨을 ERROR로 설정
+        'level': 'DEBUG',  # 루트 로거의 레벨을 DEBUG로 변경
     },
     'loggers': {
         'django': {
             'handlers': ['console'],
-            'level': 'ERROR',  # django 로거의 레벨을 ERROR로 설정
+            'level': 'INFO',  # django 로거의 레벨을 INFO로 변경하여 더 많은 로그 출력
             'propagate': False,
         },
         'crawled_data': {
             'handlers': ['console'],
-            'level': 'DEBUG',  # 당신의 로거는 DEBUG 레벨로 유지
+            'level': 'DEBUG',  # crawled_data 로거는 DEBUG 레벨로 유지
             'propagate': False,
         },
     },

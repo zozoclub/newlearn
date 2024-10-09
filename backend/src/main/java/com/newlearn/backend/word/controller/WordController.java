@@ -15,6 +15,8 @@ import com.newlearn.backend.common.ApiResponse;
 import com.newlearn.backend.common.ErrorCode;
 import com.newlearn.backend.user.model.Users;
 import com.newlearn.backend.user.service.UserService;
+import com.newlearn.backend.word.dto.request.CompleteRequestDTO;
+import com.newlearn.backend.word.dto.request.DeleteRequestDTO;
 import com.newlearn.backend.word.dto.request.RestudyResultRequestDTO;
 import com.newlearn.backend.word.dto.request.WordRequestDto;
 import com.newlearn.backend.word.dto.response.RestudyWordResponseDTO;
@@ -85,15 +87,15 @@ public class WordController {
 	}
 
 	//단어 삭제
-	@DeleteMapping("/{wordId}")
-	public ApiResponse<?> deleteWord(Authentication authentication, @PathVariable Long wordId) {
+	@DeleteMapping()
+	public ApiResponse<?> deleteWord(Authentication authentication, @RequestBody DeleteRequestDTO dto) {
 
 		try {
 			Users user = userService.findByEmail(authentication.getName());
 			if(user == null) {
 				return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
 			}
-			wordService.deleteWord(wordId);
+			wordService.deleteWord(dto);
 			return ApiResponse.createSuccess(null, "성공적 삭제");
 		} catch (Exception e) {
 			return ApiResponse.createError(ErrorCode.WORD_DELETE_FAILED);
@@ -117,14 +119,14 @@ public class WordController {
 	}
 
 	//단어 외움처리
-	@PostMapping("/{wordId}/complete")
-	public ApiResponse<?> completeWord(Authentication authentication, @PathVariable Long wordId) {
+	@PostMapping("/complete")
+	public ApiResponse<?> completeWord(Authentication authentication, @RequestBody CompleteRequestDTO dto) {
 		try {
 			Users user = userService.findByEmail(authentication.getName());
 			if(user == null) {
 				return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
 			}
-			wordService.completeWord(wordId, user);
+			wordService.completeWord(dto, user);
 			return ApiResponse.createSuccess(null, "성공적으로 단어 완료 하였슴다");
 		} catch (Exception e) {
 			return ApiResponse.createError(ErrorCode.WORD_FIND_FAILED);

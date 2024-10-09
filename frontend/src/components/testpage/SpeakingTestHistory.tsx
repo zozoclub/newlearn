@@ -231,7 +231,7 @@ const SpeakingTestHistory: React.FC = () => {
                 했어요.
               </MobileTitleText>
               <InfoText>
-                10월에 학습된 발음 평균 점수 :
+              {new Date().getMonth() + 1}에 학습된 발음 평균 점수 :
                 {monthCurrentScoreAverage >= monthAgoScoreAverage ? (
                   <InfoTextEmphasizeBlue>
                     {Math.floor(monthCurrentScoreAverage)}
@@ -301,7 +301,7 @@ const SpeakingTestHistory: React.FC = () => {
                 했어요.
               </TitleText>
               <InfoText>
-                10월에 학습된 발음 평균 점수 :
+              {new Date().getMonth() + 1}에 학습된 발음 평균 점수 :
                 {monthCurrentScoreAverage ? (
                   monthCurrentScoreAverage >= monthAgoScoreAverage ? (
                     <InfoTextEmphasizeBlue>

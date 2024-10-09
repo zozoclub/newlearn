@@ -31,7 +31,7 @@ public class UserRank {
     private String rankingType;
 
     @Column(name = "ranking", nullable = false)
-    private int ranking;
+    private Long ranking;
 
     @Column(name = "score", nullable = false)
     private Long score;

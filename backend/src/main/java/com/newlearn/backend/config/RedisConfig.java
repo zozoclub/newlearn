@@ -44,6 +44,27 @@ public class RedisConfig {
 		redisTemplate.setValueSerializer(new StringRedisSerializer());
 		return redisTemplate;
 	}
+
+	@Bean
+	public RedisConnectionFactory redisConnectionFactoryForRank(){
+		RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
+		redisStandaloneConfiguration.setHostName(host);
+		redisStandaloneConfiguration.setPort(port);
+		redisStandaloneConfiguration.setPassword(password);
+		redisStandaloneConfiguration.setDatabase(2);	// 랭킹용 2번 DB
+		LettuceConnectionFactory lettuceConnectionFactory = new LettuceConnectionFactory(redisStandaloneConfiguration);
+		return lettuceConnectionFactory;
+	}
+
+	@Bean
+	public RedisTemplate<String, String> redisTemplateForRank() {
+		RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();
+		redisTemplate.setConnectionFactory(redisConnectionFactoryForRank());
+		redisTemplate.setKeySerializer(new StringRedisSerializer());
+		redisTemplate.setValueSerializer(new StringRedisSerializer());
+		return redisTemplate;
+	}
+
 	/**
 	 * @Bean
 	 *     public RedisConnectionFactory redisConnectionFactory() {

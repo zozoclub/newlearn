@@ -86,12 +86,8 @@ const NewsDetailPage = () => {
         steps: [
           {
             selector: "#step1",
-<<<<<<< Updated upstream
-            content: "화면 상단에 뉴스 읽음 진행도가 표시됩니다.",
-=======
             content:
               "화면 상단에 뉴스 읽음 진행도가 표시됩니다. 진행도 100% 달성 시 초록색으로 나타나요.",
->>>>>>> Stashed changes
           },
           {
             selector: "#step2",
@@ -103,12 +99,8 @@ const NewsDetailPage = () => {
           },
           {
             selector: "#step4",
-<<<<<<< Updated upstream
             content:
               "뉴스 본문에서 단어를 드래그 or 더블클릭 하면 해당 단어의 뜻을 볼 수 있고 단어를 하이라이팅 할 수 있습니다.",
-=======
-            content: `${userInfoData.nickname}님이 최근 읽은 뉴스를 확인할 수 있어요.`,
->>>>>>> Stashed changes
             isNeedToGo: true,
           },
           {

@@ -56,8 +56,9 @@ const NewsDetailContent: React.FC<NewsDetailContentType> = ({
     { sentence: string; words: string[] }[]
   >([]);
   const theme = useTheme();
-
   const contentRef = useRef<HTMLDivElement>(null);
+  const lastTouchTime = useRef<number>(0);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const getSelectionPosition = (): { x: number; y: number } | null => {
     const selection = window.getSelection();
@@ -76,9 +77,33 @@ const NewsDetailContent: React.FC<NewsDetailContentType> = ({
     };
   };
 
-  const handleSelectionEnd = () => {
+  const handleSelectionEnd = (event: React.MouseEvent | React.TouchEvent) => {
+    const isTouch = "touches" in event;
+
+    if (isTouch) {
+      const currentTime = new Date().getTime();
+      const timeSinceLastTouch = currentTime - lastTouchTime.current;
+
+      if (timeSinceLastTouch < 300) {
+        // 300ms 이내의 더블 터치 무시
+        return;
+      }
+
+      lastTouchTime.current = currentTime;
+    }
+
+    if (wordModalRef.current?.contains(event.target as Node)) {
+      return;
+    }
+
     const prevWord = selected.word;
     const result = handleSelection();
+
+    // 이미 모달이 열려 있고 동일한 단어 div를 클릭했다면 요청을 보내지 않음
+    if (isModalOpen && prevWord === result?.word) {
+      return;
+    }
+
     if (result) {
       searchDaumDictionary(result.word)
         .then((searchResult) => {
@@ -98,7 +123,6 @@ const NewsDetailContent: React.FC<NewsDetailContentType> = ({
               const y = position.y + 30;
 
               const modalWidth = 300;
-              // 컨테이너의 오른쪽 경계를 넘어가지 않도록 조정
               if (
                 x + modalWidth + 30 >
                 (contentRef.current?.offsetWidth || 0)
@@ -107,12 +131,17 @@ const NewsDetailContent: React.FC<NewsDetailContentType> = ({
               }
 
               setWordModalPosition({ x, y });
+              setIsModalOpen(true);
             }
+          } else {
+            setIsModalOpen(true);
           }
         })
         .catch((error) => {
           console.error("Error searching Daum Dictionary:", error);
         });
+    } else {
+      setIsModalOpen(false);
     }
   };
 
@@ -199,7 +228,7 @@ const NewsDetailContent: React.FC<NewsDetailContentType> = ({
                 ))
               )
             : korData?.content}
-          {searchResult && selected.word && (
+          {searchResult && selected.word && isModalOpen && (
             <WordModal
               difficulty={difficulty}
               newsId={Number(newsId)}

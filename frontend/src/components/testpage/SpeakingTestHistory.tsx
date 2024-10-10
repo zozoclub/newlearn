@@ -246,7 +246,7 @@ const SpeakingTestHistory: React.FC = () => {
                   이번 달 평균 점수: {Math.floor(monthCurrentScoreAverage)}점
                 </StatItem>
                 <StatItem>
-                  최근 평균 점수: {Math.floor(monthAgoScoreAverage)}점
+                  이전 5개월 평균: {Math.floor(monthAgoScoreAverage)}점
                 </StatItem>
               </StatsHistory>
             </InfoContainer>
@@ -318,7 +318,7 @@ const SpeakingTestHistory: React.FC = () => {
                   이번 달 평균 점수: {Math.floor(monthCurrentScoreAverage)}점
                 </StatItem>
                 <StatItem>
-                  최근 평균 점수: {Math.floor(monthAgoScoreAverage)}점
+                  이전 5개월 평균: {Math.floor(monthAgoScoreAverage)}점
                 </StatItem>
               </StatsHistory>
             </InfoContainer>
@@ -383,7 +383,7 @@ const ChartContainer = styled.div`
   padding-top: 1rem;
   margin-bottom: 2rem;
   justify-content: center;
-  font-family:"Pretendard";
+  font-family: "Pretendard";
   letter-spacing: 0.1px;
 `;
 

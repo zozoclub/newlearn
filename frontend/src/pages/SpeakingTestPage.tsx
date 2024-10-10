@@ -40,6 +40,15 @@ const SpeakingTestPage: React.FC = () => {
     refetchOnWindowFocus: false,
   });
 
+  useEffect(() => {
+    // 페이지를 떠날 때 녹음을 중지
+    return () => {
+      stopUserRecording(); // 녹음을 중지
+      stopRecognition(); // 음성 인식 중지
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // 예문
   const [referenceText, setReferenceText] = useState<string>("");
   const [referenceTextTranslate, setReferenceTextTranslate] =
@@ -319,7 +328,7 @@ const SpeakingTestPage: React.FC = () => {
       const results = {
         sentenceIds: sentenceIds,
         accuracyScore: Number(
-          (Number(avgAccuracy) * Number(completeness) /100).toFixed(0)
+          (Number(avgAccuracy) * Number(completeness) / 100).toFixed(0)
         ),
         fluencyScore: Number(
           (Number(avgFluency) * Number(completeness) / 100).toFixed(0)
@@ -384,12 +393,15 @@ const SpeakingTestPage: React.FC = () => {
             closeRecordingModal={closeRecordingModal}
           />
           <SubmitButtonContainer>
-            <SubmitButton
-              onClick={handleRecordingDataSubmit}
-              disabled={isSubmitDisabled || !userRecognizedText}
-            >
-              {isSubmitLoading ? <Spinner></Spinner> : "제출하기"}
-            </SubmitButton>
+            {/* 녹음이 진행되지 않았거나 종료된 상태에서만 Submit 버튼을 표시 */}
+            {status === "stopped" && (
+              <SubmitButton
+                onClick={handleRecordingDataSubmit}
+                disabled={isSubmitDisabled || !userRecognizedText}
+              >
+                {isSubmitLoading ? <Spinner></Spinner> : "제출하기"}
+              </SubmitButton>
+            )}
           </SubmitButtonContainer>
         </MobileContainer>
         <Modal
@@ -481,7 +493,8 @@ export default SpeakingTestPage;
 
 const MainContainer = styled.div`
   width: 90%;
-  min-height: 40rem;
+  min-height: 44rem;
+  max-height: 44rem;
   margin: auto;
   padding: 1rem;
   background-color: ${(props) => props.theme.colors.cardBackground + "5A"};
@@ -492,7 +505,7 @@ const MainContainer = styled.div`
 `;
 
 const MainLayout = styled.div`
-  margin-top: 4rem;
+  margin-top: 2rem;
   display: flex;
 `;
 
@@ -522,7 +535,6 @@ const SubmitButtonContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 1rem;
 `;
 
 const SubmitButton = styled.button<{ disabled: boolean }>`
@@ -542,7 +554,7 @@ const SubmitButton = styled.button<{ disabled: boolean }>`
 
   &:hover {
     background-color: ${(props) =>
-      props.disabled ? "#ccc" : props.theme.colors.primaryPress};
+    props.disabled ? "#ccc" : props.theme.colors.primaryPress};
   }
 `;
 

@@ -85,7 +85,7 @@ const SpeakingTestRealtimeText: React.FC<Props> = ({
             <RecognizedContainer>
               <NoText>최종 인식된 텍스트가 없습니다.</NoText>
               <br />
-              <Explain>녹음된 음성을 확인해주세요.</Explain>
+              <Explain>녹음된 음성을 확인하고 다시 시도해주세요.</Explain>
             </RecognizedContainer>
           )}
         </Container>

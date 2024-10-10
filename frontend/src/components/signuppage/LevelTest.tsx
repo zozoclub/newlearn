@@ -303,7 +303,9 @@ const WordButton = styled.button<{ $isSelected: boolean }>`
 
   &:hover {
     background-color: ${(props) =>
-      props.$isSelected ? props.theme.colors.primaryPress : "#e0e0e0"};
+      props.$isSelected
+        ? props.theme.colors.primaryPress
+        : props.theme.colors.cancelPress};
   }
 `;
 

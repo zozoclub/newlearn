@@ -73,7 +73,7 @@ const Container = styled.div`
     margin: 0;
     padding: 0.75rem 0.5rem;
     background-color: transparent;
-    border-bottom: 1px solid ${(props) => props.theme.colors.readonly};
+    border-bottom: 1px solid ${(props) => props.theme.colors.mobileBorder};
   }
 `;
 

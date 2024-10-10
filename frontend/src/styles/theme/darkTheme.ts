@@ -26,7 +26,7 @@ export const darkTheme: Theme = {
     readonly: "#333333",
     placeholder: "#8b8b8b",
     highliting: "#78AFF0",
-    mobileBorder: "#5D5D5D",
+    mobileBorder: "#44475E",
     divider: "#3F3F57",
   },
   shadows: {

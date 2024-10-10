@@ -161,7 +161,7 @@ const RecommandNewsDiv = styled.div<{ $isLast: boolean }>`
   &:hover {
     background-color: ${(props) => props.theme.colors.newsItemBackgroundPress};
   }
-  border-bottom: 1px solid ${(props) => props.theme.colors.readonly};
+  border-bottom: 1px solid ${(props) => props.theme.colors.mobileBorder};
 
   .img-space {
     min-width: 30%;

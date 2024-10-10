@@ -57,15 +57,13 @@
   - 애플리케이션의 두 개의 환경(Blue와 Green)을 활용하여<br/> 서비스의 가용성과 안정성을 높이는 배포 방식
 
 ## 프로젝트 산출물
-✔ [요구사항 명세서]()
+✔ [기능 명세서](https://lying-sled-191.notion.site/5e288e4a2209420fa506f1a272651ff4?v=a656c43b335645cab41381e6631526f7)
 
-✔ [기능 정의서]()
+✔ [API 명세서](https://lying-sled-191.notion.site/API-8cd85d9441604e6fa374fe29dc34970a)
 
-✔ [API 명세서]()
+✔ [와이어 프레임](https://www.figma.com/design/fwwTElvwSVoxJu1kZyvE0P/NewLearn?node-id=0-1&m=dev)
 
-✔ [와이어 프레임]()
-
-✔ [E-R Diagram]()
+✔ [E-R Diagram](https://www.erdcloud.com/d/aGzLSJQJ94mt3ZTgA)
 
 ✔ [시스템 아키텍처](./resources/system_architecture.png)
 
@@ -75,7 +73,7 @@
 
 ✔ [시연 시나리오]()
 
-✔ [Postman 문서]()
+✔ [Postman 문서](https://documenter.getpostman.com/view/34463295/2sAXxQfCqB)
 
 ## Conventions
 ```

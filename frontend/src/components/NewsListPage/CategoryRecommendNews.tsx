@@ -150,16 +150,13 @@ const NewsDiv = styled.div`
   cursor: pointer;
   padding: 0.25rem;
   border-radius: 0.75rem;
-  backdrop-filter: blur(10px);
-  background-color: ${(props) =>
-    props.theme.mode === "dark" ? "transparent" : "#ffffffaa"};
-  border: 2px solid
-    ${(props) => (props.theme.mode === "dark" ? "#1a1a1aaa" : "#ddddddaa")};
+  background-color: ${(props) => props.theme.colors.newsItemBackground};
   transform: translateY(0rem);
   transition: backdrop-filter 0.3s, background-color 0.3s, transform 0.3s,
     border 0.3s;
   &:hover {
     transform: translateY(-0.25rem);
+    background-color: ${(props) => props.theme.colors.newsItemBackgroundPress};
   }
 `;
 

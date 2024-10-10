@@ -279,14 +279,15 @@ const WordTest = styled.div`
 `;
 const WordGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  place-items: center;
+  grid-template-columns: repeat(2, minmax(0, 2fr));
   grid-template-rows: repeat(8, 1fr);
   gap: 1rem 2rem;
-  max-width: 40rem; // 최대 너비 설정 (필요에 따라 조정)
+  width: 100%;
 `;
 
 const WordButton = styled.button<{ $isSelected: boolean }>`
-  width: 185px;
+  width: 100%;
   font-weight: bold;
   padding: 0.75rem 1rem;
   font-size: 1.125rem;
@@ -302,7 +303,9 @@ const WordButton = styled.button<{ $isSelected: boolean }>`
 
   &:hover {
     background-color: ${(props) =>
-      props.$isSelected ? props.theme.colors.primaryPress : "#e0e0e0"};
+      props.$isSelected
+        ? props.theme.colors.primaryPress
+        : props.theme.colors.cancelPress};
   }
 `;
 

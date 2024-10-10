@@ -43,9 +43,14 @@ const MainMobilePage = () => {
                 <div className="img-space">
                   <Spinner />
                 </div>
-                <LoadingBar />
-                <LoadingBar />
-                <LoadingBar />
+                <div
+                  style={{ width: "100%", gap: "0.1rem" }}
+                  className="user-info"
+                >
+                  <LoadingBar />
+                  <LoadingBar />
+                  <LoadingBar />
+                </div>
               </RecommandNewsDiv>
             ))
           ) : (

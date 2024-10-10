@@ -481,7 +481,8 @@ export default SpeakingTestPage;
 
 const MainContainer = styled.div`
   width: 90%;
-  min-height: 40rem;
+  min-height: 44rem;
+  max-height: 44rem;
   margin: auto;
   padding: 1rem;
   background-color: ${(props) => props.theme.colors.cardBackground + "5A"};

@@ -492,7 +492,7 @@ const MainContainer = styled.div`
 `;
 
 const MainLayout = styled.div`
-  margin-top: 4rem;
+  margin-top: 2rem;
   display: flex;
 `;
 
@@ -522,7 +522,6 @@ const SubmitButtonContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 1rem;
 `;
 
 const SubmitButton = styled.button<{ disabled: boolean }>`

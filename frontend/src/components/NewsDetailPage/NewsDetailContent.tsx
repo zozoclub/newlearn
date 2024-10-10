@@ -77,9 +77,9 @@ const NewsDetailContent: React.FC<NewsDetailContentType> = ({
   };
 
   const handleSelectionEnd = () => {
+    const prevWord = selected.word;
     const result = handleSelection();
     if (result) {
-      const prevWord = result.word;
       searchDaumDictionary(result.word)
         .then((searchResult) => {
           console.log("Daum Dictionary Result:", searchResult);
@@ -91,7 +91,7 @@ const NewsDetailContent: React.FC<NewsDetailContentType> = ({
             korSentence: result.koreanSentence,
           });
 
-          if (prevWord !== selected.word) {
+          if (prevWord !== result.word) {
             const position = getSelectionPosition();
             if (position) {
               let x = position.x;

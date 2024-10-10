@@ -124,6 +124,6 @@ const ChartContainer = styled.div`
   width: 90%;
   @media (max-width: 768px) {
     width: 80%;
-    background-color: ${(props) => props.theme.colors.background};
+    background-color: ${(props) => props.theme.colors.cardBackground};
   }
 `;

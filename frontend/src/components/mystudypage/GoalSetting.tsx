@@ -220,6 +220,10 @@ const GoalItem = styled.div`
   align-items: center;
   gap: 6rem;
   margin: 0.5rem 8rem;
+
+  @media (max-width: 767px) {
+    margin: 0.5rem 3rem;
+  }
 `;
 
 const GoalTitle = styled.div`
@@ -227,11 +231,16 @@ const GoalTitle = styled.div`
   gap: 0.5rem;
   font-size: 1.5rem;
   font-weight: bold;
+
+  @media (max-width: 767px) {
+    font-size: 1.25rem;
+  }
 `;
 
 const GoalTitleStrong = styled.span`
   color: ${(props) => props.theme.colors.primary};
 `;
+
 const GoalInput = styled.input`
   text-align: right;
   width: 110px;

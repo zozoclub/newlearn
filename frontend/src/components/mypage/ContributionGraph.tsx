@@ -30,7 +30,7 @@ const ContributionGraph: React.FC<grassProps> = ({ data }) => {
   const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
   const darkColors = [
-    "#1A1925 ",
+    "#444350 ",
     "#0F3353 ",
     "#004D81 ",
     "#005994 ",

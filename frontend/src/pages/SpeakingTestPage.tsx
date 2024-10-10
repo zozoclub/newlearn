@@ -493,8 +493,8 @@ export default SpeakingTestPage;
 
 const MainContainer = styled.div`
   width: 90%;
-  min-height: 44rem;
-  max-height: 44rem;
+  min-height: 46rem;
+  max-height: 46rem;
   margin: auto;
   padding: 1rem;
   background-color: ${(props) => props.theme.colors.cardBackground + "5A"};
@@ -505,7 +505,6 @@ const MainContainer = styled.div`
 `;
 
 const MainLayout = styled.div`
-  margin-top: 2rem;
   display: flex;
 `;
 
@@ -520,8 +519,9 @@ const SubContainer = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 90%;
-  min-height: 16rem;
+  width: 95%;
+  min-height: 18rem;
+  max-height: 18rem;
   margin: 0.75rem 0;
   padding: 0.625rem;
   background-color: ${(props) => props.theme.colors.cardBackground + "5A"};

@@ -51,8 +51,6 @@ scheduler.add_job(
     my_scheduled_job,
     'cron',
     hour=17,
-    minute=30,
-    second=10,
     id='daily_job_1730',
     replace_existing=True
 )

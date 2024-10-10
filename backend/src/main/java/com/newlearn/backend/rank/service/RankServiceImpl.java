@@ -2,85 +2,184 @@ package com.newlearn.backend.rank.service;
 
 import com.newlearn.backend.rank.dto.PointsRankDTO;
 import com.newlearn.backend.rank.dto.ReadingRankDTO;
-import com.newlearn.backend.rank.model.UserRank;
-import com.newlearn.backend.rank.repository.RankRepository;
-import com.newlearn.backend.user.dto.response.UserRankDTO;
 import com.newlearn.backend.user.model.Users;
 import com.newlearn.backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 @Service
 @Slf4j
 public class RankServiceImpl implements RankService {
 
     private final UserRepository userRepository;
-    private final RankRepository rankRepository;
 
-    @Override
-    public void updateRankings() {
-        List<UserRankDTO> experienceRanks = userRepository.findTop10ByExperience();
-        saveRankings(experienceRanks, "points");
+//    @Qualifier("redisTemplateForRank")
+    private final RedisTemplate<String, String> redisTemplate;
 
-        List<UserRankDTO> newsReadRanks = userRepository.findTop10ByNewsRead();
-        saveRankings(newsReadRanks, "reading");
+    public RankServiceImpl(UserRepository userRepository,
+                           @Qualifier("redisTemplateForRank") RedisTemplate<String, String> redisTemplate) {
+        this.userRepository = userRepository;
+        this.redisTemplate = redisTemplate;
     }
 
+    private static final String POINTS_RANK_KEY = "points_rank";
+    private static final String READING_RANK_KEY = "reading_rank";
+
     @Override
-    public void saveRankings(List<UserRankDTO> ranks, String rankType) {
-        for (int i = 0; i < ranks.size(); i++) {
-            UserRankDTO userRankDTO = ranks.get(i);
+    @Scheduled(fixedRate = 5000) // 5초마다 실행
+    public void updateRankings() {
+        updatePointsRanking();
+        updateReadingRanking();
+    }
 
-            Users user = userRepository.findUserByUserId(userRankDTO.getUserId());
-            if (user == null) {
-                continue;
+    private void updatePointsRanking() {
+        List<Users> allUsers = userRepository.findAll();
+        ZSetOperations<String, String> zSetOps = redisTemplate.opsForZSet();
+
+        // 모든 유저를 ZSet에 추가
+        for (Users user : allUsers) {
+            if (user.getUserId() != null) {
+                zSetOps.add(POINTS_RANK_KEY, user.getUserId().toString(), user.getExperience());
             }
+        }
 
-            UserRank rank = UserRank.builder()
-                    .user(user)
-                    .rankingType(rankType)
-                    .ranking(i + 1)
-                    .month(LocalDate.now().withDayOfMonth(1))
-                    .build();
+        // 현재 랭킹에 있는 유저 IDs
+        Set<String> currentRankedUserIds = zSetOps.range(POINTS_RANK_KEY, 0, -1);
+        int currentRankCount = currentRankedUserIds.size();
 
-            rankRepository.save(rank);
+        // 필요에 따라 새로운 유저 추가
+        if (currentRankCount < 10) {
+            int neededUsers = 10 - currentRankCount;
+
+            // 현재 랭킹에 포함되지 않은 유저를 필터링하여 추가
+            List<Users> newUsers = allUsers.stream()
+                    .filter(user -> !currentRankedUserIds.contains(user.getUserId().toString()))
+                    .limit(neededUsers)
+                    .collect(Collectors.toList());
+
+            for (Users user : newUsers) {
+                zSetOps.add(POINTS_RANK_KEY, user.getUserId().toString(), user.getExperience());
+            }
+        }
+
+        // ZSet에서 탈퇴한 유저 제거
+        for (String rankedUserId : currentRankedUserIds) {
+            if (!allUsers.stream().anyMatch(user -> user.getUserId().toString().equals(rankedUserId))) {
+                zSetOps.remove(POINTS_RANK_KEY, rankedUserId);
+            }
+        }
+    }
+
+    private void updateReadingRanking() {
+        List<Users> allUsers = userRepository.findAll();
+        ZSetOperations<String, String> zSetOps = redisTemplate.opsForZSet();
+
+        // 모든 유저를 ZSet에 추가
+        for (Users user : allUsers) {
+            if (user.getUserId() != null) {
+                zSetOps.add(READING_RANK_KEY, user.getUserId().toString(), user.getTotalNewsReadCount());
+            }
+        }
+
+        // 현재 랭킹에 있는 유저 IDs
+        Set<String> currentRankedUserIds = zSetOps.range(READING_RANK_KEY, 0, -1);
+        int currentRankCount = currentRankedUserIds.size();
+
+        // 필요에 따라 새로운 유저 추가
+        if (currentRankCount < 10) {
+            int neededUsers = 10 - currentRankCount;
+
+            // 현재 랭킹에 포함되지 않은 유저를 필터링하여 추가
+            List<Users> newUsers = allUsers.stream()
+                    .filter(user -> !currentRankedUserIds.contains(user.getUserId().toString()))
+                    .limit(neededUsers)
+                    .collect(Collectors.toList());
+
+            for (Users user : newUsers) {
+                zSetOps.add(READING_RANK_KEY, user.getUserId().toString(), user.getTotalNewsReadCount());
+            }
+        }
+
+        // ZSet에서 탈퇴한 유저 제거
+        for (String rankedUserId : currentRankedUserIds) {
+            if (!allUsers.stream().anyMatch(user -> user.getUserId().toString().equals(rankedUserId))) {
+                zSetOps.remove(READING_RANK_KEY, rankedUserId);
+            }
         }
     }
 
     @Override
-    public List<PointsRankDTO> getTopPointUsers() {
-        LocalDate currentMonth = LocalDate.now().withDayOfMonth(1);
-        List<UserRank> userRanks = rankRepository.findTop10ByRankingTypeAndMonth("points", currentMonth);
+    public List<PointsRankDTO> getRealtimeTopPointUsers() {
+        Set<ZSetOperations.TypedTuple<String>> rangeWithScores =
+                redisTemplate.opsForZSet().reverseRangeWithScores(POINTS_RANK_KEY, 0, 9);
 
-        return userRanks.stream()
-                .map(userRank -> PointsRankDTO.builder()
-                        .userId(userRank.getUser().getUserId())
-                        .nickname(userRank.getUser().getNickname())
-                        .experience(userRank.getUser().getExperience())
-                        .ranking(userRank.getRanking())
-                        .build())
-                .collect(Collectors.toList());
+        List<PointsRankDTO> result = new ArrayList<>();
+        int rank = 1;
+        for (ZSetOperations.TypedTuple<String> tuple : rangeWithScores) {
+            Long userId = Long.parseLong(tuple.getValue());
+            Users user = userRepository.findUserByUserId(userId);
+
+            result.add(PointsRankDTO.builder()
+                    .userId(userId)
+                    .nickname(user.getNickname())
+                    .experience((int) tuple.getScore().doubleValue())
+                    .ranking(rank++)
+                    .build());
+        }
+        return result;
     }
 
     @Override
-    public List<ReadingRankDTO> getTopReaderUsers() {
-        LocalDate currentMonth = LocalDate.now().withDayOfMonth(1);
-        List<UserRank> userRanks = rankRepository.findTop10ByRankingTypeAndMonth("reading", currentMonth);
+    public List<ReadingRankDTO> getRealtimeTopReaderUsers() {
+        Set<ZSetOperations.TypedTuple<String>> rangeWithScores =
+                redisTemplate.opsForZSet().reverseRangeWithScores(READING_RANK_KEY, 0, 9);
 
-        return userRanks.stream()
-                .map(userRank -> ReadingRankDTO.builder()
-                        .userId(userRank.getUser().getUserId())
-                        .nickname(userRank.getUser().getNickname())
-                        .experience(userRank.getUser().getExperience())
-                        .totalNewsReadCount(userRank.getUser().getTotalNewsReadCount())
-                        .ranking(userRank.getRanking())
-                        .build())
-                .collect(Collectors.toList());
+        List<ReadingRankDTO> result =  new ArrayList<>();
+        int rank = 1;
+
+        for (ZSetOperations.TypedTuple<String> tuple : rangeWithScores) {
+            Long userId = Long.parseLong(tuple.getValue());
+            Users user = userRepository.findUserByUserId(userId);
+
+            result.add(ReadingRankDTO.builder()
+                    .userId(userId)
+                    .nickname(user.getNickname())
+                    .experience(user.getExperience())
+                    .totalNewsReadCount((int) tuple.getScore().doubleValue())
+                    .ranking(rank++)
+                    .build());
+        }
+
+        return result;
+    }
+
+    @Override
+    public void updateUserPoints(Long userId, int points) {
+        redisTemplate.opsForZSet().incrementScore(POINTS_RANK_KEY, userId.toString(), points);
+    }
+
+    @Override
+    public void updateUserReadCount(Long userId, int readCount) {
+        redisTemplate.opsForZSet().incrementScore(READING_RANK_KEY, userId.toString(), readCount);
+    }
+
+    @Override
+    public void removeUserFromRanking(Long userId) {
+        String userKey = "user:" + userId;
+
+        ZSetOperations<String, String> zSetOperations = redisTemplate.opsForZSet();
+        zSetOperations.remove(POINTS_RANK_KEY, userKey);
+        zSetOperations.remove(READING_RANK_KEY, userKey);
     }
 }

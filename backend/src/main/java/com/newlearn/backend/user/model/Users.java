@@ -38,7 +38,7 @@ import lombok.ToString;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @EqualsAndHashCode(of = "userId")
-@ToString(exclude = {"avatar", "words"})
+@ToString(exclude = {"avatar", "words","userTutorial"})
 public class Users {
 
 	@Id
@@ -83,6 +83,9 @@ public class Users {
 
 	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Avatar avatar;
+
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Set<UserTutorial> userTutorial = new HashSet<>();
 
 	@Setter
 	@ManyToMany

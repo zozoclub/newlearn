@@ -10,6 +10,7 @@ sonarqube {
 		property "sonar.projectKey", System.getenv('SONAR_PROJECT_KEY')
 		property "sonar.host.url", System.getenv('SONAR_HOST_URL')
 		property "sonar.login", System.getenv('SONAR_LOGIN')
+		property "sonar.gradle.skipCompile", "true"  // SonarQube 경고 해결을 위해 추가
 	}
 }
 
@@ -60,4 +61,8 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+// SonarQube 작업이 컴파일 후에 실행되도록 설정
+tasks.named('sonarqube').configure {
+	dependsOn test  // 'test' 작업은 컴파일을 포함합니다
 }

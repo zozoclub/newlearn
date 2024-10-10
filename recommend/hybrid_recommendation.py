@@ -8,19 +8,36 @@ from datetime import datetime, timedelta
 import locale
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.preprocessing import OneHotEncoder
 from functools import lru_cache
+from konlpy.tag import Okt
 
 # 한글 로케일 설정
 locale.setlocale(locale.LC_TIME, 'ko_KR.UTF-8')
+
+# Okt 형태소 분석기 초기화
+okt = Okt()
+
+# 원-핫 인코더 초기화
+encoder = OneHotEncoder(sparse_output=False)
 
 #####################################
 # 1. 사용자 데이터 가져오기
 #####################################
 @lru_cache(maxsize=1024)
-def get_user_categories(user_id: int, db: Session) -> Set[int]:
-    """해당 유저의 UserCategory (MySQL) 가져오기"""
+def get_user_categories(user_id: int, db: Session) -> np.ndarray:
+    """해당 유저의 UserCategory (MySQL) 가져오기 및 원-핫 인코딩"""
     categories = db.query(UserCategory.category_id).filter(UserCategory.user_id == user_id).all()
-    return set(category[0] for category in categories)
+    category_ids = np.array([category[0] for category in categories]).reshape(-1, 1)
+
+    if len(category_ids) == 0:
+        # 사용자의 카테고리가 없는 경우, 모든 카테고리에 대해 0으로 채운 벡터 반환
+        all_categories = db.query(News.category_id).distinct().all()
+        all_category_ids = np.array([category[0] for category in all_categories]).reshape(-1, 1)
+        return np.zeros((1, len(all_category_ids)))
+
+    # 카테고리를 원-핫 인코딩하여 반환
+    return encoder.fit_transform(category_ids)
 
 @lru_cache(maxsize=1024)
 def get_user_difficulty(user_id: int, db: Session):
@@ -55,10 +72,19 @@ def get_popular_news_ids(limit: int = 1000) -> List[int]:
 # 2. 데이터 전처리 및 유사도 계산
 #####################################
 @lru_cache(maxsize=1)
+def tokenize_korean(text: str) -> List[str]:
+    """한국어 텍스트를 형태소 분석하여 토큰화"""
+    return okt.nouns(text)  # 명사만 추출하여 단순화, 필요에 따라 다른 형태소도 사용 가능
+
+@lru_cache(maxsize=1)
 def vectorize_titles(titles_tuple: Tuple[str, ...]) -> Tuple[np.ndarray, TfidfVectorizer]:
-    """뉴스 제목을 벡터화하고 TF-IDF 벡터라이저 반환"""
-    vectorizer = TfidfVectorizer()
-    return vectorizer.fit_transform(titles_tuple).toarray(), vectorizer
+    """뉴스 제목을 벡터화하고 TF-IDF 벡터라이저 반환 (KoNLPy 사용)"""
+    # KoNLPy를 사용한 형태소 분석을 통해 토큰화
+    tokenized_titles = [' '.join(tokenize_korean(title)) for title in titles_tuple]
+
+    # TF-IDF 벡터화
+    vectorizer = TfidfVectorizer(tokenizer=lambda x: x.split(), token_pattern=None)  # 이미 공백으로 분리된 토큰 사용
+    return vectorizer.fit_transform(tokenized_titles).toarray(), vectorizer
 
 #####################################
 # 3. 유사한 유저 찾기
@@ -86,7 +112,6 @@ def find_similar_users(user_id: int, db: Session, limit: int = 100, top_k: int =
 
     # 상위 K개의 유사한 사용자 선택
     top_similar_indices = np.argsort(similarities)[-top_k:][::-1]
-
     return [other_user_ids[i] for i in top_similar_indices if similarities[i] > 0]
 
 #####################################
@@ -165,8 +190,8 @@ def get_user_time_pattern(user_id: int, db: Session) -> Dict[str, float]:
         UserNewsScrap.scraped_date >= one_week_ago
     ).all()
 
+    total_reads = len(user_scraps)
     time_pattern = {'아침': 0, '오후': 0, '저녁': 0, '밤': 0}
-    total_scraps = len(user_scraps)
 
     for scrap in user_scraps:
         hour = scrap.scraped_date.hour
@@ -179,9 +204,10 @@ def get_user_time_pattern(user_id: int, db: Session) -> Dict[str, float]:
         else:
             time_pattern['밤'] += 1
 
-    if total_scraps > 0:
+    # 비율로 변환
+    if total_reads > 0:
         for key in time_pattern:
-            time_pattern[key] /= total_scraps
+            time_pattern[key] = time_pattern[key] / total_reads
 
     return time_pattern
 
@@ -224,11 +250,11 @@ def collaborative_filtering(user_id: int, db: Session, limit: int = 100) -> List
 
     return sorted(recommended_news, key=lambda x: x[3], reverse=True)[:20]
 
-def content_based_filtering(user_id: int, db: Session, limit: int = 100) -> List[tuple]:
+def content_based_filtering(user_id: int, db: Session, limit: int = 500) -> List[tuple]:
     """컨텐츠 기반 필터링 추천"""
 
     # 사용자 정보 가져오기
-    user_categories = get_user_categories(user_id, db)  # 이미 Set[int]
+    user_categories = get_user_categories(user_id, db)
     user_clicks = get_user_clicks_batch([user_id], limit)[user_id]
     user_difficulty = get_user_difficulty(user_id, db)
     user_time_pattern = get_user_time_pattern(user_id, db)
@@ -240,26 +266,25 @@ def content_based_filtering(user_id: int, db: Session, limit: int = 100) -> List
     recommended_news = []
     current_time = datetime.now()
 
-    # 전체 뉴스 가져오기 (제한된 개수)
-    all_news = db.query(News).limit(limit).all()
+    # 전체 뉴스 가져오기 (최신 순으로 정렬)
+    all_news = db.query(News).order_by(News.published_date.desc()).limit(limit).all()
     clicked_news_ids = user_clicks
 
     # 뉴스 제목 벡터화
     news_titles = tuple(news.title for news in all_news)
     title_vectors, vectorizer = vectorize_titles(news_titles)
 
-    # 사용자와 유사한 뉴스 찾기
-    user_vector_index = -1
-    for index, news in enumerate(all_news):
-        if news.category_id in user_categories:
-            user_vector_index = index
-            break
+    # 사용자 벡터 생성 (뉴스 제목 벡터와 같은 차원으로)
+    user_vector = np.zeros((1, title_vectors.shape[1]))
+    for news in all_news:
+        if news.category_id in user_categories[0]:
+            user_vector += title_vectors[all_news.index(news)]
+    if np.any(user_vector):
+        user_vector /= np.linalg.norm(user_vector)
+    else:
+        # 사용자 카테고리가 없는 경우, 모든 뉴스에 대해 균등한 가중치 부여
+        user_vector = np.ones((1, title_vectors.shape[1])) / title_vectors.shape[1]
 
-    if user_vector_index == -1:
-        print("사용자 카테고리에 맞는 뉴스가 없습니다.")
-        return []
-
-    user_vector = title_vectors[user_vector_index].reshape(1, -1)
     similarity_scores = cosine_similarity(user_vector, title_vectors).flatten()
 
     # 뉴스 추천 가중치 계산
@@ -268,16 +293,16 @@ def content_based_filtering(user_id: int, db: Session, limit: int = 100) -> List
             weight = 0
 
             # 1) 카테고리 관심도에 따른 가중치
-            if news.category_id in user_categories:
+            if news.category_id in user_categories[0]:
                 weight += 2
             else:
                 weight += 1
 
             # 2) 유사도 점수 가중치
-            weight += similarity_scores[index]
+            weight += similarity_scores[index] * 2
 
             # 3) 조회수 가중치
-            weight += news.hit / 100
+            weight += news.hit / 1000
 
             # 4) 시간대별 인기도 가중치
             news_time_popularity = time_based_popularity.get(news.news_id, {})
@@ -292,13 +317,17 @@ def content_based_filtering(user_id: int, db: Session, limit: int = 100) -> List
             if isinstance(news.published_date, datetime):
                 time_diff = (current_time - news.published_date).total_seconds() / 3600
                 if time_diff < 24:
+                    weight += 3
+                elif time_diff < 72:
+                    weight += 2
+                elif time_diff < 168:
                     weight += 1
 
             # 추천 뉴스 리스트에 추가
             recommended_news.append((news.news_id, news.title, news.category_id, weight, news.published_date, news.hit))
 
     # 가중치 기준으로 뉴스 정렬
-    return sorted(recommended_news, key=lambda x: x[2], reverse=True)[:20]
+    return sorted(recommended_news, key=lambda x: x[3], reverse=True)[:20]
 
 def hybrid_recommendation(user_id: int, db: Session) -> List[tuple]:
     """하이브리드 추천 (협업 필터링 + 컨텐츠 기반 필터링)"""

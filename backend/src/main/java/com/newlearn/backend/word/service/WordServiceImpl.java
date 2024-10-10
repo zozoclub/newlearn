@@ -17,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.newlearn.backend.news.model.News;
 import com.newlearn.backend.news.repository.NewsRepository;
 import com.newlearn.backend.user.model.Users;
+import com.newlearn.backend.word.dto.request.CompleteRequestDTO;
+import com.newlearn.backend.word.dto.request.DeleteRequestDTO;
 import com.newlearn.backend.word.dto.request.RestudyResultRequestDTO;
 import com.newlearn.backend.word.dto.request.WordRequestDto;
 import com.newlearn.backend.word.dto.response.RestudyWordResponseDTO;
@@ -98,7 +100,7 @@ public class WordServiceImpl implements WordService {
 		List<WordResponseDTO> response = new ArrayList<>();
 
 		for(Word word : findAllWords) {
-			if(!word.isComplete()) {
+			if(!word.isDelete()) {
 				WordResponseDTO wordResponseDTO = new WordResponseDTO(word.getWordId(), word.getWord(),
 					word.getWordMeaning(), word.isComplete());
 				response.add(wordResponseDTO);
@@ -109,12 +111,16 @@ public class WordServiceImpl implements WordService {
 	}
 
 	@Override
-	public void deleteWord(Long wordId) {
-		Word word = wordRepository.findById(wordId)
+	public void deleteWord(DeleteRequestDTO dto) {
+		List<Long> wordIds = dto.getWordIds();
+
+		for (Long wordId : wordIds) {
+			Word word = wordRepository.findById(wordId)
 				.orElseThrow(() -> new IllegalArgumentException("단어로 찾을 수 없습니다. " + wordId));
 
-		word.delete();
-		wordRepository.save(word);
+			word.delete();
+			wordRepository.save(word);
+		}
 	}
 
 	@Override
@@ -127,6 +133,7 @@ public class WordServiceImpl implements WordService {
 
 		String wordMeaning = words.get(0).getWordMeaning();
 		List<WordDetailResponseDTO.SentenceResponseDTO> sentenceDTO = words.stream()
+			.filter(w -> !w.isDelete())
 				.map(w -> {
 					try {
 						return new WordDetailResponseDTO.SentenceResponseDTO(
@@ -154,17 +161,19 @@ public class WordServiceImpl implements WordService {
 	}
 
 	@Transactional
-	public void completeWord(Long wordId, Users user) {
-		Word word = wordRepository.findById(wordId)
+	public void completeWord(CompleteRequestDTO dto, Users user) {
+		List<Long> wordIds = dto.getWordIds();
+		for(Long wordId : wordIds) {
+			Word word = wordRepository.findById(wordId)
 				.orElseThrow(() -> new IllegalArgumentException("해당 단어를 찾을 수 없"));
 
-		if (!word.getUser().equals(user)) {
-			throw new IllegalStateException("사용자와 단어가 일치하지 않습니다.");
+			if (!word.getUser().equals(user)) {
+				throw new IllegalStateException("사용자와 단어가 일치하지 않습니다.");
+			}
+
+			word.completeWord();
+			wordRepository.save(word);
 		}
-
-		word.completeWord();
-		wordRepository.save(word);
-
 //		Optional<Goal> optionalGoal = studyRepository.findByUserId(user.getUserId());
 //		if (optionalGoal.isPresent()) {
 //			Goal goal = optionalGoal.get();

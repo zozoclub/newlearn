@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.newlearn.backend.user.model.Users;
+import com.newlearn.backend.word.dto.request.CompleteRequestDTO;
+import com.newlearn.backend.word.dto.request.DeleteRequestDTO;
 import com.newlearn.backend.word.dto.request.RestudyResultRequestDTO;
 import com.newlearn.backend.word.dto.request.WordRequestDto;
 import com.newlearn.backend.word.dto.response.RestudyWordResponseDTO;
@@ -20,11 +22,11 @@ public interface WordService {
 
 	List<WordResponseDTO> getCompleteWords(Users user);
 
-	void deleteWord(Long wordId);
+	void deleteWord(DeleteRequestDTO dto);
 
 	WordDetailResponseDTO getWordDetail(String word, Users user) throws Exception;
 
-	void completeWord(Long wordId, Users user);
+	void completeWord(CompleteRequestDTO dto, Users user);
 
 	List<RestudyWordResponseDTO> getWordsForRestudy(Users user);
 

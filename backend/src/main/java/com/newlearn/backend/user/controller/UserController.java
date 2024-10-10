@@ -1,5 +1,7 @@
 package com.newlearn.backend.user.controller;
 
+import com.newlearn.backend.rank.service.RankService;
+import com.newlearn.backend.rank.service.RankServiceImpl;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.newlearn.backend.common.ApiResponse;
@@ -30,6 +33,7 @@ import com.newlearn.backend.user.model.Avatar;
 import com.newlearn.backend.user.model.Users;
 import com.newlearn.backend.user.service.TokenService;
 import com.newlearn.backend.user.service.UserService;
+import com.newlearn.backend.user.service.UserTutorialService;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -46,7 +50,8 @@ public class UserController {
 	private final UserService userService;
 	private final TokenService tokenService;
 	private final JwtTokenProvider jwtTokenProvider;
-
+	private final UserTutorialService userTutorialService;
+	private final RankService rankService;
 
 	//회원가입
 	@PostMapping("/sign-up")
@@ -268,6 +273,8 @@ public class UserController {
 
 			userService.deleteUser(user.getUserId());
 
+			rankService.removeUserFromRanking(user.getUserId());
+
 			return ApiResponse.createSuccess(null, "회원 탈퇴가 완료되었습니다.");
 		} catch (Exception e) {
 			return ApiResponse.createError(ErrorCode.USER_DELETE_FAILED);
@@ -283,6 +290,52 @@ public class UserController {
 			}
 			userService.updateExperience(user, updateExperienceRequestDTO.getExperience());
 			return ApiResponse.createSuccess(null, "경험치 업뎃성공!!");
+		} catch (Exception e) {
+			return ApiResponse.createError(ErrorCode.USER_UPDATE_FAILED);
+		}
+	}
+
+	@GetMapping("/tutorial/complete")
+	public ApiResponse<?> isTutorialPageCompleted(
+		Authentication authentication,
+		@RequestParam Long page) {
+		try {
+			Users user = userService.findByEmail(authentication.getName());
+			if (user == null) {
+				return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
+			}
+			boolean isCompleted = userTutorialService.isTutorialPageCompleted(user, page);
+			return ApiResponse.createSuccess(isCompleted, "성공적으로 조회하였습니다");
+		} catch (Exception e) {
+			return ApiResponse.createError(ErrorCode.USER_UPDATE_FAILED);
+		}
+	}
+
+	@PostMapping("/tutorial/complete")
+	public ApiResponse<?> completeTutorial(Authentication authentication, @RequestParam Long page) {
+		try {
+			Users user = userService.findByEmail(authentication.getName());
+			if (user == null) {
+				return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
+			}
+			userTutorialService.completeTutorialPage(user, page);
+			return ApiResponse.createSuccess(null, "성공적으로 저장했습니다");
+
+		} catch (Exception e) {
+			return ApiResponse.createError(ErrorCode.USER_UPDATE_FAILED);
+		}
+	}
+
+	@PostMapping("/tutorial/cancel")
+	public ApiResponse<?> cancelTutorial(Authentication authentication, @RequestParam Long page) {
+		try {
+			Users user = userService.findByEmail(authentication.getName());
+			if (user == null) {
+				return ApiResponse.createError(ErrorCode.USER_NOT_FOUND);
+			}
+			userTutorialService.cancelTutorialPage(user, page);
+			return ApiResponse.createSuccess(null, "성공적으로 저장했습니다");
+
 		} catch (Exception e) {
 			return ApiResponse.createError(ErrorCode.USER_UPDATE_FAILED);
 		}

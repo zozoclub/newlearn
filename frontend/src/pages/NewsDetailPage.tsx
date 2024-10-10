@@ -29,6 +29,7 @@ import {
   completeTutorial,
   getCompletedTutorial,
 } from "@services/tutorialService";
+import locationState from "@store/locationState";
 
 const NewsDetailPage = () => {
   const isMobile = useMediaQuery({ maxWidth: 768 });
@@ -45,6 +46,7 @@ const NewsDetailPage = () => {
   ]);
   const [isFirstView, setIsFirstView] = useState<boolean>(true);
   const { newsId } = useParams();
+  const setCurrentLocation = useSetRecoilState(locationState);
 
   console.log(newsId);
 
@@ -126,6 +128,13 @@ const NewsDetailPage = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [newsId]);
+
+  useEffect(() => {
+    setCurrentLocation("newsDetail");
+    return () => {
+      setCurrentLocation("");
+    };
+  }, [setCurrentLocation]);
 
   return (
     <>

@@ -13,7 +13,6 @@ const Header = () => {
   const currentLocation = useRecoilValue(locationState);
   const [isVisible, setIsVisible] = useState<boolean>(false);
   const [isNewsPage, setIsNewspage] = useState<boolean>(false);
-  const [isLandingPage, setIsLandingPage] = useState<boolean>(false);
   const transitionTo = usePageTransition();
   const hiddenPages = ["login", "signUp", "notFound"];
 
@@ -21,8 +20,9 @@ const Header = () => {
     const isPublicPage = hiddenPages.includes(currentLocation);
     console.log("현재 url", currentLocation);
     setIsVisible(!isPublicPage);
-    setIsNewspage(currentLocation === "newsList");
-    setIsLandingPage(currentLocation === "landing");
+    setIsNewspage(
+      currentLocation === "newsList" || currentLocation === "newsDetail"
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentLocation]);
 
@@ -40,20 +40,11 @@ const Header = () => {
       )}
       {isNewsPage && <NewsListHeader />}
       <div className="right-side">
-        {isVisible && !isLandingPage && (
+        {isVisible && (
           <>
             {/* 페이지 정보 없을 때 유저 프로필 표시 안 함 */}
             <UserProfile />
           </>
-        )}
-        {isLandingPage && (
-          <LoginContainer
-            onClick={() => {
-              transitionTo("login");
-            }}
-          >
-            로그인
-          </LoginContainer>
         )}
         <DarkModeButton />
       </div>
@@ -87,15 +78,5 @@ const Logo = styled.div`
   width: 17.5rem;
   height: 3.75rem;
   cursor: pointer;
-`;
-
-const LoginContainer = styled.div`
-  margin-right: 1rem;
-  font-size: 1.375rem;
-  font-weight: 500;
-  cursor: pointer;
-  &:hover {
-    color: ${(props) => props.theme.colors.primary};
-  }
 `;
 export default Header;

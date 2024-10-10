@@ -11,47 +11,47 @@ import locationState from "@store/locationState";
 import { getRefreshToken } from "@services/axiosInstance";
 
 const LoginMobilePage = () => {
-    const [isLogin, setIsLogin] = useState(sessionStorage.getItem("accessToken"));
-    const transitionTo = usePageTransition();
-    const setCurrentLocation = useSetRecoilState(locationState);
+  const [isLogin, setIsLogin] = useState(sessionStorage.getItem("accessToken"));
+  const transitionTo = usePageTransition();
+  const setCurrentLocation = useSetRecoilState(locationState);
 
-    const requestAccessToken = async () => {
-        try {
-            const response = await getRefreshToken();
-            if (response) {
-                setIsLogin(response);
-                console.log("refreshToken 유효, 토큰 재발급");
-                transitionTo("/");
-            } else {
-                console.log("refreshToken 만료, 다시 로그인하세요.");
-            }
-        } catch {
-            console.log("refreshToken 만료, 다시 로그인하세요.");
-        }
-    };
+  const requestAccessToken = async () => {
+    try {
+      const response = await getRefreshToken();
+      if (response) {
+        setIsLogin(response);
+        console.log("refreshToken 유효, 토큰 재발급");
+        transitionTo("/");
+      } else {
+        console.log("refreshToken 만료, 다시 로그인하세요.");
+      }
+    } catch {
+      console.log("refreshToken 만료, 다시 로그인하세요.");
+    }
+  };
 
-    useEffect(() => {
-        setCurrentLocation("login");
-    }, [setCurrentLocation]);
+  useEffect(() => {
+    setCurrentLocation("login");
+  }, [setCurrentLocation]);
 
-    useEffect(() => {
-        if (isLogin) {
-            transitionTo("/");
-        } else {
-            requestAccessToken();
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isLogin, transitionTo]);
+  useEffect(() => {
+    if (isLogin) {
+      transitionTo("/");
+    } else {
+      requestAccessToken();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLogin, transitionTo]);
 
-    return (
-        <Container>
-            <LogoDiv onClick={() => transitionTo("/landing")}>
-                <FullLogo width={240} height={40} />
-            </LogoDiv>
-            <LoginButton src={NavarButton} alt="naver" onClick={naverLogin} />
-            <LoginButton src={KakaoButton} alt="kakao" onClick={kakaoLogin} />
-        </Container>
-    );
+  return (
+    <Container>
+      <LogoDiv>
+        <FullLogo width={240} height={40} />
+      </LogoDiv>
+      <LoginButton src={NavarButton} alt="naver" onClick={naverLogin} />
+      <LoginButton src={KakaoButton} alt="kakao" onClick={kakaoLogin} />
+    </Container>
+  );
 };
 
 const Container = styled.div`

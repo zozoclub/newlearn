@@ -181,38 +181,53 @@ const RestudyQuizList: React.FC<RestudyQuizListProps> = ({
     }
   };
 
-  // 문제 스킵 시 호출되는 함수
-  const handleSkip = async (question: ForgettingCurveWordListResponseDto) => {
-    await postSkipCurveWord(question.wordId);
-    setSkippedWords((prev) => [...prev, question.wordId]);
+  const handleSkip = async () => {
+    const currentQuestion = newRestudyData[currentPage]; // 현재 문제 가져오기
 
-    // 마지막 문제인지 확인
-    const isLastQuestion = currentPage === newRestudyData!.length - 1;
+    if (currentQuestion) {
+      console.log("스킵 시도 단어", currentQuestion);
 
-    if (isLastQuestion) {
-      // 마지막 문제일 경우 즉시 결과를 제출
-      const updatedResults = [
-        ...results,
-        {
-          wordId: question.wordId,
-          isDoing: false,
-          isCorrect: false,
-        },
-      ];
-      const filteredResults = updatedResults.filter(
-        (result) => !skippedWords.includes(result.wordId)
-      );
+      // 서버에 스킵 요청 보내기
+      await postSkipCurveWord(currentQuestion.wordId);
+      setSkippedWords((prev) => [...prev, currentQuestion.wordId]);
 
-      submitResultsMutation.mutate(filteredResults, {
-        onSuccess: () => {
-          setCurrentPage(newRestudyData!.length);
-        },
-      });
-    } else {
-      // 마지막 문제가 아닌 경우 다음 문제로 이동
-      setCurrentPage((prevPage) => prevPage + 1);
+      // 마지막 문제인지 확인
+      const isLastQuestion = currentPage === newRestudyData.length - 1;
+
+      if (isLastQuestion) {
+        // 마지막 문제일 경우 즉시 결과를 제출
+        const updatedResults = [
+          ...results,
+          {
+            wordId: currentQuestion.wordId,
+            isDoing: false,
+            isCorrect: false,
+          },
+        ];
+        const filteredResults = updatedResults.filter(
+          (result) => !skippedWords.includes(result.wordId)
+        );
+
+        submitResultsMutation.mutate(filteredResults, {
+          onSuccess: () => {
+            setCurrentPage(newRestudyData.length); // 전체 퀴즈 종료
+          },
+        });
+      } else {
+        // 마지막 문제가 아닌 경우 다음 문제로 이동
+        setResults((prevResults) => [
+          ...prevResults,
+          {
+            wordId: currentQuestion.wordId,
+            isDoing: false,
+            isCorrect: false,
+          },
+        ]);
+        setCurrentPage((prevPage) => prevPage + 1); // 다음 문제로 이동
+      }
     }
   };
+
 
   const handleQuizExit = () => {
     onClose();
@@ -269,17 +284,17 @@ const RestudyQuizList: React.FC<RestudyQuizListProps> = ({
             >
               <QuizWrapper>
                 {/* 레벨 메시지 표시 */}
-                  <LevelMessage>
-                    {question.wordNowLevel === 2
-                      ? "3일 전에 출제됐어요."
-                      : question.wordNowLevel === 3
+                <LevelMessage>
+                  {question.wordNowLevel === 2
+                    ? "3일 전에 출제됐어요."
+                    : question.wordNowLevel === 3
                       ? "7일 전에 출제됐어요."
                       : question.wordNowLevel === 4
-                      ? "30일 전에 출제됐어요."
-                      : question.wordNowLevel === 5
-                      ? "60일 전에 출제됐어요."
-                      : ""}
-                  </LevelMessage>
+                        ? "30일 전에 출제됐어요."
+                        : question.wordNowLevel === 5
+                          ? "60일 전에 출제됐어요."
+                          : ""}
+                </LevelMessage>
                 <QuestionText>
                   {question.sentence.replace(question.word, "_______")}
                 </QuestionText>
@@ -300,21 +315,6 @@ const RestudyQuizList: React.FC<RestudyQuizListProps> = ({
                 </OptionsWrapper>
               </QuizWrapper>
             </QuestionWrapper>
-            {currentPage !== newRestudyData.length && (
-              <NextButton
-                key={`next-button-${index}`}
-                onClick={() => handleSkip(question)}
-                disabled={showDetails}
-              >
-                {
-                  selectedOption === null
-                    ? "Skip"
-                    : selectedOption === correctAnswer // 정답을 맞췄을 경우
-                    ? getLevelMessage(updatedLevel!)
-                    : "1일 뒤 출제됩니다." // 틀렸을 경우 1일 뒤 출제
-                }
-              </NextButton>
-            )}
           </React.Fragment>
         ))}
 
@@ -323,7 +323,7 @@ const RestudyQuizList: React.FC<RestudyQuizListProps> = ({
           $index={newRestudyData.length}
         >
           <ResultPage>
-            {results.length ? (
+            {skippedWords.length !== newRestudyData.length ? (
               <>
                 <ResultText>{`${newRestudyData.length}문제 중 ${score}문제 맞혔습니다.`}</ResultText>
                 <ResultSkipText>
@@ -359,8 +359,22 @@ const RestudyQuizList: React.FC<RestudyQuizListProps> = ({
           </ResultPage>
         </QuestionWrapper>
       </QuizContainer>
+      {currentPage !== newRestudyData.length && (
+        <NextButton
+          onClick={handleSkip}
+          disabled={showDetails}
+        >
+          {
+            selectedOption === null
+              ? "Skip"
+              : selectedOption === correctAnswer
+                ? getLevelMessage(updatedLevel!)
+                : "1일 뒤 출제됩니다."
+          }
+        </NextButton>
+      )}
       {currentPage === newRestudyData.length && (
-        <EndButton onClick={handleQuizExit}>종료</EndButton>
+        <NextButton onClick={handleQuizExit}>종료</NextButton>
       )}
     </Container>
   );
@@ -438,8 +452,8 @@ const QuestionWrapper = styled.div<{ $currentPage: number; $index: number }>`
     $index === $currentPage
       ? "translateX(0)"
       : $index > $currentPage
-      ? "translateX(100%)"
-      : "translateX(-100%)"};
+        ? "translateX(100%)"
+        : "translateX(-100%)"};
   transition: transform 0.5s ease-in-out;
 `;
 
@@ -499,36 +513,8 @@ const OptionButton = styled.button`
   }
 `;
 
-const EndButton = styled.button`
-  margin-bottom: 1.75rem;
-  margin-top: 1rem;
-  padding: 0.75rem 2rem;
-  border: none;
-  background-color: #42b883;
-  color: white;
-  font-size: 1.125rem;
-  font-weight: bold;
-  border-radius: 0.5rem;
-  cursor: pointer;
-  transition: background-color 0.3s, box-shadow 0.3s;
-
-  &:hover {
-    background-color: #38a76d;
-  }
-
-  &:active {
-    background-color: #2c8f5e;
-  }
-  @media (max-width: 1280px) {
-    font-size: 1rem;
-  }
-`;
-
 const NextButton = styled.button`
-  position: absolute; /* 버튼을 QuizWrapper 하단에 고정 */
   bottom: 1rem; /* 하단에서 1rem 위로 띄움 */
-  left: 50%; /* 가로 중앙 정렬 */
-  transform: translateX(-50%); /* 가로 중앙 정렬을 위한 transform */
   width: 12rem;
   padding: 0.75rem 1.5rem;
   border: none;
@@ -569,6 +555,7 @@ const ResultPage = styled.div`
 `;
 
 const ResultSkipTitle = styled.div`
+margin-top: 10rem;
   font-size: 2rem;
   font-weight: 700;
   display: flex;
@@ -585,6 +572,7 @@ const ResultSkipTitle = styled.div`
 `;
 const ResultSkipText = styled.div`
   font-size: 1rem;
+  margin-top: 1rem;
   color: ${({ theme }) => theme.colors.text04};
   @media (max-width: 768px) {
     font-size: 0.875rem;
@@ -595,7 +583,7 @@ const ResultText = styled.p`
   font-size: 1.5rem;
   font-weight: bold;
   color: ${({ theme }) => theme.colors.text};
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.5rem;
   text-align: center;
   @media (max-width: 1280px) {
     font-size: 1.375rem;

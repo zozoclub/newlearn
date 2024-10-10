@@ -80,12 +80,18 @@ const NewsDetailContent: React.FC<NewsDetailContentType> = ({
     const prevWord = selected.word;
     const result = handleSelection();
 
+    // selection이 비었으면 아무런 동작도 하지 않음
+    if (!result) {
+      return;
+    }
+
     // 이미 모달이 열려 있고 동일한 단어 div를 클릭했다면 요청을 보내지 않음
     if (isModalOpen && prevWord === result?.word) {
       return;
     }
 
     if (result) {
+      const position = getSelectionPosition();
       searchDaumDictionary(result.word)
         .then((searchResult) => {
           console.log("Daum Dictionary Result:", searchResult);
@@ -98,7 +104,6 @@ const NewsDetailContent: React.FC<NewsDetailContentType> = ({
           });
 
           if (prevWord !== result.word) {
-            const position = getSelectionPosition();
             if (position) {
               let x = position.x;
               const y = position.y + 30;

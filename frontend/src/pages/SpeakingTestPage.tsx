@@ -393,12 +393,15 @@ const SpeakingTestPage: React.FC = () => {
             closeRecordingModal={closeRecordingModal}
           />
           <SubmitButtonContainer>
-            <SubmitButton
-              onClick={handleRecordingDataSubmit}
-              disabled={isSubmitDisabled || !userRecognizedText}
-            >
-              {isSubmitLoading ? <Spinner></Spinner> : "제출하기"}
-            </SubmitButton>
+            {/* 녹음이 진행되지 않았거나 종료된 상태에서만 Submit 버튼을 표시 */}
+            {status === "stopped" && (
+              <SubmitButton
+                onClick={handleRecordingDataSubmit}
+                disabled={isSubmitDisabled || !userRecognizedText}
+              >
+                {isSubmitLoading ? <Spinner></Spinner> : "제출하기"}
+              </SubmitButton>
+            )}
           </SubmitButtonContainer>
         </MobileContainer>
         <Modal

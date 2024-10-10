@@ -176,9 +176,6 @@ const CategoryButton = styled.button`
   background-color: ${(props) => props.theme.colors.primary};
   transition: background-color 0.5s;
   border: none;
-  &:hover {
-    background-color: ${(props) => props.theme.colors.primaryPress};
-  }
 
   @media (max-width: 768px) {
     min-height: 1.5rem;

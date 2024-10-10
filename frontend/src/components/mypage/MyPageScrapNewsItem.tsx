@@ -29,6 +29,7 @@ const NewsListItem: React.FC<{ news: ScrapNewsType }> = ({ news }) => {
           flexDirection: "column",
           justifyContent: "space-between",
           position: "relative",
+          width: "100%",
         }}
       >
         <Title>{news.title}</Title>
@@ -167,15 +168,14 @@ const Footer = styled.div`
   }
 `;
 
-const CategoryButton = styled.div`
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
+const CategoryButton = styled.button`
+  min-height: 2.5rem;
+  padding: 0 1rem;
+  border-radius: 0.75rem;
   color: #ffffff;
   background-color: ${(props) => props.theme.colors.primary};
   transition: background-color 0.5s;
-  &:hover {
-    background-color: ${(props) => props.theme.colors.primaryPress};
-  }
+  border: none;
 
   @media (max-width: 768px) {
     min-height: 1.5rem;

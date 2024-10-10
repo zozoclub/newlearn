@@ -40,6 +40,7 @@
   - 각 데이터베이스의 특성을 고려한 멀티 데이터베이스 아키텍처 설계
   - 대용량 데이터 백업을 위한 효율적인 아키텍처 설계
   - APScheduler를 활용한 데이터 수집 프로세스 자동화
+  <img src="./resources/data_pipeline.png" width="60%">
   ![alt text](./resources/data_pipeline.png)
   
 - **하이브리드 추천 시스템**

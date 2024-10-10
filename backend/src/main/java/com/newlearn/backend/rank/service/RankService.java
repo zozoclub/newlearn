@@ -10,4 +10,5 @@ public interface RankService {
     List<ReadingRankDTO> getRealtimeTopReaderUsers();
     void updateUserPoints(Long userId, int points);
     void updateUserReadCount(Long userId, int readCount);
+    void removeUserFromRanking(Long userId);
 }

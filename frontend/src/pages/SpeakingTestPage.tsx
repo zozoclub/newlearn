@@ -40,6 +40,15 @@ const SpeakingTestPage: React.FC = () => {
     refetchOnWindowFocus: false,
   });
 
+  useEffect(() => {
+    // 페이지를 떠날 때 녹음을 중지
+    return () => {
+      stopUserRecording(); // 녹음을 중지
+      stopRecognition(); // 음성 인식 중지
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // 예문
   const [referenceText, setReferenceText] = useState<string>("");
   const [referenceTextTranslate, setReferenceTextTranslate] =
@@ -319,7 +328,7 @@ const SpeakingTestPage: React.FC = () => {
       const results = {
         sentenceIds: sentenceIds,
         accuracyScore: Number(
-          (Number(avgAccuracy) * Number(completeness) /100).toFixed(0)
+          (Number(avgAccuracy) * Number(completeness) / 100).toFixed(0)
         ),
         fluencyScore: Number(
           (Number(avgFluency) * Number(completeness) / 100).toFixed(0)
@@ -542,7 +551,7 @@ const SubmitButton = styled.button<{ disabled: boolean }>`
 
   &:hover {
     background-color: ${(props) =>
-      props.disabled ? "#ccc" : props.theme.colors.primaryPress};
+    props.disabled ? "#ccc" : props.theme.colors.primaryPress};
   }
 `;
 

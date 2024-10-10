@@ -447,7 +447,7 @@ const QuizWrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-height: 50vh; /* 전체 높이를 줄이기 위해 max-height 설정 */
+  max-height: 40vh; /* 전체 높이를 줄이기 위해 max-height 설정 */
   padding: 0 1.25rem;
   border-radius: 1rem;
   overflow-y: auto; /* 내용이 길 경우 세로 스크롤 추가 */
@@ -494,7 +494,7 @@ const OptionButton = styled.button`
     font-size: 1.125rem;
   }
   @media (max-width: 768px) {
-    font-size: 0.875rem;
+    font-size: 0.75rem;
     padding: 0.625rem 0.875rem;
   }
 `;

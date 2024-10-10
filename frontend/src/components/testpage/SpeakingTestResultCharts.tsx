@@ -125,7 +125,7 @@ const SpeakingTestResultCharts: React.FC<Props> = ({ results }) => {
             indexAxis: "y", // 수평 막대형 차트
             scales: {
               x: {
-                max: 110,
+                max: 120,
                 grid: { display: false },
                 ticks: {
                   display: false,

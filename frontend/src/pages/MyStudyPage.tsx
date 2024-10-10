@@ -65,6 +65,10 @@ const Container = styled.div`
   padding: 50px 5%;
   min-height: 600px;
   height: 600px;
+  @media (max-width: 768px) {
+    min-height: 550px;
+    height: 550px;
+  }
 `;
 
 const MenuContainer = styled.div`

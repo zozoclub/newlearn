@@ -82,10 +82,14 @@ const SpeakingTestPage: React.FC = () => {
   const closeRecordingModal = () => setIsStartRecordModal(false);
 
   // 페이지 확인
-  const setCurrentLocation = useSetRecoilState(locationState);
+  const setCurrentLocationData = useSetRecoilState(locationState);
   useEffect(() => {
-    setCurrentLocation("Speaking Test Page");
-  }, [setCurrentLocation]);
+    setCurrentLocationData("speakingTest");
+    return () => {
+      setCurrentLocationData("");
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // 컴포넌트가 언마운트될 때 정리
   useEffect(() => {

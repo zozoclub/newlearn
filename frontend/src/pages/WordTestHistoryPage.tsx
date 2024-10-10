@@ -19,8 +19,16 @@ type Word = {
 };
 
 const WordTestHistoryPage: React.FC = () => {
+    const setCurrentLocationData = useSetRecoilState(locationState);
+    useEffect(() => {
+      setCurrentLocationData("wordHistory");
+      return () => {
+        setCurrentLocationData("");
+      };
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
     const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
-    const setCurrentLocation = useSetRecoilState(locationState);
 
     const { data: wordList } = useQuery<MemorizeWordListResponseDto[]>({
         queryKey: ["memorizeWordList"],
@@ -42,9 +50,6 @@ const WordTestHistoryPage: React.FC = () => {
         }
     }, [wordList]);
 
-    useEffect(() => {
-        setCurrentLocation("WordTestHistoryPage");
-    }, [setCurrentLocation]);
 
     if (isMobile) {
         return (

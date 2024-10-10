@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useSetRecoilState } from "recoil";
 import locationState from "@store/locationState";
 import styled from "styled-components";
 import BackArrow from "@assets/icons/BackArrow";
@@ -14,15 +13,20 @@ import {
 import Spinner from "@components/Spinner";
 import { useMediaQuery } from "react-responsive"; // 모바일 여부 감지
 import WordTestResultDetailMobilePage from "./mobile/WordTestResultDetailMobilePage";
+import { useSetRecoilState } from "recoil";
 
 const WordTestResultPage: React.FC = () => {
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const { quizId } = useParams<{ quizId: string }>();
-  const setCurrentLocation = useSetRecoilState(locationState);
 
+  const setCurrentLocationData = useSetRecoilState(locationState);
   useEffect(() => {
-    setCurrentLocation("Word Test Page");
-  }, [setCurrentLocation]);
+    setCurrentLocationData("wordResult");
+    return () => {
+      setCurrentLocationData("");
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // 서버에서 데이터를 가져오기
   const {
@@ -57,8 +61,7 @@ const WordTestResultPage: React.FC = () => {
     return <ErrorText>에러가 발생했습니다. 다시 시도해 주세요.</ErrorText>;
 
   // testDetail이 null일 때
-  if (!testDetail)
-    return <ErrorText>데이터가 없습니다.</ErrorText>;
+  if (!testDetail) return <ErrorText>데이터가 없습니다.</ErrorText>;
 
   // 모바일
   if (isMobile) return <WordTestResultDetailMobilePage />;
@@ -68,9 +71,7 @@ const WordTestResultPage: React.FC = () => {
       <MainContainer>
         <BackHeader>
           <BackArrow width={48} height={48} url="/wordtesthistory" />
-          <BackHeaderText>
-            평가 리스트로 돌아가기
-          </BackHeaderText>
+          <BackHeaderText>평가 리스트로 돌아가기</BackHeaderText>
         </BackHeader>
         <WordListLayout>
           {testDetail.result.map((item, index) => {
@@ -96,11 +97,13 @@ const WordTestResultPage: React.FC = () => {
               userAnswer={testDetail.result[currentWordIndex].answer}
               difficulty={testDetail.result[currentWordIndex].difficulty}
               sentence={testDetail.result[currentWordIndex].sentence}
-              sentenceMeaning={testDetail.result[currentWordIndex].sentenceMeaning}
+              sentenceMeaning={
+                testDetail.result[currentWordIndex].sentenceMeaning
+              }
               isCorrect={testDetail.result[currentWordIndex].correct}
-              />
-            ) : (
-              <WordTestResultWordDetail
+            />
+          ) : (
+            <WordTestResultWordDetail
               newsId={testDetail.result[0].newsId}
               answerWord={testDetail.result[0].correctAnswer}
               userAnswer={testDetail.result[0].answer}
@@ -138,7 +141,7 @@ const BackHeader = styled.div`
   display: flex;
   margin-right: auto;
   align-items: center;
-  padding-top : 0.5rem;
+  padding-top: 0.5rem;
   padding-left: 2rem;
   font-size: 1.5rem;
   font-weight: 700;
@@ -177,5 +180,5 @@ const ErrorText = styled.div`
 `;
 
 const BackHeaderText = styled.span`
-margin-left: 1rem;
-`
+  margin-left: 1rem;
+`;

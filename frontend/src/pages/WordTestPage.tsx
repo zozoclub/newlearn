@@ -33,10 +33,14 @@ const WordTestPage: React.FC = () => {
     },
   });
 
-  const setCurrentLocation = useSetRecoilState(locationState);
+  const setCurrentLocationData = useSetRecoilState(locationState);
   useEffect(() => {
-    setCurrentLocation("Word Test Page");
-  }, [setCurrentLocation]);
+    setCurrentLocationData("wordTest");
+    return () => {
+      setCurrentLocationData("");
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const {
     isLoading,

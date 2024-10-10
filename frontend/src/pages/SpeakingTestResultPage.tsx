@@ -28,11 +28,15 @@ import SpeakingTestResultReferenceMobile from "@components/testpage/SpeakingTest
 const SpeakingTestResultPage: React.FC = () => {
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const { audioFileId } = useParams<{ audioFileId: string }>();
-  const setCurrentLocation = useSetRecoilState(locationState);
 
+  const setCurrentLocationData = useSetRecoilState(locationState);
   useEffect(() => {
-    setCurrentLocation("Speaking Test Result Page");
-  }, [setCurrentLocation]);
+    setCurrentLocationData("speakingResult");
+    return () => {
+      setCurrentLocationData("");
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const {
     data: testDetail,

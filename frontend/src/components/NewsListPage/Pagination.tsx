@@ -1,4 +1,5 @@
 import { usePageTransition } from "@hooks/usePageTransition";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 interface PaginationProps {
@@ -15,31 +16,52 @@ const Pagination: React.FC<PaginationProps> = ({
   const pageGroup = Math.ceil(currentPage / 10);
   const lastPage = pageGroup * 10 > totalPages ? totalPages : pageGroup * 10;
   const firstPage = lastPage - 9 <= 0 ? 1 : lastPage - 9;
-  const transitionTo = usePageTransition();
+  const navigate = useNavigate();
 
   const firstButtonHandle = () => {
-    window.scrollTo(0, 0);
-    transitionTo(`/news/${category}/1`);
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: "smooth",
+    });
+    navigate(`/news/${category}/1`);
   };
 
   const prevButtonHandle = () => {
-    window.scrollTo(0, 0);
-    transitionTo(`news/${category}/${currentPage - 1}`);
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: "smooth",
+    });
+    navigate(`/news/${category}/${currentPage - 1}`);
   };
 
   const nextButtonHandle = () => {
-    window.scrollTo(0, 0);
-    transitionTo(`news/${category}/${currentPage + 1}`);
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: "smooth",
+    });
+    navigate(`/news/${category}/${currentPage + 1}`);
   };
 
   const lastButtonHandle = () => {
-    window.scrollTo(0, 0);
-    transitionTo(`/news/${category}/${lastPage}`);
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: "smooth",
+    });
+
+    navigate(`/news/${category}/${lastPage}`);
   };
 
   const pageButtonHandle = (page: number) => {
-    window.scrollTo(0, 0);
-    transitionTo(`news/${category}/${page}`);
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: "smooth",
+    });
+    navigate(`/news/${category}/${page}`);
   };
 
   return (

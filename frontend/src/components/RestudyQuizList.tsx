@@ -269,7 +269,6 @@ const RestudyQuizList: React.FC<RestudyQuizListProps> = ({
             >
               <QuizWrapper>
                 {/* 레벨 메시지 표시 */}
-                <QuestionText>
                   <LevelMessage>
                     {question.wordNowLevel === 2
                       ? "3일 전에 출제됐어요."
@@ -281,6 +280,7 @@ const RestudyQuizList: React.FC<RestudyQuizListProps> = ({
                       ? "60일 전에 출제됐어요."
                       : ""}
                   </LevelMessage>
+                <QuestionText>
                   {question.sentence.replace(question.word, "_______")}
                 </QuestionText>
                 <SentenceMeaning>{`${question.sentenceMeaning}`}</SentenceMeaning>
@@ -636,7 +636,7 @@ const ErrorText = styled.p`
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  height: 50vh;
+  height: 55vh;
   align-items: center;
   justify-content: center;
   @media (max-width: 768px) {
@@ -652,7 +652,13 @@ const ScrollableResultContainer = styled.div`
   width: 100%;
   max-height: 20rem;
   overflow-y: auto;
-  padding-right: 1rem;
+  padding-right: 0.5rem;
+  @media (max-width: 1280px) {
+    max-height: 16rem;
+  }
+  @media (max-width: 768px) {
+    max-height: 15rem;
+  }
 `;
 
 const ResultCard = styled.div`
@@ -729,7 +735,6 @@ const RemainingQuestions = styled.div`
 
 const LevelMessage = styled.span`
   font-size: 1rem;
-  margin-bottom: 0.5rem;
   color: ${({ theme }) => theme.colors.primary};
   @media (max-width: 1280px) {
     font-size: 0.875rem;

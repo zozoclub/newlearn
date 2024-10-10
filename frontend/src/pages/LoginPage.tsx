@@ -73,12 +73,6 @@ const Container = styled.div`
   @media screen and (min-width: 768px) {
     padding: 6rem 3rem;
     width: calc(100% - 6rem);
-    ${(props) =>
-      props.theme.mode === "dark" &&
-      `
-        border: 1px solid #ffffff22;
-        backdrop-filter: blur(12px);  
-    `}
   }
   @media screen and (max-width: 767px) {
     width: calc(100% - 2rem);

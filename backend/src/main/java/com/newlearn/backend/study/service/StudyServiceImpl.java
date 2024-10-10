@@ -291,6 +291,8 @@ public class StudyServiceImpl implements StudyService{
                     .sentenceMeaning(sentence.getSentenceMeaning())
                     .build());
         }
+        tests.sort(Comparator.comparing(PronounceTestResponseDTO::getSentenceId));
+
         return tests;
     }
 

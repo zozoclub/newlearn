@@ -155,7 +155,7 @@ public class RankServiceImpl implements RankService {
             result.add(ReadingRankDTO.builder()
                     .userId(userId)
                     .nickname(user.getNickname())
-                    .experience((int) tuple.getScore().doubleValue())
+                    .experience(user.getExperience())
                     .totalNewsReadCount((int) tuple.getScore().doubleValue())
                     .ranking(rank++)
                     .build());

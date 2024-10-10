@@ -6,7 +6,7 @@ import { getRecentReadNews } from "@services/newsService";
 import { useParams } from "react-router-dom";
 import { usePageTransition } from "@hooks/usePageTransition";
 import { useMemo } from "react";
-import { useTheme } from "styled-components";
+import styled, { useTheme } from "styled-components";
 import LoadingBar from "../common/LoadingBar";
 import Spinner from "@components/Spinner";
 import LightThumbnailImage from "@assets/images/lightThumbnail.png";
@@ -25,7 +25,7 @@ const RecentReadNews = () => {
   const transitionTo = usePageTransition();
   const MemoizedComponent = useMemo(() => {
     return (
-      <>
+      <Container>
         <div className="header" style={{ marginTop: "1.5rem" }}>
           {languageData === "en" ? "Recently Viewed" : "최근 읽은 뉴스"}
         </div>
@@ -95,7 +95,7 @@ const RecentReadNews = () => {
             ))}
           </div>
         )}
-      </>
+      </Container>
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, languageData]);
@@ -104,3 +104,7 @@ const RecentReadNews = () => {
 };
 
 export default RecentReadNews;
+
+const Container = styled.div`
+  min-height: 20rem;
+`;

@@ -166,7 +166,7 @@ const Content = styled.div`
   gap: 0.5rem;
   position: absolute;
   z-index: 501;
-  color: ${(props) => props.theme.colors.background};
+  color: black;
   background-color: white;
   padding: 1rem;
   border-radius: 0.5rem;
@@ -191,6 +191,7 @@ const SkipButton = styled.div`
   padding: 1rem;
   font-size: 1.25rem;
   text-align: center;
+  color: white;
   background-color: ${(props) => props.theme.colors.primary};
   border-radius: 0.5rem;
   cursor: pointer;

@@ -1,9 +1,18 @@
+import locationState from "@store/locationState";
 import React, { useRef, useEffect } from "react";
+import { useSetRecoilState } from "recoil";
 import styled from "styled-components";
 
 const LandingPage: React.FC = () => {
   const mainRef = useRef<HTMLDivElement>(null);
+  const setCurrentLocation = useSetRecoilState(locationState);
 
+  useEffect(() => {
+    setCurrentLocation("landing");
+    return () => {
+      setCurrentLocation("");
+    };
+  }, [setCurrentLocation]);
   useEffect(() => {
     if (!mainRef.current) return;
 

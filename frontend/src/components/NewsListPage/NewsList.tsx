@@ -51,9 +51,11 @@ const NewsList: React.FC<{
   useEffect(() => {
     if (selectedCategory === 0 && totalNewsList) {
       setTotalPages(totalNewsList?.totalPages);
+    } else if (categoryNewsList) {
+      setTotalPages(categoryNewsList?.totalPages);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [totalNewsList, categoryNewsList]);
+  }, [categoryNewsList, selectedCategory, totalNewsList]);
 
   return (
     <Container id="step9">

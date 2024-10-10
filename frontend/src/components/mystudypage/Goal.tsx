@@ -1,5 +1,3 @@
-// src/components/Goal.tsx
-
 import { useState } from "react";
 import { useRecoilState } from "recoil";
 import { useMutation } from "@tanstack/react-query";
@@ -97,6 +95,7 @@ const GoalContainer = styled.div`
     align-items: start;
     margin-top: 70px;
     height: calc(100% - 70px);
+    background-color: ${(props) => props.theme.colors.cardBackground};
     box-shadow: none;
   }
 `;

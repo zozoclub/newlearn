@@ -135,7 +135,7 @@ const ModalHeader = styled.div`
 `;
 
 const ModalTitle = styled.div`
-  margin-top: 0.5rem;
+  margin-top: 1rem;
   margin-left: 1rem;
   font-size: 1.75rem;
   font-weight: bold;

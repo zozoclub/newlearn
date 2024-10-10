@@ -11,7 +11,6 @@ import { usePageTransition } from "@hooks/usePageTransition";
 import MobileLogoHeader from "@components/common/MobileLogoHeader";
 
 const MyStudyPage = () => {
-  const isTablet = useMediaQuery({ query: "(max-width: 1280px)" });
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const transitionTo = usePageTransition();
 
@@ -38,7 +37,7 @@ const MyStudyPage = () => {
     <>
       {isMobile && <MobileLogoHeader />}
       <Container>
-        {!isTablet && <Goal />}
+        {!isMobile && <Goal />}
         <MenuContainer>
           <VocaMenu onClick={handleWordClick}>
             <Overlay>
@@ -66,12 +65,6 @@ const Container = styled.div`
   padding: 50px 5%;
   min-height: 600px;
   height: 600px;
-  @media (max-width: 1280px) {
-    padding-top: 1rem;
-    padding-bottom: 5rem;
-    min-height: 30rem;
-    height: 30rem;
-  }
 `;
 
 const MenuContainer = styled.div`

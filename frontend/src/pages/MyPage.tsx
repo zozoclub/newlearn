@@ -325,7 +325,7 @@ const ContentWrapper = styled.main`
 
 const MyPageContainer = styled.div`
   padding: 0 4rem;
-  margin-bottom: 5rem;
+  padding-bottom: 5rem;
 
   @media (max-width: 1279px) {
     padding: 0 1rem;
@@ -415,7 +415,7 @@ const FullScreenModal = styled.div<{ $isVisible: boolean }>`
   bottom: 70px;
   width: 100%;
   height: calc(100% - 70px);
-  background-color: ${(props) => props.theme.colors.background};
+  background-color: ${(props) => props.theme.colors.cardBackground};
   z-index: 1000;
   display: flex;
   flex-direction: column;
@@ -490,7 +490,7 @@ const ModalHeader = styled.div`
   padding: 0 1rem;
   width: 100%;
   height: 70px;
-  background-color: ${(props) => props.theme.colors.background};
+  background-color: ${(props) => props.theme.colors.cardBackground};
   z-index: 1002;
 `;
 

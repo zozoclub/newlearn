@@ -253,8 +253,8 @@ const RestudyQuizList: React.FC<RestudyQuizListProps> = ({
       <ModalRightHeader>
         {currentPage < newRestudyData.length && (
           <>
-            <SkipAllButton onClick={handleSkipAll}>미루기</SkipAllButton>
             <RemainingQuestions>{`남은 문항: ${remainingQuestions}`}</RemainingQuestions>
+            <SkipAllButton onClick={handleSkipAll}>미루기</SkipAllButton>
           </>
         )}
       </ModalRightHeader>
@@ -396,21 +396,23 @@ const SkipAllButton = styled.button`
     top: 0.5rem;
     right: 1rem;
     padding: 0.375rem 1rem;
+    font-size: 0.75rem;
   }
 `;
 
 const QuizContainer = styled.div<{ $currentPage: number }>`
   display: flex;
   width: 100%;
-  height: 95%;
+  height: 100%;
   overflow: hidden;
   position: relative;
 `;
 
 const ModalRightHeader = styled.div`
   position: absolute;
-  top: 1rem;
-  right: 3rem;
+  display: flex;
+  top: 1.5rem;
+  right: 2rem;
   align-items: center;
   gap: 2rem;
   @media (max-width: 1280px) {
@@ -418,9 +420,10 @@ const ModalRightHeader = styled.div`
     right: 2rem;
   }
   @media (max-width: 768px) {
-    top: 0.5rem;
+    top: 1.5rem;
     right: 1rem;
     padding: 0.375rem 1rem;
+    gap: 1rem;
   }
 `;
 
@@ -713,8 +716,8 @@ const AnswerMeanText = styled.p`
 const RemainingQuestions = styled.div`
   margin-top: 0.25rem;
   text-align: center;
-  font-size: 1rem;
-  font-weight: 400;
+  font-size: 1.25rem;
+  font-weight: 500;
   color: ${({ theme }) => theme.colors.text04};
   @media (max-width: 1280px) {
     font-size: 0.875rem;
@@ -726,6 +729,7 @@ const RemainingQuestions = styled.div`
 
 const LevelMessage = styled.span`
   font-size: 1rem;
+  margin-bottom: 0.5rem;
   color: ${({ theme }) => theme.colors.primary};
   @media (max-width: 1280px) {
     font-size: 0.875rem;
@@ -734,3 +738,4 @@ const LevelMessage = styled.span`
     font-size: 0.75rem;
   }
 `;
+

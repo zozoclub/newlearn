@@ -318,20 +318,15 @@ const SubContainer = styled.div`
     display: flex;
     border-radius: 5px;
     padding: 0.5rem;
-    background-color: ${(props) =>
-      props.theme.mode === "dark" ? "transparent" : "#ffffffaa"};
-    backdrop-filter: blur(10px);
-    border: 2px solid
-      ${(props) => (props.theme.mode === "dark" ? "#1a1a1aaa" : "#e2e2e2aa")};
+    background-color: ${(props) => props.theme.colors.newsItemBackground};
+    ${(props) => (props.theme.mode === "dark" ? "#1a1a1aaa" : "#e2e2e2aa")};
     cursor: pointer;
     transform: translateY(0rem);
     transition: background-color 0.3s, transform 0.3s, border 0.3s,
       backdrop-filter 0.3s;
     &:hover {
       background-color: ${(props) =>
-        props.theme.mode === "dark"
-          ? props.theme.colors.cardBackground01
-          : "transparent"};
+        props.theme.colors.newsItemBackgroundPress};
       transform: translateY(-0.25rem);
     }
   }

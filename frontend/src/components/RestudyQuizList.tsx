@@ -163,7 +163,6 @@ const RestudyQuizList: React.FC<RestudyQuizListProps> = ({
     }, 1000); // 1초 후 다음 페이지로 이동
   };
 
-
   // 레벨에 따른 메시지 표시 함수
   const getLevelMessage = (level: number) => {
     switch (level) {
@@ -254,8 +253,8 @@ const RestudyQuizList: React.FC<RestudyQuizListProps> = ({
       <ModalRightHeader>
         {currentPage < newRestudyData.length && (
           <>
-            <SkipAllButton onClick={handleSkipAll}>미루기</SkipAllButton>
             <RemainingQuestions>{`남은 문항: ${remainingQuestions}`}</RemainingQuestions>
+            <SkipAllButton onClick={handleSkipAll}>미루기</SkipAllButton>
           </>
         )}
       </ModalRightHeader>
@@ -263,21 +262,25 @@ const RestudyQuizList: React.FC<RestudyQuizListProps> = ({
       <QuizContainer $currentPage={currentPage}>
         {newRestudyData!.map((question, index) => (
           <>
-            <QuestionWrapper key={index} $currentPage={currentPage} $index={index}>
+            <QuestionWrapper
+              key={index}
+              $currentPage={currentPage}
+              $index={index}
+            >
               <QuizWrapper>
                 {/* 레벨 메시지 표시 */}
                 <QuestionText>
-                <LevelMessage>
-                  {question.wordNowLevel === 2
-                    ? "3일 전에 출제됐어요."
-                    : question.wordNowLevel === 3
+                  <LevelMessage>
+                    {question.wordNowLevel === 2
+                      ? "3일 전에 출제됐어요."
+                      : question.wordNowLevel === 3
                       ? "7일 전에 출제됐어요."
                       : question.wordNowLevel === 4
-                        ? "30일 전에 출제됐어요."
-                        : question.wordNowLevel === 5
-                          ? "60일 전에 출제됐어요."
-                          : ""}
-                </LevelMessage>
+                      ? "30일 전에 출제됐어요."
+                      : question.wordNowLevel === 5
+                      ? "60일 전에 출제됐어요."
+                      : ""}
+                  </LevelMessage>
                   {question.sentence.replace(question.word, "_______")}
                 </QuestionText>
                 <SentenceMeaning>{`${question.sentenceMeaning}`}</SentenceMeaning>
@@ -297,16 +300,20 @@ const RestudyQuizList: React.FC<RestudyQuizListProps> = ({
                 </OptionsWrapper>
               </QuizWrapper>
             </QuestionWrapper>
-            {(currentPage !== newRestudyData.length) &&
-            <NextButton onClick={() => handleSkip(question)} disabled={showDetails}>
-              {selectedOption === null
-                ? "Skip"
-                : selectedOption === correctAnswer // 정답을 맞췄을 경우
-                  ? getLevelMessage(updatedLevel!)
-                  : "1일 뒤 출제됩니다." // 틀렸을 경우 1일 뒤 출제
-              }
-            </NextButton>
-      }
+            {currentPage !== newRestudyData.length && (
+              <NextButton
+                onClick={() => handleSkip(question)}
+                disabled={showDetails}
+              >
+                {
+                  selectedOption === null
+                    ? "Skip"
+                    : selectedOption === correctAnswer // 정답을 맞췄을 경우
+                    ? getLevelMessage(updatedLevel!)
+                    : "1일 뒤 출제됩니다." // 틀렸을 경우 1일 뒤 출제
+                }
+              </NextButton>
+            )}
           </>
         ))}
 
@@ -351,9 +358,9 @@ const RestudyQuizList: React.FC<RestudyQuizListProps> = ({
           </ResultPage>
         </QuestionWrapper>
       </QuizContainer>
-      {(currentPage === newRestudyData.length) &&
+      {currentPage === newRestudyData.length && (
         <EndButton onClick={handleQuizExit}>종료</EndButton>
-      }
+      )}
     </Container>
   );
 };
@@ -388,21 +395,23 @@ const SkipAllButton = styled.button`
     top: 0.5rem;
     right: 1rem;
     padding: 0.375rem 1rem;
+    font-size: 0.75rem;
   }
 `;
 
 const QuizContainer = styled.div<{ $currentPage: number }>`
   display: flex;
   width: 100%;
-  height: 95%;
+  height: 100%;
   overflow: hidden;
   position: relative;
 `;
 
 const ModalRightHeader = styled.div`
   position: absolute;
-  top: 1rem;
-  right: 3rem;
+  display: flex;
+  top: 1.5rem;
+  right: 2rem;
   align-items: center;
   gap: 2rem;
   @media (max-width: 1280px) {
@@ -410,9 +419,10 @@ const ModalRightHeader = styled.div`
     right: 2rem;
   }
   @media (max-width: 768px) {
-    top: 0.5rem;
+    top: 1.5rem;
     right: 1rem;
     padding: 0.375rem 1rem;
+    gap: 1rem;
   }
 `;
 
@@ -427,8 +437,8 @@ const QuestionWrapper = styled.div<{ $currentPage: number; $index: number }>`
     $index === $currentPage
       ? "translateX(0)"
       : $index > $currentPage
-        ? "translateX(100%)"
-        : "translateX(-100%)"};
+      ? "translateX(100%)"
+      : "translateX(-100%)"};
   transition: transform 0.5s ease-in-out;
 `;
 
@@ -541,8 +551,6 @@ const NextButton = styled.button`
     font-size: 1rem;
   }
 `;
-
-
 
 const ResultPage = styled.div`
   display: flex;
@@ -707,8 +715,8 @@ const AnswerMeanText = styled.p`
 const RemainingQuestions = styled.div`
   margin-top: 0.25rem;
   text-align: center;
-  font-size: 1rem;
-  font-weight: 400;
+  font-size: 1.25rem;
+  font-weight: 500;
   color: ${({ theme }) => theme.colors.text04};
   @media (max-width: 1280px) {
     font-size: 0.875rem;
@@ -720,6 +728,7 @@ const RemainingQuestions = styled.div`
 
 const LevelMessage = styled.p`
   font-size: 1rem;
+  margin-bottom: 0.5rem;
   color: ${({ theme }) => theme.colors.primary};
   @media (max-width: 1280px) {
     font-size: 0.875rem;

@@ -151,6 +151,7 @@ const SpeakingTestResultCharts: React.FC<Props> = ({ results }) => {
                 bodyFont: {
                   size: 14,
                   family: "Pretendard",
+                  weight: "bold",
                 },
               },
               datalabels: {
@@ -160,6 +161,7 @@ const SpeakingTestResultCharts: React.FC<Props> = ({ results }) => {
                 font: {
                   size: 14,
                   family: "Pretendard",
+                  weight: "bold",
                 },
                 color: theme.colors.text, // 텍스트 색상 설정
               },
@@ -194,6 +196,7 @@ const ChartContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  font-family: "Pretendard";
 `;
 
 const DoughnutChartContainer = styled.div`

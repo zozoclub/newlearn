@@ -31,13 +31,17 @@ type Word = {
 
 const VocabularyPage: React.FC = () => {
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
-  const setCurrentLocation = useSetRecoilState(locationState);
   const queryClient = useQueryClient();
   const [showUncompletedTooltip, setShowUncompletedTooltip] = useState(false);
   const [showCompletedTooltip, setShowCOmpletedTooltip] = useState(false);
+  const setCurrentLocationData = useSetRecoilState(locationState);
   useEffect(() => {
-    setCurrentLocation("Word Test Page");
-  }, [setCurrentLocation]);
+    setCurrentLocationData("voca");
+    return () => {
+      setCurrentLocationData("");
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const {
     data: wordList,

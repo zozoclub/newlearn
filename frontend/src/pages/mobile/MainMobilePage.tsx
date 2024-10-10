@@ -14,6 +14,9 @@ import darkThumbnailImage from "@assets/images/darkThumbnail.png";
 import RankingKindSelect from "@components/mainpage/RankingKindSelect";
 import TopRanking from "@components/mainpage/TopRanking";
 import { usePageTransition } from "@hooks/usePageTransition";
+import { goalDataSelector } from "@store/goalState";
+import MainGoalBar from "@components/mainpage/MainGoalBar";
+import { useNavigate } from "react-router-dom";
 
 const MainMobilePage = () => {
   const Theme = useTheme();
@@ -25,6 +28,11 @@ const MainMobilePage = () => {
     staleTime: 5 * 60 * 1000,
   });
   const transitionTo = usePageTransition();
+  const goalData = useRecoilValue(goalDataSelector);
+  const navigate = useNavigate();
+  const handleMyStudy = () => {
+    navigate("/mystudy");
+  };
 
   return (
     <PageWrapper>
@@ -102,7 +110,21 @@ const MainMobilePage = () => {
           )}
         </RecommandNewsContainer>
         <Divider />
-
+        <GoalContainer>
+          {goalData[0].goal && goalData[1].goal && goalData[2].goal ? (
+            <>
+              <MainGoalBar />
+            </>
+          ) : (
+            <>
+              <div>아직 학습 목표가 없습니다.</div>
+              <GoalSetting onClick={handleMyStudy}>
+                학습 목표 설정하기
+              </GoalSetting>
+            </>
+          )}
+        </GoalContainer>
+        <Divider />
         <div style={{ position: "relative", marginTop: "1.5rem" }}>
           <Title>이 달의 랭킹</Title>
           <RankingKindSelect />
@@ -216,9 +238,26 @@ const RankingContainer = styled.div`
 `;
 
 const Divider = styled.div`
-  height: 1rem;
+  height: 0.5rem;
   margin: 0 0 0.5rem;
   background-color: ${(props) => props.theme.colors.divider};
   border-top: none;
   border-bottom: none;
+`;
+
+const GoalContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+`;
+
+const GoalSetting = styled.button`
+  padding: 0.75rem;
+  margin-top: 1rem;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  background-color: ${(props) => props.theme.colors.primary};
+  cursor: pointer;
 `;

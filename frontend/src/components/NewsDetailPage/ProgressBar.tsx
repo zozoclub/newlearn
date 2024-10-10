@@ -39,7 +39,6 @@ const ProgressBar: React.FC<ProgressBarPropsType> = ({
   const languageData = useRecoilValue(languageState);
   const { newsId } = useParams();
   const isLoadingRef = useRef<boolean>(engIsLoading || korIsLoading);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
   const isActiveRef = useRef<boolean>(false);
   const setExpModal = useSetRecoilState(isExpModalState);
 
@@ -51,36 +50,14 @@ const ProgressBar: React.FC<ProgressBarPropsType> = ({
   // 상세 페이지에 들어오고 10초 동안은 읽음 처리를 하지 않음 + 한글일 때는 읽음 처리를 하지 않음
   useEffect(() => {
     isActiveRef.current = false;
-    let leftTime = 1;
     setScrollProgress(0);
 
-    const startTimer = () => {
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
+    setTimeout(() => {
+      if (languageData === "en") {
+        isActiveRef.current = true;
+        calculateProgress();
       }
-
-      timerRef.current = setInterval(() => {
-        leftTime--;
-
-        if (leftTime <= 0) {
-          if (timerRef.current) {
-            clearInterval(timerRef.current);
-          }
-          if (languageData === "en") {
-            isActiveRef.current = true;
-            calculateProgress();
-          }
-        }
-      }, 1000);
-    };
-
-    startTimer();
-
-    return () => {
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-      }
-    };
+    }, 150);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [difficulty, languageData, newsId]);
 

@@ -16,7 +16,8 @@ const Recommend = () => {
 const Container = styled.div`
   @media screen and (min-width: 768px) {
     display: flex;
-    min-height: 30rem;
+    height: 30rem;
+    overflow: hidden;
   }
 `;
 

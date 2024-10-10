@@ -14,16 +14,17 @@ export const PWAInstallPrompt = () => {
   };
 
   return (
-    !isInstalled &&
-    <Modal isOpen={isOpen} onClose={handleClose} title="New Learn">
-      <p>앱으로 사용하면 더 편하게 사용할 수 있습니다!</p>
-      <ModalButtonContainer>
-        <ModalCancelButton onClick={handleClose}>취소</ModalCancelButton>
-        <ModalConfirmButton onClick={handleInstallClick}>
-          설치
-        </ModalConfirmButton>
-      </ModalButtonContainer>
-    </Modal>
+    !isInstalled && (
+      <Modal isOpen={isOpen} onClose={handleClose} title="New Learn">
+        <p>앱으로 사용하면 더 편하게 사용할 수 있습니다!</p>
+        <ModalButtonContainer>
+          <ModalCancelButton onClick={handleClose}>취소</ModalCancelButton>
+          <ModalConfirmButton onClick={handleInstallClick}>
+            설치
+          </ModalConfirmButton>
+        </ModalButtonContainer>
+      </Modal>
+    )
   );
 };
 

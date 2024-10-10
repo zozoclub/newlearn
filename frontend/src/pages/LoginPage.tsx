@@ -50,8 +50,10 @@ const LoginPage = () => {
       <LogoDiv>
         <FullLogo width={360} height={60} />
       </LogoDiv>
-      <LoginButton src={NavarButton} alt="naver" onClick={naverLogin} />
-      <LoginButton src={KakaoButton} alt="kakao" onClick={kakaoLogin} />
+      <LoginButtonDiv>
+        <LoginButton src={NavarButton} alt="naver" onClick={naverLogin} />
+        <LoginButton src={KakaoButton} alt="kakao" onClick={kakaoLogin} />
+      </LoginButtonDiv>
     </Container>
   );
 };
@@ -65,24 +67,39 @@ const Container = styled.div`
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  width: 20rem;
+  max-width: 25rem;
   height: 20rem;
+  border-radius: 1rem;
+  @media screen and (min-width: 768px) {
+    padding: 6rem 3rem;
+    width: calc(100% - 6rem);
+    ${(props) =>
+      props.theme.mode === "dark" &&
+      `
+        border: 1px solid #ffffff22;
+        backdrop-filter: blur(12px);  
+    `}
+  }
+  @media screen and (max-width: 767px) {
+    width: calc(100% - 2rem);
+    padding: 0 1rem;
+  }
 `;
 
 const LogoDiv = styled.div`
-  margin-bottom: 3rem;
-  margin: 1rem 0 2rem 0;
+  margin: 1rem 0 4rem 0;
+`;
+const LoginButtonDiv = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
 `;
 
 const LoginButton = styled.img`
+  flex: 0 1;
   cursor: pointer;
   margin-bottom: 1rem;
-  @media screen and (min-width: 768px) {
-    width: 25rem;
-  }
-  @media screen and (max-width: 767px) {
-    width: 21rem;
-  }
+  width: 100%;
 `;
 
 export default LoginPage;

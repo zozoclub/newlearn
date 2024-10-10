@@ -94,14 +94,16 @@ const NewsDetailContent: React.FC<NewsDetailContentType> = ({
           if (prevWord !== selected.word) {
             const position = getSelectionPosition();
             if (position) {
-              const modalWidth = 300; // 모달의 예상 너비
-
               let x = position.x;
               const y = position.y + 30;
 
+              const modalWidth = 300;
               // 컨테이너의 오른쪽 경계를 넘어가지 않도록 조정
-              if (x + modalWidth > (contentRef.current?.offsetWidth || 0)) {
-                x = (contentRef.current?.offsetWidth || 0) - modalWidth;
+              if (
+                x + modalWidth + 30 >
+                (contentRef.current?.offsetWidth || 0)
+              ) {
+                x = (contentRef.current?.offsetWidth || 0) - (modalWidth + 30);
               }
 
               setWordModalPosition({ x, y });
@@ -138,6 +140,14 @@ const NewsDetailContent: React.FC<NewsDetailContentType> = ({
       setSlicedContent(slice);
     }
   }, [engData]);
+
+  useEffect(() => {
+    setSelected({ ...selected, word: "" });
+    return () => {
+      setSelected({ ...selected, word: "" });
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [newsId]);
 
   return (
     <Container>

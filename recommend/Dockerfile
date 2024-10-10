@@ -17,6 +17,10 @@ WORKDIR .
 # 애플리케이션 코드를 복사합니다.
 COPY . .
 
+# install java
+RUN apt-get install -y openjdk-17-jdk
+ENV JAVA_HOME="/usr/lib/jvm/java-17-openjdk-amd64"
+
 # 시스템 패키지 업데이트 및 의존성 설치
 RUN apt-get update && \
     pip install --no-cache-dir --upgrade pip && \

@@ -121,7 +121,7 @@ const MyPageProfile: React.FC = () => {
     setIsValidNickname(
       newNickname.length >= 3 &&
         newNickname.length <= 8 &&
-        /^[가-힣]+$/.test(newNickname)
+        /^[가-힣ㄱ-ㅎㅏ-ㅣ]+$/.test(newNickname)
     );
     setIsNicknameDuplicate(null);
   };
@@ -240,12 +240,18 @@ const MyPageProfile: React.FC = () => {
           </ExperienceContainer>
           {/* 소셜 로그인 정보 */}
           <SocialInfoContainer>
-            {name}
-            {social === "naver" ? <SocialNaver /> : <SocialKakao />}
-            {email}
-            <DeleteUserButton onClick={() => setIsDeleteUserModalOpen(true)}>
-              회원탈퇴
-            </DeleteUserButton>
+            <SocialInfoRow>
+              <NameSocialContainer>
+                {name}
+                {social === "naver" ? <SocialNaver /> : <SocialKakao />}
+              </NameSocialContainer>
+              <EmailContainer>
+                <Email>{email}</Email>
+              </EmailContainer>
+              <DeleteUserButton onClick={() => setIsDeleteUserModalOpen(true)}>
+                회원탈퇴
+              </DeleteUserButton>
+            </SocialInfoRow>
           </SocialInfoContainer>
           <Modal
             isOpen={isDeleteUserModalOpen}
@@ -449,12 +455,43 @@ const ExperienceText = styled.div`
 // 이름, 네이버&카카오, 이메일
 const SocialInfoContainer = styled.div`
   display: flex;
-  font-size: 1.25rem;
+  flex-direction: column;
+  font-size: 1rem;
+  gap: 0.5rem;
+  width: 100%;
+`;
+
+const SocialInfoRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+`;
+
+const NameSocialContainer = styled.div`
+  display: flex;
   align-items: center;
   gap: 0.5rem;
+  min-width: 80px; // Adjust this value as needed
+`;
+
+const EmailContainer = styled.div`
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0; // This allows the container to shrink below its content size
+  overflow: hidden;
+`;
+
+const Email = styled.span`
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-all; // This will break the email at any character
+  hyphens: auto;
 `;
 
 const DeleteUserButton = styled.button`
+  min-width: 70px;
   border: none;
   border-radius: 1rem;
   background-color: ${(props) => props.theme.colors.newsItemBackground};
@@ -463,6 +500,7 @@ const DeleteUserButton = styled.button`
   font-size: 0.875rem;
   cursor: pointer;
 `;
+
 // 아바타
 const AvatarSettingContainer = styled.div`
   position: relative;

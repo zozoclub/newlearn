@@ -235,7 +235,7 @@ const TitleContainer = styled.div`
 const ContentContainer = styled.div`
   display: flex;
   flex: 3;
-  gap: 0.875rem;
+  gap: 0.75rem;
   font-size: 1.25rem;
   @media (max-width: 767px) {
     font-size: 1rem;

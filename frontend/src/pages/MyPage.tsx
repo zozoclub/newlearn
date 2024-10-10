@@ -435,6 +435,9 @@ const ModalContent = styled.div`
   overflow-y: auto;
   flex-grow: 1;
   height: 100%;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const ItemTitle = styled.div`

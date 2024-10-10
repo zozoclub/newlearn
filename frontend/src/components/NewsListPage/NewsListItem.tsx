@@ -75,7 +75,7 @@ const Container = styled.div`
     margin: 0;
     padding: 0.75rem 0.5rem;
     background-color: transparent;
-    border-bottom: 1px solid ${(props) => props.theme.colors.readonly};
+    border-bottom: 1px solid ${(props) => props.theme.colors.mobileBorder};
   }
 `;
 
@@ -176,9 +176,6 @@ const CategoryButton = styled.button`
   background-color: ${(props) => props.theme.colors.primary};
   transition: background-color 0.5s;
   border: none;
-  &:hover {
-    background-color: ${(props) => props.theme.colors.primaryPress};
-  }
 
   @media (max-width: 768px) {
     min-height: 1.5rem;

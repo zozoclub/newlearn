@@ -100,7 +100,7 @@ const BarLabel = styled(BarContent)`
 `;
 
 const BarNumber = styled(BarContent)`
-  min-width: 70px;
+  min-width: 90px;
   text-align: right;
 `;
 

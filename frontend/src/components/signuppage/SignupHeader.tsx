@@ -10,7 +10,7 @@ const SignupHeader: React.FC<{
       <BackArrowDiv>
         <BackArrow width={36} height={36} />
       </BackArrowDiv>
-      <div>회원가입</div>
+      <div style={{ fontWeight: 600 }}>회원가입</div>
       {pageNum === 2 && (
         <PrevButton onClick={() => setPageNum(1)}>이전</PrevButton>
       )}

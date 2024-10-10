@@ -22,7 +22,7 @@ const SpeakingTestRealtimeText: React.FC<Props> = ({
       console.log("Current scroll position:", scrollPosition); // 스크롤 위치 디버깅
 
       // 스크롤 위치에 따라 모달의 위치를 업데이트
-      if (scrollPosition > 200) {
+      if (scrollPosition > 50) {
         setIsModalTop(true);
         console.log("위로");
       } else {

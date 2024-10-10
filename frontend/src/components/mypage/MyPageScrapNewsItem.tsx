@@ -68,19 +68,21 @@ const Container = styled.div`
   }
   @media (max-width: 767px) {
     height: 100%;
-    background-color: ${(props) => props.theme.colors.background};
     box-shadow: none;
     border-radius: 2px;
     margin: 0;
-    padding: 0.5rem;
-    border-bottom: 1px solid lightgray;
+    padding: 0.75rem 0.5rem;
+    background-color: transparent;
+    border-bottom: 1px solid ${(props) => props.theme.colors.readonly};
   }
 `;
 
 const ThumbnailImageDiv = styled.div`
   position: relative;
+  width: 25%;
   height: 100%;
   margin-right: 2.5rem;
+  object-fit: cover;
   @media screen and (min-width: 1280px) {
     min-width: 20rem;
   }
@@ -88,14 +90,15 @@ const ThumbnailImageDiv = styled.div`
     aspect-ratio: 1.6;
   }
   @media (max-width: 768px) {
-    min-width: 10rem;
-    height: 6.5rem;
+    min-width: 7rem;
+    height: 4.5rem;
     margin-right: 1rem;
   }
 `;
 
 const ThumbnailImage = styled.img`
   height: 100%;
+  width: 100%;
   border-radius: 1rem;
   object-fit: fill;
   @media screen and (min-width: 1280px) {
@@ -105,16 +108,16 @@ const ThumbnailImage = styled.img`
     aspect-ratio: 1.6;
   }
   @media (max-width: 768px) {
-    width: 10rem;
-    height: 6.5rem;
+    width: 7rem;
+    height: 4.5rem;
     border-radius: 5px;
+    object-fit: cover;
   }
 `;
 
 const DarkThumbnailImage = styled(ThumbnailImage)`
   position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 0;
   opacity: ${(props) => (props.theme.mode === "dark" ? 1 : 0)};
   transition: opacity 0.3s;
 `;
@@ -132,8 +135,8 @@ const Title = styled.div`
   width: 100%;
   @media (max-width: 768px) {
     height: auto;
-    font-weight: 500;
-    font-size: 1.125rem;
+    font-weight: 600;
+    font-size: 1rem;
     line-height: 1.25rem;
     margin-bottom: 0rem;
     text-overflow: ellipsis;
@@ -175,14 +178,16 @@ const CategoryButton = styled.div`
   }
 
   @media (max-width: 768px) {
-    margin-bottom: 0.75rem;
-    padding: 0.375rem 0.5rem;
-    font-size: 0.75rem;
+    min-height: 1.5rem;
+    padding: 0.375rem 0rem;
+    font-size: 0.875rem;
+    background: none;
+    color: ${(props) => props.theme.colors.text04};
   }
 `;
 
 const Medal = styled.img`
-  width: 32px;
+  width: 2.5rem;
   @media (max-width: 768px) {
     width: 1.75rem;
     height: 1.75rem;

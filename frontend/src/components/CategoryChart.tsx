@@ -91,6 +91,7 @@ const CategoryChart: React.FC = () => {
           stepSize: 10,
           font: {
             size: 12,
+            letterSpacing: "6px",
           },
           color: theme.colors.text,
           backdropColor: `${theme.colors.cardBackground}`,
@@ -99,6 +100,7 @@ const CategoryChart: React.FC = () => {
           font: {
             size: 14,
             weight: 600,
+            letterSpacing: "6px",
           },
           color: theme.colors.text,
         },
@@ -106,6 +108,7 @@ const CategoryChart: React.FC = () => {
     },
     font: {
       size: 16,
+      letterSpacing: "6px",
     },
   };
 

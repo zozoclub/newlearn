@@ -121,7 +121,7 @@ const MyPageProfile: React.FC = () => {
     setIsValidNickname(
       newNickname.length >= 3 &&
         newNickname.length <= 8 &&
-        /^[가-힣]+$/.test(newNickname)
+        /^[가-힣ㄱ-ㅎㅏ-ㅣ]+$/.test(newNickname)
     );
     setIsNicknameDuplicate(null);
   };
@@ -451,7 +451,7 @@ const SocialInfoContainer = styled.div`
   display: flex;
   font-size: 1.25rem;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.75rem;
 `;
 
 const DeleteUserButton = styled.button`

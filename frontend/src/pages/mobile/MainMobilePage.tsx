@@ -13,6 +13,7 @@ import lightThumbnailImage from "@assets/images/lightThumbnail.png";
 import darkThumbnailImage from "@assets/images/darkThumbnail.png";
 import RankingKindSelect from "@components/mainpage/RankingKindSelect";
 import TopRanking from "@components/mainpage/TopRanking";
+import { usePageTransition } from "@hooks/usePageTransition";
 
 const MainMobilePage = () => {
   const Theme = useTheme();
@@ -23,6 +24,7 @@ const MainMobilePage = () => {
     queryFn: getHybridNews,
     staleTime: 5 * 60 * 1000,
   });
+  const transitionTo = usePageTransition();
 
   return (
     <PageWrapper>
@@ -49,7 +51,11 @@ const MainMobilePage = () => {
           ) : (
             <div>
               {data?.slice(0, 5).map((news, index) => (
-                <RecommandNewsDiv key={news.newsId} $isLast={index === 4}>
+                <RecommandNewsDiv
+                  onClick={() => transitionTo(`news/detail/${news.newsId}`)}
+                  key={news.newsId}
+                  $isLast={index === 4}
+                >
                   {news.thumbnailImageUrl ? (
                     <div className="img-space">
                       <img

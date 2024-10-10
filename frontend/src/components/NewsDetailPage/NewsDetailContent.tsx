@@ -93,11 +93,11 @@ const NewsDetailContent: React.FC<NewsDetailContentType> = ({
 
           if (prevWord !== selected.word) {
             const position = getSelectionPosition();
-            const modalWidth = 300;
-            if (position && modalWidth) {
+            if (position) {
               let x = position.x;
               const y = position.y + 30;
 
+              const modalWidth = 300;
               // 컨테이너의 오른쪽 경계를 넘어가지 않도록 조정
               if (
                 x + modalWidth + 30 >
@@ -140,6 +140,14 @@ const NewsDetailContent: React.FC<NewsDetailContentType> = ({
       setSlicedContent(slice);
     }
   }, [engData]);
+
+  useEffect(() => {
+    setSelected({ ...selected, word: "" });
+    return () => {
+      setSelected({ ...selected, word: "" });
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [newsId]);
 
   return (
     <Container>

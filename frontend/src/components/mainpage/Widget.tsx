@@ -1,17 +1,17 @@
 import styled from "styled-components";
 import MainGoalBar from "@components/mainpage/MainGoalBar";
-import { useNavigate } from "react-router-dom";
 import { useRecoilValue } from "recoil";
 import { goalDataSelector } from "@store/goalState";
 import CategoryChart from "@components/CategoryChart";
 import RankingWidget from "./RankingWidget";
 import TopRanking from "./TopRanking";
+import { usePageTransition } from "@hooks/usePageTransition";
 
 const Widget: React.FC<{ variety: string }> = ({ variety }) => {
-  const navigate = useNavigate();
   const goalData = useRecoilValue(goalDataSelector);
+  const transitionTo = usePageTransition();
   const handleMyStudy = () => {
-    navigate("/mystudy");
+    transitionTo("mystudy");
   };
   switch (variety) {
     case "chart":

@@ -65,7 +65,7 @@ const UserProfile = () => {
       </ProfileAvatar>
       <UserProfileModal $isOpened={isOpened} ref={modalRef}>
         <div className="tail"></div>
-        <ProfileWidget />
+        <ProfileWidget setIsOpened={setIsOpened} />
         <div className="logout" onClick={handleLogoutButton}>
           로그아웃
         </div>

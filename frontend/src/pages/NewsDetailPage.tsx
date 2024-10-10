@@ -211,7 +211,7 @@ const NewsDetailPage = () => {
                 </>
               )}
             </ThumbnailImageDiv>
-            <div ref={newsContainerRef}>
+            <div>
               <NewsDetailContent
                 difficulty={difficulty}
                 engData={engData}

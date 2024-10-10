@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 //@RequiredArgsConstructor
 @Service
@@ -46,8 +47,37 @@ public class RankServiceImpl implements RankService {
         List<Users> allUsers = userRepository.findAll();
         ZSetOperations<String, String> zSetOps = redisTemplate.opsForZSet();
 
+        // 모든 유저를 ZSet에 추가
         for (Users user : allUsers) {
-            zSetOps.add(POINTS_RANK_KEY, user.getUserId().toString(), user.getExperience());
+            if (user.getUserId() != null) {
+                zSetOps.add(POINTS_RANK_KEY, user.getUserId().toString(), user.getExperience());
+            }
+        }
+
+        // 현재 랭킹에 있는 유저 IDs
+        Set<String> currentRankedUserIds = zSetOps.range(POINTS_RANK_KEY, 0, -1);
+        int currentRankCount = currentRankedUserIds.size();
+
+        // 필요에 따라 새로운 유저 추가
+        if (currentRankCount < 10) {
+            int neededUsers = 10 - currentRankCount;
+
+            // 현재 랭킹에 포함되지 않은 유저를 필터링하여 추가
+            List<Users> newUsers = allUsers.stream()
+                    .filter(user -> !currentRankedUserIds.contains(user.getUserId().toString()))
+                    .limit(neededUsers)
+                    .collect(Collectors.toList());
+
+            for (Users user : newUsers) {
+                zSetOps.add(POINTS_RANK_KEY, user.getUserId().toString(), user.getExperience());
+            }
+        }
+
+        // ZSet에서 탈퇴한 유저 제거
+        for (String rankedUserId : currentRankedUserIds) {
+            if (!allUsers.stream().anyMatch(user -> user.getUserId().toString().equals(rankedUserId))) {
+                zSetOps.remove(POINTS_RANK_KEY, rankedUserId);
+            }
         }
     }
 
@@ -55,8 +85,37 @@ public class RankServiceImpl implements RankService {
         List<Users> allUsers = userRepository.findAll();
         ZSetOperations<String, String> zSetOps = redisTemplate.opsForZSet();
 
+        // 모든 유저를 ZSet에 추가
         for (Users user : allUsers) {
-            zSetOps.add(READING_RANK_KEY, user.getUserId().toString(), user.getTotalNewsReadCount());
+            if (user.getUserId() != null) {
+                zSetOps.add(READING_RANK_KEY, user.getUserId().toString(), user.getTotalNewsReadCount());
+            }
+        }
+
+        // 현재 랭킹에 있는 유저 IDs
+        Set<String> currentRankedUserIds = zSetOps.range(READING_RANK_KEY, 0, -1);
+        int currentRankCount = currentRankedUserIds.size();
+
+        // 필요에 따라 새로운 유저 추가
+        if (currentRankCount < 10) {
+            int neededUsers = 10 - currentRankCount;
+
+            // 현재 랭킹에 포함되지 않은 유저를 필터링하여 추가
+            List<Users> newUsers = allUsers.stream()
+                    .filter(user -> !currentRankedUserIds.contains(user.getUserId().toString()))
+                    .limit(neededUsers)
+                    .collect(Collectors.toList());
+
+            for (Users user : newUsers) {
+                zSetOps.add(READING_RANK_KEY, user.getUserId().toString(), user.getTotalNewsReadCount());
+            }
+        }
+
+        // ZSet에서 탈퇴한 유저 제거
+        for (String rankedUserId : currentRankedUserIds) {
+            if (!allUsers.stream().anyMatch(user -> user.getUserId().toString().equals(rankedUserId))) {
+                zSetOps.remove(READING_RANK_KEY, rankedUserId);
+            }
         }
     }
 
@@ -70,13 +129,6 @@ public class RankServiceImpl implements RankService {
         for (ZSetOperations.TypedTuple<String> tuple : rangeWithScores) {
             Long userId = Long.parseLong(tuple.getValue());
             Users user = userRepository.findUserByUserId(userId);
-
-            // 유저가 존재하지 않거나 탈퇴한 경우
-            if (user == null) {
-                // 해당 userId를 zset에서 삭제
-                redisTemplate.opsForZSet().remove(READING_RANK_KEY, tuple.getValue());
-                continue; // 다음 유저로 넘어감
-            }
 
             result.add(PointsRankDTO.builder()
                     .userId(userId)
@@ -100,13 +152,6 @@ public class RankServiceImpl implements RankService {
             Long userId = Long.parseLong(tuple.getValue());
             Users user = userRepository.findUserByUserId(userId);
 
-            // 유저가 존재하지 않거나 탈퇴한 경우
-            if (user == null) {
-                // 해당 userId를 zset에서 삭제
-                redisTemplate.opsForZSet().remove(READING_RANK_KEY, tuple.getValue());
-                continue; // 다음 유저로 넘어감
-            }
-
             result.add(ReadingRankDTO.builder()
                     .userId(userId)
                     .nickname(user.getNickname())
@@ -114,6 +159,7 @@ public class RankServiceImpl implements RankService {
                     .ranking(rank++)
                     .build());
         }
+
         return result;
     }
 

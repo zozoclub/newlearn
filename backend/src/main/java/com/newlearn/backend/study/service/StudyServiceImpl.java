@@ -87,7 +87,7 @@ public class StudyServiceImpl implements StudyService{
         newQuiz.setCorrectCount(0L);
         wordQuizRepository.save(newQuiz);
 
-        List<Word> words = wordQuizQuestionRepository.findRandomWords(userId, totalCount);
+        List<Word> words = wordQuizQuestionRepository.findRandomWordsforWordTest(userId, totalCount);
         List<WordTestResponseDTO> tests = new ArrayList<>();
 
         for (Word word : words) {
@@ -279,7 +279,7 @@ public class StudyServiceImpl implements StudyService{
     @Override
     public List<PronounceTestResponseDTO> getPronounceTestProblems(Long userId) {
         // 랜덤 단어 3개 가져오기
-        List<Word> words = wordQuizQuestionRepository.findRandomWords(userId, 3L);
+        List<Word> words = wordQuizQuestionRepository.findRandomWordsforPronounceTest(userId, 3L);
         List<PronounceTestResponseDTO> tests = new ArrayList<>();
 
         for (Word word : words) {

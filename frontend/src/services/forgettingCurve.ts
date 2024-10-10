@@ -11,6 +11,7 @@ export type ForgettingCurveWordListResponseDto = {
 
 // 망각 곡선 문제 받기
 export const getForgettingCurveWordList = async (): Promise<ForgettingCurveWordListResponseDto[]> => {
+    
     try {
         console.log("망각 실행");
         const response = await axiosInstance.get(`word/restudy/check`)
@@ -39,6 +40,8 @@ export const postCompleteCurveWord = async (wordId: number): Promise<void> => {
 
 // 망각 곡선 하루 스킵
 export const postSkipCurveWord = async (wordId : number): Promise<void> => {
+    console.log(wordId);
+    
     try {
         const response = await axiosInstance.post(`word/restudy/skip/${wordId}`)
         console.log(response);
@@ -59,6 +62,7 @@ export type SaveForgettingCurveWordRequestDto = {
 }
 
 export const postSaveForgettingCurveWord = async (saveData:SaveForgettingCurveWordRequestDto[]) : Promise<void> => {
+    console.log(saveData);
     try {
         const response = await axiosInstance.post(`word/restudy/exit`,saveData)
         console.log(response);

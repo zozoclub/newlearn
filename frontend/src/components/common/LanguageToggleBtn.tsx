@@ -25,7 +25,16 @@ const LanguageToggleBtn = () => {
     currentLocationData === "signUp" ||
     currentLocationData === "notFound" ||
     currentLocationData === "myPage" ||
-    currentLocationData === "search"
+    currentLocationData === "search" ||
+    currentLocationData === "wordResult" ||
+    currentLocationData === "wordTest" ||
+    currentLocationData === "wordHistory" ||
+    currentLocationData === "voca" ||
+    currentLocationData === "speakingResult" ||
+    currentLocationData === "speakingTest" ||
+    currentLocationData === "speakingHistory" ||
+    currentLocationData === "newsSearch" ||
+    currentLocationData === "myStudy"
   )
     return null;
 

@@ -15,7 +15,8 @@ export const GlobalStyle = createGlobalStyle`
 
   // 모바일 크기에서 스크롤바 제거
   @media screen and (max-width: 767px) {
-  body::-webkit-scrollbar {
+  
+    main::-webkit-scrollbar, body::-webkit-scrollbar {
     display: none;  /* Chrome, Safari and Opera */
   }
 }

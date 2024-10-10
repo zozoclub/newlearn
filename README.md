@@ -26,14 +26,20 @@
 
 ## 주요 기능
 - 회원가입 / 로그인
+  
 - 뉴스
+  
 - 단어 빈칸 테스트
+  
 - 발음 테스트
+  
 - 검색 / WordCloud
+  
 - 마이페이지
+  
 
 ## 개발 환경
-<img src="./resources/development_environment.png"><br>
+<img src="./resources/development_environment.png" width="60%"><br>
 
 ## 기술 특이점
 - **데이터 파이프라인 구축**

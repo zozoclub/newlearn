@@ -306,16 +306,34 @@ const SpeakingTestPage: React.FC = () => {
       );
 
       const completeness = (similarity * 100).toFixed(0);
+      // 보정 전 데이터
+      console.log(
+        "보정 전 데이터",
+        avgPronunciation,
+        avgAccuracy,
+        avgFluency,
+        avgProsody
+      );
 
+      // 점수 보정
       const results = {
         sentenceIds: sentenceIds,
-        accuracyScore: Number(avgAccuracy),
-        fluencyScore: Number(avgFluency),
+        accuracyScore: Number(
+          (Number(avgAccuracy) * Number(completeness) /100).toFixed(0)
+        ),
+        fluencyScore: Number(
+          (Number(avgFluency) * Number(completeness) / 100).toFixed(0)
+        ),
         completenessScore: Number(completeness),
-        prosodyScore: Number(avgProsody),
-        totalScore: Number(avgPronunciation),
+        prosodyScore: Number(
+          (Number(avgProsody) * Number(completeness) / 100).toFixed(0)
+        ),
+        totalScore: Number(
+          (Number(avgPronunciation) * Number(completeness) / 100).toFixed(0)
+        ),
         files: audioFile,
       };
+      console.log("보정 후 데이터", results);
 
       mutation.mutate(results, {
         onSuccess: () => {

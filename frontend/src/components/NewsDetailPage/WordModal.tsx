@@ -251,10 +251,11 @@ const SaveButton = styled.div<{ $isSaved: boolean; $isJustSaved: boolean }>`
 const Container = styled.div`
   position: absolute;
   z-index: 1;
-  min-width: 10rem;
+  min-width: 12rem;
   background-color: ${(props) => props.theme.colors.cardBackground};
   padding: 1.5rem;
   border-radius: 0.75rem;
+  box-shadow: ${(props) => props.theme.shadows.medium};
 `;
 
 const Word = styled.div`

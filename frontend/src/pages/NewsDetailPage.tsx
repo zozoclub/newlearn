@@ -86,8 +86,7 @@ const NewsDetailPage = () => {
         steps: [
           {
             selector: "#step1",
-            content:
-              "화면 상단에 뉴스 읽음 진행도가 표시됩니다. 점수 획득을 위한 편법을 방지하기 위해 10초 후부터 활성화됩니다.",
+            content: "화면 상단에 뉴스 읽음 진행도가 표시됩니다.",
           },
           {
             selector: "#step2",
@@ -99,11 +98,6 @@ const NewsDetailPage = () => {
           },
           {
             selector: "#step4",
-            content: `${userInfoData.nickname}님이 최근 읽은 뉴스를 확인할 수 있습니다.`,
-            isNeedToGo: true,
-          },
-          {
-            selector: "#step5",
             content:
               "뉴스에서 나온 단어들을 찾는 Word Hunt 게임입니다. 단어는 가로와 세로 방향만 존재합니다.",
             isNeedToGo: true,
@@ -222,7 +216,7 @@ const NewsDetailPage = () => {
               />
             </div>
           </NewsContainer>
-          <WordHuntContainer id="step5">
+          <WordHuntContainer>
             <WordHunt engData={engData?.content} />
           </WordHuntContainer>
         </News>

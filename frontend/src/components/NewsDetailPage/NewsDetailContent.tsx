@@ -57,7 +57,6 @@ const NewsDetailContent: React.FC<NewsDetailContentType> = ({
   >([]);
   const theme = useTheme();
   const contentRef = useRef<HTMLDivElement>(null);
-  const lastTouchTime = useRef<number>(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const getSelectionPosition = (): { x: number; y: number } | null => {
@@ -78,23 +77,7 @@ const NewsDetailContent: React.FC<NewsDetailContentType> = ({
   };
 
   const handleSelectionEnd = (event: React.MouseEvent | React.TouchEvent) => {
-    const isTouch = "touches" in event;
-
-    if (isTouch) {
-      const currentTime = new Date().getTime();
-      const timeSinceLastTouch = currentTime - lastTouchTime.current;
-
-      if (timeSinceLastTouch < 300) {
-        // 300ms 이내의 더블 터치 무시
-        return;
-      }
-
-      lastTouchTime.current = currentTime;
-    }
-
-    if (wordModalRef.current?.contains(event.target as Node)) {
-      return;
-    }
+    event.preventDefault();
 
     const prevWord = selected.word;
     const result = handleSelection();

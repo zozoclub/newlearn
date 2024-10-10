@@ -94,6 +94,7 @@ export const useWordSelection = (engData: string, korData: string) => {
     const selection = window.getSelection();
     if (!selection || selection.rangeCount === 0 || selection.isCollapsed)
       return null;
+    setSelectedText(selection.toString().trim());
 
     const range = selection.getRangeAt(0);
     const word = selectedText;

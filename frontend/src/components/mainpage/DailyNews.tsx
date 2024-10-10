@@ -49,6 +49,7 @@ const Container = styled.div`
     top: 10rem;
     width: 55vw;
     aspect-ratio: 1.6;
+    max-height: 550px;
   }
   @media screen and (min-width: 768px) and (max-width: 1279px) {
     width: 50vw;

@@ -99,6 +99,12 @@ const NewsDetailPage = () => {
           {
             selector: "#step4",
             content:
+              "뉴스 본문에서 단어를 드래그 or 더블클릭 하면 해당 단어의 뜻을 볼 수 있고 단어를 하이라이팅 할 수 있습니다.",
+            isNeedToGo: true,
+          },
+          {
+            selector: "#step5",
+            content:
               "뉴스에서 나온 단어들을 찾는 Word Hunt 게임입니다. 단어는 가로와 세로 방향만 존재합니다.",
             isNeedToGo: true,
           },
@@ -205,7 +211,7 @@ const NewsDetailPage = () => {
                 </>
               )}
             </ThumbnailImageDiv>
-            <div>
+            <div id="step4">
               <NewsDetailContent
                 difficulty={difficulty}
                 engData={engData}
@@ -216,7 +222,7 @@ const NewsDetailPage = () => {
               />
             </div>
           </NewsContainer>
-          <WordHuntContainer>
+          <WordHuntContainer id="step5">
             <WordHunt engData={engData?.content} />
           </WordHuntContainer>
         </News>

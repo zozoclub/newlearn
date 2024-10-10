@@ -1,5 +1,5 @@
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Mousewheel, Pagination } from "swiper/modules";
+import { Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/parallax";
 import "swiper/css/effect-coverflow";
@@ -39,9 +39,8 @@ const NewsSwiper: React.FC<NewsSwiperProps> = ({
         slidesPerView={slidesPerView} // 한 번에 1.5개의 슬라이드가 보이도록 설정
         spaceBetween={-50} // 음수 값을 주어 슬라이드가 겹치도록 설정
         speed={500}
-        mousewheel={true}
         pagination={isTablet ? false : true}
-        modules={[Pagination, Mousewheel]} // EffectCoverflow 제거
+        modules={[Pagination]}
         className="mySwiper"
       >
         {newsList?.map((news) => (

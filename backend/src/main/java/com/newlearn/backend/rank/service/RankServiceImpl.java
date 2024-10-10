@@ -70,6 +70,14 @@ public class RankServiceImpl implements RankService {
         for (ZSetOperations.TypedTuple<String> tuple : rangeWithScores) {
             Long userId = Long.parseLong(tuple.getValue());
             Users user = userRepository.findUserByUserId(userId);
+
+            // 유저가 존재하지 않거나 탈퇴한 경우
+            if (user == null) {
+                // 해당 userId를 zset에서 삭제
+                redisTemplate.opsForZSet().remove(READING_RANK_KEY, tuple.getValue());
+                continue; // 다음 유저로 넘어감
+            }
+
             result.add(PointsRankDTO.builder()
                     .userId(userId)
                     .nickname(user.getNickname())
@@ -85,11 +93,20 @@ public class RankServiceImpl implements RankService {
         Set<ZSetOperations.TypedTuple<String>> rangeWithScores =
                 redisTemplate.opsForZSet().reverseRangeWithScores(READING_RANK_KEY, 0, 9);
 
-        List<ReadingRankDTO> result = new ArrayList<>();
+        List<ReadingRankDTO> result =  new ArrayList<>();
         int rank = 1;
+
         for (ZSetOperations.TypedTuple<String> tuple : rangeWithScores) {
             Long userId = Long.parseLong(tuple.getValue());
             Users user = userRepository.findUserByUserId(userId);
+
+            // 유저가 존재하지 않거나 탈퇴한 경우
+            if (user == null) {
+                // 해당 userId를 zset에서 삭제
+                redisTemplate.opsForZSet().remove(READING_RANK_KEY, tuple.getValue());
+                continue; // 다음 유저로 넘어감
+            }
+
             result.add(ReadingRankDTO.builder()
                     .userId(userId)
                     .nickname(user.getNickname())
@@ -108,5 +125,14 @@ public class RankServiceImpl implements RankService {
     @Override
     public void updateUserReadCount(Long userId, int readCount) {
         redisTemplate.opsForZSet().incrementScore(READING_RANK_KEY, userId.toString(), readCount);
+    }
+
+    @Override
+    public void removeUserFromRanking(Long userId) {
+        String userKey = "user:" + userId;
+
+        ZSetOperations<String, String> zSetOperations = redisTemplate.opsForZSet();
+        zSetOperations.remove(POINTS_RANK_KEY, userKey);
+        zSetOperations.remove(READING_RANK_KEY, userKey);
     }
 }

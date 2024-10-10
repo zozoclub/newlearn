@@ -1,5 +1,7 @@
 package com.newlearn.backend.user.controller;
 
+import com.newlearn.backend.rank.service.RankService;
+import com.newlearn.backend.rank.service.RankServiceImpl;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
@@ -49,6 +51,7 @@ public class UserController {
 	private final TokenService tokenService;
 	private final JwtTokenProvider jwtTokenProvider;
 	private final UserTutorialService userTutorialService;
+	private final RankService rankService;
 
 	//회원가입
 	@PostMapping("/sign-up")
@@ -269,6 +272,8 @@ public class UserController {
 			}
 
 			userService.deleteUser(user.getUserId());
+
+			rankService.removeUserFromRanking(user.getUserId());
 
 			return ApiResponse.createSuccess(null, "회원 탈퇴가 완료되었습니다.");
 		} catch (Exception e) {

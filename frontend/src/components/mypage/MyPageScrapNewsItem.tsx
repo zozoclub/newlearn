@@ -100,7 +100,7 @@ const ThumbnailImage = styled.img`
   height: 100%;
   width: 100%;
   border-radius: 1rem;
-  object-fit: fill;
+  object-fit: cover;
   @media screen and (min-width: 1280px) {
     width: 20rem;
   }

@@ -47,11 +47,8 @@ const SpeakingTestRealtimeText: React.FC<Props> = ({
               <RecognizingText>최종 인식된 텍스트</RecognizingText>
               <Explain>
                 인식된 텍스트는 문장의 완성도 점수에서 확인 가능합니다.
-                <br />
-                문단이 제대로 나누어지지 않아도 점수에는 큰 영향 없습니다.
               </Explain>
               <RecognizedText>
-
                 {splitRecognizedText.map((sentence, index) => (
                   <span key={index}>
                     {sentence}
@@ -106,10 +103,10 @@ const Tip = styled.p`
 
 const FinalText = styled.div`
   color: ${(props) => props.theme.colors.text};
-  font-size: 1.125rem;
+  font-size: 1rem;
   font-weight: 600;
-  line-height: 1.75rem;
-  margin-top: 1.5rem;
+  line-height: 1.3rem;
+  margin-top: 1rem;
 `;
 
 const InstructionText = styled.p`

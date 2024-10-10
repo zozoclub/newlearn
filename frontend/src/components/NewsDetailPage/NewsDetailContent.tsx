@@ -76,9 +76,7 @@ const NewsDetailContent: React.FC<NewsDetailContentType> = ({
     };
   };
 
-  const handleSelectionEnd = (event: React.MouseEvent | React.TouchEvent) => {
-    event.preventDefault();
-
+  const handleSelectionEnd = () => {
     const prevWord = selected.word;
     const result = handleSelection();
 

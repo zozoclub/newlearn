@@ -222,7 +222,7 @@ const GoalItem = styled.div`
   margin: 0.5rem 8rem;
 
   @media (max-width: 767px) {
-    margin: 0.5rem 3rem;
+    margin: 0.5rem;
   }
 `;
 

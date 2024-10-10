@@ -41,7 +41,6 @@ const MyPage = () => {
   const [isDeleteUserModalOpen, setIsDeleteUserModalOpen] = useState(false);
   const setCurrentLocation = useSetRecoilState(locationState);
 
-  // 페이지마다 튜토리얼 추가해주시면 됩니다.
   const setTutorialTip = useSetRecoilState(tutorialTipState);
   const resetTutorialTip = useResetRecoilState(tutorialTipState);
   const startTutorial = async () => {
@@ -68,6 +67,11 @@ const MyPage = () => {
           {
             selector: "#step5",
             content: "매일 뉴스를 읽고 잔디를 채워보세요.",
+          },
+          {
+            selector: "#step10",
+            content: "내가 스크랩한 뉴스를 확인할 수 있어요.",
+            isNeedToGo: true,
           },
         ],
         isActive: true,
@@ -127,7 +131,7 @@ const MyPage = () => {
       sessionStorage.removeItem("accessToken");
       setIsDeleteUserModalOpen(false);
 
-      transitionTo("/login");
+      location.replace("/login");
     } catch (error) {
       console.log("로그아웃 오류 발생", error);
     }
@@ -296,7 +300,7 @@ const MyPage = () => {
             </WidgetContainer>
           </FlexItem>
         </FlexContainer>
-        <FlexContainer>
+        <FlexContainer id="step10">
           <FlexItem $flex={1}>
             <WidgetContainer>
               <MyPageScrapNews />

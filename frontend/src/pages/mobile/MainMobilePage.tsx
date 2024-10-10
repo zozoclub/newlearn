@@ -43,9 +43,14 @@ const MainMobilePage = () => {
                 <div className="img-space">
                   <Spinner />
                 </div>
-                <LoadingBar />
-                <LoadingBar />
-                <LoadingBar />
+                <div
+                  style={{ width: "100%", gap: "0.1rem" }}
+                  className="user-info"
+                >
+                  <LoadingBar />
+                  <LoadingBar />
+                  <LoadingBar />
+                </div>
               </RecommandNewsDiv>
             ))
           ) : (
@@ -97,7 +102,6 @@ const MainMobilePage = () => {
           )}
         </RecommandNewsContainer>
         <Divider />
-
         <div style={{ position: "relative", marginTop: "1.5rem" }}>
           <Title>이 달의 랭킹</Title>
           <RankingKindSelect />
@@ -211,7 +215,7 @@ const RankingContainer = styled.div`
 `;
 
 const Divider = styled.div`
-  height: 1rem;
+  height: 0.5rem;
   margin: 0 0 0.5rem;
   background-color: ${(props) => props.theme.colors.divider};
   border-top: none;

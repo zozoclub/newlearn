@@ -109,7 +109,11 @@ const TopRanking = () => {
               </div>
             </div>
             <div className="avatar">
-              <Avatar avatar={firstUserAvatar!} size={4} />
+              {firstUserAvatar ? (
+                <Avatar avatar={firstUserAvatar} size={4} />
+              ) : (
+                <Spinner />
+              )}
             </div>
             <div className="user-info">
               <img src={firstRankIcon} width={48} />
@@ -130,7 +134,11 @@ const TopRanking = () => {
               </div>
             </div>
             <div className="avatar">
-              <Avatar avatar={secondUserAvatar!} size={4} />
+              {secondUserAvatar ? (
+                <Avatar avatar={secondUserAvatar!} size={4} />
+              ) : (
+                <Spinner />
+              )}
             </div>
             <div className="user-info">
               <img src={secondRankIcon} width={48} />
@@ -151,7 +159,11 @@ const TopRanking = () => {
               </div>
             </div>
             <div className="avatar">
-              <Avatar avatar={thirdUserAvatar!} size={4} />
+              {thirdUserAvatar ? (
+                <Avatar avatar={thirdUserAvatar!} size={4} />
+              ) : (
+                <Spinner />
+              )}
             </div>
             <div className="user-info">
               <img src={thirdRankIcon} width={48} />

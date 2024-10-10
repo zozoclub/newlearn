@@ -7,7 +7,11 @@ import Spinner from "@components/Spinner";
 import { usePageTransition } from "@hooks/usePageTransition";
 import LevelIcon from "./LevelIcon";
 
-const Profile = () => {
+type ProfileProps = {
+  setIsOpened: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+const Profile: React.FC<ProfileProps> = ({ setIsOpened }) => {
   const userInfo = useRecoilValue(userInfoState);
   const avatar: AvatarType = {
     skin: userInfo.skin,
@@ -47,6 +51,7 @@ const Profile = () => {
           }}
           className="center-circle"
           onClick={() => {
+            setIsOpened(false);
             transitionTo("/mypage");
           }}
         >

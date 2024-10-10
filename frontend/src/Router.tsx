@@ -15,7 +15,6 @@ import SpeakingTestHistoryPage from "@pages/SpeakingTestHistoryPage";
 import NewsSearchPage from "@pages/NewsSearchPage";
 import LoginPage from "@pages/LoginPage";
 import SignUpPage from "@pages/SignUpPage";
-import LandingPage from "@pages/LandingPage";
 import NewsDetailPage from "@pages/NewsDetailPage";
 import NotFoundPage from "@pages/NotFoundPage";
 import PrivateRoute from "@hooks/PrivateRoute";
@@ -70,8 +69,7 @@ export const router = createBrowserRouter([
           },
           {
             path: "speakingtesthistory",
-            element: <SpeakingTestHistoryPage
-            />,
+            element: <SpeakingTestHistoryPage />,
           },
           {
             path: "voca",
@@ -85,10 +83,6 @@ export const router = createBrowserRouter([
             ],
           },
         ],
-      },
-      {
-        path: "landing",
-        element: <LandingPage />,
       },
       {
         path: "login",

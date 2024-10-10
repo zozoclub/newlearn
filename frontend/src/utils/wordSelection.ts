@@ -6,19 +6,18 @@ type SelectionResult = {
   koreanSentence: string;
 };
 
-// 선택된 단어가 완전한 단어인지 확인하는 함수
-const isCompleteWord = (node: Node, start: number, end: number): boolean => {
-  const nodeText = node.textContent || "";
-  const beforeChar = nodeText[start - 1];
-  const afterChar = nodeText[end];
-  const isStartOfWord = !beforeChar || /\W/.test(beforeChar);
-  const isEndOfWord = !afterChar || /\W/.test(afterChar);
-  return isStartOfWord && isEndOfWord;
-};
-
 // 선택된 텍스트가 유효한 단어인지 확인하는 함수
 const isValidWord = (word: string): boolean => {
   return /^[a-zA-Z가-힣]+$/.test(word);
+};
+
+// 선택된 단어가 완전한 단어인지 확인하는 함수
+const isCompleteWord = (text: string, start: number, end: number): boolean => {
+  const beforeChar = text[start - 1];
+  const afterChar = text[end];
+  const isStartOfWord = !beforeChar || /\W/.test(beforeChar);
+  const isEndOfWord = !afterChar || /\W/.test(afterChar);
+  return isStartOfWord && isEndOfWord;
 };
 
 // 영어와 한글 문장을 추출하는 함수
@@ -52,14 +51,36 @@ const extractSentences = (
   return { engSentence: null, korSentence: null };
 };
 
+// 선택된 텍스트의 정확한 위치를 찾는 함수
+const findExactTextNode = (
+  container: Node,
+  text: string
+): { node: Node; start: number; end: number } | null => {
+  if (container.nodeType === Node.TEXT_NODE) {
+    const content = container.textContent || "";
+    const index = content.indexOf(text);
+    if (index !== -1) {
+      return { node: container, start: index, end: index + text.length };
+    }
+  } else if (container.nodeType === Node.ELEMENT_NODE) {
+    for (let i = 0; i < container.childNodes.length; i++) {
+      const result = findExactTextNode(container.childNodes[i], text);
+      if (result) return result;
+    }
+  }
+  return null;
+};
+
 export const useWordSelection = (engData: string, korData: string) => {
   const [selectedText, setSelectedText] = useState("");
 
   useEffect(() => {
     const handleSelectionChange = () => {
       const selection = window.getSelection();
-      if (selection) {
+      if (selection && !selection.isCollapsed) {
         setSelectedText(selection.toString().trim());
+      } else {
+        setSelectedText("");
       }
     };
 
@@ -71,15 +92,32 @@ export const useWordSelection = (engData: string, korData: string) => {
 
   const handleSelection = useCallback((): SelectionResult | null => {
     const selection = window.getSelection();
-    if (!selection || selection.rangeCount === 0) return null;
+    if (!selection || selection.rangeCount === 0 || selection.isCollapsed)
+      return null;
+    setSelectedText(selection.toString().trim());
 
     const range = selection.getRangeAt(0);
     const word = selectedText;
 
+    // 선택된 텍스트가 비어있거나 유효하지 않은 경우 처리
+    if (!word || !isValidWord(word) || word.length === 0) {
+      return null;
+    }
+
+    // 정확한 텍스트 노드와 위치 찾기
+    const exactLocation = findExactTextNode(
+      range.commonAncestorContainer,
+      word
+    );
+    if (!exactLocation) return null;
+
+    // 선택된 텍스트가 완전한 단어인지 확인
     if (
-      !isValidWord(word) ||
-      word.length === 0 ||
-      !isCompleteWord(range.startContainer, range.startOffset, range.endOffset)
+      !isCompleteWord(
+        exactLocation.node.textContent || "",
+        exactLocation.start,
+        exactLocation.end
+      )
     ) {
       return null;
     }

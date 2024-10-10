@@ -56,8 +56,8 @@ const NewsDetailContent: React.FC<NewsDetailContentType> = ({
     { sentence: string; words: string[] }[]
   >([]);
   const theme = useTheme();
-
   const contentRef = useRef<HTMLDivElement>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const getSelectionPosition = (): { x: number; y: number } | null => {
     const selection = window.getSelection();
@@ -79,7 +79,19 @@ const NewsDetailContent: React.FC<NewsDetailContentType> = ({
   const handleSelectionEnd = () => {
     const prevWord = selected.word;
     const result = handleSelection();
+
+    // selection이 비었으면 아무런 동작도 하지 않음
+    if (!result) {
+      return;
+    }
+
+    // 이미 모달이 열려 있고 동일한 단어 div를 클릭했다면 요청을 보내지 않음
+    if (isModalOpen && prevWord === result?.word) {
+      return;
+    }
+
     if (result) {
+      const position = getSelectionPosition();
       searchDaumDictionary(result.word)
         .then((searchResult) => {
           console.log("Daum Dictionary Result:", searchResult);
@@ -92,13 +104,11 @@ const NewsDetailContent: React.FC<NewsDetailContentType> = ({
           });
 
           if (prevWord !== result.word) {
-            const position = getSelectionPosition();
             if (position) {
               let x = position.x;
               const y = position.y + 30;
 
               const modalWidth = 300;
-              // 컨테이너의 오른쪽 경계를 넘어가지 않도록 조정
               if (
                 x + modalWidth + 30 >
                 (contentRef.current?.offsetWidth || 0)
@@ -107,12 +117,17 @@ const NewsDetailContent: React.FC<NewsDetailContentType> = ({
               }
 
               setWordModalPosition({ x, y });
+              setIsModalOpen(true);
             }
+          } else {
+            setIsModalOpen(true);
           }
         })
         .catch((error) => {
           console.error("Error searching Daum Dictionary:", error);
         });
+    } else {
+      setIsModalOpen(false);
     }
   };
 
@@ -199,7 +214,7 @@ const NewsDetailContent: React.FC<NewsDetailContentType> = ({
                 ))
               )
             : korData?.content}
-          {searchResult && selected.word && (
+          {searchResult && selected.word && isModalOpen && (
             <WordModal
               difficulty={difficulty}
               newsId={Number(newsId)}

@@ -39,7 +39,6 @@ const ProgressBar: React.FC<ProgressBarPropsType> = ({
   const languageData = useRecoilValue(languageState);
   const { newsId } = useParams();
   const isLoadingRef = useRef<boolean>(engIsLoading || korIsLoading);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
   const isActiveRef = useRef<boolean>(false);
   const setExpModal = useSetRecoilState(isExpModalState);
 
@@ -51,36 +50,14 @@ const ProgressBar: React.FC<ProgressBarPropsType> = ({
   // 상세 페이지에 들어오고 10초 동안은 읽음 처리를 하지 않음 + 한글일 때는 읽음 처리를 하지 않음
   useEffect(() => {
     isActiveRef.current = false;
-    let leftTime = 10;
     setScrollProgress(0);
 
-    const startTimer = () => {
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
+    setTimeout(() => {
+      if (languageData === "en") {
+        isActiveRef.current = true;
+        calculateProgress();
       }
-
-      timerRef.current = setInterval(() => {
-        leftTime--;
-
-        if (leftTime <= 0) {
-          if (timerRef.current) {
-            clearInterval(timerRef.current);
-          }
-          if (languageData === "en") {
-            isActiveRef.current = true;
-            calculateProgress();
-          }
-        }
-      }, 1000);
-    };
-
-    startTimer();
-
-    return () => {
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-      }
-    };
+    }, 150);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [difficulty, languageData, newsId]);
 
@@ -90,34 +67,21 @@ const ProgressBar: React.FC<ProgressBarPropsType> = ({
     }
     // 데이터 fetching이 됐을 때만 calculate
     else if (newsContainerRef.current && !isLoadingRef?.current) {
-      const containerRect = newsContainerRef.current.getBoundingClientRect();
-      const containerTop = containerRect.top;
-      const containerHeight = containerRect.height;
+      const newsContainerRectBox =
+        newsContainerRef.current.getBoundingClientRect();
+      const containerTop = newsContainerRectBox.top;
+      const containerHeight = newsContainerRectBox.height;
       const windowHeight = window.innerHeight;
 
-      // 시작할 때 보여지는 newsContainer 높이
-      const initialVisibleHeight = Math.min(
+      const windowBottom = Math.min(
         windowHeight - containerTop,
-        containerHeight
+        containerHeight + 150
       );
-      // Calculate how much of the container has been scrolled past
-      const scrolledPastContainer = Math.max(0, -containerTop);
 
-      // 총 이동할 수 있는 스크롤 길이
-      const totalScrollableDistance = containerHeight - initialVisibleHeight;
-
-      // Calculate overall progress
-      let progress;
-      if (totalScrollableDistance <= 0) {
-        // If the entire container fits in the viewport
-        progress = 100;
-      } else {
-        progress = Math.min(
-          ((scrolledPastContainer + initialVisibleHeight) / containerHeight) *
-            100,
-          100
-        );
-      }
+      const progress = Math.min(
+        (windowBottom / (containerHeight + 150)) * 100,
+        100
+      );
 
       setScrollProgress(progress);
     }

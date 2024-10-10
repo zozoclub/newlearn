@@ -29,6 +29,7 @@ import {
   completeTutorial,
   getCompletedTutorial,
 } from "@services/tutorialService";
+import locationState from "@store/locationState";
 
 const NewsDetailPage = () => {
   const isMobile = useMediaQuery({ maxWidth: 768 });
@@ -45,6 +46,7 @@ const NewsDetailPage = () => {
   ]);
   const [isFirstView, setIsFirstView] = useState<boolean>(true);
   const { newsId } = useParams();
+  const setCurrentLocation = useSetRecoilState(locationState);
 
   console.log(newsId);
 
@@ -87,25 +89,26 @@ const NewsDetailPage = () => {
           {
             selector: "#step1",
             content:
-              "화면 상단에 뉴스 읽음 진행도가 표시됩니다. 점수 획득을 위한 편법을 방지하기 위해 10초 후부터 활성화됩니다.",
+              "화면 상단에 뉴스 읽음 진행도가 표시됩니다. 진행도 100% 달성 시 초록색으로 나타나요.",
           },
           {
             selector: "#step2",
-            content: "뉴스의 난이도를 조절할 수 있습니다.",
+            content: "뉴스의 난이도를 조절할 수 있어요.",
           },
           {
             selector: "#step3",
-            content: "읽고 있는 뉴스와 비슷한 뉴스를 추천받을 수 있습니다.",
+            content: "읽고 있는 뉴스와 비슷한 뉴스를 추천받을 수 있어요.",
           },
           {
             selector: "#step4",
-            content: `${userInfoData.nickname}님이 최근 읽은 뉴스를 확인할 수 있습니다.`,
+            content:
+              "뉴스 본문에서 단어를 드래그 or 더블클릭 하면 해당 단어의 뜻을 볼 수 있고 단어를 하이라이팅 할 수 있습니다.",
             isNeedToGo: true,
           },
           {
             selector: "#step5",
             content:
-              "뉴스에서 나온 단어들을 찾는 Word Hunt 게임입니다. 단어는 가로와 세로 방향만 존재합니다.",
+              "뉴스에서 나온 단어들을 찾는 Word Hunt 게임입니다. 단어는 가로와 세로 방향만 존재헤요.",
             isNeedToGo: true,
           },
         ],
@@ -125,6 +128,13 @@ const NewsDetailPage = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [newsId]);
+
+  useEffect(() => {
+    setCurrentLocation("newsDetail");
+    return () => {
+      setCurrentLocation("");
+    };
+  }, [setCurrentLocation]);
 
   return (
     <>
@@ -211,7 +221,7 @@ const NewsDetailPage = () => {
                 </>
               )}
             </ThumbnailImageDiv>
-            <div ref={newsContainerRef}>
+            <div id="step4">
               <NewsDetailContent
                 difficulty={difficulty}
                 engData={engData}

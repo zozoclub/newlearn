@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
 import loginState from "@store/loginState";
 import { useRecoilValue, useSetRecoilState } from "recoil";
-import { getRefreshToken } from "@services/axiosInstance";
 
 const useQuery = () => {
   return new URLSearchParams(useLocation().search);
@@ -45,12 +44,9 @@ const PrivateRoute = () => {
       }
       // 세션에 accessToken 정보가 없고 소셜 로그인 후가 아니라면 쿠키에 refreshToken으로 accessToken 재발급
       else {
-        try {
-          await getRefreshToken();
-        } catch {
-          setLoginState(false);
-          setIsLoading(false);
-        }
+        setLoginState(false);
+        setIsLoading(false);
+        navigate("/login", { replace: true });
       }
 
       setIsLoading(false);

@@ -53,7 +53,7 @@ const RecentReadNews = () => {
             ))}
           </div>
         ) : (
-          <div id="step4" className="recent-news">
+          <div className="recent-news">
             {data?.map((news) => (
               <div
                 className="news-div"

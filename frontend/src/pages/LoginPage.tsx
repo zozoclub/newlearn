@@ -45,6 +45,22 @@ const LoginPage = () => {
     }
   }, [isLogin, transitionTo]);
 
+  // 뒤로 가기 방지 + 모달 로직
+  useEffect(() => {
+    const handlePopState = (event: PopStateEvent) => {
+      // 튜토리얼이 띄워져 있는 상태에서 뒤로가기 방지
+      event.preventDefault();
+      window.history.pushState(null, "", window.location.href); // 현재 페이지로 다시 푸시
+    };
+
+    window.history.pushState(null, "", window.location.href); // 페이지 진입 시 히스토리 상태 추가
+    window.addEventListener("popstate", handlePopState); // 뒤로 가기 방지
+
+    return () => {
+      window.removeEventListener("popstate", handlePopState); // 컴포넌트 언마운트 시 이벤트 제거
+    };
+  }, []);
+
   return (
     <Container>
       <LogoDiv>

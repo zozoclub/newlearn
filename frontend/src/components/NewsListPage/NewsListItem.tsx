@@ -102,7 +102,7 @@ const ThumbnailImage = styled.img`
   width: 100%;
   height: 100%;
   border-radius: 1rem;
-  object-fit: fill;
+  object-fit: cover;
   @media screen and (min-width: 1280px) {
     width: 20rem;
   }
@@ -113,7 +113,6 @@ const ThumbnailImage = styled.img`
     width: 7rem;
     height: 4.5rem;
     border-radius: 5px;
-    object-fit: cover;
   }
 `;
 

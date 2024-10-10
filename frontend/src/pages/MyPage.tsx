@@ -272,7 +272,7 @@ const MyPage = () => {
     return (
       <MyPageContainer>
         <FlexContainer>
-          <FlexItem $flex={6} id="step1">
+          <FlexItem $flex={5} id="step1">
             <WidgetContainer>
               <MyPageProfile />
             </WidgetContainer>

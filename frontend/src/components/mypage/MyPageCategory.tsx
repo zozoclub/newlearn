@@ -78,7 +78,7 @@ const ChartContainer = styled.div`
   flex-direction: column;
   width: 50%;
   margin-left: 1rem;
-  letter-spacing: 0.03rem;
+  letter-spacing: 0.02rem;
   @media (max-width: 768px) {
     width: 90%;
     align-items: center;

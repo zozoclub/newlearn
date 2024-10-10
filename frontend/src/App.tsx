@@ -16,7 +16,6 @@ import { lightTheme } from "@styles/theme/lightTheme";
 import TransitionContent from "@components/common/TransitionContent";
 import loginState from "@store/loginState";
 
-import { getToken, messaging } from "./firebase";
 import userInfoState, { userInfoType } from "@store/userInfoState";
 import { getUserInfo } from "@services/userService";
 
@@ -45,27 +44,6 @@ const App: React.FC = () => {
       Welcome To NewsLearn!"
     );
 
-    // 알림 권한 설정
-    const requestPermission = async () => {
-      try {
-        const permission = await Notification.requestPermission();
-        if (permission === "granted") {
-          console.log("알림 권한이 허용되었습니다.");
-          const token = await getToken(messaging, {
-            vapidKey: import.meta.env.VITE_FIREBASE_VAPIDKEY, // Firebase Console에서 제공하는 VAPID Key
-          });
-          if (token) {
-            console.log("토큰을 얻었습니다:", token);
-          }
-        } else {
-          console.log("알림 권한이 거부되었습니다.");
-        }
-      } catch (error) {
-        console.error("알림 권한 요청 중 오류 발생:", error);
-      }
-    };
-
-    requestPermission();
   }, []);
 
   // 로그인이 되면 회원 정보를 저장

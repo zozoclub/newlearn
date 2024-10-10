@@ -42,6 +42,15 @@ const NewsSearchPage = () => {
   const setLocationState = useSetRecoilState(locationState);
   const elementValue = isMobile ? 6 : 5;
 
+  const setCurrentLocationData = useSetRecoilState(locationState);
+  useEffect(() => {
+    setCurrentLocationData("newsSearch");
+    return () => {
+      setCurrentLocationData("");
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   useEffect(() => {
     setSearchQuery(query || "");
   }, [query]);

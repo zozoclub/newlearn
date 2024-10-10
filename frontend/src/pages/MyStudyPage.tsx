@@ -15,10 +15,14 @@ const MyStudyPage = () => {
   const transitionTo = usePageTransition();
 
   // 페이지 헤더
-  const setCurrentLocation = useSetRecoilState(locationState);
+  const setCurrentLocationData = useSetRecoilState(locationState);
   useEffect(() => {
-    setCurrentLocation("My Study");
-  }, [setCurrentLocation]);
+    setCurrentLocationData("myStudy");
+    return () => {
+      setCurrentLocationData("");
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // 페이지 이동
   const handleWordClick = () => {

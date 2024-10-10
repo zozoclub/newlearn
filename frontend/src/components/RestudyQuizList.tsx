@@ -90,10 +90,10 @@ const RestudyQuizList: React.FC<RestudyQuizListProps> = ({
 
   const fullProcessMeaning = (meaning: string) => {
     return meaning.split("//").map((line, index) => (
-      <React.Fragment key={index}>
+      <span key={index}>
         {index + 1}. {line}
         <br />
-      </React.Fragment>
+      </span>
     ));
   };
 
@@ -261,9 +261,9 @@ const RestudyQuizList: React.FC<RestudyQuizListProps> = ({
 
       <QuizContainer $currentPage={currentPage}>
         {newRestudyData!.map((question, index) => (
-          <>
+          <React.Fragment key={`fragment-${index}`}>
             <QuestionWrapper
-              key={index}
+              key={`question-${index}`}
               $currentPage={currentPage}
               $index={index}
             >
@@ -287,7 +287,7 @@ const RestudyQuizList: React.FC<RestudyQuizListProps> = ({
                 <OptionsWrapper>
                   {options[index]?.map((option, idx) => (
                     <OptionButton
-                      key={idx}
+                      key={`option-${index}-${idx}`}
                       onClick={() => handleAnswerSelection(option, question)}
                       style={{
                         backgroundColor: getButtonColor(option),
@@ -302,6 +302,7 @@ const RestudyQuizList: React.FC<RestudyQuizListProps> = ({
             </QuestionWrapper>
             {currentPage !== newRestudyData.length && (
               <NextButton
+                key={`next-button-${index}`}
                 onClick={() => handleSkip(question)}
                 disabled={showDetails}
               >
@@ -314,7 +315,7 @@ const RestudyQuizList: React.FC<RestudyQuizListProps> = ({
                 }
               </NextButton>
             )}
-          </>
+          </React.Fragment>
         ))}
 
         <QuestionWrapper
@@ -605,7 +606,7 @@ const ResultText = styled.p`
   }
 `;
 
-const SentenceMeaning = styled.p`
+const SentenceMeaning = styled.span`
   font-size: 1.25rem;
   line-height: 1.4;
   color: ${({ theme }) => theme.colors.text04};
@@ -726,7 +727,7 @@ const RemainingQuestions = styled.div`
   }
 `;
 
-const LevelMessage = styled.p`
+const LevelMessage = styled.span`
   font-size: 1rem;
   margin-bottom: 0.5rem;
   color: ${({ theme }) => theme.colors.primary};
@@ -737,3 +738,4 @@ const LevelMessage = styled.p`
     font-size: 0.75rem;
   }
 `;
+

@@ -134,15 +134,15 @@ const MainPage = () => {
         <>
           <TabletRender />
           <PWAInstallPrompt />
+          <RestudyQuiz />
         </>
       ) : (
         <>
           <DesktopRender />
           <PWAInstallPrompt />
+          <RestudyQuiz />
         </>
       )}
-      <RestudyQuiz />
-      <RestudyQuiz />
     </Container>
   );
 };

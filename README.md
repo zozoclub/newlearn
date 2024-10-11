@@ -3,9 +3,7 @@
 
 > D105 酒酒CLUB 특화 PJT / 빅데이터 추천 Track<br/>
 > 2024.08.26 ~ 2024.10.11 (7주)<br/>
-
-🔗 **서비스 URL  /  [NewLearn](https://i11d205.p.ssafy.io/)<br/>**
-🔗 **서비스 소개 영상  /  ["NewLearn" UCC]()<br/>**
+> 🔗 **[NewLearn](https://i11d205.p.ssafy.io/) 바로가기<br/>**
 
 최신 뉴스 기사를 통해 영어를 배우고, 실질적인 지식과 정보를 습득하자!<br/>
 국내 뉴스 기반 영어 학습 플랫폼, **New Learn** ✨<br/>

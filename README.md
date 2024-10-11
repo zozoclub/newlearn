@@ -98,9 +98,9 @@
 
 ✔ [최종 발표 자료](https://www.canva.com/design/DAGS_f7KERU/yNVr2LT_-nCfHfwO0pGKxw/edit?utm_content=DAGS_f7KERU&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
 
-✔ [포팅 매뉴얼]()
+✔ [포팅 매뉴얼](./exec/D105_NEWLEARN_포팅메뉴얼.pdf)
 
-✔ [시연 시나리오]()
+✔ [시연 시나리오](./exec/D105_NEWLEARN_시연시나리오.pdf)
 
 ✔ [Postman 문서](https://documenter.getpostman.com/view/34463295/2sAXxQfCqB)
 

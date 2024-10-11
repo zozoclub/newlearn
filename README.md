@@ -22,63 +22,64 @@
 영어로 뉴스를 읽으며 즐겁게 학습해보는건 어떤가요?<br/>
 최신 국내 뉴스와 함께 영어를 쉽게 공부할 수 있는 곳, **New Learn**🙌🏻
 
-## 주요 기능
+<!-- ## 주요 기능
 ### 회원가입 & 로그인
-<img src="./resources/image/gif/.gif" alt="" width="800"><br/>
-  
-### 뉴스
-<img src="./resources/image/gif/.gif" alt="" width="800"><br/>
-<br/>
-<br/>
-  
+<img src="./resources/gif/.gif" alt="" width="800"><br/><br/>
+
+### 메인 페이지
+- 라이트/다크 모드
+  <img src="./resources/gif/.gif" alt="" width="800"><br/><br/>
+
+### 뉴스 페이지
+- 
+
+- 뉴스 상세 난이도 조정
+  <img src="./resources/gif/.gif" alt="" width="800"><br/><br/>
+
+### 나만의 단어장
+- 뉴스 상세 난이도 조정
+  <img src="./resources/gif/.gif" alt="" width="800"><br/><br/>
+
 ### 단어 빈칸 테스트
-<img src="./resources/image/gif/.gif" alt="" width="800"><br/>
-<br/>
-<br/>
+<img src="./resources/gif/.gif" alt="" width="800"><br/><br/>
 
 
 ### 발음 테스트
-<img src="./resources/image/gif/.gif" alt="" width="800"><br/>
-<br/>
-<br/>
+<img src="./resources/gif/.gif" alt="" width="800"><br/><br/>
   
-### 검색 & WordCloud
-<img src="./resources/image/gif/.gif" alt="" width="800"><br/>
-<br/>
-<br/>
+### 검색 페이지
+<img src="./resources/gif/.gif" alt="" width="800"><br/><br/>
   
-### 마이페이지
-<img src="./resources/image/gif/.gif" alt="" width="800"><br/>
-<br/>
-<br/>
+### 마이 페이지
+<img src="./resources/gif/.gif" alt="" width="800"><br/><br/>
 
 ### 튜토리얼
-<img src="./resources/image/gif/.gif" alt="" width="800"><br/>
-<br/>
-<br/>
+<img src="./resources/gif/튜토리얼.gif" alt="" width="800"><br/><br/>
 
+### PWA 지원
+<img src="./resources/gif/.gif" alt="" width="800"><br/><br/> -->
   
 
 ## 개발 환경
-<img src="./resources/development_environment.png" width="60%"><br>
+<img src="./resources/image/development_environment.png" width="60%"><br>
 
 ## 기술 특이점
 - **데이터 파이프라인 구축**
   - 각 데이터베이스의 특성을 고려한 멀티 데이터베이스 아키텍처 설계
   - 대용량 데이터 백업을 위한 효율적인 아키텍처 설계
   - APScheduler를 활용한 데이터 수집 프로세스 자동화
-  <img src="./resources/data_pipeline.png" width="60%">
+  <img src="./resources/image/data_pipeline.png" width="60%">
   
 - **하이브리드 추천 시스템**
   - **Cold Start 문제 해결**을 위한 협업 필터링(CF) 및 컨텐츠 기반 필터링(CBF) 결합
   - 사용자 행동 데이터 기반 유사도 계산
   - KoNLPy 기반 형태소 분석 및 TF-IDF 매트릭스 구축
-  <img src="./resources/hybrid_recommendation.png" width="60%">
+  <img src="./resources/image/hybrid_recommendation.png" width="60%">
 
 - **Elasticsearch 기반 검색**
   - 뉴스 기사 검색 기능 최적화
   - 역 인덱스 활용한 데이터 처리 및 검색 기능 제공
-  <img src="./resources/elasticsearch_Jmeter.png" width="60%">
+  <img src="./resources/image/elasticsearch_Jmeter.png" width="60%">
 
 - **Blue/Green 무중단 배포 전략**
   - 애플리케이션의 두 개의 환경(Blue와 Green)을 활용하여<br/> 서비스의 가용성과 안정성을 높이는 배포 방식
@@ -92,7 +93,7 @@
 
 ✔ [E-R Diagram](https://www.erdcloud.com/d/aGzLSJQJ94mt3ZTgA)
 
-✔ [시스템 아키텍처](./resources/system_architecture.png)
+✔ [시스템 아키텍처](./resources/image/system_architecture.png)
 
 ✔ [최종 발표 자료](https://www.canva.com/design/DAGS_f7KERU/yNVr2LT_-nCfHfwO0pGKxw/edit?utm_content=DAGS_f7KERU&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
 

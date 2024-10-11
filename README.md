@@ -36,6 +36,10 @@
 - 검색 / WordCloud
   
 - 마이페이지
+
+- 튜토리얼
+<img src="./resources/gif/튜토리얼.gif" width="60%"><br>
+
   
 
 ## 개발 환경

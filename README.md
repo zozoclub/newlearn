@@ -25,20 +25,39 @@
 최신 국내 뉴스와 함께 영어를 쉽게 공부할 수 있는 곳, **New Learn**🙌🏻
 
 ## 주요 기능
-- 회원가입 / 로그인
+### 회원가입 & 로그인
+<img src="./resources/image/gif/.gif" alt="" width="800"><br/>
   
-- 뉴스
+### 뉴스
+<img src="./resources/image/gif/.gif" alt="" width="800"><br/>
+<br/>
+<br/>
   
-- 단어 빈칸 테스트
-  
-- 발음 테스트
-  
-- 검색 / WordCloud
-  
-- 마이페이지
+### 단어 빈칸 테스트
+<img src="./resources/image/gif/.gif" alt="" width="800"><br/>
+<br/>
+<br/>
 
-- 튜토리얼
-<img src="./resources/gif/튜토리얼.gif" width="60%"><br>
+
+### 발음 테스트
+<img src="./resources/image/gif/.gif" alt="" width="800"><br/>
+<br/>
+<br/>
+  
+### 검색 & WordCloud
+<img src="./resources/image/gif/.gif" alt="" width="800"><br/>
+<br/>
+<br/>
+  
+### 마이페이지
+<img src="./resources/image/gif/.gif" alt="" width="800"><br/>
+<br/>
+<br/>
+
+### 튜토리얼
+<img src="./resources/image/gif/.gif" alt="" width="800"><br/>
+<br/>
+<br/>
 
   
 
@@ -77,7 +96,7 @@
 
 ✔ [시스템 아키텍처](./resources/system_architecture.png)
 
-✔ [최종 발표 자료]()
+✔ [최종 발표 자료](https://www.canva.com/design/DAGS_f7KERU/yNVr2LT_-nCfHfwO0pGKxw/edit?utm_content=DAGS_f7KERU&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
 
 ✔ [포팅 매뉴얼]()
 

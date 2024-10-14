@@ -27,7 +27,6 @@
 ### 1) 회원가입 & 로그인
 
 
-
 ### 2) 튜토리얼
 <img src="./resources/gif/main/튜토리얼.gif" alt="" width="800"><br/><br/>
 
@@ -67,6 +66,8 @@
 #### ✔ 단어 외움 처리
 <img src="./resources/gif/word/단어외움처리.gif" alt="" width="800"><br/>
 
+#### ✔ 망각 곡선 기반 단어 복습
+
 
 
 ### 7) 학습 목표 및 경험치
@@ -77,20 +78,23 @@
 <img src="./resources/gif/study/학습목표달성경험치모달.gif" alt="" width="800"><br/>
 
 
-
 ### 8) 단어 빈칸 테스트
-#### ✔ 단어 시험 시작하기
+#### ✔ 테스트 시작
 <img src="./resources/gif/word/단어시험시작하기.gif" alt="" width="800"><br/>
+
+#### ✔ 테스트 결과
 
 
 
 ### 9) 발음 테스트
-  
+#### ✔ 테스트 시작
+
+#### ✔ 테스트 결과
 
 
 ### 10) 검색 페이지
-✔ Elasticsearch 기반 검색 최적화<br/>
-✔ Wordcloud 기반 인기 키워드 검색
+#### ✔ Elasticsearch 기반 검색 최적화<br/>
+#### ✔ Wordcloud 기반 인기 키워드 검색
 <img src="./resources/gif/main/검색.gif" alt="" width="800"><br/><br/>
   
 

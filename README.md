@@ -1,4 +1,4 @@
-<img src="./resources/logo.png"><br>
+<img src="./resources/image/logo.png"><br>
 <hr/><br/>
 
 > D105 酒酒CLUB 특화 PJT / 빅데이터 추천 Track<br/>
@@ -18,23 +18,37 @@
  7. [팀원 소개](#팀원_소개)
 
 ## 서비스 소개
-처음 시작하기 어려운 영어 공부, 재미있게 할 방법이 없을까요?<br/>
+🗣 처음 시작하기 어려운 영어 공부, 재미있게 할 방법이 없을까?<br/>
 영어로 뉴스를 읽으며 즐겁게 학습해보는건 어떤가요?<br/>
 최신 국내 뉴스와 함께 영어를 쉽게 공부할 수 있는 곳, **New Learn**🙌🏻
 
-<!-- ## 주요 기능
+## 주요 기능
+
 ### 회원가입 & 로그인
 <img src="./resources/gif/.gif" alt="" width="800"><br/><br/>
 
+### 튜토리얼
+<img src="./resources/gif/main/튜토리얼.gif" alt="" width="800"><br/><br/>
+
 ### 메인 페이지
-- 라이트/다크 모드
-  <img src="./resources/gif/.gif" alt="" width="800"><br/><br/>
+<img src="./resources/gif/main/메인페이지.gif" alt="" width="800"><br/><br/>
+
+### 라이트/다크모드
+<img src="./resources/gif/main/다크모드토글.gif" alt="" width="800"><br/><br/>
 
 ### 뉴스 페이지
-- 
+✔ 전체 뉴스 보기
+<img src="./resources/gif/news/뉴스목록.gif" alt="" width="800"><br/><br/>
+
+✔ 전체 뉴스 보기
+<img src="./resources/gif/news/뉴스상세.gif" alt="" width="800"><br/><br/>
+
+✔ 상세 난이도 토글
+<img src="./resources/gif/news/뉴스상세난이도토글.gif" alt="" width="800"><br/><br/>
+
 
 - 뉴스 상세 난이도 조정
-  <img src="./resources/gif/.gif" alt="" width="800"><br/><br/>
+<img src="./resources/gif/.gif" alt="" width="800"><br/><br/>
 
 ### 나만의 단어장
 - 뉴스 상세 난이도 조정
@@ -47,17 +61,17 @@
 ### 발음 테스트
 <img src="./resources/gif/.gif" alt="" width="800"><br/><br/>
   
-### 검색 페이지
-<img src="./resources/gif/.gif" alt="" width="800"><br/><br/>
+### 검색
+✔ Elasticsearch 기반 검색 최적화<br/>
+✔ Wordcloud 기반 인기 키워드 검색
+<img src="./resources/gif/main/검색.gif" alt="" width="800"><br/><br/>
   
-### 마이 페이지
+### 마이페이지
+<img src="./resources/gif/main/마이페이지.gif" alt="" width="800"><br/><br/>
+
+
+### PWA (Progressive Web Apps)
 <img src="./resources/gif/.gif" alt="" width="800"><br/><br/>
-
-### 튜토리얼
-<img src="./resources/gif/튜토리얼.gif" alt="" width="800"><br/><br/>
-
-### PWA 지원
-<img src="./resources/gif/.gif" alt="" width="800"><br/><br/> -->
   
 
 ## 개발 환경

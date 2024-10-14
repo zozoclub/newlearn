@@ -24,55 +24,84 @@
 
 ## 주요 기능
 
-### 회원가입 & 로그인
-<img src="./resources/gif/.gif" alt="" width="800"><br/><br/>
+### 1) 회원가입 & 로그인
 
-### 튜토리얼
+
+
+### 2) 튜토리얼
 <img src="./resources/gif/main/튜토리얼.gif" alt="" width="800"><br/><br/>
 
-### 메인 페이지
+### 3) 메인 페이지
 <img src="./resources/gif/main/메인페이지.gif" alt="" width="800"><br/><br/>
 
-### 라이트/다크모드
+### 4) 라이트/다크모드
 <img src="./resources/gif/main/다크모드토글.gif" alt="" width="800"><br/><br/>
 
-### 뉴스 페이지
-✔ 전체 뉴스 보기
-<img src="./resources/gif/news/뉴스목록.gif" alt="" width="800"><br/><br/>
-
-✔ 전체 뉴스 보기
-<img src="./resources/gif/news/뉴스상세.gif" alt="" width="800"><br/><br/>
-
-✔ 상세 난이도 토글
-<img src="./resources/gif/news/뉴스상세난이도토글.gif" alt="" width="800"><br/><br/>
 
 
-- 뉴스 상세 난이도 조정
-<img src="./resources/gif/.gif" alt="" width="800"><br/><br/>
+### 5) 뉴스 페이지
+#### ✔ 뉴스 전체 목록
+<img src="./resources/gif/news/뉴스목록.gif" alt="" width="800"><br/>
 
-### 나만의 단어장
-- 뉴스 상세 난이도 조정
-  <img src="./resources/gif/.gif" alt="" width="800"><br/><br/>
+#### ✔ 뉴스 상세
+<img src="./resources/gif/news/뉴스상세.gif" alt="" width="800"><br/>
+<img src="./resources/gif/news/뉴스읽음메달.gif" alt="" width="800"><br/>
+<img src="./resources/gif/news/뉴스상세난이도토글.gif" alt="" width="800"><br/>
 
-### 단어 빈칸 테스트
-<img src="./resources/gif/.gif" alt="" width="800"><br/><br/>
+#### ✔ 단어 하이라이팅
+<img src="./resources/gif/word/단어하이라이팅및취소.gif" alt="" width="800"><br/>
+
+#### ✔ 뉴스 스크랩
+<img src="./resources/gif/news/뉴스스크랩.gif" alt="" width="800"><br/>
+
+#### ✔ Word hunt game
+<img src="./resources/gif/news/워드헌트풀기.gif" alt="" width="800"><br/>
+<img src="./resources/gif/news/워드헌트정답보기.gif" alt="" width="800"><br/>
 
 
-### 발음 테스트
-<img src="./resources/gif/.gif" alt="" width="800"><br/><br/>
+
+### 6) 나만의 단어장
+#### ✔ 단어 목록
+<img src="./resources/gif/word/단어장.gif" alt="" width="800"><br/>
+
+#### ✔ 단어 외움 처리
+<img src="./resources/gif/word/단어외움처리.gif" alt="" width="800"><br/>
+
+
+
+### 7) 학습 목표 및 경험치
+#### ✔ 학습 목표 설정
+<img src="./resources/gif/study/학습목표설정.gif" alt="" width="800"><br/>
+
+#### ✔ 경험치 획득
+<img src="./resources/gif/study/학습목표달성경험치모달.gif" alt="" width="800"><br/>
+
+
+
+### 8) 단어 빈칸 테스트
+#### ✔ 단어 시험 시작하기
+<img src="./resources/gif/word/단어시험시작하기.gif" alt="" width="800"><br/>
+
+
+
+### 9) 발음 테스트
   
-### 검색
+
+
+### 10) 검색 페이지
 ✔ Elasticsearch 기반 검색 최적화<br/>
 ✔ Wordcloud 기반 인기 키워드 검색
 <img src="./resources/gif/main/검색.gif" alt="" width="800"><br/><br/>
   
-### 마이페이지
+
+### 11) 마이페이지
 <img src="./resources/gif/main/마이페이지.gif" alt="" width="800"><br/><br/>
 
 
-### PWA (Progressive Web Apps)
+### 12) PWA (Progressive Web Apps)
 <img src="./resources/gif/.gif" alt="" width="800"><br/><br/>
-  
+
+
 
 ## 개발 환경
 <img src="./resources/image/development_environment.png" width="60%"><br>

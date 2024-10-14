@@ -5,54 +5,58 @@ import NewsList from "@components/NewsListPage/NewsList";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Pagination from "@components/NewsListPage/Pagination";
-import { useRecoilValue, useResetRecoilState, useSetRecoilState } from "recoil";
+import {
+  useRecoilValue,
+  // useResetRecoilState,
+  useSetRecoilState,
+} from "recoil";
 import locationState from "@store/locationState";
 import { useMediaQuery } from "react-responsive";
 import MobileLogoHeader from "@components/common/MobileLogoHeader";
 
 import NewsListHeader from "@components/NewsListPage/NewsListHeader";
-import { tutorialTipState } from "@store/tutorialState";
 import userInfoState from "@store/userInfoState";
-import {
-  completeTutorial,
-  getCompletedTutorial,
-} from "@services/tutorialService";
+// import { tutorialTipState } from "@store/tutorialState";
+// import {
+//   completeTutorial,
+//   getCompletedTutorial,
+// } from "@services/tutorialService";
 
 const NewsPage = () => {
   const { nickname } = useRecoilValue(userInfoState);
-  const setTutorialTip = useSetRecoilState(tutorialTipState);
-  const resetTutorialTip = useResetRecoilState(tutorialTipState);
-  const startTutorial = async () => {
-    const response = await getCompletedTutorial(1);
-    if (!response) {
-      setTutorialTip({
-        steps: [
-          {
-            selector: "#step6",
-            content: "이 곳에서 원하는 뉴스 카테고리를 선택할 수 있습니다.",
-          },
-          {
-            selector: "#step7",
-            content: `${nickname}님에게 추천하는 뉴스를 확인할 수 있습니다.`,
-          },
-          {
-            selector: "#step8",
-            content: "선호하는 카테고리에 맞는 뉴스를 추천 받을 수 있습니다.",
-          },
-          {
-            selector: "#step9",
-            content: "상단 바에서 선택한 카테고리에 맞는 뉴스 목록입니다.",
-          },
-        ],
-        isActive: true,
-        onComplete: async () => {
-          console.log("튜토리얼 완료!");
-          await completeTutorial(1);
-          resetTutorialTip();
-        },
-      });
-    }
-  };
+  // const setTutorialTip = useSetRecoilState(tutorialTipState);
+  // const resetTutorialTip = useResetRecoilState(tutorialTipState);
+  // const startTutorial = async () => {
+  //   const response = await getCompletedTutorial(1);
+  //   if (!response) {
+  //     setTutorialTip({
+  //       steps: [
+  //         {
+  //           selector: "#step6",
+  //           content: "이 곳에서 원하는 뉴스 카테고리를 선택할 수 있습니다.",
+  //         },
+  //         {
+  //           selector: "#step7",
+  //           content: `${nickname}님에게 추천하는 뉴스를 확인할 수 있습니다.`,
+  //         },
+  //         {
+  //           selector: "#step8",
+  //           content: "선호하는 카테고리에 맞는 뉴스를 추천 받을 수 있습니다.",
+  //         },
+  //         {
+  //           selector: "#step9",
+  //           content: "상단 바에서 선택한 카테고리에 맞는 뉴스 목록입니다.",
+  //         },
+  //       ],
+  //       isActive: true,
+  //       onComplete: async () => {
+  //         console.log("튜토리얼 완료!");
+  //         await completeTutorial(1);
+  //         resetTutorialTip();
+  //       },
+  //     });
+  //   }
+  // };
 
   const { category, page } = useParams();
   const selectedCategory = Number(category);
@@ -63,9 +67,9 @@ const NewsPage = () => {
 
   useEffect(() => {
     setCurrentLocation("newsList");
-    if (!isMobile && nickname) {
-      startTutorial();
-    }
+    // if (!isMobile && nickname) {
+    //   startTutorial();
+    // }
     return () => {
       setCurrentLocation("");
     };

@@ -1,6 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useRecoilValue, useResetRecoilState, useSetRecoilState } from "recoil";
+import {
+  useRecoilValue,
+  // useResetRecoilState,
+  useSetRecoilState,
+} from "recoil";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
 
@@ -24,11 +28,11 @@ import goldMedal from "@assets/images/gold-medal.png";
 import silverMedal from "@assets/images/silver-medal.png";
 import bronzeMedal from "@assets/images/bronze-medal.png";
 import { useMediaQuery } from "react-responsive";
-import { tutorialTipState } from "@store/tutorialState";
-import {
-  completeTutorial,
-  getCompletedTutorial,
-} from "@services/tutorialService";
+// import { tutorialTipState } from "@store/tutorialState";
+// import {
+//   completeTutorial,
+//   getCompletedTutorial,
+// } from "@services/tutorialService";
 import locationState from "@store/locationState";
 
 const NewsDetailPage = () => {
@@ -79,55 +83,55 @@ const NewsDetailPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [engData]);
 
-  const setTutorialTip = useSetRecoilState(tutorialTipState);
-  const resetTutorialTip = useResetRecoilState(tutorialTipState);
-  const startTutorial = async () => {
-    const response = await getCompletedTutorial(2);
-    if (!response) {
-      setTutorialTip({
-        steps: [
-          {
-            selector: "#step1",
-            content:
-              "화면 상단에 뉴스 읽음 진행도가 표시됩니다. 진행도 100% 달성 시 초록색으로 나타나요.",
-          },
-          {
-            selector: "#step2",
-            content: "뉴스의 난이도를 조절할 수 있어요.",
-          },
-          {
-            selector: "#step3",
-            content: "읽고 있는 뉴스와 비슷한 뉴스를 추천받을 수 있어요.",
-          },
-          {
-            selector: "#step4",
-            content:
-              "뉴스 본문에서 단어를 드래그 or 더블클릭 하면 해당 단어의 뜻을 볼 수 있고 단어를 하이라이팅 할 수 있습니다.",
-            isNeedToGo: true,
-          },
-          {
-            selector: "#step5",
-            content:
-              "뉴스에서 나온 단어들을 찾는 Word Hunt 게임입니다. 단어는 가로와 세로 방향만 존재헤요.",
-            isNeedToGo: true,
-          },
-        ],
-        isActive: true,
-        onComplete: async () => {
-          console.log("튜토리얼 완료!");
-          await completeTutorial(2);
-          resetTutorialTip();
-        },
-      });
-    }
-  };
+  // const setTutorialTip = useSetRecoilState(tutorialTipState);
+  // const resetTutorialTip = useResetRecoilState(tutorialTipState);
+  // const startTutorial = async () => {
+  //   const response = await getCompletedTutorial(2);
+  //   if (!response) {
+  //     setTutorialTip({
+  //       steps: [
+  //         {
+  //           selector: "#step1",
+  //           content:
+  //             "화면 상단에 뉴스 읽음 진행도가 표시됩니다. 진행도 100% 달성 시 초록색으로 나타나요.",
+  //         },
+  //         {
+  //           selector: "#step2",
+  //           content: "뉴스의 난이도를 조절할 수 있어요.",
+  //         },
+  //         {
+  //           selector: "#step3",
+  //           content: "읽고 있는 뉴스와 비슷한 뉴스를 추천받을 수 있어요.",
+  //         },
+  //         {
+  //           selector: "#step4",
+  //           content:
+  //             "뉴스 본문에서 단어를 드래그 or 더블클릭 하면 해당 단어의 뜻을 볼 수 있고 단어를 하이라이팅 할 수 있습니다.",
+  //           isNeedToGo: true,
+  //         },
+  //         {
+  //           selector: "#step5",
+  //           content:
+  //             "뉴스에서 나온 단어들을 찾는 Word Hunt 게임입니다. 단어는 가로와 세로 방향만 존재헤요.",
+  //           isNeedToGo: true,
+  //         },
+  //       ],
+  //       isActive: true,
+  //       onComplete: async () => {
+  //         console.log("튜토리얼 완료!");
+  //         await completeTutorial(2);
+  //         resetTutorialTip();
+  //       },
+  //     });
+  //   }
+  // };
 
-  useEffect(() => {
-    if (!isMobile && userInfoData.nickname) {
-      startTutorial();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [newsId]);
+  // useEffect(() => {
+  //   if (!isMobile && userInfoData.nickname) {
+  //     startTutorial();
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [newsId]);
 
   useEffect(() => {
     setCurrentLocation("newsDetail");

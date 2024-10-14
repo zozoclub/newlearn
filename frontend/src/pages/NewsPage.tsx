@@ -98,10 +98,10 @@ const NewsPage = () => {
       <PageWrapper>
         <MobileLogoHeader />
         <NewsListHeader />
-        <RecommandNewsContainer>
-          <HybridRecommendNews />
-        </RecommandNewsContainer>
         <ContentWrapper>
+          <RecommandNewsContainer>
+            <HybridRecommendNews />
+          </RecommandNewsContainer>
           <NewsContent>
             <NewsList setTotalPages={setTotalPages} />
             <Pagination

@@ -145,8 +145,8 @@
 <img src="./resources/image/system_architecture.png" width="60%"><br>
 
 ## 산출물
-|   |   |   |
-| --- | --- | --- |
+| 종류 | 바로가기 |
+| --- | --- |
 | 기능 명세서 | [📝 기능 명세서](https://lying-sled-191.notion.site/5e288e4a2209420fa506f1a272651ff4?v=a656c43b335645cab41381e6631526f7) |
 | API 명세서 | [📡 API 명세서](https://lying-sled-191.notion.site/API-8cd85d9441604e6fa374fe29dc34970a) |
 | 와이어 프레임 | [🎨 와이어 프레임](https://www.figma.com/design/fwwTElvwSVoxJu1kZyvE0P/NewLearn?node-id=0-1&m=dev) |

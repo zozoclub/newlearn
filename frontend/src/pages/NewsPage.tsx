@@ -16,6 +16,7 @@ import MobileLogoHeader from "@components/common/MobileLogoHeader";
 
 import NewsListHeader from "@components/NewsListPage/NewsListHeader";
 import userInfoState from "@store/userInfoState";
+import HybridRecommendNews from "@components/NewsListPage/HybridRecommendNews";
 // import { tutorialTipState } from "@store/tutorialState";
 // import {
 //   completeTutorial,
@@ -97,6 +98,9 @@ const NewsPage = () => {
       <PageWrapper>
         <MobileLogoHeader />
         <NewsListHeader />
+        <RecommandNewsContainer>
+          <HybridRecommendNews />
+        </RecommandNewsContainer>
         <ContentWrapper>
           <NewsContent>
             <NewsList setTotalPages={setTotalPages} />
@@ -162,5 +166,27 @@ const ContentWrapper = styled.main`
     max-width: 100%;
     height: calc(100vh-140px);
     box-sizing: border-box;
+  }
+`;
+
+const RecommandNewsContainer = styled.div`
+  background-color: ${(props) => props.theme.colors.cardBackground};
+  padding: 1rem 0 0;
+  display: flex;
+  flex-direction: column;
+  @media screen and (min-width: 768px) {
+    gap: 2.5%;
+  }
+  @media screen and (max-width: 767px) {
+    padding: 0 1rem;
+  }
+`;
+
+const Title = styled.div`
+  font-size: 1.25rem;
+  padding: 0 1rem;
+  font-weight: bold;
+  @media screen and (min-width: 768px) {
+    margin: 0.5rem 0 1rem;
   }
 `;

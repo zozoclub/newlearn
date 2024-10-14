@@ -5,54 +5,59 @@ import NewsList from "@components/NewsListPage/NewsList";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Pagination from "@components/NewsListPage/Pagination";
-import { useRecoilValue, useResetRecoilState, useSetRecoilState } from "recoil";
+import {
+  useRecoilValue,
+  // useResetRecoilState,
+  useSetRecoilState,
+} from "recoil";
 import locationState from "@store/locationState";
 import { useMediaQuery } from "react-responsive";
 import MobileLogoHeader from "@components/common/MobileLogoHeader";
 
 import NewsListHeader from "@components/NewsListPage/NewsListHeader";
-import { tutorialTipState } from "@store/tutorialState";
 import userInfoState from "@store/userInfoState";
-import {
-  completeTutorial,
-  getCompletedTutorial,
-} from "@services/tutorialService";
+import HybridRecommendNews from "@components/NewsListPage/HybridRecommendNews";
+// import { tutorialTipState } from "@store/tutorialState";
+// import {
+//   completeTutorial,
+//   getCompletedTutorial,
+// } from "@services/tutorialService";
 
 const NewsPage = () => {
   const { nickname } = useRecoilValue(userInfoState);
-  const setTutorialTip = useSetRecoilState(tutorialTipState);
-  const resetTutorialTip = useResetRecoilState(tutorialTipState);
-  const startTutorial = async () => {
-    const response = await getCompletedTutorial(1);
-    if (!response) {
-      setTutorialTip({
-        steps: [
-          {
-            selector: "#step6",
-            content: "이 곳에서 원하는 뉴스 카테고리를 선택할 수 있습니다.",
-          },
-          {
-            selector: "#step7",
-            content: `${nickname}님에게 추천하는 뉴스를 확인할 수 있습니다.`,
-          },
-          {
-            selector: "#step8",
-            content: "선호하는 카테고리에 맞는 뉴스를 추천 받을 수 있습니다.",
-          },
-          {
-            selector: "#step9",
-            content: "상단 바에서 선택한 카테고리에 맞는 뉴스 목록입니다.",
-          },
-        ],
-        isActive: true,
-        onComplete: async () => {
-          console.log("튜토리얼 완료!");
-          await completeTutorial(1);
-          resetTutorialTip();
-        },
-      });
-    }
-  };
+  // const setTutorialTip = useSetRecoilState(tutorialTipState);
+  // const resetTutorialTip = useResetRecoilState(tutorialTipState);
+  // const startTutorial = async () => {
+  //   const response = await getCompletedTutorial(1);
+  //   if (!response) {
+  //     setTutorialTip({
+  //       steps: [
+  //         {
+  //           selector: "#step6",
+  //           content: "이 곳에서 원하는 뉴스 카테고리를 선택할 수 있습니다.",
+  //         },
+  //         {
+  //           selector: "#step7",
+  //           content: `${nickname}님에게 추천하는 뉴스를 확인할 수 있습니다.`,
+  //         },
+  //         {
+  //           selector: "#step8",
+  //           content: "선호하는 카테고리에 맞는 뉴스를 추천 받을 수 있습니다.",
+  //         },
+  //         {
+  //           selector: "#step9",
+  //           content: "상단 바에서 선택한 카테고리에 맞는 뉴스 목록입니다.",
+  //         },
+  //       ],
+  //       isActive: true,
+  //       onComplete: async () => {
+  //         console.log("튜토리얼 완료!");
+  //         await completeTutorial(1);
+  //         resetTutorialTip();
+  //       },
+  //     });
+  //   }
+  // };
 
   const { category, page } = useParams();
   const selectedCategory = Number(category);
@@ -63,9 +68,9 @@ const NewsPage = () => {
 
   useEffect(() => {
     setCurrentLocation("newsList");
-    if (!isMobile && nickname) {
-      startTutorial();
-    }
+    // if (!isMobile && nickname) {
+    //   startTutorial();
+    // }
     return () => {
       setCurrentLocation("");
     };
@@ -93,6 +98,9 @@ const NewsPage = () => {
       <PageWrapper>
         <MobileLogoHeader />
         <NewsListHeader />
+        <RecommandNewsContainer>
+          <HybridRecommendNews />
+        </RecommandNewsContainer>
         <ContentWrapper>
           <NewsContent>
             <NewsList setTotalPages={setTotalPages} />
@@ -158,5 +166,27 @@ const ContentWrapper = styled.main`
     max-width: 100%;
     height: calc(100vh-140px);
     box-sizing: border-box;
+  }
+`;
+
+const RecommandNewsContainer = styled.div`
+  background-color: ${(props) => props.theme.colors.cardBackground};
+  padding: 1rem 0 0;
+  display: flex;
+  flex-direction: column;
+  @media screen and (min-width: 768px) {
+    gap: 2.5%;
+  }
+  @media screen and (max-width: 767px) {
+    padding: 0 1rem;
+  }
+`;
+
+const Title = styled.div`
+  font-size: 1.25rem;
+  padding: 0 1rem;
+  font-weight: bold;
+  @media screen and (min-width: 768px) {
+    margin: 0.5rem 0 1rem;
   }
 `;

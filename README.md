@@ -101,17 +101,21 @@
 
 
 ### 12) PWA (Progressive Web Apps)
-|메인 페이지|마이페이지|단어장|
+|메인 페이지|나만의 단어장|마이 페이지|
 |:---:|:---:|:---:|
- <img src="./resources/gif/pwa/MobileMainpage.gif" width=200>|<img src="./resources/gif/pwa/MobileMypage.gif" width=200/>|<img src="./resources/gif/pwa/MobileVocapage.gif" width=200/>|
+ <img src="./resources/gif/pwa/MobileMainpage.gif" width=200>|<img src="./resources/gif/pwa/MobileVocapage.gif" width=200/>|<img src="./resources/gif/pwa/MobileMypage.gif" width=200/>|
  
 |뉴스 전체 목록|뉴스 상세|
 |:---:|:---:|
  <img src="./resources/gif/pwa/MobileNewsList.gif" width=200>|<img src="./resources/gif/pwa/MobileNewsDetail.gif" width=200/>
 
-|뉴스 전체 목록|뉴스 상세|
-|:---:|:---:|
- <img src="./resources/gif/pwa/MobileNewsList.gif" width=200>|<img src="./resources/gif/pwa/MobileNewsDetail.gif" width=200/>
+|단어 빈칸 테스트 시작|단어 빈칸 테스트 진행|단어 빈칸 테스트 결과|
+|:---:|:---:|:---:|
+ <img src="./resources/gif/pwa/MobileWordStartpage.gif" width=200>|<img src="./resources/gif/pwa/MobileWordTestpage.gif" width=200/>|<img src="./resources/gif/pwa/MobileWordTestResultpage.gif" width=200/>|
+
+|발음 테스트 시작|발음 테스트 진행|발음 테스트 결과|
+|:---:|:---:|:---:|
+ <img src="./resources/gif/pwa/MobilePronounceStartpage.gif" width=200>|<img src="./resources/gif/pwa/MobilePronounceTestpage.gif" width=200/>|<img src="./resources/gif/pwa/MobilePronounceTestResultpage.gif" width=200/>|
 
 ## 기술 스택
 <img src="./resources/image/development_environment.png" width="60%"><br>

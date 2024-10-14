@@ -16,6 +16,7 @@ export default defineConfig({
         name: "NewLearn",
         short_name: "NewLearn",
         theme_color: "#ffffff",
+        display: "fullscreen",
         icons: [
           {
             src: "/pwa-64x64.png", // 절대 경로로 수정

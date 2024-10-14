@@ -181,12 +181,3 @@ const RecommandNewsContainer = styled.div`
     padding: 0 1rem;
   }
 `;
-
-const Title = styled.div`
-  font-size: 1.25rem;
-  padding: 0 1rem;
-  font-weight: bold;
-  @media screen and (min-width: 768px) {
-    margin: 0.5rem 0 1rem;
-  }
-`;

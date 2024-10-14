@@ -3,7 +3,7 @@
 
 > D105 酒酒CLUB 특화 PJT / 빅데이터 추천 Track<br/>
 > 2024.08.26 ~ 2024.10.11 (7주)<br/>
-> 🔗 **[NewLearn](https://i11d205.p.ssafy.io/) 바로가기<br/>**
+> 🔗 **[NewLearn](https://j11d105.p.ssafy.io/) 바로가기<br/>**
 
 ### 📌 Contents
  1. [Overview](#Overview)

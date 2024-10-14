@@ -131,12 +131,18 @@ const MainPage = () => {
       {isMobile ? (
         <MainMobilePage />
       ) : isTablet ? (
-        <TabletRender />
+        <>
+          <TabletRender />
+          <PWAInstallPrompt />
+          <RestudyQuiz />
+        </>
       ) : (
-        <DesktopRender />
+        <>
+          <DesktopRender />
+          <PWAInstallPrompt />
+          <RestudyQuiz />
+        </>
       )}
-      <RestudyQuiz />
-      <PWAInstallPrompt />
     </Container>
   );
 };

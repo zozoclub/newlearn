@@ -8,6 +8,7 @@ import { useRecoilValue } from "recoil";
 import languageState from "@store/languageState";
 import userInfoState from "@store/userInfoState";
 import NewsSwiper from "@components/common/NewsSwiper";
+import { useMediaQuery } from "react-responsive";
 
 const HybridRecommendNews = () => {
   const languageData = useRecoilValue(languageState);
@@ -17,6 +18,8 @@ const HybridRecommendNews = () => {
     queryFn: getHybridNews,
     staleTime: 5 * 60 * 1000,
   });
+  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
+
   const MemoizedComponent = useMemo(
     () => {
       return (
@@ -41,8 +44,8 @@ const HybridRecommendNews = () => {
                 )}
                 <NewsSwiper
                   variety={"hybrid"}
-                  newsList={data}
-                  slidesPerView={1.5}
+                  newsList={isMobile ? data.slice(0, 5) : data}
+                  slidesPerView={isMobile ? 1 : 1.5}
                 />
               </>
             )

@@ -17,14 +17,17 @@ import { createGlobalStyle } from "styled-components";
 import { usePageTransition } from "@hooks/usePageTransition";
 import Modal from "@components/Modal";
 import BackArrowMobileIcon from "@assets/icons/mobile/BackArrowMobileIcon";
-import { useResetRecoilState, useSetRecoilState } from "recoil";
+import {
+  // useResetRecoilState,
+  useSetRecoilState,
+} from "recoil";
 import locationState from "@store/locationState";
 import MobileLogoHeader from "@components/common/MobileLogoHeader";
-import { tutorialTipState } from "@store/tutorialState";
-import {
-  completeTutorial,
-  getCompletedTutorial,
-} from "@services/tutorialService";
+// import { tutorialTipState } from "@store/tutorialState";
+// import {
+//   completeTutorial,
+//   getCompletedTutorial,
+// } from "@services/tutorialService";
 
 const BodyScrollLock = createGlobalStyle`
   body {
@@ -41,55 +44,55 @@ const MyPage = () => {
   const [isDeleteUserModalOpen, setIsDeleteUserModalOpen] = useState(false);
   const setCurrentLocation = useSetRecoilState(locationState);
 
-  const setTutorialTip = useSetRecoilState(tutorialTipState);
-  const resetTutorialTip = useResetRecoilState(tutorialTipState);
-  const startTutorial = async () => {
-    const response = await getCompletedTutorial(6);
-    if (!response) {
-      setTutorialTip({
-        steps: [
-          {
-            selector: "#step1",
-            content: "아바타, 닉네임을 수정할 수 있어요.",
-          },
-          {
-            selector: "#step2",
-            content: "영어 난이도, 관심 카테고리를 수정할 수 있어요.",
-          },
-          {
-            selector: "#step3",
-            content: "나의 활동 내역을 확인할 수 있어요",
-          },
-          {
-            selector: "#step4",
-            content: "내가 읽은 뉴스들의 카테고리 분포를 확인할 수 있어요",
-          },
-          {
-            selector: "#step5",
-            content: "매일 뉴스를 읽고 잔디를 채워보세요.",
-          },
-          {
-            selector: "#step10",
-            content: "내가 스크랩한 뉴스를 확인할 수 있어요.",
-            isNeedToGo: true,
-          },
-        ],
-        isActive: true,
-        onComplete: async () => {
-          console.log("튜토리얼 완료!");
-          await completeTutorial(6);
-          resetTutorialTip();
-        },
-      });
-    }
-  };
+  // const setTutorialTip = useSetRecoilState(tutorialTipState);
+  // const resetTutorialTip = useResetRecoilState(tutorialTipState);
+  // const startTutorial = async () => {
+  //   const response = await getCompletedTutorial(6);
+  //   if (!response) {
+  //     setTutorialTip({
+  //       steps: [
+  //         {
+  //           selector: "#step1",
+  //           content: "아바타, 닉네임을 수정할 수 있어요.",
+  //         },
+  //         {
+  //           selector: "#step2",
+  //           content: "영어 난이도, 관심 카테고리를 수정할 수 있어요.",
+  //         },
+  //         {
+  //           selector: "#step3",
+  //           content: "나의 활동 내역을 확인할 수 있어요",
+  //         },
+  //         {
+  //           selector: "#step4",
+  //           content: "내가 읽은 뉴스들의 카테고리 분포를 확인할 수 있어요",
+  //         },
+  //         {
+  //           selector: "#step5",
+  //           content: "매일 뉴스를 읽고 잔디를 채워보세요.",
+  //         },
+  //         {
+  //           selector: "#step10",
+  //           content: "내가 스크랩한 뉴스를 확인할 수 있어요.",
+  //           isNeedToGo: true,
+  //         },
+  //       ],
+  //       isActive: true,
+  //       onComplete: async () => {
+  //         console.log("튜토리얼 완료!");
+  //         await completeTutorial(6);
+  //         resetTutorialTip();
+  //       },
+  //     });
+  //   }
+  // };
 
-  useEffect(() => {
-    if (!isMobile) {
-      startTutorial();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // useEffect(() => {
+  //   if (!isMobile) {
+  //     startTutorial();
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
 
   // 모바일 버전 모달
   const handleChartModal = () => {

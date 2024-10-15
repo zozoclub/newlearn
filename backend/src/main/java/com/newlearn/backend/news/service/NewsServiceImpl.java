@@ -103,7 +103,7 @@ public class NewsServiceImpl implements NewsService{
     @Override
     public List<NewsResponseDTO> getTodayTopNewsList(Users user, int difficulty, String lang) {
         // 오늘 날짜 포맷팅
-        LocalDate today = LocalDate.now();
+        LocalDate today = LocalDate.now().minusDays(1);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy. MM. dd.");
         String todayString = today.format(formatter);
 

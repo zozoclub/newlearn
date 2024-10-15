@@ -62,7 +62,3 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
-// SonarQube 작업이 컴파일 후에 실행되도록 설정
-tasks.named('sonarqube').configure {
-	dependsOn test  // 'test' 작업은 컴파일을 포함합니다
-}

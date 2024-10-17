@@ -23,7 +23,7 @@
 ## 기능 소개
 
 ### 1) 회원가입 & 로그인
-
+<img src="./resources/gif/main/회원가입.gif" alt="" width="800"><br/><br/>
 
 ### 2) 튜토리얼
 <img src="./resources/gif/main/튜토리얼.gif" alt="" width="800"><br/><br/>
@@ -103,7 +103,7 @@
 ### 12) PWA (Progressive Web Apps)
 |메인 페이지|나만의 단어장|마이 페이지|
 |:---:|:---:|:---:|
- <img src="https://github.com/user-attachments/assets/559b7c0e-3e3a-480b-aa56-7cf50062a860" width=200>|<img src="./resources/gif/pwa/MobileVocapage.gif" width=200/>|<img src="./resources/gif/pwa/MobileMypage.gif" width=200/>|
+ <img src="./resources/gif/pwa/MobileMainPage.gif" width=200/>|<img src="./resources/gif/pwa/MobileMypage.gif" width=200/>|
  
 |뉴스 전체 목록|뉴스 상세|
 |:---:|:---:|

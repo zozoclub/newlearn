@@ -91,10 +91,9 @@
 
 
 ### 10) 검색 페이지
-#### ✔ Elasticsearch 기반 검색 최적화<br/>
-#### ✔ Wordcloud 기반 인기 키워드 검색
+#### ✔ Wordcloud 기반 인기 키워드 검색<br/>
 <img src="./resources/gif/main/검색.gif" alt="" width="800"><br/><br/>
-  
+
 
 ### 11) 마이페이지
 <img src="./resources/gif/main/마이페이지.gif" alt="" width="800"><br/><br/>
@@ -103,7 +102,7 @@
 ### 12) PWA (Progressive Web Apps)
 |메인 페이지|나만의 단어장|마이 페이지|
 |:---:|:---:|:---:|
- <img src="./resources/gif/pwa/MobileMainPage.gif" width=200/>|<img src="./resources/gif/pwa/MobileMypage.gif" width=200/>|
+ <img src="./resources/gif/pwa/MobileMainPage.gif" width=200/>|<img src="./resources/gif/pwa/MobileVocapage.gif" width=200/>|<img src="./resources/gif/pwa/MobileMypage.gif" width=200/>|
  
 |뉴스 전체 목록|뉴스 상세|
 |:---:|:---:|

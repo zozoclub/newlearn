@@ -102,7 +102,7 @@
 ### 12) PWA (Progressive Web Apps)
 |메인 페이지|나만의 단어장|마이 페이지|
 |:---:|:---:|:---:|
- <img src="./resources/gif/pwa/MobileMainPage.gif" width=200/>|<img src="./resources/gif/pwa/MobileVocapage.gif" width=200/>|<img src="./resources/gif/pwa/MobileMypage.gif" width=200/>|
+ <img src="./resources/gif/pwa/MobileMainpage.gif" width=200/>|<img src="./resources/gif/pwa/MobileVocapage.gif" width=200/>|<img src="./resources/gif/pwa/MobileMypage.gif" width=200/>|
  
 |뉴스 전체 목록|뉴스 상세|
 |:---:|:---:|

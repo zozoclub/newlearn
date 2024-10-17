@@ -137,11 +137,10 @@
   - 역 인덱스 활용한 데이터 처리 및 검색 기능 제공<br/>
   <img src="./resources/image/elasticsearch_Jmeter.png" width="60%">
 
+## 시스템 아키텍처
 - **Blue/Green 무중단 배포 전략**
   - 애플리케이션의 두 개의 환경(Blue와 Green)을 활용하여<br/> 서비스의 가용성과 안정성을 높이는 배포 방식
-
-## 시스템 아키텍처
-<img src="./resources/image/system_architecture.png" width="60%"><br>
+  <img src="./resources/image/system_architecture.png" width="60%"><br>
 
 ## 산출물
 | 종류 | 바로가기 |

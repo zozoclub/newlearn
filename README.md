@@ -7,12 +7,12 @@
 
 ### 📌 Contents
  1. [Overview](#Overview)
- 2. [기능 소개](#기능_소개)
- 3. [기술 스택](#기술_스택)
- 4. [주요 기술](주요_기술)
- 5. [시스템 아키텍처](#시스템_아키텍처)
+ 2. [기능 소개](#기능-소개)
+ 3. [기술 스택](#기술-스택)
+ 4. [주요 기술](주요-기술)
+ 5. [시스템 아키텍처](#시스템-아키텍처)
  5. [산출물](#산출물)
- 6. [팀원 소개](#팀원_소개)
+ 6. [팀원 소개](#팀원-소개)
  7. [Conventions](#Conventions)
 
 ## Overview
@@ -161,7 +161,7 @@
 |**[이예찬](https://github.com/yechanissm)**|**[김수정](https://github.com/iamsoojung)**|**[노나현](https://github.com/nahyon)**|**[박효진](https://github.com/piaoria)**|**[손민락](https://github.com/pushedRak)**|**[허세령](https://github.com/seryoii)** |
 | :---------------------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------: |
 |👑Backend|Backend|Backend|Frontend|Frontend|Frontend|
-| <img src="https://github.com/yechanissm" width="800"> | <img src="https://github.com/iamsoojung" width="800"> | <img src="https://github.com/nahyon" width="800"> | <img src="https://github.com/piaoria" width="800"> | <img src="https://github.com/pushedRak" width="800"> | <img src="https://github.com/seryoii" width="800"> |
+| <img src="https://avatars.githubusercontent.com/u/106381504?v=4" width="800"> | <img src="https://avatars.githubusercontent.com/u/65272297?v=4" width="800"> | <img src="https://avatars.githubusercontent.com/u/62339370?v=4" width="800"> | <img src="https://avatars.githubusercontent.com/u/155702981?v=4" width="800"> | <img src="https://avatars.githubusercontent.com/u/158262155?v=4" width="800"> | <img src="https://avatars.githubusercontent.com/u/156271964?v=4" width="800"> |
 
 
 ## Conventions

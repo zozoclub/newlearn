@@ -159,9 +159,8 @@
 ## 팀원 소개
 #### 🔥 酒酒CLUB
 
-|**[이예찬](https://github.com/yechanissm)**|**[김수정](https://github.com/iamsoojung)**|**[노나현](https://github.com/nahyon)**|**[박효진](https://github.com/piaoria)**|**[손민락](https://github.com/pushedRak)**|**[허세령](https://github.com/seryoii)** |
+|**[👑이예찬/BE](https://github.com/yechanissm)**|**[김수정/BE](https://github.com/iamsoojung)**|**[노나현/BE](https://github.com/nahyon)**|**[박효진/FE](https://github.com/piaoria)**|**[손민락/FE](https://github.com/pushedRak)**|**[허세령/FE](https://github.com/seryoii)** |
 | :---------------------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------: |
-|👑Backend|Backend|Backend|Frontend|Frontend|Frontend|
 | <img src="https://avatars.githubusercontent.com/u/106381504?v=4" width="800"> | <img src="https://avatars.githubusercontent.com/u/65272297?v=4" width="800"> | <img src="https://avatars.githubusercontent.com/u/62339370?v=4" width="800"> | <img src="https://avatars.githubusercontent.com/u/155702981?v=4" width="800"> | <img src="https://avatars.githubusercontent.com/u/158262155?v=4" width="800"> | <img src="https://avatars.githubusercontent.com/u/156271964?v=4" width="800"> |
 
 

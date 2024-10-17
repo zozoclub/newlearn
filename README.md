@@ -1,5 +1,5 @@
 <img src="./resources/image/logo.png"><br>
-<hr/><br/>
+<hr/>
 
 > D105 酒酒CLUB 특화 PJT / 빅데이터 추천 Track<br/>
 > 2024.08.26 ~ 2024.10.11 (7주)<br/>
@@ -65,7 +65,7 @@
 <img src="./resources/gif/word/단어외움처리.gif" alt="" width="800"><br/>
 
 #### ✔ 망각 곡선 기반 단어 복습
-
+<img src="./resources/gif/study/망각곡선팝퀴즈.gif" alt="" width="800"><br/>
 
 
 ### 7) 학습 목표 및 경험치
@@ -81,7 +81,7 @@
 <img src="./resources/gif/word/단어시험시작하기.gif" alt="" width="800"><br/>
 
 #### ✔ 테스트 결과
-
+<img src="./resources/gif/word/단어시험결과.gif" alt="" width="800"><br/>
 
 
 ### 9) 발음 테스트

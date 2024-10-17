@@ -23,77 +23,78 @@
 ## 기능 소개
 
 ### 1) 회원가입 & 로그인
-<img src="./resources/gif/main/회원가입.gif" alt="" width="800"><br/><br/>
+<img src="./resources/gif/main/회원가입.gif" alt="회원가입" width="800"><br/><br/>
 
 ### 2) 튜토리얼
-<img src="./resources/gif/main/튜토리얼.gif" alt="" width="800"><br/><br/>
+<img src="./resources/gif/main/튜토리얼.gif" alt="튜토리얼" width="800"><br/><br/>
 
 ### 3) 메인 페이지
-<img src="./resources/gif/main/메인페이지.gif" alt="" width="800"><br/><br/>
+<img src="./resources/gif/main/메인페이지.gif" alt="메인페이지" width="800"><br/><br/>
 
 ### 4) 라이트/다크모드
-<img src="./resources/gif/main/다크모드토글.gif" alt="" width="800"><br/><br/>
+<img src="./resources/gif/main/다크모드토글.gif" alt="다크모드토글" width="800"><br/><br/>
 
 
 
 ### 5) 뉴스 페이지
 #### ✔ 뉴스 전체 목록
-<img src="./resources/gif/news/뉴스목록.gif" alt="" width="800"><br/>
+<img src="./resources/gif/news/뉴스목록.gif" alt="뉴스목록" width="800"><br/>
 
 #### ✔ 뉴스 상세
-<img src="./resources/gif/news/뉴스상세.gif" alt="" width="800"><br/>
-<img src="./resources/gif/news/뉴스읽음메달.gif" alt="" width="800"><br/>
-<img src="./resources/gif/news/뉴스상세난이도토글.gif" alt="" width="800"><br/>
+<img src="./resources/gif/news/뉴스상세.gif" alt="뉴스상세" width="800"><br/>
+<img src="./resources/gif/news/뉴스읽음메달.gif" alt="뉴스읽음메달" width="800"><br/>
+<img src="./resources/gif/news/뉴스상세난이도토글.gif" alt="뉴스상세난이도토글" width="800"><br/>
 
 #### ✔ 단어 하이라이팅
-<img src="./resources/gif/word/단어하이라이팅및취소.gif" alt="" width="800"><br/>
+<img src="./resources/gif/word/단어하이라이팅및취소.gif" alt="단어하이라이팅및취소" width="800"><br/>
 
 #### ✔ 뉴스 스크랩
-<img src="./resources/gif/news/뉴스스크랩.gif" alt="" width="800"><br/>
+<img src="./resources/gif/news/뉴스스크랩.gif" alt="뉴스스크랩" width="800"><br/>
 
 #### ✔ Word hunt game
-<img src="./resources/gif/news/워드헌트풀기.gif" alt="" width="800"><br/>
-<img src="./resources/gif/news/워드헌트정답보기.gif" alt="" width="800"><br/>
+<img src="./resources/gif/news/워드헌트풀기.gif" alt="워드헌트풀기" width="800"><br/>
+<img src="./resources/gif/news/워드헌트정답보기.gif" alt="워드헌트정답보기" width="800"><br/>
 
 
 
 ### 6) 나만의 단어장
 #### ✔ 단어 목록
-<img src="./resources/gif/word/단어장.gif" alt="" width="800"><br/>
+<img src="./resources/gif/word/단어장.gif" alt="단어장" width="800"><br/>
 
 #### ✔ 단어 외움 처리
-<img src="./resources/gif/word/단어외움처리.gif" alt="" width="800"><br/>
+<img src="./resources/gif/word/단어외움처리.gif" alt="단어외움처리" width="800"><br/>
 
 #### ✔ 망각 곡선 기반 단어 복습
-<img src="./resources/gif/study/망각곡선팝퀴즈.gif" alt="" width="800"><br/>
+<img src="./resources/gif/study/망각곡선팝퀴즈.gif" alt="망각곡선팝퀴즈" width="800"><br/>
 
 
 ### 7) 학습 목표 및 경험치
 #### ✔ 학습 목표 설정
-<img src="./resources/gif/study/학습목표설정.gif" alt="" width="800"><br/>
+<img src="./resources/gif/study/학습목표설정.gif" alt="학습목표설정" width="800"><br/>
 
 #### ✔ 경험치 획득
-<img src="./resources/gif/study/학습목표달성경험치모달.gif" alt="" width="800"><br/>
+<img src="./resources/gif/study/학습목표달성경험치모달.gif" alt="학습목표달성경험치모달" width="800"><br/>
 
 
 ### 8) 단어 빈칸 테스트
 #### ✔ 테스트 시작
-<img src="./resources/gif/word/단어시험시작하기.gif" alt="" width="800"><br/>
+<img src="./resources/gif/word/단어테스트.gif" alt="단어테스트" width="800"><br/>
 
 #### ✔ 테스트 결과
-<img src="./resources/gif/word/단어시험결과.gif" alt="" width="800"><br/>
+<img src="./resources/gif/word/단어테스트결과.gif" alt="단어테스트결과" width="800"><br/>
 
 
 ### 9) 발음 테스트
 #### ✔ 테스트 시작
+<img src="./resources/gif/study/발음테스트.gif" alt="발음테스트" width="800"><br/>
 
 #### ✔ 테스트 결과
+<img src="./resources/gif/study/발음테스트결과.gif" alt="발음테스트결과" width="800"><br/>
 
 
 ### 10) 검색 페이지
 #### ✔ Wordcloud 기반 인기 키워드 검색<br/>
 <img src="./resources/gif/main/검색.gif" alt="" width="800"><br/><br/>
-
 
 ### 11) 마이페이지
 <img src="./resources/gif/main/마이페이지.gif" alt="" width="800"><br/><br/>

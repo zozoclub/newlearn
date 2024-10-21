@@ -10,14 +10,21 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.beans.factory.annotation.Value;
 
 @Configuration
 public class ElasticsearchConfig {
 
+	@Value("${elastic.host}")
+    private String host;
+
+	@Value("${elastic.port}")
+    private String port;
+
 	@Bean
 	public RestClient restClient() {
 		return RestClient.builder(
-			new HttpHost("j11d105.p.ssafy.io", 9200, "http")
+			new HttpHost(host, port, "http")
 		).build();
 	}
 

@@ -190,23 +190,23 @@
   - 각 데이터베이스의 특성을 고려한 멀티 데이터베이스 아키텍처 설계<br/>
   - 대용량 데이터 백업을 위한 효율적인 아키텍처 설계<br/>
   - APScheduler를 활용한 데이터 수집 프로세스 자동화<br/>
-  <img src="./resources/image/data_pipeline.png" width="60%">
+  <img src="./resources/image/data_pipeline.png" width="800">
   
 - **하이브리드 추천 시스템**
   - **Cold Start 문제 해결**을 위한 협업 필터링(CF) 및 컨텐츠 기반 필터링(CBF) 결합<br/>
   - 사용자 행동 데이터 기반 유사도 계산<br/>
   - KoNLPy 기반 형태소 분석 및 TF-IDF 매트릭스 구축<br/>
-  <img src="./resources/image/hybrid_recommendation.png" width="60%">
+  <img src="./resources/image/hybrid_recommendation.png" width="800">
 
 - **Elasticsearch 기반 검색**
   - 뉴스 기사 검색 기능 최적화<br/>
   - 역 인덱스 활용한 데이터 처리 및 검색 기능 제공<br/>
-  <img src="./resources/image/elasticsearch_Jmeter.png" width="60%">
+  <img src="./resources/image/elasticsearch_Jmeter.png" width="800">
 
 ## 시스템 아키텍처
 - **Blue/Green 무중단 배포 전략**
   - 애플리케이션의 두 개의 환경(Blue와 Green)을 활용하여 서비스의 가용성과 안정성을 높이는 배포 방식<br/>
-  <img src="./resources/image/system_architecture.png" width="60%"><br>
+  <img src="./resources/image/system_architecture.png" width="800"><br>
 
 ## 산출물
 | 종류 | 바로가기 |
